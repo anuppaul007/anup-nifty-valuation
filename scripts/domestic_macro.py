@@ -1,25 +1,28 @@
 """India domestic macro block for Anup Nifty Valuation V3.6.
 
-Uses current official Indian sources only:
-- MoSPI/PIB Consumer Price Index release
-- MoSPI/PIB Index of Industrial Production release
+Current inputs are taken from official Indian sources:
+- MoSPI current CPI press release
+- MoSPI current IIP press release
 - RBI current policy repo rate
 
-Scores are anchored to economic reference points rather than short histories:
-4% CPI target, 5% IIP growth and a 1% real policy-rate reference. This avoids
-calling a short post-rebase history a statistically calibrated z-score.
+Scores use explicit economic anchors rather than pretending that short/rebased
+series provide a stable z-score history: 4% CPI, 5% IIP growth and a 1% real
+policy-rate reference.
 """
 from __future__ import annotations
 from datetime import date
+from io import BytesIO
 from urllib.parse import urljoin
 import math,re
 import numpy as np
 import pandas as pd
 from lxml import html
+from pypdf import PdfReader
 import http_client as requests
 
 UA={'User-Agent':'Mozilla/5.0 (compatible; AnupNiftyValuation/3.6; personal research)'}
-PIB_LIST='https://www.pib.gov.in/newsite/pmreleases.aspx?lang=2&mincode=55&reg=48'
+MOSPI='https://www.mospi.gov.in/'
+MOSPI_ARCHIVE='https://www.mospi.gov.in/archive/press-release'
 RBI='https://www.rbi.org.in/'
 
 
@@ -36,24 +39,61 @@ def fresh(asof,max_age):
 def period_end(month,year):
     return pd.Period(f'{int(year):04d}-{pd.to_datetime(month,format="%B").month:02d}',freq='M').end_time.date().isoformat()
 
-def clean_text(text):return ' '.join(html.fromstring(text).text_content().split())
+def clean_text(text):
+    if '<' in str(text)[:200]:
+        try:return ' '.join(html.fromstring(text).text_content().split())
+        except Exception:pass
+    return ' '.join(str(text).split())
+
+def release_text(response):
+    """Extract searchable text from either an official HTML or PDF release."""
+    content=getattr(response,'content',b'') or b''
+    if content[:5]==b'%PDF-':
+        reader=PdfReader(BytesIO(content))
+        return ' '.join(' '.join((p.extract_text() or '').split()) for p in reader.pages)
+    return clean_text(response.text)
+
+def _release_match(kind,title,href):
+    s=(title+' '+href).lower().replace('_',' ').replace('-',' ')
+    if kind=='cpi':return 'cpi' in s or 'consumer price index' in s
+    return 'iip' in s or 'industrial production' in s
+
+def _candidates_from_page(url):
+    r=requests.get(url,headers=UA,timeout=25);r.raise_for_status();tree=html.fromstring(r.text);out=[]
+    for a in tree.xpath('//a[@href]'):
+        href=urljoin(url,a.get('href') or '')
+        own=' '.join(a.text_content().split())
+        parent=' '.join(a.getparent().text_content().split()) if a.getparent() is not None else ''
+        title=own if len(own)>8 and own.lower() not in ('read more','view document','view more') else parent
+        out.append((title,href))
+    return out
 
 def discover_release(kind):
-    r=requests.get(PIB_LIST,headers=UA,timeout=25);r.raise_for_status();tree=html.fromstring(r.text)
-    found=[]
-    for a in tree.xpath('//a[@href]'):
-        title=' '.join(a.text_content().split());low=title.lower();href=a.get('href') or ''
-        if kind=='cpi':ok='consumer price index' in low and ('release' in low or 'cpi' in low)
-        else:ok='industrial production' in low and ('index' in low or 'iip' in low)
-        if ok and href:found.append((title,urljoin(PIB_LIST,href)))
-    if not found:raise RuntimeError(f'PIB {kind.upper()} release link not found')
-    return found[0]
+    """Find the newest current official MoSPI release without hard-coded month URLs."""
+    pages=[MOSPI]
+    # Archive pages are a fallback for releases that have already rolled off the home page.
+    pages.extend(f'{MOSPI_ARCHIVE}?field_press_release_category_tid=All&order=field_release_date&sort=desc&page={p}' for p in range(0,4))
+    seen=set()
+    for page in pages:
+        try:candidates=_candidates_from_page(page)
+        except Exception:continue
+        for title,href in candidates:
+            key=(title,href)
+            if key in seen:continue
+            seen.add(key)
+            if _release_match(kind,title,href):
+                # Avoid old metadata/API/navigation links that merely contain the acronym.
+                context=(title+' '+href).lower()
+                if any(x in context for x in ('press','release','latestrelease','latest release','quick estimate','quick-estimate','uploads/')):
+                    return title,href
+    raise RuntimeError(f'MoSPI {kind.upper()} release link not found')
 
 def parse_cpi(text,source_url=None):
     page=clean_text(text)
     pats=[
       r'Retail inflation based on Consumer Price Index in\s+([A-Za-z]+),?\s+(\d{4})\s+is\s+(-?\d+(?:\.\d+)?)\s*%',
-      r'Year-on-year inflation rate based on All India Consumer Price Index.*?month of\s+([A-Za-z]+),?\s+(\d{4}).{0,180}?is\s+(-?\d+(?:\.\d+)?)\s*%'
+      r'Year[- ]on[- ]year inflation rate based on All India Consumer Price Index.*?(?:month of|for)\s+([A-Za-z]+),?\s+(\d{4}).{0,260}?(?:is|stood at)\s+(-?\d+(?:\.\d+)?)\s*%',
+      r'All India.*?CPI.*?Combined.*?([A-Za-z]+)\s+(\d{4}).{0,180}?(-?\d+(?:\.\d+)?)\s*%'
     ]
     match=None
     for p in pats:
@@ -67,12 +107,14 @@ def parse_cpi(text,source_url=None):
 
 def parse_iip(text,source_url=None):
     page=clean_text(text)
-    p1=r'IIP growth rate for the month of\s+([A-Za-z]+)\s+(\d{4})\s+is\s+(-?\d+(?:\.\d+)?)\s*(?:percent|%)'
-    p2=r'Index of industrial production records growth of\s+(-?\d+(?:\.\d+)?)\s*%\s+in\s+([A-Za-z]+)\s+(\d{4})'
-    m=re.search(p1,page,re.I)
+    pats=[
+      r'IIP growth rate for the month of\s+([A-Za-z]+)\s+(\d{4})\s+is\s+(-?\d+(?:\.\d+)?)\s*(?:percent|%)',
+      r'Index of Industrial Production.*?(?:growth of|grew by)\s+(-?\d+(?:\.\d+)?)\s*%\s+(?:in|during)\s+([A-Za-z]+)\s+(\d{4})'
+    ]
+    m=re.search(pats[0],page,re.I)
     if m:month,year,value=m.groups()
     else:
-        m=re.search(p2,page,re.I)
+        m=re.search(pats[1],page,re.I)
         if not m:raise RuntimeError('India IIP growth not parsed')
         value,month,year=m.groups()
     value=float(value)
@@ -91,7 +133,7 @@ def parse_repo(text,source_url=RBI):
     return {'value':value,'asof':date.today().isoformat(),'source_url':source_url,'status':'live','label':'RBI policy repo rate','date_basis':'retrieval date; current policy rate remains effective until changed'}
 
 def fetch_release(kind,parser):
-    _,url=discover_release(kind);r=requests.get(url,headers=UA,timeout=25);r.raise_for_status();return parser(r.text,url)
+    _,url=discover_release(kind);r=requests.get(url,headers=UA,timeout=25);r.raise_for_status();return parser(release_text(r),url)
 
 def fetch_repo():
     r=requests.get(RBI,headers=UA,timeout=25);r.raise_for_status();return parse_repo(r.text,RBI)
