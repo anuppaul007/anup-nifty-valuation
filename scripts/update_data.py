@@ -27,7 +27,7 @@ from io import StringIO
 import json, math, re, sys
 import numpy as np
 import pandas as pd
-import requests
+import http_client as requests
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'data'/'latest.json'
@@ -56,6 +56,9 @@ def fnum(x):
 def pdate(x):
     if x is None: return None
     s=str(x).strip()
+    if re.match(r'^\d{4}-\d{2}-\d{2}',s):
+        try:return date.fromisoformat(s[:10])
+        except ValueError:return None
     for dayfirst in (True,False):
         try:
             t=pd.to_datetime(s,dayfirst=dayfirst,errors='raise')
@@ -74,9 +77,11 @@ def fred(series):
     return df.dropna().sort_values('date').reset_index(drop=True)
 
 def robust_z(series, floor=1e-9, max_obs=1260):
-    s=pd.Series(series).dropna()
-    if len(s)<12: return None
-    look=s.tail(min(len(s),max_obs))
+    s=pd.Series(series)
+    if s.empty or pd.isna(s.iloc[-1]):return None
+    s=s.dropna()
+    if len(s)<13: return None
+    look=s.iloc[:-1].tail(max_obs)
     mu=float(look.mean()); sd=float(look.std(ddof=0))
     if not math.isfinite(sd) or sd<floor: return None
     return float(np.clip((float(s.iloc[-1])-mu)/sd,-3,3))
@@ -105,7 +110,7 @@ def directional_score(factors):
 
 def fetch_nifty():
     from jugaad_data.nse import index_raw, index_pe_raw
-    end=date.today(); start=end-timedelta(days=5*365+45)
+    end=date.today(); start=date(2021,5,1)
     ratio=index_pe_raw('NIFTY 50',start,end)
     price=index_raw('NIFTY 50',start,end)
     if not ratio or not price: raise RuntimeError('Nifty Indices returned no data')
@@ -115,31 +120,35 @@ def fetch_nifty():
         pe=fnum(pick(x,['P/E','PE','pe']))
         pb=fnum(pick(x,['P/B','PB','pb']))
         dy=fnum(pick(x,['Div Yield %','Div Yield','Dividend Yield','DY','divYield']))
-        if dt and pe and pb: rr.append({'date':dt,'pe':pe,'pb':pb,'dy':dy})
+        if dt and dt<=end and pe and pb and pe>0 and pb>0: rr.append({'date':dt,'pe':pe,'pb':pb,'dy':dy})
     pp=[]
     for x in price:
         dt=pdate(pick(x,['Date','DATE','HistoricalDate']))
         close=fnum(pick(x,['Close','CLOSE','Closing Index Value','Close Price']))
-        if dt and close: pp.append({'date':dt,'level':close})
+        if dt and dt<=end and close and close>0: pp.append({'date':dt,'level':close})
     if len(rr)<100 or len(pp)<100: raise RuntimeError(f'Parsed too little NIFTY data: ratios={len(rr)}, prices={len(pp)}')
     rdf=pd.DataFrame(rr).drop_duplicates('date').set_index('date').sort_index()
     pdf=pd.DataFrame(pp).drop_duplicates('date').set_index('date').sort_index()
     d=rdf.join(pdf,how='inner').dropna(subset=['pe','pb','level'])
     if len(d)<100: raise RuntimeError('Unable to align NIFTY ratio and price histories')
     latest=d.iloc[-1]; latest_date=d.index[-1]
+    if (end-latest_date).days>7:raise RuntimeError('NIFTY observations are over seven calendar days old')
     md=d[d.index>=date(2021,5,1)].copy(); md.index=pd.to_datetime(md.index)
     m=md.groupby(md.index.to_period('M')).tail(1)
     hist=[[idx.strftime('%Y-%m'),round(float(row.pe),4),round(float(row.pb),4),None if pd.isna(row.dy) else round(float(row.dy),4)] for idx,row in m.iterrows()]
     eps=(d['level']/d['pe']).copy(); eps.index=pd.to_datetime(eps.index)
     em=eps.groupby(eps.index.to_period('M')).last().sort_index()
+    # Use completed months for cycle comparisons, not a partial month versus a month-end.
+    em=em[em.index<pd.Period(end,freq='M')].asfreq('M')
+    em=em.reindex(pd.period_range(em.index.min(),em.index.max(),freq='M'))
     g12=100*(em/em.shift(12)-1); accel=g12-g12.shift(6)
     zg=robust_z(g12,3.0); za=robust_z(accel,3.0)
     zparts=[x for x in [(0.7,zg),(0.3,za)] if x[1] is not None]
-    escore=float(np.tanh(sum(w*z for w,z in zparts)/max(sum(w for w,z in zparts),1e-9)/1.5)) if zparts else 0.0
+    escore=float(np.tanh(sum(w*z for w,z in zparts)/sum(w for w,z in zparts)/1.5)) if zparts else None
     return {
       'latest':{'date':latest_date.isoformat(),'level':float(latest.level),'pe':float(latest.pe),'pb':float(latest.pb),'div_yield':None if pd.isna(latest.dy) else float(latest.dy)},
       'history':hist,
-      'earnings':{'eps':float(eps.iloc[-1]),'eps_growth_12m':None if pd.isna(g12.iloc[-1]) else float(g12.iloc[-1]),'acceleration_6m':None if pd.isna(accel.iloc[-1]) else float(accel.iloc[-1]),'score':escore}
+      'earnings':{'eps':float(em.iloc[-1]),'asof':str(em.index[-1].end_time.date()),'coverage':sum(w for w,z in zparts),'eps_growth_12m':None if pd.isna(g12.iloc[-1]) else float(g12.iloc[-1]),'acceleration_6m':None if pd.isna(accel.iloc[-1]) else float(accel.iloc[-1]),'score':escore}
     }
 
 
@@ -306,4 +315,6 @@ def main():
     print(f'Updated {OUT} for NIFTY date {latest["date"]}; macro coverage={coverage:.0%}')
 
 if __name__=='__main__':
-    main()
+    # Preserve the old command while routing it through the reviewed entry point.
+    from update_data_v3 import main as reviewed_main
+    reviewed_main()

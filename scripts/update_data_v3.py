@@ -1,121 +1,114 @@
 #!/usr/bin/env python3
+"""Refresh dated source data. Optional sources cannot invalidate other factors."""
 from datetime import datetime,timezone,date
 from io import StringIO
-import json,math
+from pathlib import Path
+import json,math,re
 import numpy as np
 import pandas as pd
-import requests
-from pathlib import Path
+from lxml import html
+import http_client as requests
 import update_data as b
-import macro_v3
-ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'data'/'latest.json'
-UA={'User-Agent':'Mozilla/5.0 (compatible; AnupNiftyValuation/3.3; personal research dashboard)'}
+import macro_v3 as m
 
-# Hard network cap: an optional provider must never hold the whole refresh hostage.
-_real_get=requests.get
-def capped_get(*args,**kwargs):
-    t=kwargs.get('timeout',8)
-    try:t=min(float(t),8.0)
-    except:t=8.0
-    kwargs['timeout']=t
-    return _real_get(*args,**kwargs)
-requests.get=capped_get
-b.requests.get=capped_get
-macro_v3.requests.get=capped_get
+ROOT=Path(__file__).resolve().parents[1]
+OUT=ROOT/'data'/'latest.json'
+coverage_adjust_macro=m.coverage_adjust_macro
 
-def fred_retry(series):
-    # FRED is secondary in V3.3: one short attempt, then other factors continue.
-    url=f'https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}&cosd=2015-01-01'
-    try:
-        r=capped_get(url,headers=UA,timeout=8);r.raise_for_status();df=pd.read_csv(StringIO(r.text));df.columns=['date','value'];df['date']=pd.to_datetime(df['date'],errors='coerce');df['value']=pd.to_numeric(df['value'],errors='coerce');q=df.dropna().sort_values('date').reset_index(drop=True)
-        if len(q):return q
-    except Exception as e:raise RuntimeError(f'FRED {series} unavailable: {e}')
-    raise RuntimeError(f'FRED {series} empty')
-b.fred=fred_retry
+def parse_rbi_yield(text):
+    """Read the dated government-securities section, not coupons or FX dates."""
+    page=' '.join(html.fromstring(text).text_content().split())
+    section=re.search(r'Government\s+Securities\s+Market(.*?)Capital\s+Market',page,re.I)
+    if not section:raise RuntimeError('RBI government-securities section not found')
+    section=section.group(1)
+    dates=set(re.findall(r'as on\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4})',section,re.I))
+    if len(dates)!=1:raise RuntimeError('RBI bond observation date is missing or ambiguous')
+    dt=pd.to_datetime(dates.pop()).date()
+    bonds=[]
+    for coupon,year,yield_ in re.findall(r'(\d+(?:\.\d+)?)\s*%\s*GS\s*(20\d{2})\s*:?\s*(\d+(?:\.\d+)?)\s*%',section,re.I):
+        distance=abs(int(year)-dt.year-10)
+        if distance<=1 and 3<float(yield_)<15:
+            bonds.append((distance,float(yield_),f'{coupon}% GS {year}'))
+    if not bonds:raise RuntimeError('RBI approximately 10-year bond not found')
+    closest=min(x[0] for x in bonds);matches=[x for x in bonds if x[0]==closest]
+    if len(matches)!=1:raise RuntimeError('RBI 10-year bond selection is ambiguous')
+    _,value,security=matches[0]
+    return value,{'asof':dt.isoformat(),'source_url':'https://www.rbi.org.in/','source':'RBI dated government bond near 10 years','security':security,'status':'live','max_age_days':7}
 
-# Current-only STOXX path. Historical archive backfill is deliberately deferred to a
-# separate future job so it cannot delay the daily market refresh.
-def relative_em_fast(nifty,hist,old):
-    prior=(((old or {}).get('calibration') or {}).get('em_ex_india_history') or [])
-    hh=[x for x in prior if isinstance(x,dict) and x.get('month')][-60:]
-    cur=macro_v3.safe('STOXX current',macro_v3.stoxx)
-    out={'available':bool(cur),'history_count':len(hh),'score':None}
-    if cur:
-        rel=.6*math.log(nifty['pe']/cur['pe'])+.4*math.log(nifty['pb']/cur['pb'])
-        z=macro_v3.zhist(rel,[x.get('relative_log_premium') for x in hh],12,.03)
-        out.update({'em_ex_india_pe':cur['pe'],'em_ex_india_pb':cur['pb'],'em_ex_india_div_yield':cur['div_yield'],'asof':cur.get('asof'),'nifty_pe_premium_pct':100*(nifty['pe']/cur['pe']-1),'nifty_pb_premium_pct':100*(nifty['pb']/cur['pb']-1),'relative_log_premium':rel,'z':z,'score':None if z is None else macro_v3.squash(-z)})
-        mon=date.today().strftime('%Y-%m');hh=[x for x in hh if x.get('month')!=mon];hh.append({'month':mon,'em_pe':cur['pe'],'em_pb':cur['pb'],'nifty_pe':nifty['pe'],'nifty_pb':nifty['pb'],'relative_log_premium':rel})
-    return out,hh[-60:]
-macro_v3.relative_em=relative_em_fast
+def india_yield(old):
+    def rbi():
+        response=requests.get('https://www.rbi.org.in/',headers=m.UA);response.raise_for_status()
+        value,meta=parse_rbi_yield(response.text)
+        if not m.fresh(meta['asof'],7):raise RuntimeError('RBI bond observation is stale')
+        return value,meta
+    found=m.safe('RBI dated yield',rbi)
+    if found:return found
+    url='https://www.fbil.org.in/'
+    def fbil():
+        for t in pd.read_html(StringIO(requests.get(url,headers=m.UA).text)):
+            cols=[' '.join(map(str,c)) if isinstance(c,tuple) else str(c) for c in t.columns]
+            ci={k:next((i for i,c in enumerate(cols) if k in c.lower()),None) for k in ('tenor','rate','date')}
+            if any(v is None for v in ci.values()):continue
+            for _,row in t.iterrows():
+                if str(row.iloc[ci['tenor']]).upper().replace(' ','') not in ('10YR','10Y','10YEARS'):continue
+                val=b.fnum(row.iloc[ci['rate']]);dt=b.pdate(row.iloc[ci['date']])
+                if val is not None and 3<val<15 and dt and m.fresh(dt.isoformat(),7):
+                    return val,{'asof':dt.isoformat(),'source_url':url,'source':'FBIL dated 10Y par yield','status':'live','max_age_days':7}
+        raise RuntimeError('A dated India 10Y row was not found')
+    found=m.safe('FBIL dated yield',fbil)
+    if found:return found
+    def monthly():
+        df=m.clean(b.fred('INDIRLTLT01STM'),'https://fred.stlouisfed.org/series/INDIRLTLT01STM')
+        dt=df.attrs['asof'];v=float(df.value.iloc[-1])
+        if not 3<v<15 or not m.fresh(dt,100):raise RuntimeError('India monthly yield is stale')
+        return v,{'asof':dt,'source_url':df.attrs['source'],'source':'FRED/OECD India 10Y monthly period','status':'lagged','max_age_days':100}
+    found=m.safe('India monthly yield',monthly)
+    if found:return found
+    meta=(old.get('nifty') or {}).get('gsec_meta') or {}
+    value=(old.get('nifty') or {}).get('gsec10')
+    # A saved number without its observation date is not a current bond yield.
+    if m.finite(value) and meta.get('status')!='excluded' and m.fresh(meta.get('asof'),meta.get('max_age_days',7)):
+        return float(value),dict(meta,status='cached')
+    return value,{'asof':meta.get('asof'),'status':'excluded','source':'India 10Y unavailable or undated','source_url':meta.get('source_url'),'max_age_days':7}
 
-def coverage_adjust_macro(mac):
-    """Weight macro blocks by strategic weight * live internal coverage.
-
-    This prevents, for example, a 35%-complete India/carry block from receiving the
-    same influence as a fully populated block. Missing data reduces both coverage and
-    influence; it never becomes a neutral zero.
-    """
-    blocks=mac.get('blocks') or {}
-    fc=mac.get('factor_coverage') or {}
-    specs=[
-      ('global_liquidity',0.30,float(fc.get('global_liquidity') or 0)),
-      ('india_external_carry',0.30,float(fc.get('india_external_carry') or 0)),
-      ('china_industrial',0.20,1.0 if blocks.get('china_industrial') is not None else 0.0),
-      ('relative_em_valuation',0.20,1.0 if blocks.get('relative_em_valuation') is not None else 0.0),
-    ]
-    active=[]
-    detail={}
-    for key,strategic,internal in specs:
-        val=blocks.get(key);eff=strategic*max(0,min(1,internal))
-        detail[key]={'strategic_weight':strategic,'internal_coverage':internal,'effective_weight':eff}
-        if val is not None and math.isfinite(float(val)) and eff>0:active.append((float(val),eff))
-    total=sum(w for _,w in active)
-    mac['score']=sum(v*w for v,w in active)/total if total else 0.0
-    mac['active_block_weight']=total
-    mac['block_weight_detail']=detail
-    mac.setdefault('factor_coverage',{})['block_weight']=total
-    return mac
+def unavailable_macro(old,reason):
+    mac=dict(old.get('macro') or {})
+    mac.update(score=None,active_block_weight=0,blocks={k:None for k in m.BLOCKS},factor_coverage={k:0 for k in m.BLOCKS},build_error=reason)
+    mac['factors']={k:dict(v,score=None,status='cached') for k,v in (mac.get('factors') or {}).items()}
+    return m.coverage_adjust_macro(mac)
 
 def main():
-    try:old=json.loads(OUT.read_text()) if OUT.exists() else {}
-    except:old={}
+    try:old=json.loads(OUT.read_text())
+    except (OSError,ValueError):old={}
     n=b.fetch_nifty()
-    try:g10,gsrc=b.fetch_india_gsec10()
+    g10,gmeta=india_yield(old)
+    latest=n['latest']
+    latest.update(gsec10=g10,gsec_meta=gmeta)
+    if any(not m.finite(latest.get(k)) or latest[k]<=0 for k in ['level','pe','pb','div_yield']):
+        raise RuntimeError('Mandatory NIFTY input validation failed; retaining saved data')
+    if not m.fresh(latest.get('date'),7):
+        raise RuntimeError('Mandatory NIFTY observation date is stale')
+    try:mac,cal=m.build(g10,latest,n['history'],old,gmeta)
     except Exception as e:
-        prior=((old.get('nifty') or {}).get('gsec10'))
-        if prior is None:raise
-        g10=float(prior);gsrc=f'Last-known-good India 10Y (live source unavailable: {type(e).__name__})'
-    latest=n['latest'];latest['gsec10']=g10
-    vals=[latest.get(k) for k in ['level','pe','pb','div_yield','gsec10']]
-    if any(v is None or not math.isfinite(float(v)) or float(v)<=0 for v in vals):raise RuntimeError('Mandatory input validation failed; keeping old JSON')
-
-    try:
-        mac,cal=macro_v3.build(g10,latest,n['history'],old)
-        mac=coverage_adjust_macro(mac)
-    except Exception as e:
-        prior=old.get('macro')
-        if not prior:raise
-        mac=prior;cal=old.get('calibration') or {};mac['stale_factors']=list(set((mac.get('stale_factors') or [])+['macro build failure']))
-        print('Macro build exception; retained last-known-good macro:',e)
-
-    coverage=float(np.clip(mac.get('active_block_weight',0),0,1))
-    macro_stale=coverage<0.30
-    macro_partial=bool(mac.get('stale_factors')) or coverage<0.99
-    vix=mac.get('vix') or 20
-    vconf=float(np.clip(1-max(0,vix-18)/40,.35,1))
-    confidence=float(np.clip(vconf*(.65+.35*coverage),.30,1))
-
-    out={'generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'model_version':'3.3','macro_stale':macro_stale,'macro_partial':macro_partial,'nifty':latest,'earnings':n['earnings'],'macro':mac,'confidence':confidence,'history':n['history'],'calibration':cal,'sources':[
-        {'name':'Nifty Indices / NSE','role':'NIFTY 50 level, P/E, P/B and dividend yield'},
-        {'name':gsrc,'role':'India 10-year government bond yield'},
-        {'name':'U.S. Treasury','role':'US 10-year real and nominal Treasury yields'},
-        {'name':'Federal Reserve H.10 / H.4.1','role':'Broad USD index and Federal Reserve balance-sheet assets'},
-        {'name':'CBOE','role':'VIX; confidence/deployment speed only'},
-        {'name':'Yahoo Finance / ICE-linked market data','role':'Brent futures history used for oil momentum'},
-        {'name':'BIS / FRED (secondary)','role':'India REER and selected historical calibration series'},
-        {'name':'STOXX','role':'Emerging Markets ex-India relative valuation when available'},
-        {'name':'National Bureau of Statistics of China','role':'Official China manufacturing PMI / new orders when available'},
-        {'name':'CCIL (best effort)','role':'USD/INR 1-month forward premium; excluded until calibrated'}]}
-    tmp=OUT.with_suffix('.tmp');tmp.write_text(json.dumps(out,indent=2,allow_nan=False));tmp.replace(OUT)
-    print(f'Updated V3.3 for NIFTY {latest["date"]}; macro={mac.get("score",0):.3f}; coverage={coverage:.0%}; partial={macro_partial}')
+        mac=unavailable_macro(old,str(e))
+        # Invalid legacy valuation history must never be promoted into corrected history.
+        cal={'em_ex_india_history':[],'forward_premium_history':[],'carry_spread_history':[]}
+    coverage=mac['active_block_weight']
+    vf=(mac.get('factors') or {}).get('vix') or {}
+    confidence=None
+    if vf.get('status')=='live' and m.finite(vf.get('value')):
+        stress=float(np.clip(1-max(0,vf['value']-18)/40,.35,1))
+        confidence=stress*(.65+.35*coverage)
+    out={'schema_version':4,'model_version':'3.4','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<1,'nifty':latest,'earnings':n['earnings'],'macro':mac,'confidence':confidence,'history':n['history'],'calibration':cal,'sources':[
+        {'name':'Nifty Indices / NSE','role':'NIFTY index and ratio history; EPS is an index-implied proxy','url':'https://www.niftyindices.com/reports/historical-data'},
+        {'name':gmeta['source'],'role':'India 10Y; its separate date and status determine eligibility','url':gmeta.get('source_url')},
+        {'name':'U.S. Treasury / Federal Reserve / CBOE','role':'Dated US yields, dollar, balance sheet, and volatility'},
+        {'name':'Yahoo Finance Brent futures','role':'Approximately 3 months: 63 trading observations; includes contract-roll effects'},
+        {'name':'STOXX EM ex India Universal All Cap','role':'Dated trailing fundamentals; all-cap comparison differs from NIFTY large caps','url':m.STOXX_URL},
+        {'name':'NBS China','role':'Official manufacturing PMI and new orders','url':(mac.get('china_pmi') or {}).get('source_url')}
+    ]}
+    tmp=OUT.with_suffix('.tmp')
+    tmp.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8')
+    tmp.replace(OUT)
+    print(json.dumps({'nifty_asof':latest['date'],'gsec_status':gmeta['status'],'macro_score':mac['score'],'coverage':coverage,'version':'3.4'}))
 if __name__=='__main__':main()

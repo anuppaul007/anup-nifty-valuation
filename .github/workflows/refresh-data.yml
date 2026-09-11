@@ -20,6 +20,7 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -27,6 +28,10 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - name: Test data parsing and allocation safeguards
+        run: |
+          python -m unittest discover -s tests -p 'test_*.py' -v
+          node --test tests/model.test.cjs
       - run: python scripts/update_data_v3.py
       - name: Commit only when data changed
         run: |
