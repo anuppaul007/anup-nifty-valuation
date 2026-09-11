@@ -13,7 +13,7 @@ from contextlib import redirect_stdout
 from datetime import date
 from io import BytesIO,StringIO
 from urllib.parse import urljoin
-import math,re
+import math,re,sys
 import numpy as np
 import pandas as pd
 from lxml import html
@@ -23,6 +23,9 @@ import http_client as requests
 UA={'User-Agent':'Mozilla/5.0 (compatible; AnupNiftyValuation/3.6; personal research)'}
 MOSPI='https://www.mospi.gov.in/'
 MOSPI_ARCHIVE='https://www.mospi.gov.in/archive/press-release'
+# These ordinary MoSPI pages carry the server-rendered global "What's New"
+# release widget even when the dedicated archive endpoint is temporarily stale.
+MOSPI_LATEST_PAGES=['https://www.mospi.gov.in/statistical-year-book-india/2015/202','https://www.mospi.gov.in/statistical-year-book-india/2011/']
 RBI='https://www.rbi.org.in/'
 ESANKHYIKI='https://api.mospi.gov.in/'
 
@@ -38,8 +41,7 @@ def fresh(asof,max_age):
     except (TypeError,ValueError):return False
 
 def period_end(month,year):
-    if isinstance(month,(int,float,np.integer,np.floating)) or str(month).strip().isdigit():
-        mm=int(float(month))
+    if isinstance(month,(int,float,np.integer,np.floating)) or str(month).strip().isdigit():mm=int(float(month))
     else:mm=pd.to_datetime(str(month).strip(),format='%B').month
     return pd.Period(f'{int(year):04d}-{mm:02d}',freq='M').end_time.date().isoformat()
 
@@ -63,7 +65,6 @@ def fnum(x):
     except Exception:return None
 
 def records(result):
-    """Flatten common MoSPI API response shapes without depending on internals."""
     if isinstance(result,list):return [x for x in result if isinstance(x,dict)]
     if not isinstance(result,dict):return []
     data=result.get('data',result)
@@ -92,20 +93,17 @@ def month_number(value):
 
 def _is_all_india_combined(row):
     values=' '.join(str(v).lower() for v in row.values())
-    state=row_value(row,['state','state_name','state_description','state_desc'])
-    sector=row_value(row,['sector','sector_name','sector_description','sector_desc'])
+    state=row_value(row,['state','state_name','state_description','state_desc']);sector=row_value(row,['sector','sector_name','sector_description','sector_desc'])
     state_code=row_value(row,['state_code','statecode']);sector_code=row_value(row,['sector_code','sectorcode'])
     state_ok=(state is not None and 'all india' in str(state).lower()) or str(state_code).strip()=='99' or 'all india' in values
     sector_ok=(sector is not None and 'combined' in str(sector).lower()) or str(sector_code).strip()=='3' or 'combined' in values
     return state_ok and sector_ok
 
 def _is_general(row):
-    class_keys=('group','subgroup','division','class','subclass','category','subcategory','description','item')
-    parts=[]
+    class_keys=('group','subgroup','division','class','subclass','category','subcategory','description','item');parts=[]
     for k,v in row.items():
         if any(x in norm(k) for x in class_keys):parts.append(str(v).lower())
-    text=' '.join(parts)
-    return any(x in text for x in ('general','all items','overall'))
+    text=' '.join(parts);return any(x in text for x in ('general','all items','overall'))
 
 def _latest_row(rows,require_general=True):
     candidates=[]
@@ -126,60 +124,49 @@ def _api_get(dataset,params):
     client=_api_client();sink=StringIO()
     with redirect_stdout(sink):result=client.get_data(dataset,params)
     if isinstance(result,dict) and result.get('error'):raise RuntimeError(result['error'])
-    return records(result)
+    rows=records(result)
+    if not rows:
+        keys=list(result.keys()) if isinstance(result,dict) else []
+        raise RuntimeError(f'{dataset} returned no record rows; response keys={keys}')
+    return rows
 
 def api_cpi():
     year=date.today().year
-    params={'base_year':'2024','series':'Current','year':f'{year-1},{year}','state_code':'99','sector_code':'3','Format':'JSON','limit':5000,'page':1}
-    rows=_api_get('CPI_Group',params)
-    latest=_latest_row(rows)
-    if not latest:raise RuntimeError('Official eSankhyiki CPI rows could not identify All-India Combined General')
+    params={'base_year':'2024','series':'Current','year':str(year),'state_code':'99','sector_code':'3','Format':'JSON','limit':5000,'page':1}
+    rows=_api_get('CPI_Group',params);latest=_latest_row(rows)
+    if not latest:raise RuntimeError(f'Official eSankhyiki CPI rows could not identify All-India Combined General; sample keys={list(rows[0].keys()) if rows else []}')
     y,mo,row=latest
     inflation=fnum(row_value(row,['inflation','inflation_rate','annual_inflation','yoy_inflation','year_on_year_inflation']))
     if inflation is None:
-        idx=fnum(row_value(row,['index','index_value','cpi','cpi_index']))
-        prior=None
+        idx=fnum(row_value(row,['index','index_value','cpi','cpi_index']));prior=None
+        # A current-year-only unauthenticated response may not include the prior year; in that case the release fallback is used.
         for r in rows:
             yy=fnum(row_value(r,['year','calendar_year']));mm=month_number(row_value(r,['month','month_name','month_code']))
             if yy==y-1 and mm==mo and _is_all_india_combined(r) and (not _is_general(row) or _is_general(r)):
                 prior=fnum(row_value(r,['index','index_value','cpi','cpi_index']));break
         if idx is not None and prior not in (None,0):inflation=100*(idx/prior-1)
     if inflation is None or not -5<inflation<30:raise RuntimeError('Official eSankhyiki CPI inflation missing or invalid')
-    asof=period_end(mo,y)
-    return {'value':float(inflation),'asof':asof,'source_url':ESANKHYIKI,'status':'live' if fresh(asof,75) else 'stale','label':'All-India CPI inflation, YoY','source':'MoSPI eSankhyiki CPI 2024=100'}
+    asof=period_end(mo,y);return {'value':float(inflation),'asof':asof,'source_url':ESANKHYIKI,'status':'live' if fresh(asof,75) else 'stale','label':'All-India CPI inflation, YoY','source':'MoSPI eSankhyiki CPI 2024=100'}
 
 def api_iip():
     year=date.today().year
-    params={'base_year':'2022-23','year':f'{year-1},{year}','type':'All','Format':'JSON','limit':5000,'page':1}
-    rows=_api_get('IIP_Monthly',params)
-    # IIP is all-India by construction; choose the General/overall monthly row.
-    candidates=[]
+    params={'base_year':'2022-23','year':str(year),'type':'All','Format':'JSON','limit':5000,'page':1}
+    rows=_api_get('IIP_Monthly',params);candidates=[]
     for row in rows:
-        if not _is_general(row):continue
         y=fnum(row_value(row,['year','calendar_year']));mo=month_number(row_value(row,['month','month_name','month_code']))
-        if y is not None and mo is not None:candidates.append((int(y),mo,row))
+        if y is not None and mo is not None and _is_general(row):candidates.append((int(y),mo,row))
     if not candidates:
         for row in rows:
-            y=fnum(row_value(row,['year','calendar_year']));mo=month_number(row_value(row,['month','month_name','month_code']))
-            typ=' '.join(str(v).lower() for v in row.values())
+            y=fnum(row_value(row,['year','calendar_year']));mo=month_number(row_value(row,['month','month_name','month_code']));typ=' '.join(str(v).lower() for v in row.values())
             if y is not None and mo is not None and ('general' in typ or 'overall' in typ):candidates.append((int(y),mo,row))
-    if not candidates:raise RuntimeError('Official eSankhyiki IIP rows could not identify General monthly index')
-    y,mo,row=max(candidates,key=lambda x:(x[0],x[1]))
-    growth=fnum(row_value(row,['growth','growth_rate','growthrate','yoy_growth','annual_growth']))
-    if growth is None:
-        idx=fnum(row_value(row,['index','index_value','iip','iip_index']))
-        prior=None
-        for yy,mm,r in candidates:
-            if yy==y-1 and mm==mo:
-                prior=fnum(row_value(r,['index','index_value','iip','iip_index']));break
-        if idx is not None and prior not in (None,0):growth=100*(idx/prior-1)
-    if growth is None or not -30<growth<40:raise RuntimeError('Official eSankhyiki IIP growth missing or invalid')
-    asof=period_end(mo,y)
-    return {'value':float(growth),'asof':asof,'source_url':ESANKHYIKI,'status':'live' if fresh(asof,90) else 'stale','label':'India IIP growth, YoY','source':'MoSPI eSankhyiki IIP 2022-23=100'}
+    if not candidates:raise RuntimeError(f'Official eSankhyiki IIP rows could not identify General monthly index; sample keys={list(rows[0].keys()) if rows else []}')
+    y,mo,row=max(candidates,key=lambda x:(x[0],x[1]));growth=fnum(row_value(row,['growth','growth_rate','growthrate','yoy_growth','annual_growth']))
+    if growth is None:raise RuntimeError('Official eSankhyiki IIP response did not include directly usable growth; release fallback required')
+    if not -30<growth<40:raise RuntimeError('Official eSankhyiki IIP growth missing or invalid')
+    asof=period_end(mo,y);return {'value':float(growth),'asof':asof,'source_url':ESANKHYIKI,'status':'live' if fresh(asof,90) else 'stale','label':'India IIP growth, YoY','source':'MoSPI eSankhyiki IIP 2022-23=100'}
 
 def _release_match(kind,title,href):
-    s=(title+' '+href).lower().replace('_',' ').replace('-',' ')
-    return ('cpi' in s or 'consumer price index' in s) if kind=='cpi' else ('iip' in s or 'industrial production' in s)
+    s=(title+' '+href).lower().replace('_',' ').replace('-',' ');return ('cpi' in s or 'consumer price index' in s) if kind=='cpi' else ('iip' in s or 'industrial production' in s)
 
 def _candidates_from_page(url):
     r=requests.get(url,headers=UA,timeout=25);r.raise_for_status();tree=html.fromstring(r.text);out=[]
@@ -189,18 +176,20 @@ def _candidates_from_page(url):
     return out
 
 def discover_release(kind):
-    pages=[MOSPI]+[f'{MOSPI_ARCHIVE}?field_press_release_category_tid=All&order=field_release_date&sort=desc&page={p}' for p in range(0,4)]
+    pages=MOSPI_LATEST_PAGES+[MOSPI]+[f'{MOSPI_ARCHIVE}?field_press_release_category_tid=All&order=field_release_date&sort=desc&page={p}' for p in range(0,4)]
     for page in pages:
         try:candidates=_candidates_from_page(page)
         except Exception:continue
-        for title,href in candidates:
-            if _release_match(kind,title,href):
+        matches=[x for x in candidates if _release_match(kind,*x)]
+        if matches:
+            # The global What's New widget is ordered newest first.
+            for title,href in matches:
                 context=(title+' '+href).lower()
-                if any(x in context for x in ('press','release','latestrelease','quick estimate','uploads/')):return title,href
+                if any(x in context for x in ('press','release','latestrelease','quick estimate','uploads/','file_download')):return title,href
     raise RuntimeError(f'MoSPI {kind.upper()} release link not found')
 
 def parse_cpi(text,source_url=None):
-    page=clean_text(text);pats=[r'Retail inflation based on Consumer Price Index in\s+([A-Za-z]+),?\s+(\d{4})\s+is\s+(-?\d+(?:\.\d+)?)\s*%',r'Year[- ]on[- ]year inflation rate based on All India Consumer Price Index.*?(?:month of|for)\s+([A-Za-z]+),?\s+(\d{4}).{0,260}?(?:is|stood at)\s+(-?\d+(?:\.\d+)?)\s*%']
+    page=clean_text(text);pats=[r'Retail inflation based on Consumer Price Index in\s+([A-Za-z]+),?\s+(\d{4})\s+is\s+(-?\d+(?:\.\d+)?)\s*%',r'Year[- ]on[- ]year inflation rate based on All India Consumer Price Index.*?(?:month of|for)\s+([A-Za-z]+),?\s+(\d{4}).{0,300}?(?:is|stood at|estimated at)\s+(-?\d+(?:\.\d+)?)\s*%']
     match=None
     for p in pats:
         match=re.search(p,page,re.I)
@@ -211,7 +200,7 @@ def parse_cpi(text,source_url=None):
     asof=period_end(month,year);return {'value':value,'asof':asof,'source_url':source_url,'status':'live' if fresh(asof,75) else 'stale','label':'All-India CPI inflation, YoY'}
 
 def parse_iip(text,source_url=None):
-    page=clean_text(text);p1=r'IIP growth rate for the month of\s+([A-Za-z]+)\s+(\d{4})\s+is\s+(-?\d+(?:\.\d+)?)\s*(?:percent|%)';p2=r'Index of Industrial Production.*?(?:growth of|grew by)\s+(-?\d+(?:\.\d+)?)\s*%\s+(?:in|during)\s+([A-Za-z]+)\s+(\d{4})'
+    page=clean_text(text);p1=r'IIP growth rate for the month of\s+([A-Za-z]+)\s+(\d{4})\s+is\s+(-?\d+(?:\.\d+)?)\s*(?:percent|%)';p2=r'(?:Index of Industrial Production|India.s Index of industrial production).*?(?:records growth of|growth of|grew by)\s+(-?\d+(?:\.\d+)?)\s*%\s+(?:in|during)\s+([A-Za-z]+)\s+(\d{4})'
     m=re.search(p1,page,re.I)
     if m:month,year,value=m.groups()
     else:
@@ -238,9 +227,11 @@ def fetch_repo():
 
 def build():
     try:cpi=api_cpi()
-    except Exception:cpi=fetch_release('cpi',parse_cpi)
+    except Exception as e:
+        print(f'eSankhyiki CPI primary failed: {type(e).__name__}: {e}',file=sys.stderr);cpi=fetch_release('cpi',parse_cpi)
     try:iip=api_iip()
-    except Exception:iip=fetch_release('iip',parse_iip)
+    except Exception as e:
+        print(f'eSankhyiki IIP primary failed: {type(e).__name__}: {e}',file=sys.stderr);iip=fetch_release('iip',parse_iip)
     repo=fetch_repo()
     if any(x.get('status')!='live' or not finite(x.get('value')) for x in (cpi,iip,repo)):raise RuntimeError('India domestic macro source is stale or unavailable')
     inflation_gap=float(cpi['value'])-4.0;real_repo=float(repo['value'])-float(cpi['value'])
