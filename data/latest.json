@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
-  "model_version": "3.4",
-  "generated_at": "2026-09-11T19:25:45+00:00",
+  "model_version": "3.5",
+  "generated_at": "2026-09-11T19:29:31+00:00",
   "macro_stale": false,
   "macro_partial": true,
   "nifty": {
@@ -33,7 +33,7 @@
     "usd_3m_pct": 0.06061667362635692,
     "fed_assets_6m_pct": 1.4184489999313987,
     "vix": 17.84,
-    "brent_3m_pct": 16.065506432521847,
+    "brent_3m_pct": 16.10976502595285,
     "india_reer_bis": 90.37,
     "usd_inr_3m_pct": 0.17928493769474585,
     "india_us_10y_spread": 2.0210999999999997,
@@ -76,9 +76,9 @@
         "status": "live"
       },
       "brent_3m_pct": {
-        "value": 16.065506432521847,
-        "z": 0.7079855083036604,
-        "score": -0.4398060680642165,
+        "value": 16.10976502595285,
+        "z": 0.7101492933449737,
+        "score": -0.4409688265333733,
         "asof": "2026-09-11",
         "observations": 757,
         "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
@@ -155,7 +155,7 @@
     },
     "blocks": {
       "global_liquidity": -0.1906622595798292,
-      "india_external_carry": -0.04226009155930202,
+      "india_external_carry": -0.042608919100049075,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null
     },
@@ -180,7 +180,7 @@
       "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
     },
-    "score": -0.08567923970142677,
+    "score": -0.08581005002920691,
     "active_block_weight": 0.8,
     "block_weight_detail": {
       "global_liquidity": {
@@ -671,20 +671,30 @@
     },
     {
       "name": "RBI dated government bond near 10 years",
-      "role": "India 10Y; its separate date and status determine eligibility",
+      "role": "Current India ~10Y yield; its own observation date determines eligibility",
       "url": "https://www.rbi.org.in/"
     },
     {
       "name": "U.S. Treasury / Federal Reserve / CBOE",
-      "role": "Dated US yields, dollar, balance sheet, and volatility"
+      "role": "Dated real/nominal yields, broad USD, Fed balance sheet and VIX"
+    },
+    {
+      "name": "BIS Statistics API",
+      "role": "India broad REER and monthly USD/INR history from official SDMX feeds",
+      "url": "https://data.bis.org/"
+    },
+    {
+      "name": "OECD Data Explorer",
+      "role": "Monthly India long-term government bond history used to standardise India-US carry",
+      "url": "https://data-explorer.oecd.org/"
     },
     {
       "name": "Yahoo Finance Brent futures",
-      "role": "Approximately 3 months: 63 trading observations; includes contract-roll effects"
+      "role": "Brent 63-trading-observation momentum; contract-roll effects are possible"
     },
     {
-      "name": "STOXX EM ex India Universal All Cap",
-      "role": "Dated trailing fundamentals; all-cap comparison differs from NIFTY large caps",
+      "name": "STOXX EM ex India Universal Large Cap",
+      "role": "Archived dated trailing P/E and P/B for relative valuation against a large-cap benchmark",
       "url": "https://stoxx.com/index/swexilv/"
     },
     {
