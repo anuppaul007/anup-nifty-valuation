@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-11T11:41:36+00:00",
-  "model_version": "3.2",
+  "generated_at": "2026-09-11T11:46:28+00:00",
+  "model_version": "3.3",
   "macro_stale": false,
   "macro_partial": true,
   "nifty": {
@@ -21,7 +21,7 @@
     "us_real_10y": 2.55,
     "fed_assets_6m_pct": null,
     "usd_3m_pct": 0.06061667362635692,
-    "brent_3m_pct": 15.290993709674595,
+    "brent_3m_pct": 15.479094842122265,
     "vix": 17.84,
     "india_reer_bis": null,
     "india_reer_z": null,
@@ -39,7 +39,7 @@
     },
     "relative_em": {
       "available": true,
-      "history_count": 0,
+      "history_count": 1,
       "score": null,
       "em_ex_india_pe": 23.9,
       "em_ex_india_pb": 0.8,
@@ -52,12 +52,12 @@
     },
     "blocks": {
       "global_liquidity": -0.5910131508030626,
-      "india_external_carry": -0.28705459655098703,
+      "india_external_carry": -0.291777058540953,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null
     },
-    "score": -0.3276087632820211,
-    "active_block_weight": 0.8,
+    "score": -0.3061910122582852,
+    "active_block_weight": 0.53,
     "sources_live": {
       "us_real_10y": "U.S. Treasury",
       "us_10y": "U.S. Treasury",
@@ -73,10 +73,32 @@
     "factor_coverage": {
       "global_liquidity": 0.75,
       "india_external_carry": 0.35,
-      "block_weight": 0.8
+      "block_weight": 0.53
+    },
+    "block_weight_detail": {
+      "global_liquidity": {
+        "strategic_weight": 0.3,
+        "internal_coverage": 0.75,
+        "effective_weight": 0.22499999999999998
+      },
+      "india_external_carry": {
+        "strategic_weight": 0.3,
+        "internal_coverage": 0.35,
+        "effective_weight": 0.105
+      },
+      "china_industrial": {
+        "strategic_weight": 0.2,
+        "internal_coverage": 1.0,
+        "effective_weight": 0.2
+      },
+      "relative_em_valuation": {
+        "strategic_weight": 0.2,
+        "internal_coverage": 0.0,
+        "effective_weight": 0.0
+      }
     }
   },
-  "confidence": 0.9299999999999999,
+  "confidence": 0.8355,
   "history": [
     [
       "2021-07",
