@@ -1,51 +1,69 @@
-# Anup Nifty Valuation — Web V2
+# Anup Nifty Valuation — Web V3
 
-This is a deployable upgrade of the supplied single-file dashboard. The page remains static and fast; a scheduled Python job refreshes `data/latest.json` after the Indian market closes.
+Automated NIFTY 50 valuation and valuation-driven equity/debt allocation dashboard. A scheduled GitHub Action refreshes `data/latest.json` after the Indian market closes; the browser never needs API keys.
 
-## Model architecture
+## Decision architecture
 
-1. **Fundamental valuation anchor** — trailing P/E, profitability-adjusted P/B, earnings-yield minus India 10-year G-sec, dividend yield, and the existing low-weight trend check.
-2. **Earnings-cycle overlay** — derived NIFTY EPS (`index level / P/E`), 12-month EPS growth and its 6-month acceleration.
-3. **Global macro/liquidity overlay** — US 10-year real yield, broad USD, Brent and Federal Reserve assets. VIX is displayed as a confidence/stress variable, not a directional valuation factor.
-4. **Portfolio controller** — existing debt floor, hard bounds, deadband, rate limit and review cadence.
+### 1. Fundamental valuation — the anchor
 
-The tactical overlay is deliberately bounded (default ±6 percentage points from macro and ±6 from earnings) and is multiplied by a damping factor `1 - |valuation z| / extreme-z`. It therefore fades to zero at valuation extremes: the model can still reach **100% equity when extremely cheap and 0% when extremely dear**.
+- NIFTY trailing P/E
+- P/B adjusted partly for profitability/ROE
+- earnings yield minus India 10-year G-sec
+- dividend yield
 
-## Why this is safer than browser-side scraping
+Fundamental valuation determines the core equity allocation. The allocation curve may reach **100% equity at extreme undervaluation and 0% equity at extreme overvaluation**.
 
-The browser reads only a local JSON file. Data-site failures, CORS and keys never reach the user. The updater validates mandatory fields before replacing the last good file. The UI flags a feed older than three days as stale.
+### 2. Earnings-cycle overlay
 
-## Free hosting: recommended setup
+NIFTY EPS is derived as `index level / P/E`. The model tracks 12-month EPS growth and six-month growth acceleration.
 
-### Cloudflare Pages + GitHub Actions
+### 3. Four-block macro overlay
 
-1. Create a GitHub repository and put this folder at its root.
-2. Push to `main`.
-3. In Cloudflare: **Workers & Pages → Create → Pages → Connect to Git** and choose the repository.
-4. No framework/build command is required; set the output directory to `.` (repository root).
-5. GitHub Actions runs at 18:45 IST on weekdays and commits a refreshed `data/latest.json`. Each commit automatically triggers a Cloudflare Pages deployment.
-6. Use the generated `*.pages.dev` URL, or add your own domain later.
+Macro is intentionally split to reduce double-counting:
 
-At this traffic/data volume the stack is designed to fit free tiers.
+| Block | Weight | Inputs |
+|---|---:|---|
+| Global liquidity | 30% | US 10Y real yield, Fed assets, broad USD |
+| India external / carry | 30% | Brent, India-US 10Y spread, India REER, USD/INR 1M forward premium |
+| China industrial cycle | 20% | official NBS manufacturing PMI and new orders |
+| Relative EM valuation | 20% | NIFTY valuation premium vs STOXX Emerging Markets ex-India |
+
+Within each block, unavailable optional inputs are removed and the remaining weights are renormalized. Missing data are never silently treated as neutral.
+
+**VIX is not directional.** It reduces deployment confidence/speed during stress, but a high VIX does not make cheap assets expensive.
+
+The macro overlay is bounded to ±6 percentage points before damping. Earnings is also bounded to ±6 points. Both are multiplied by `1 - |fundamental valuation z| / extreme-z`, clipped to 0–1, so tactical overlays fade to zero at valuation extremes.
+
+## Requested series and implementation choices
+
+- **MSCI EM ex-India relative valuation:** the automated model uses the freely accessible STOXX Emerging Markets ex-India fundamentals as a licensing-friendly proxy. Historical archived factsheets are used to calibrate the normal India premium rather than assuming a fixed premium.
+- **China Credit Impulse / Caixin PMI:** V3 uses official China NBS manufacturing PMI and new orders. It avoids proprietary Caixin/S&P data while preserving the industrial-cycle signal. A true PBOC credit-impulse module can be added later if a stable historical feed is established.
+- **USD/INR forward premium:** best-effort CCIL 1-month implied differential. It is displayed immediately but excluded from the directional score until the dashboard has accumulated enough observations for its own calibration.
+- **India REER:** BIS/FRED broad real effective exchange rate series.
+- **US-India 10Y spread:** India 10Y less US 10Y, standardized against historical monthly spread data.
 
 ## Data sources
 
-- NIFTY 50 level, P/E, P/B, dividend yield: Nifty Indices/NSE historical reports, retrieved by the current `jugaad-data` index helper.
-- India 10-year: FBIL daily par-yield table when it can be read; FRED/OECD monthly series is a lagged fallback. **If the site becomes commercial or public at scale, review/licence the FBIL redistribution terms or replace this feed with a licensed source.**
-- Global macro: FRED CSV series `DFII10`, `DTWEXBGS`, `DCOILBRENTEU`, `WALCL`, `VIXCLS`.
+- NIFTY 50 level, P/E, P/B, dividend yield: Nifty Indices/NSE via `jugaad-data` helpers.
+- India 10-year: FBIL daily par-yield table when available; FRED/OECD monthly series is a lagged fallback. Review/licence FBIL redistribution terms if the site becomes commercial.
+- US real/nominal yields, broad USD, Brent, Fed assets and VIX: Federal Reserve/FRED.
+- India REER: BIS series distributed through FRED.
+- Emerging Markets ex-India fundamentals: STOXX.
+- China manufacturing PMI/new orders: National Bureau of Statistics of China.
+- USD/INR forward implied differential: CCIL public market table, best effort.
 
-## Important next improvement: a real walk-forward backtest
+## Automation
 
-The legacy chart is intentionally left labelled as a behaviour check. A production V3 should use monthly NIFTY 50 TRI and a debt TRI, calculate calibration only from information available at each historical date, and compare the core and core+macro systems against 100% NIFTY and fixed 60/40. Measure CAGR, volatility, max drawdown, Sortino, rolling 1/3/5-year returns, turnover and realistic tax/friction assumptions.
+`.github/workflows/refresh-data.yml` runs `scripts/update_data_v3.py` at **18:45 IST Monday–Friday**, and on model-code pushes. Data-only bot commits are ignored to prevent loops. Mandatory NIFTY inputs must validate before the last-known-good JSON is replaced.
 
-## Local test
+## Next research milestone
 
-Do not double-click `index.html` if you want automatic JSON loading. Run:
+Build a true walk-forward backtest with NIFTY 50 TRI and a debt TRI, recalculating every reference distribution using only information available at that historical date. Compare:
 
-```bash
-python -m http.server 8000
-```
+- 100% NIFTY TRI
+- fixed 60/40
+- fundamental-only Anup Valuation
+- fundamental + earnings
+- full V3 fundamental + earnings + macro
 
-Then open `http://localhost:8000/`.
-
-`data/latest.json` in this package is a seed/fallback. The first successful scheduled/manual GitHub Action replaces it.
+Evaluate CAGR, max drawdown, volatility, Sortino/Sharpe, rolling 1/3/5-year returns, turnover and realistic tax/friction assumptions. Use out-of-sample testing before changing model weights.
