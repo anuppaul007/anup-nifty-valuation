@@ -6,6 +6,7 @@ import pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 import macro_v3 as m
 import update_data_v3 as updater
+import domestic_macro as dm
 
 STOXX='''<html><p>all data as of July 31, 2026</p>
 <table><tr><th>Index volatility and risk</th><th>1Y volatility</th><th>3Y</th><th>5Y</th><th>Sharpe 1Y</th><th>Sharpe 3Y</th><th>Sharpe 5Y</th></tr>
@@ -18,21 +19,28 @@ class ModelTests(unittest.TestCase):
  def test_rbi_binds_bond_yield_to_its_own_date_not_coupon_or_fx_date(self):
   text='<p>Exchange Rates As at September 11, 2026</p><h3>Government Securities Market</h3><p>6.36% GS 2031 : 6.5231% #</p><p>6.94% GS 2036 : 6.9711% #</p><p>7.06% GS 2041 : 7.1121% #</p><p># as on September 10, 2026</p><h3>Capital Market</h3>'
   value,meta=updater.parse_rbi_yield(text)
-  self.assertEqual(value,6.9711);self.assertEqual(meta['asof'],'2026-09-10')
-  self.assertEqual(meta['security'],'6.94% GS 2036')
+  self.assertEqual(value,6.9711);self.assertEqual(meta['asof'],'2026-09-10');self.assertEqual(meta['security'],'6.94% GS 2036')
   with self.assertRaises(RuntimeError):updater.parse_rbi_yield(text.replace('# as on September 10, 2026',''))
+ def test_domestic_official_release_parsers(self):
+  cpi=dm.parse_cpi('<h1>PRESS RELEASE</h1><p>Retail inflation based on Consumer Price Index in July, 2026 is 4.45%</p>','cpi')
+  iip=dm.parse_iip('<p>The IIP growth rate for the month of July 2026 is 6.7 percent which was 7.3 percent in June.</p>','iip')
+  repo=dm.parse_repo('<h3>Policy Rates</h3><p>Policy Repo Rate : 5.25%</p><h3>Reserve Ratios</h3>','rbi')
+  self.assertEqual((cpi['value'],cpi['asof']),(4.45,'2026-07-31'));self.assertEqual((iip['value'],iip['asof']),(6.7,'2026-07-31'));self.assertEqual(repo['value'],5.25)
+ def test_domestic_block_uses_explicit_economic_anchors(self):
+  c={'value':4.45,'asof':str(date.today()),'status':'live','source_url':'cpi'};i={'value':6.7,'asof':str(date.today()),'status':'live','source_url':'iip'};r={'value':5.25,'asof':str(date.today()),'status':'live','source_url':'rbi'}
+  with patch.object(dm,'fetch_release',side_effect=[c,i]),patch.object(dm,'fetch_repo',return_value=r):x=dm.build()
+  self.assertEqual(x['coverage'],1);self.assertEqual(x['status'],'live');self.assertAlmostEqual(x['real_repo_rate'],.8);self.assertTrue(-1<=x['score']<=1)
  def test_stoxx_binds_fundamentals_not_risk_table(self):
-  x=m.parse_stoxx(STOXX)
-  self.assertEqual((x['pe'],x['pb'],x['div_yield']),(16.3,2.4,2.8))
-  self.assertEqual(x['asof'],'2026-07-31')
+  x=m.parse_stoxx(STOXX);self.assertEqual((x['pe'],x['pb'],x['div_yield']),(16.3,2.4,2.8));self.assertEqual(x['asof'],'2026-07-31')
  def test_missing_history_is_not_neutral(self):
   self.assertIsNone(m.rz([1,2,3],24));self.assertIsNone(m.rz([1]*100,24));self.assertEqual(m.weighted([(None,.5),(None,.5)]),(None,0))
  def test_china_missing_orders_reduces_coverage(self):
   period=str(pd.Period(date.today(),freq='M')-1);x=m.parse_china('<p>manufacturing industry was 49.8%</p>',period)
   self.assertEqual(x['coverage'],.7);self.assertAlmostEqual(x['score'],m.squash((49.8-50)/1.75))
- def test_coverage_arithmetic_matches_quote(self):
-  mac={'blocks':{'global_liquidity':-.5910131508030626,'india_external_carry':-.291777058540953,'china_industrial':.006666567902989752,'relative_em_valuation':None},'factor_coverage':{'global_liquidity':.75,'india_external_carry':.35,'china_industrial':1,'relative_em_valuation':0}}
-  m.coverage_adjust_macro(mac);self.assertAlmostEqual(mac['active_block_weight'],.53);self.assertAlmostEqual(mac['score'],-.3061910122582852)
+ def test_v36_macro_block_plan_sums_to_one(self):
+  self.assertAlmostEqual(sum(m.BLOCKS.values()),1);self.assertEqual(set(m.BLOCKS),{'global_liquidity','india_external_carry','india_domestic','china_industrial'})
+  mac={'blocks':{'global_liquidity':-.2,'india_external_carry':-.1,'india_domestic':.1,'china_industrial':0},'factor_coverage':{k:1 for k in m.BLOCKS}}
+  m.coverage_adjust_macro(mac);self.assertAlmostEqual(mac['active_block_weight'],1);self.assertAlmostEqual(mac['score'],-.06)
  def test_build_failure_invalidates_old_active_scores(self):
   x=updater.unavailable_macro({'macro':{'score':1,'active_block_weight':1,'blocks':{'global_liquidity':1}}},'timeout')
   self.assertIsNone(x['score']);self.assertEqual(x['active_block_weight'],0)
@@ -41,8 +49,7 @@ class ModelTests(unittest.TestCase):
  def test_corrected_em_history_aligns_month_and_deduplicates(self):
   cur=m.parse_stoxx(STOXX);old={'calibration':{'em_ex_india_history':[]}}
   hist=[[f'2025-{i:02d}',20+i*.05,3+i*.01,1.2] for i in range(1,13)]+[['2026-07',20.78,2.99,1.22]]
-  with patch.object(m,'stoxx',return_value=cur):
-   out,h=m.relative_em({'pe':19.85,'pb':2.84},hist,old)
+  with patch.object(m,'stoxx',return_value=cur):out,h=m.relative_em({'pe':19.85,'pb':2.84},hist,old)
   self.assertTrue(all(x['method']=='largecap-fundamentals-v1' for x in h));self.assertEqual(h[-1]['month'],'2026-07')
  def test_fed_real_csv_is_parsed_as_csv(self):
   class Response:
@@ -53,8 +60,7 @@ class ModelTests(unittest.TestCase):
  def test_fed_csv_quoted_header_selects_named_series(self):
   text='"Series Description","Nominal Advanced Foreign Economies Dollar Index","Nominal Broad Dollar Index"\n"Time Period","ADV","BROAD"\n2026-07,900,120\n2026-08,901,118\n'
   x=m._fed_csv(text,'Nominal Broad Dollar Index','fixture');self.assertEqual(x.value.tolist(),[120,118])
- def test_sdmx_months_are_period_ended(self):
-  self.assertEqual(str(m._period_dates(['2026-08'])[0].date()),'2026-08-31')
+ def test_sdmx_months_are_period_ended(self):self.assertEqual(str(m._period_dates(['2026-08'])[0].date()),'2026-08-31')
  def test_dollar_momentum_uses_completed_months(self):
   month=pd.Timestamp(date.today().replace(day=1));df=pd.DataFrame({'date':[month-pd.DateOffset(months=2),month-pd.DateOffset(months=1),month],'value':[99,100,1000]})
   with patch.object(m,'fred_optional',return_value=df):x=m.fed_broad_usd()
