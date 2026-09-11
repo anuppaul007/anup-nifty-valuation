@@ -1,6 +1,7 @@
 {
-  "generated_at": "2026-09-11T17:03:37+00:00",
-  "model_version": "3.3",
+  "schema_version": 4,
+  "model_version": "3.4",
+  "generated_at": "2026-09-11T18:35:06+00:00",
   "macro_stale": false,
   "macro_partial": true,
   "nifty": {
@@ -9,77 +10,179 @@
     "pe": 19.78,
     "pb": 2.83,
     "div_yield": 1.21,
-    "gsec10": 6.88
+    "gsec10": 6.9711,
+    "gsec_meta": {
+      "asof": "2026-09-10",
+      "source_url": "https://www.rbi.org.in/",
+      "source": "RBI dated government bond near 10 years",
+      "security": "6.94% GS 2036",
+      "status": "live",
+      "max_age_days": 7
+    }
   },
   "earnings": {
-    "eps": 1182.917087967644,
-    "eps_growth_12m": 4.588075438220707,
-    "acceleration_6m": 1.1700706564335084,
-    "score": -0.31921407600805357
+    "eps": 1182.7308447937132,
+    "asof": "2026-08-31",
+    "coverage": 1.0,
+    "eps_growth_12m": 3.9078060792655966,
+    "acceleration_6m": 2.295826311410698,
+    "score": -0.2928771334450563
   },
   "macro": {
     "us_real_10y": 2.55,
-    "fed_assets_6m_pct": null,
     "usd_3m_pct": 0.06061667362635692,
+    "fed_assets_6m_pct": null,
     "brent_3m_pct": 16.18721545409123,
-    "vix": 17.84,
     "india_reer_bis": null,
-    "india_reer_z": null,
-    "us_10y": 4.95,
-    "india_us_10y_spread": 1.9299999999999997,
-    "india_us_spread_z": null,
+    "india_us_10y_spread": 2.0210999999999997,
     "forward_premium_1m": null,
-    "forward_premium_z": null,
+    "vix": 17.84,
+    "us_10y": 4.95,
+    "factors": {
+      "us_real_10y": {
+        "value": 2.55,
+        "z": 2.715017313227719,
+        "score": -0.9478330225476744,
+        "asof": "2026-09-10",
+        "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
+        "status": "live"
+      },
+      "usd_3m_pct": {
+        "value": 0.06061667362635692,
+        "z": null,
+        "score": null,
+        "asof": "2026-08-31",
+        "source_url": "https://www.federalreserve.gov/datadownload/DownloadTable.aspx?filetype=csv&label=include&lastobs=120&layout=seriescolumn&rel=H10&series=847be2166a425bda9b4d92465f797544&type=package",
+        "status": "pending_history"
+      },
+      "fed_assets_6m_pct": {
+        "value": null,
+        "z": null,
+        "score": null,
+        "asof": "2026-09-09",
+        "source_url": "https://www.federalreserve.gov/datadownload/DownloadTable.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package",
+        "status": "pending_history"
+      },
+      "brent_3m_pct": {
+        "value": 16.18721545409123,
+        "z": 0.7139358139923232,
+        "score": -0.4430000401111301,
+        "asof": "2026-09-11",
+        "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
+        "status": "live"
+      },
+      "india_reer_bis": {
+        "value": null,
+        "z": null,
+        "score": null,
+        "asof": null,
+        "source_url": null,
+        "status": "unavailable"
+      },
+      "india_us_10y_spread": {
+        "value": 2.0210999999999997,
+        "z": null,
+        "score": null,
+        "asof": "2026-09-10",
+        "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
+        "status": "pending_history",
+        "india_asof": "2026-09-10",
+        "india_source_url": "https://www.rbi.org.in/"
+      },
+      "forward_premium_1m": {
+        "value": null,
+        "z": null,
+        "score": null,
+        "asof": null,
+        "source_url": null,
+        "status": "unavailable"
+      },
+      "vix": {
+        "value": 17.84,
+        "z": 0,
+        "score": 0.0,
+        "asof": "2026-09-10",
+        "source_url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+        "status": "live"
+      },
+      "us_10y": {
+        "value": 4.95,
+        "z": 0,
+        "score": 0.0,
+        "asof": "2026-09-10",
+        "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
+        "status": "live"
+      }
+    },
     "china_pmi": {
       "pmi": 49.8,
       "new_orders": 50.6,
-      "period": null,
+      "period": "2026-08",
+      "asof": "2026-08-31",
       "score": 0.006666567902989752,
+      "coverage": 1.0,
+      "status": "live",
       "source_url": "https://www.stats.gov.cn/english/PressRelease/202609/t20260901_1965170.html"
     },
     "relative_em": {
       "available": true,
-      "history_count": 1,
       "score": null,
-      "em_ex_india_pe": 23.9,
-      "em_ex_india_pb": 0.8,
-      "em_ex_india_div_yield": 0.3,
+      "history_count": 0,
+      "status": "pending_history",
+      "em_ex_india_pe": 17.2,
+      "em_ex_india_pb": 2.1,
+      "em_ex_india_div_yield": 3.1,
       "asof": "2026-07-31",
-      "nifty_pe_premium_pct": -17.23849372384936,
-      "nifty_pb_premium_pct": 253.75,
-      "relative_log_premium": 0.3918438255420032,
+      "source_url": "https://stoxx.com/index/swexiagv/?factsheet=true",
+      "pe_basis": "Trailing, including negative earnings",
+      "method": "fundamentals-v1",
+      "comparison_month": "2026-07",
+      "relative_log_premium": 0.2547833781802915,
+      "nifty_pe_premium_pct": 20.813953488372093,
+      "nifty_pb_premium_pct": 42.38095238095239,
       "z": null
     },
     "blocks": {
-      "global_liquidity": -0.5910131508030626,
-      "india_external_carry": -0.30942640121361586,
+      "global_liquidity": -0.9478330225476744,
+      "india_external_carry": -0.4430000401111301,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null
     },
-    "score": -0.30968758014626563,
-    "active_block_weight": 0.53,
-    "sources_live": {
-      "us_real_10y": "U.S. Treasury",
-      "us_10y": "U.S. Treasury",
-      "broad_usd": "Federal Reserve H.10",
-      "fed_assets": "Federal Reserve H.4.1",
-      "vix": "CBOE",
-      "brent": "Yahoo Finance Brent futures",
-      "india_reer": null
-    },
-    "stale_factors": [
-      "India REER"
-    ],
     "factor_coverage": {
-      "global_liquidity": 0.75,
+      "global_liquidity": 0.5,
       "india_external_carry": 0.35,
-      "block_weight": 0.53
+      "china_industrial": 1.0,
+      "relative_em_valuation": 0,
+      "block_weight": 0.455
     },
+    "india_reer_z": null,
+    "india_us_spread_z": null,
+    "forward_premium_z": null,
+    "stale_factors": [
+      "usd_3m_pct",
+      "fed_assets_6m_pct",
+      "india_reer_bis",
+      "india_us_10y_spread",
+      "forward_premium_1m"
+    ],
+    "sources_live": {
+      "us_real_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
+      "usd_3m_pct": null,
+      "fed_assets_6m_pct": null,
+      "brent_3m_pct": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
+      "india_reer_bis": null,
+      "india_us_10y_spread": null,
+      "forward_premium_1m": null,
+      "vix": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+      "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
+    },
+    "score": -0.41177284398510305,
+    "active_block_weight": 0.455,
     "block_weight_detail": {
       "global_liquidity": {
         "strategic_weight": 0.3,
-        "internal_coverage": 0.75,
-        "effective_weight": 0.22499999999999998
+        "internal_coverage": 0.5,
+        "effective_weight": 0.15
       },
       "india_external_carry": {
         "strategic_weight": 0.3,
@@ -94,12 +197,24 @@
       "relative_em_valuation": {
         "strategic_weight": 0.2,
         "internal_coverage": 0.0,
-        "effective_weight": 0.0
+        "effective_weight": 0
       }
     }
   },
-  "confidence": 0.8355,
+  "confidence": 0.80925,
   "history": [
+    [
+      "2021-05",
+      29.22,
+      4.39,
+      1.06
+    ],
+    [
+      "2021-06",
+      28.33,
+      4.24,
+      1.26
+    ],
     [
       "2021-07",
       27.01,
@@ -482,62 +597,47 @@
   "calibration": {
     "em_ex_india_history": [
       {
-        "month": "2026-09",
-        "em_pe": 23.9,
-        "em_pb": 0.8,
-        "nifty_pe": 19.78,
-        "nifty_pb": 2.83,
-        "relative_log_premium": 0.3918438255420032
+        "month": "2026-07",
+        "asof": "2026-07-31",
+        "method": "fundamentals-v1",
+        "em_pe": 17.2,
+        "em_pb": 2.1,
+        "nifty_pe": 20.78,
+        "nifty_pb": 2.99,
+        "relative_log_premium": 0.2547833781802915
       }
     ],
     "forward_premium_history": [],
-    "carry_spread_history": [
-      {
-        "month": "2026-09",
-        "value": 1.9299999999999997
-      }
-    ]
+    "carry_spread_history": []
   },
   "sources": [
     {
       "name": "Nifty Indices / NSE",
-      "role": "NIFTY 50 level, P/E, P/B and dividend yield"
+      "role": "NIFTY index and ratio history; EPS is an index-implied proxy",
+      "url": "https://www.niftyindices.com/reports/historical-data"
     },
     {
-      "name": "Last-known-good India 10Y (live source unavailable: RuntimeError)",
-      "role": "India 10-year government bond yield"
+      "name": "RBI dated government bond near 10 years",
+      "role": "India 10Y; its separate date and status determine eligibility",
+      "url": "https://www.rbi.org.in/"
     },
     {
-      "name": "U.S. Treasury",
-      "role": "US 10-year real and nominal Treasury yields"
+      "name": "U.S. Treasury / Federal Reserve / CBOE",
+      "role": "Dated US yields, dollar, balance sheet, and volatility"
     },
     {
-      "name": "Federal Reserve H.10 / H.4.1",
-      "role": "Broad USD index and Federal Reserve balance-sheet assets"
+      "name": "Yahoo Finance Brent futures",
+      "role": "Approximately 3 months: 63 trading observations; includes contract-roll effects"
     },
     {
-      "name": "CBOE",
-      "role": "VIX; confidence/deployment speed only"
+      "name": "STOXX EM ex India Universal All Cap",
+      "role": "Dated trailing fundamentals; all-cap comparison differs from NIFTY large caps",
+      "url": "https://stoxx.com/index/swexiagv/?factsheet=true"
     },
     {
-      "name": "Yahoo Finance / ICE-linked market data",
-      "role": "Brent futures history used for oil momentum"
-    },
-    {
-      "name": "BIS / FRED (secondary)",
-      "role": "India REER and selected historical calibration series"
-    },
-    {
-      "name": "STOXX",
-      "role": "Emerging Markets ex-India relative valuation when available"
-    },
-    {
-      "name": "National Bureau of Statistics of China",
-      "role": "Official China manufacturing PMI / new orders when available"
-    },
-    {
-      "name": "CCIL (best effort)",
-      "role": "USD/INR 1-month forward premium; excluded until calibrated"
+      "name": "NBS China",
+      "role": "Official manufacturing PMI and new orders",
+      "url": "https://www.stats.gov.cn/english/PressRelease/202609/t20260901_1965170.html"
     }
   ]
 }
