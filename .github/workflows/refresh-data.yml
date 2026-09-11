@@ -2,6 +2,10 @@ name: Refresh valuation data
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "data/latest.json"
   schedule:
     # 18:45 India time, Monday-Friday (GitHub cron is UTC)
     - cron: "15 13 * * 1-5"
