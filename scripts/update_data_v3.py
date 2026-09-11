@@ -10,9 +10,13 @@ from lxml import html
 import http_client as requests
 import update_data as b
 import macro_v3 as m
+import domestic_macro as dm
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'data'/'latest.json'
+# V3.6 true macro plan. Relative EM valuation remains a diagnostic valuation
+# cross-check, not a macro block. The four macro blocks sum to 100%.
+m.BLOCKS.clear();m.BLOCKS.update({'global_liquidity':.30,'india_external_carry':.25,'india_domestic':.25,'china_industrial':.20})
 coverage_adjust_macro=m.coverage_adjust_macro
 
 
@@ -69,27 +73,41 @@ def unavailable_macro(old,reason):
     return m.coverage_adjust_macro(mac)
 
 
+def attach_domestic(mac):
+    dom=m.safe('India domestic macro',dm.build)
+    if dom is None:
+        dom={'score':None,'coverage':0.0,'status':'unavailable','factors':{},'method':'economic-anchor-v1'}
+    mac['domestic']=dom
+    mac.setdefault('blocks',{})['india_domestic']=dom.get('score')
+    mac.setdefault('factor_coverage',{})['india_domestic']=float(dom.get('coverage') or 0)
+    return m.coverage_adjust_macro(mac)
+
+
 def main():
     try:old=json.loads(OUT.read_text())
     except (OSError,ValueError):old={}
     n=b.fetch_nifty();g10,gmeta=india_yield(old);latest=n['latest'];latest.update(gsec10=g10,gsec_meta=gmeta)
     if any(not m.finite(latest.get(k)) or latest[k]<=0 for k in ['level','pe','pb','div_yield']):raise RuntimeError('Mandatory NIFTY input validation failed; retaining saved data')
     if not m.fresh(latest.get('date'),7):raise RuntimeError('Mandatory NIFTY observation date is stale')
-    try:mac,cal=m.build(g10,latest,n['history'],old,gmeta)
-    except Exception as e:mac=unavailable_macro(old,str(e));cal={'em_ex_india_history':[],'carry_spread_history':[]}
+    try:
+        mac,cal=m.build(g10,latest,n['history'],old,gmeta);mac=attach_domestic(mac)
+    except Exception as e:
+        mac=unavailable_macro(old,str(e));cal={'em_ex_india_history':[],'carry_spread_history':[]}
     coverage=mac['active_block_weight'];vf=(mac.get('factors') or {}).get('vix') or {};confidence=None
     if vf.get('status')=='live' and m.finite(vf.get('value')):
         stress=float(np.clip(1-max(0,vf['value']-18)/40,.35,1));confidence=stress*(.65+.35*coverage)
-    out={'schema_version':4,'model_version':'3.5','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<1,'nifty':latest,'earnings':n['earnings'],'macro':mac,'confidence':confidence,'history':n['history'],'calibration':cal,'sources':[
+    out={'schema_version':4,'model_version':'3.6','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<.999,'nifty':latest,'earnings':n['earnings'],'macro':mac,'confidence':confidence,'history':n['history'],'calibration':cal,'sources':[
         {'name':'Nifty Indices / NSE','role':'NIFTY index and ratio history; EPS is an index-implied proxy','url':'https://www.niftyindices.com/reports/historical-data'},
         {'name':gmeta['source'],'role':'Current India ~10Y yield; its own observation date determines eligibility','url':gmeta.get('source_url')},
         {'name':'U.S. Treasury / Federal Reserve / CBOE','role':'Dated real/nominal yields, broad USD, Fed balance sheet and VIX'},
         {'name':'BIS Statistics API','role':'India broad REER and monthly USD/INR history from official SDMX feeds','url':'https://data.bis.org/'},
         {'name':'OECD Data Explorer','role':'Monthly India long-term government bond history used to standardise India-US carry','url':'https://data-explorer.oecd.org/'},
+        {'name':'MoSPI via Press Information Bureau','role':'Official All-India CPI inflation and Index of Industrial Production releases','url':dm.PIB_LIST},
+        {'name':'Reserve Bank of India','role':'Current policy repo rate and dated government-security yield','url':dm.RBI},
         {'name':'Yahoo Finance Brent futures','role':'Brent 63-trading-observation momentum; contract-roll effects are possible'},
-        {'name':'STOXX EM ex India Universal Large Cap','role':'Archived dated trailing P/E and P/B for relative valuation against a large-cap benchmark','url':m.STOXX_URL},
+        {'name':'STOXX EM ex India Universal Large Cap','role':'Relative valuation diagnostic only; not counted as a macro block','url':m.STOXX_URL},
         {'name':'NBS China','role':'Official manufacturing PMI and new orders','url':(mac.get('china_pmi') or {}).get('source_url')}
     ]}
     tmp=OUT.with_suffix('.tmp');tmp.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8');tmp.replace(OUT)
-    print(json.dumps({'nifty_asof':latest['date'],'gsec_status':gmeta['status'],'macro_score':mac['score'],'coverage':coverage,'version':'3.5'}))
+    print(json.dumps({'nifty_asof':latest['date'],'gsec_status':gmeta['status'],'macro_score':mac['score'],'coverage':coverage,'domestic_status':(mac.get('domestic') or {}).get('status'),'version':'3.6'}))
 if __name__=='__main__':main()
