@@ -4,18 +4,18 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const M=require('../model.js');
 const now=new Date('2026-09-11T12:00:00Z');
-function fixture(){return{schema_version:4,generated_at:'2026-09-11T11:46:28Z',nifty:{date:'2026-09-10',level:23477.8,pe:19.85,pb:2.84,div_yield:1.21,gsec10:6.88,gsec_meta:{asof:'2026-09-10',status:'live',max_age_days:7}},earnings:{score:-.3201937701240839,asof:'2026-08-31',coverage:1},macro:{score:-.3061910122582852,active_block_weight:1}};}
-test('known snapshot arithmetic works when complete-data gate passes',()=>{
+function fixture(){return{schema_version:4,generated_at:'2026-09-11T11:46:28Z',nifty:{date:'2026-09-10',level:23477.8,pe:19.85,pb:2.84,div_yield:1.21,gsec10:6.88,gsec_meta:{asof:'2026-09-10',status:'live',max_age_days:7}},earnings:{score:-.3201937701240839,asof:'2026-08-31',coverage:1},macro:{score:-.3061910122582852,active_block_weight:.8}};}
+test('known snapshot arithmetic works when complete macroeconomic gate passes',()=>{
  const r=M.calculate(fixture(),now);
- assert(Math.abs(r.core-83.1)<.06);
+ assert(Math.abs(r.core-83.1)<.06);assert.equal(r.coverage,1);
  assert.equal(r.macroEligible,true);assert.equal(r.allocationReady,true);
  assert(Math.abs(r.ma-(-.3061910122582852*6*r.damp))<1e-12);
  assert(Math.abs(r.L.reduce((s,x)=>s+x.weight,0)-100)<1e-12);
  assert(Math.abs(r.final-(r.core+r.ea+r.ma))<1e-12);
 });
-test('partial macro coverage withholds allocation instead of neutral filling',()=>{
- const d=fixture();d.macro.active_block_weight=.99;let r=M.calculate(d,now);
- assert.equal(r.macroEligible,false);assert.equal(r.ma,0);assert.equal(r.allocationReady,false);assert.equal(r.final,null);
+test('partial true-macro coverage withholds allocation instead of neutral filling',()=>{
+ const d=fixture();d.macro.active_block_weight=.79;let r=M.calculate(d,now);
+ assert(r.coverage<1);assert.equal(r.macroEligible,false);assert.equal(r.ma,0);assert.equal(r.allocationReady,false);assert.equal(r.final,null);
  d.macro.active_block_weight=.53;r=M.calculate(d,now);assert.equal(r.allocationReady,false);assert.match(r.holdReason,/coverage/);
 });
 test('0 and 100 valuation-core equity remain attainable and curve is monotone',()=>{
@@ -32,8 +32,7 @@ test('incomplete earnings history also withholds allocation',()=>{
 });
 test('undated bond yield is excluded rather than relabelled as current',()=>{
  const d=fixture();delete d.nifty.gsec_meta;const r=M.calculate(d,now);
- assert.equal(r.gsecEligible,false);assert.equal(r.L[2].weight,0);assert(r.fundamentalCoverage<1);
- assert.equal(r.allocationReady,false);assert.equal(r.final,null);
+ assert.equal(r.gsecEligible,false);assert.equal(r.L[2].weight,0);assert(r.fundamentalCoverage<1);assert.equal(r.allocationReady,false);assert.equal(r.final,null);
 });
 test('invalid, stale and future NIFTY withhold allocation',()=>{
  for(const v of [null,0,NaN,'19.85']){const d=fixture();d.nifty.pe=v;assert.equal(M.calculate(d,now).valid,false);}
