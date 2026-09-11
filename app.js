@@ -1,10 +1,10 @@
 'use strict';
-const {calculate,band,clip,ageDays,finite,fresh}=AnupModel;
+const {calculate,band,clip,finite,fresh}=AnupModel;
 const q=s=>document.querySelector(s);
 const fmt=(x,d=2)=>finite(x)?x.toFixed(d):'—';
 const signed=(x,d=1)=>finite(x)?(x>=0?'+':'')+x.toFixed(d):'—';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const stance=x=>!finite(x)?['excluded','warn']:x>.15?['supportive','good']:x<-.15?['headwind','bad']:['near neutral','warn'];
+const stance=x=>!finite(x)?['not scored','warn']:x>.15?['supportive','good']:x<-.15?['headwind','bad']:['near neutral','warn'];
 function clearAllocation(message){
  for(const id of ['eq','debt','pct','erp','core','eadj','madj','damp','final'])q('#'+id).textContent='—';
  q('#eqbar').style.width='0%';q('#barEq').textContent='Allocation withheld';q('#barDebt').textContent='';
@@ -18,51 +18,42 @@ function render(d){
  if(!r.valid){clearAllocation(r.reason);return;}
  const eq=r.allocationReady?Math.round(r.final):null,db=r.allocationReady?100-eq:null;
  q('#eq').textContent=r.allocationReady?eq+'%':'—';q('#debt').textContent=r.allocationReady?db+'%':'—';q('#pct').textContent=signed(r.z,2);q('#erp').textContent=Math.round(r.fundamentalCoverage*100)+'%';
- q('#eqbar').style.width=(eq||0)+'%';q('#barEq').textContent=r.allocationReady?'Equity '+eq+'%':'Allocation withheld';q('#barDebt').textContent=r.allocationReady?'Debt '+db+'%':'';
- q('#verdict').textContent=r.allocationReady?`Valuation is ${band(r.z)} against this model’s fixed references. The model target is ${r.final.toFixed(1)}% equity / ${(100-r.final).toFixed(1)}% debt${r.provisional?' (provisional: incomplete optional inputs)':''}. This is a research rule, not a return-maximizing allocation established by backtesting.`:'Allocation is withheld because a sufficiently recent, dated India bond yield is unavailable. The remaining valuation lenses are shown for reference; they do not establish an equity/debt target.';
+ q('#eqbar').style.width=(eq||0)+'%';q('#barEq').textContent=r.allocationReady?'Equity '+eq+'%':'Complete-data gate active';q('#barDebt').textContent=r.allocationReady?'Debt '+db+'%':'';
+ q('#verdict').textContent=r.allocationReady?`Valuation is ${band(r.z)} against the model’s fixed references. With every required macro block verified, the strategic model target is ${r.final.toFixed(1)}% equity / ${(100-r.final).toFixed(1)}% debt. This is a research allocation rule; the macro influence cap is not yet return-optimized by walk-forward backtesting.`:`No equity/debt target is published because ${r.holdReason||'the complete-data gate is not satisfied'}. Fundamental valuation is still shown, but the website will not convert incomplete macro evidence into a precise allocation.`;
  q('#lens').innerHTML=r.L.map(x=>`<tr><td>${esc(x.label)}</td><td>${fmt(x.now)}</td><td>${fmt(x.reference)}</td><td>${signed(x.z,2)}</td><td>${x.weight.toFixed(1)}%</td></tr>`).join('');
- for(const [id,value] of [['core',fmt(r.core,1)+'%'],['eadj',r.earningsEligible?signed(r.ea,2)+' pp':'Excluded'],['madj',r.macroEligible?signed(r.ma,2)+' pp':'Excluded'],['damp',fmt(100*r.damp,0)+'%'],['final',fmt(r.final,1)+'%']])q('#'+id).textContent=r.allocationReady?value:'Withheld';
- q('#overlayNote').textContent=`Macro adjustment = available-factor score × 6 pp × ${(100*r.coverage).toFixed(1)}% coverage × ${(100*r.damp).toFixed(1)}% valuation damping. Both overlays vanish at z ≤ −2.5 or z ≥ +2.5. Missing scores remain excluded.`;
- const names={global_liquidity:'Global liquidity',india_external_carry:'India external / carry',china_industrial:'China industrial cycle',relative_em_valuation:'EM ex-India relative valuation'};
- const details=m.block_weight_detail||{};
- q('#macroBlocks').innerHTML=Object.entries(names).map(([k,label])=>{const v=r.macroEligible?m.blocks?.[k]:null,a=details[k]||{},st=stance(v);return `<tr><td>${label}</td><td class="${st[1]}">${signed(v,2)}</td><td>${fmt(100*(a.strategic_weight||0),0)}%</td><td>${fmt(100*(a.internal_coverage||0),0)}%</td><td>${r.macroEligible?fmt(100*(a.effective_weight||0),1):'0.0'}%</td><td>${st[0]}</td></tr>`;}).join('');
- const ch=m.china_pmi||{},em=d.schema_version===4?(m.relative_em||{}):{},factors=m.factors||{},packetOk=d.schema_version===4&&fresh(d.generated_at,3);
- const rows=[['US 10Y real yield','us_real_10y','%'],['US nominal 10Y','us_10y','%'],['India − US 10Y spread','india_us_10y_spread',' pp'],['Broad USD, ~3 months','usd_3m_pct','%'],['Brent futures, 63 observations','brent_3m_pct','%'],['Fed assets, 26 observations','fed_assets_6m_pct','%'],['VIX','vix',''],['India REER','india_reer_bis',''],['USD/INR forward premium','forward_premium_1m','%']].map(([label,key,unit])=>{const f=factors[key]||{};return[label,finite(m[key])?fmt(m[key])+unit:'—',f.asof||'Date unknown',f.status||'legacy / excluded'];});
- rows.push(['China manufacturing PMI',fmt(ch.pmi,1),ch.asof||'Date unknown',ch.status||'excluded'],['China new orders',fmt(ch.new_orders,1),ch.asof||'Date unknown',finite(ch.new_orders)?ch.status||'excluded':'unavailable'],['EM trailing P/E (incl. losses)',fmt(em.em_ex_india_pe,1)+'×',em.asof||'Date unknown',em.status||'excluded'],['EM P/B',fmt(em.em_ex_india_pb,1)+'×',em.asof||'Date unknown',em.status||'excluded']);
- q('#macroDiag').innerHTML=rows.map(row=>`<tr>${row.map((v,i)=>`<td>${esc(i===3&&!packetOk?'Unverified file / excluded':v)}</td>`).join('')}</tr>`).join('');
- q('#pending').textContent=`Scoring coverage is ${(100*r.coverage).toFixed(1)}%. “Pending history”, stale, undated and unavailable factors receive no score. Cached values are identified separately. EM comparisons use the same source month; ${em.history_count||0} earlier validated months are available (12 required).`;
+ q('#core').textContent=fmt(r.core,1)+'%';q('#eadj').textContent=r.earningsComplete?signed(r.ea,2)+' pp':'Withheld';q('#madj').textContent=r.macroEligible?signed(r.ma,2)+' pp':'Withheld';q('#damp').textContent=fmt(100*r.damp,0)+'%';q('#final').textContent=r.allocationReady?fmt(r.final,1)+'%':'Withheld';
+ q('#overlayNote').textContent=r.allocationReady?`Macro adjustment = verified macro score × 6 pp × ${(100*r.damp).toFixed(1)}% valuation damping. Coverage is 100%; no missing factor is neutral-filled.`:`Complete-data rule: final allocation requires 100% verified macro coverage plus current earnings and India bond data. Current verified macro coverage is ${(100*r.coverage).toFixed(1)}%.`;
+ const names={global_liquidity:'Global liquidity',india_external_carry:'India external / carry',china_industrial:'China industrial cycle',relative_em_valuation:'EM ex-India large-cap relative valuation'},details=m.block_weight_detail||{};
+ const blockRows=Object.entries(names).filter(([k])=>finite(m.blocks?.[k])&&(details[k]?.internal_coverage||0)>=.999).map(([k,label])=>{const v=m.blocks[k],a=details[k]||{},st=stance(v);return `<tr><td>${label}</td><td class="${st[1]}">${signed(v,2)}</td><td>${fmt(100*(a.strategic_weight||0),0)}%</td><td>100%</td><td>${fmt(100*(a.effective_weight||0),1)}%</td><td>${st[0]}</td></tr>`;});
+ q('#macroBlocks').innerHTML=blockRows.length?blockRows.join(''):'<tr><td colspan="6" class="left">No macro block is published until its internal data are fully verified.</td></tr>';
+ const ch=m.china_pmi||{},em=m.relative_em||{},factors=m.factors||{},packetOk=d.schema_version===4&&fresh(d.generated_at,3);
+ const defs=[['US 10Y real yield','us_real_10y','%'],['US nominal 10Y','us_10y','%'],['India − US 10Y spread','india_us_10y_spread',' pp'],['Broad USD, ~3 months','usd_3m_pct','%'],['Brent futures, 63 observations','brent_3m_pct','%'],['Fed assets, 26 observations','fed_assets_6m_pct','%'],['VIX','vix',''],['India broad REER','india_reer_bis',''],['USD/INR, ~3 months','usd_inr_3m_pct','%']];
+ const rows=defs.flatMap(([label,key,unit])=>{const f=factors[key]||{};return f.status==='live'&&finite(m[key])?[[label,fmt(m[key])+unit,f.asof||'','verified']]:[];});
+ if(ch.status==='live'&&finite(ch.pmi))rows.push(['China manufacturing PMI',fmt(ch.pmi,1),ch.asof||'','verified']);
+ if(ch.status==='live'&&finite(ch.new_orders))rows.push(['China new orders',fmt(ch.new_orders,1),ch.asof||'','verified']);
+ if(em.status==='live'&&finite(em.em_ex_india_pe))rows.push(['EM ex-India large-cap trailing P/E',fmt(em.em_ex_india_pe,1)+'×',em.asof||'','verified']);
+ if(em.status==='live'&&finite(em.em_ex_india_pb))rows.push(['EM ex-India large-cap P/B',fmt(em.em_ex_india_pb,1)+'×',em.asof||'','verified']);
+ q('#macroDiag').innerHTML=rows.length?rows.map(row=>`<tr>${row.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join(''):'<tr><td colspan="4" class="left">Verified macro observations are temporarily unavailable; no target is published.</td></tr>';
+ const requiredFactorNames={us_real_10y:'US real yield',usd_3m_pct:'broad USD',fed_assets_6m_pct:'Fed assets',vix:'VIX',brent_3m_pct:'Brent',india_us_10y_spread:'India-US carry',india_reer_bis:'India REER',usd_inr_3m_pct:'USD/INR'};
+ const issues=Object.entries(requiredFactorNames).filter(([k])=>factors[k]?.status!=='live').map(([,v])=>v);
+ if(ch.status!=='live')issues.push('China PMI');if(em.status!=='live')issues.push('EM ex-India valuation history');
+ q('#pending').className='flag '+(r.allocationReady?'good':'bad');
+ q('#pending').textContent=r.allocationReady?'Complete-data gate passed: all planned macro blocks are verified and scored.':`Allocation withheld. ${issues.length?`Required inputs not yet eligible: ${issues.join(', ')}. `:''}No missing, stale, cached or pending-history value is displayed as a scored input.`;
  const gm=n.gsec_meta||{};
- q('#market').innerHTML=[['NIFTY 50',n.level.toLocaleString('en-IN')],['P/E',fmt(n.pe)],['P/B',fmt(n.pb)],['Dividend yield',fmt(n.div_yield)+'%'],['NIFTY date',n.date],['India ~10Y',fmt(n.gsec10)+'%'],['India yield date',gm.asof||'Unknown — excluded'],['India yield status',gm.status||'Undated — excluded'],['India yield instrument',gm.security||gm.source||'Unverified']].map(x=>`<div>${esc(x[0])}</div><div>${esc(x[1])}</div>`).join('');
- q('#earn').innerHTML=[['Index-implied EPS',fmt(en.eps,1)],['Cycle observation date',en.asof||'Unverified'],['EPS growth, 12 months',signed(en.eps_growth_12m)+'%'],['Growth acceleration, 6 months',signed(en.acceleration_6m)+' pp'],['Earnings score',r.earningsEligible?signed(en.score,2):'Excluded']].map(x=>`<div>${esc(x[0])}</div><div>${esc(x[1])}</div>`).join('');
- const score=r.macroEligible?m.score:null,st=stance(score);q('#mscore').textContent=signed(score,2);q('#mstance').textContent=st[0];q('#mcov').textContent=fmt(100*r.coverage,0)+'%';q('#vix').textContent=fmt(m.vix,1);q('#carry').textContent=fmt(m.india_us_10y_spread)+' pp';
- const qualityOk=packetOk&&factors.vix?.status==='live'&&finite(d.confidence);
- q('#confbar').style.width=(qualityOk?clip(d.confidence,0,1)*100:0)+'%';
- q('#conf').textContent=qualityOk?`${fmt(d.confidence*100,0)}/100 data/stress indicator — a heuristic, not a probability of profit or statistical confidence. It does not execute or schedule trades.`:'Data/stress indicator unavailable because current, dated inputs are missing.';
+ q('#market').innerHTML=[['NIFTY 50',n.level.toLocaleString('en-IN')],['P/E',fmt(n.pe)],['P/B',fmt(n.pb)],['Dividend yield',fmt(n.div_yield)+'%'],['NIFTY date',n.date],['India ~10Y',fmt(n.gsec10)+'%'],['India yield date',gm.asof||'Not verified'],['India yield instrument',gm.security||gm.source||'Not verified']].map(x=>`<div>${esc(x[0])}</div><div>${esc(x[1])}</div>`).join('');
+ q('#earn').innerHTML=[['Index-implied EPS',fmt(en.eps,1)],['Cycle observation date',en.asof||'Not verified'],['EPS growth, 12 months',signed(en.eps_growth_12m)+'%'],['Growth acceleration, 6 months',signed(en.acceleration_6m)+' pp'],['Earnings score',r.earningsComplete?signed(en.score,2):'Withheld']].map(x=>`<div>${esc(x[0])}</div><div>${esc(x[1])}</div>`).join('');
+ const score=r.macroEligible?m.score:null,st=stance(score);q('#mscore').textContent=r.macroEligible?signed(score,2):'Withheld';q('#mstance').textContent=r.macroEligible?st[0]:'complete data required';q('#mcov').textContent=fmt(100*r.coverage,0)+'%';q('#vix').textContent=factors.vix?.status==='live'?fmt(m.vix,1):'—';q('#carry').textContent=factors.india_us_10y_spread?.status==='live'?fmt(m.india_us_10y_spread)+' pp':'—';
+ const qualityOk=packetOk&&factors.vix?.status==='live'&&finite(d.confidence);q('#confbar').style.width=(qualityOk?clip(d.confidence,0,1)*100:0)+'%';q('#conf').textContent=qualityOk?`${fmt(d.confidence*100,0)}/100 data/stress indicator — heuristic, not probability of profit.`:'Data/stress indicator withheld until current dated inputs are available.';
  q('#sources').innerHTML=(d.sources||[]).map(s=>`<p><b>${esc(s.name)}</b><br>${esc(s.role)}${s.url&&/^https:\/\//.test(s.url)?`<br><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">Source</a>`:''}</p>`).join('');
- const old=!packetOk;
- q('#status').textContent=`${old?'Old published file — overlays excluded':'Published data'} · NIFTY ${n.date} · refresh ${new Date(d.generated_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST`;
- q('#status').className='status '+(old?'bad':'warn');
+ const old=!packetOk;q('#status').textContent=`${old?'Old published file — target withheld':'Published data'} · NIFTY ${n.date} · refresh ${new Date(d.generated_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST`;q('#status').className='status '+(old?'bad':r.allocationReady?'good':'warn');
 }
 let requestNumber=0;
 async function loadData(){
- const request=++requestNumber,controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
- q('#status').textContent='Checking latest published data…';
+ const request=++requestNumber,controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);q('#status').textContent='Checking latest published data…';
  try{
-  // Prefer the repository API; the raw-file CDN can briefly retain an older branch tip.
-  const urls=['https://api.github.com/repos/anuppaul007/anup-nifty-valuation/contents/data/latest.json','https://raw.githubusercontent.com/anuppaul007/anup-nifty-valuation/main/data/latest.json'];
-  let d,lastError;
-  for(const url of urls){
-   try{
-    const response=await fetch(url+'?t='+Date.now(),{cache:'no-store',signal:controller.signal,headers:{Accept:'application/vnd.github.raw+json'}});
-    if(!response.ok)throw Error('HTTP '+response.status);
-    const payload=await response.json();
-    d=payload.encoding==='base64'&&typeof payload.content==='string'?JSON.parse(atob(payload.content)):payload;
-    if(!d.nifty)throw Error('Unexpected published data format');
-    break;
-   }catch(error){lastError=error;}
-  }
-  if(!d)throw lastError||Error('Data unavailable');
-  if(request===requestNumber)render(d);
+  const urls=['https://api.github.com/repos/anuppaul007/anup-nifty-valuation/contents/data/latest.json','https://raw.githubusercontent.com/anuppaul007/anup-nifty-valuation/main/data/latest.json'];let d,lastError;
+  for(const url of urls){try{const response=await fetch(url+'?t='+Date.now(),{cache:'no-store',signal:controller.signal,headers:{Accept:'application/vnd.github.raw+json'}});if(!response.ok)throw Error('HTTP '+response.status);const payload=await response.json();d=payload.encoding==='base64'&&typeof payload.content==='string'?JSON.parse(atob(payload.content)):payload;if(!d.nifty)throw Error('Unexpected published data format');break;}catch(error){lastError=error;}}
+  if(!d)throw lastError||Error('Data unavailable');if(request===requestNumber)render(d);
  }catch(error){if(request===requestNumber)clearAllocation('Published data could not be loaded. Allocation is withheld; please try again later.');}
  finally{clearTimeout(timer);}
 }
