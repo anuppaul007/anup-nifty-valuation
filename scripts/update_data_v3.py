@@ -13,11 +13,11 @@ UA={'User-Agent':'Mozilla/5.0 (compatible; AnupNiftyValuation/3.0; personal rese
 
 def fred_retry(series):
     url=f'https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}';err=None
-    for timeout in (30,60,90):
+    for timeout in (12,25):
         try:
             r=requests.get(url,headers=UA,timeout=timeout);r.raise_for_status();df=pd.read_csv(StringIO(r.text));df.columns=['date','value'];df['date']=pd.to_datetime(df['date'],errors='coerce');df['value']=pd.to_numeric(df['value'],errors='coerce');q=df.dropna().sort_values('date').reset_index(drop=True)
             if len(q):return q
-        except Exception as e:err=e;time.sleep(2)
+        except Exception as e:err=e;time.sleep(1)
     raise RuntimeError(f'FRED {series} unavailable after retries: {err}')
 
 # Replace the V2 single-attempt FRED helper everywhere, including macro_v3's shared module reference.
