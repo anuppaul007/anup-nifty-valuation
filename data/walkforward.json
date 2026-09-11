@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "model_version": "3.6",
+  "updated_at": "2026-09-11T20:00:56+00:00",
+  "candidate_macro_caps_pp": [
+    0,
+    3,
+    6,
+    9,
+    12,
+    15
+  ],
+  "validation": {
+    "status": "collecting_prospective_data",
+    "signal_months": 0,
+    "realized_6m_outcomes": 0,
+    "realized_12m_outcomes": 0,
+    "required_signal_months": 84,
+    "required_realized_12m_outcomes": 60,
+    "eligible_for_parameter_change": false,
+    "parameter_lock": "macroMax remains 6 pp until prospective evidence gate is satisfied",
+    "note": "Forward returns are NIFTY price-index returns only. They are not debt-relative portfolio returns and are not used to auto-optimize the live model."
+  },
+  "records": []
+}
