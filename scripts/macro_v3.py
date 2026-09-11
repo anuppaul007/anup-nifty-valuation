@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import date
 from io import StringIO
 from urllib.parse import urljoin
-import math, re, sys
+import csv, math, re, sys
 import numpy as np
 import pandas as pd
 from lxml import html
@@ -59,17 +59,27 @@ def fresh(asof,max_age):
         return 0<=age<=max_age
     except (ValueError,TypeError):return False
 def fred_optional(series):return safe('FRED '+series,lambda:b.fred(series))
+def _fed_csv(text,description,url):
+    rows=list(csv.reader(StringIO(text.lstrip('\ufeff'))))
+    norm=lambda s:re.sub(r'[^a-z0-9]','',s.lower())
+    desc=next((r for r in rows if r and norm(r[0])=='seriesdescription'),None)
+    for i,row in enumerate(rows):
+        if not row or norm(row[0]) not in ('timeperiod','date','observationdate'):continue
+        if desc:
+            candidates=[j for j,v in enumerate(desc[1:],1) if norm(description) in norm(v)]
+            if len(candidates)>1:
+                candidates=[j for j in candidates if 'wednesday' in desc[j].lower()]
+            if len(candidates)!=1:raise RuntimeError('Federal Reserve CSV series is missing or ambiguous')
+            column=candidates[0]
+        elif len(row)==2:column=1
+        else:raise RuntimeError('Federal Reserve multi-series CSV has no descriptions')
+        pts=[(r[0],r[column]) for r in rows[i+1:] if len(r)>column]
+        return clean(pd.DataFrame(pts,columns=['date','value']),url)
+    raise RuntimeError('Federal Reserve CSV date header not found')
 def _fed_table(url,description):
     r=requests.get(url,headers=UA);r.raise_for_status()
-    # DownloadTable may return either a real CSV or an HTML table.
     if not r.text.lstrip().startswith('<'):
-        lines=r.text.splitlines()
-        for i,line in enumerate(lines):
-            if line.lower().startswith(('time period,','date,','observation_date,')):
-                t=pd.read_csv(StringIO('\n'.join(lines[i:])))
-                q=pd.DataFrame({'date':t.iloc[:,0],'value':t.iloc[:,1]})
-                return clean(q,url)
-        raise RuntimeError('Federal Reserve CSV date header not found')
+        return _fed_csv(r.text,description,url)
     for t in pd.read_html(StringIO(r.text)):
         for _,row in t.iterrows():
             if description.lower() not in ' '.join(map(str,row.iloc[:2])).lower():continue
@@ -87,13 +97,14 @@ def fed_broad_usd():
         m=m[m.date<pd.Timestamp(date.today().replace(day=1))]
         asof=str(m.date.iloc[-1].to_period('M').end_time.date())
         return clean(m,q.attrs['source'],asof)
-    q=_fed_table('https://www.federalreserve.gov/datadownload/DownloadTable.aspx?filetype=csv&label=include&lastobs=120&layout=seriescolumn&rel=H10&series=847be2166a425bda9b4d92465f797544&type=package','Nominal Broad Dollar Index')
+    # Output.aspx downloads the requested history; DownloadTable.aspx is only a preview.
+    q=_fed_table('https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=120&layout=seriescolumn&rel=H10&series=847be2166a425bda9b4d92465f797544&type=package','Nominal Broad Dollar Index')
     source=q.attrs['source'];q=q[q.date<pd.Timestamp(date.today().replace(day=1))]
     return clean(q,source,str(q.date.iloc[-1].to_period('M').end_time.date()))
 def fed_assets():
     q=fred_optional('WALCL')
     if q is not None:return clean(q,'https://fred.stlouisfed.org/series/WALCL')
-    return _fed_table('https://www.federalreserve.gov/datadownload/DownloadTable.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package','Assets: Total Assets')
+    return _fed_table('https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package','Assets: Total Assets')
 def treasury_curve(real=False):
     typ='daily_treasury_real_yield_curve' if real else 'daily_treasury_yield_curve'
     parts=[]
@@ -198,7 +209,7 @@ def ccil_forward():
 def factor(value,z,df,max_age,sign=1):
     asof=df.attrs.get('asof') if df is not None else None
     status='unavailable' if df is None else ('stale' if not fresh(asof,max_age) else ('pending_history' if z is None or not finite(value) else 'live'))
-    return {'value':value,'z':z,'score':squash(sign*z) if status=='live' else None,'asof':asof,'source_url':df.attrs.get('source') if df is not None else None,'status':status}
+    return {'value':value,'z':z,'score':squash(sign*z) if status=='live' else None,'asof':asof,'observations':len(df) if df is not None else 0,'source_url':df.attrs.get('source') if df is not None else None,'status':status}
 def coverage_adjust_macro(mac):
     details={};items=[]
     for key,w in BLOCKS.items():

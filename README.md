@@ -42,7 +42,7 @@ Eligibility limits are explicit policy choices: NIFTY, daily yields, Brent and V
 
 GitHub Pages continues to host the website. `.github/workflows/refresh-data.yml` runs `scripts/update_data_v3.py` at **18:45 IST on weekdays**, on code pushes, or through workflow dispatch. GitHub schedules can be delayed, and provider data may lag. Tests run first. NIFTY validation and atomic file replacement prevent partial JSON publication.
 
-The browser reads the public repository's latest `data/latest.json` directly with cache bypass. This matters because data commits made using `GITHUB_TOKEN` do not trigger a branch-based Pages rebuild. **Reload published data** reads that file; it does not trigger provider downloads. Weekends and holidays show the last available observation and its date.
+The browser reads the public repository's latest `data/latest.json` through the GitHub API with cache bypass and a raw-file fallback. This avoids depending on a Pages rebuild or raw-CDN propagation for every update. Data commits made using `GITHUB_TOKEN` do not trigger a branch-based Pages rebuild. **Reload published data** reads that file; it does not trigger provider downloads. Weekends and holidays show the last available observation and its date.
 
 ## Validation and research still required
 

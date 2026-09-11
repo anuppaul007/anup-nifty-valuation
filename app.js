@@ -48,12 +48,21 @@ async function loadData(){
  const request=++requestNumber,controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
  q('#status').textContent='Checking latest published data…';
  try{
-  // Scheduled GITHUB_TOKEN commits do not trigger a branch-based Pages rebuild.
-  // Read the public branch data directly so scheduled refreshes are visible immediately.
-  const dataURL='https://raw.githubusercontent.com/anuppaul007/anup-nifty-valuation/main/data/latest.json';
-  const response=await fetch(dataURL+'?t='+Date.now(),{cache:'no-store',signal:controller.signal});
-  if(!response.ok)throw Error('HTTP '+response.status);
-  const d=await response.json();if(request===requestNumber)render(d);
+  // Prefer the repository API; the raw-file CDN can briefly retain an older branch tip.
+  const urls=['https://api.github.com/repos/anuppaul007/anup-nifty-valuation/contents/data/latest.json','https://raw.githubusercontent.com/anuppaul007/anup-nifty-valuation/main/data/latest.json'];
+  let d,lastError;
+  for(const url of urls){
+   try{
+    const response=await fetch(url+'?t='+Date.now(),{cache:'no-store',signal:controller.signal,headers:{Accept:'application/vnd.github.raw+json'}});
+    if(!response.ok)throw Error('HTTP '+response.status);
+    const payload=await response.json();
+    d=payload.encoding==='base64'&&typeof payload.content==='string'?JSON.parse(atob(payload.content)):payload;
+    if(!d.nifty)throw Error('Unexpected published data format');
+    break;
+   }catch(error){lastError=error;}
+  }
+  if(!d)throw lastError||Error('Data unavailable');
+  if(request===requestNumber)render(d);
  }catch(error){if(request===requestNumber)clearAllocation('Published data could not be loaded. Allocation is withheld; please try again later.');}
  finally{clearTimeout(timer);}
 }

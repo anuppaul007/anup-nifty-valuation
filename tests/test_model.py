@@ -61,6 +61,10 @@ class ModelTests(unittest.TestCase):
   with patch.object(m.requests,'get',return_value=Response()):
    x=m._fed_table('https://example.org','series')
   self.assertEqual(x.value.tolist(),[100,101])
+ def test_fed_csv_quoted_header_selects_named_series(self):
+  text='"Series Description","Nominal Advanced Foreign Economies Dollar Index","Nominal Broad Dollar Index"\n"Time Period","ADV","BROAD"\n2026-07,900,120\n2026-08,901,118\n'
+  x=m._fed_csv(text,'Nominal Broad Dollar Index','fixture')
+  self.assertEqual(x.value.tolist(),[120,118])
  def test_dollar_momentum_uses_completed_months(self):
   month=pd.Timestamp(date.today().replace(day=1))
   df=pd.DataFrame({'date':[month-pd.DateOffset(months=2),month-pd.DateOffset(months=1),month],'value':[99,100,1000]})
