@@ -1,0 +1,30 @@
+name: Verify primary macro sources
+on:
+  push:
+    branches: [review/macro-robustness]
+    paths:
+      - scripts/**
+      - .github/workflows/verify-sources.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python scripts/verify_sources.py
+      - name: Save verified source observations on research branch
+        run: |
+          git add research/sources.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name anup-nifty-bot
+          git config user.email anup-nifty-bot@users.noreply.github.com
+          git commit -m 'research: capture primary source observations'
+          git push
