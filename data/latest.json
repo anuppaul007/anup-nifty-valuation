@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
   "model_version": "3.4",
-  "generated_at": "2026-09-11T18:43:37+00:00",
+  "generated_at": "2026-09-11T19:25:45+00:00",
   "macro_stale": false,
   "macro_partial": true,
   "nifty": {
@@ -32,11 +32,11 @@
     "us_real_10y": 2.55,
     "usd_3m_pct": 0.06061667362635692,
     "fed_assets_6m_pct": 1.4184489999313987,
-    "brent_3m_pct": 15.622928939675361,
-    "india_reer_bis": null,
-    "india_us_10y_spread": 2.0210999999999997,
-    "forward_premium_1m": null,
     "vix": 17.84,
+    "brent_3m_pct": 16.065506432521847,
+    "india_reer_bis": 90.37,
+    "usd_inr_3m_pct": 0.17928493769474585,
+    "india_us_10y_spread": 2.0210999999999997,
     "us_10y": 4.95,
     "factors": {
       "us_real_10y": {
@@ -66,52 +66,54 @@
         "source_url": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package",
         "status": "live"
       },
+      "vix": {
+        "value": 17.84,
+        "z": 0.11259840563065815,
+        "score": -0.07492492647911578,
+        "asof": "2026-09-10",
+        "observations": 9270,
+        "source_url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+        "status": "live"
+      },
       "brent_3m_pct": {
-        "value": 15.622928939675361,
-        "z": 0.6863480705903245,
-        "score": -0.42809785332363437,
+        "value": 16.065506432521847,
+        "z": 0.7079855083036604,
+        "score": -0.4398060680642165,
         "asof": "2026-09-11",
         "observations": 757,
         "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
         "status": "live"
       },
       "india_reer_bis": {
-        "value": null,
-        "z": null,
-        "score": null,
-        "asof": null,
-        "observations": 0,
-        "source_url": null,
-        "status": "unavailable"
+        "value": 90.37,
+        "z": -2.579902483154261,
+        "score": 0.9378552030103554,
+        "asof": "2026-07-31",
+        "observations": 175,
+        "source_url": "https://stats.bis.org/api/v1/data/WS_EER/M.R.B.IN/all?startPeriod=2012-01&detail=dataonly&format=csv",
+        "status": "live",
+        "momentum_12m_pct": -8.057788177841086
+      },
+      "usd_inr_3m_pct": {
+        "value": 0.17928493769474585,
+        "z": -0.31287548420971334,
+        "score": 0.20561042853933786,
+        "asof": "2026-08-31",
+        "observations": 176,
+        "source_url": "https://stats.bis.org/api/v1/data/WS_XRU/M.IN.INR.E/all?startPeriod=2012-01&detail=dataonly&format=csv",
+        "status": "live"
       },
       "india_us_10y_spread": {
         "value": 2.0210999999999997,
-        "z": null,
-        "score": null,
+        "z": -1.4377821723798851,
+        "score": -0.743616630401974,
         "asof": "2026-09-10",
         "observations": 923,
         "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
-        "status": "pending_history",
+        "status": "live",
         "india_asof": "2026-09-10",
-        "india_source_url": "https://www.rbi.org.in/"
-      },
-      "forward_premium_1m": {
-        "value": null,
-        "z": null,
-        "score": null,
-        "asof": null,
-        "observations": 0,
-        "source_url": null,
-        "status": "unavailable"
-      },
-      "vix": {
-        "value": 17.84,
-        "z": 0,
-        "score": 0.0,
-        "asof": "2026-09-10",
-        "observations": 9270,
-        "source_url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
-        "status": "live"
+        "india_source_url": "https://www.rbi.org.in/",
+        "history_source_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/IND.M.IRLT.PA.....?startPeriod=2012-01&dimensionAtObservation=AllDimensions&format=csvfile"
       },
       "us_10y": {
         "value": 4.95,
@@ -136,55 +138,50 @@
     "relative_em": {
       "available": true,
       "score": null,
-      "history_count": 0,
+      "history_count": 5,
       "status": "pending_history",
-      "em_ex_india_pe": 17.2,
-      "em_ex_india_pb": 2.1,
-      "em_ex_india_div_yield": 3.1,
+      "em_ex_india_pe": 16.3,
+      "em_ex_india_pb": 2.4,
+      "em_ex_india_div_yield": 2.8,
       "asof": "2026-07-31",
-      "source_url": "https://stoxx.com/index/swexiagv/?factsheet=true",
+      "source_url": "https://stoxx.com/index/swexilv/?factsheet=true",
       "pe_basis": "Trailing, including negative earnings",
-      "method": "fundamentals-v1",
+      "method": "largecap-fundamentals-v1",
       "comparison_month": "2026-07",
-      "relative_log_premium": 0.2547833781802915,
-      "nifty_pe_premium_pct": 20.813953488372093,
-      "nifty_pb_premium_pct": 42.38095238095239,
+      "relative_log_premium": 0.23361738673449692,
+      "nifty_pe_premium_pct": 27.484662576687114,
+      "nifty_pb_premium_pct": 24.583333333333357,
       "z": null
     },
     "blocks": {
-      "global_liquidity": -0.2728759437146592,
-      "india_external_carry": -0.42809785332363437,
+      "global_liquidity": -0.1906622595798292,
+      "india_external_carry": -0.04226009155930202,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null
     },
     "factor_coverage": {
       "global_liquidity": 1.0,
-      "india_external_carry": 0.35,
+      "india_external_carry": 1.0,
       "china_industrial": 1.0,
       "relative_em_valuation": 0,
-      "block_weight": 0.605
+      "block_weight": 0.8
     },
-    "india_reer_z": null,
-    "india_us_spread_z": null,
-    "forward_premium_z": null,
-    "stale_factors": [
-      "india_reer_bis",
-      "india_us_10y_spread",
-      "forward_premium_1m"
-    ],
+    "india_reer_z": -2.579902483154261,
+    "india_us_spread_z": -1.4377821723798851,
+    "stale_factors": [],
     "sources_live": {
       "us_real_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "usd_3m_pct": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=120&layout=seriescolumn&rel=H10&series=847be2166a425bda9b4d92465f797544&type=package",
       "fed_assets_6m_pct": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package",
-      "brent_3m_pct": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
-      "india_reer_bis": null,
-      "india_us_10y_spread": null,
-      "forward_premium_1m": null,
       "vix": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+      "brent_3m_pct": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
+      "india_reer_bis": "https://stats.bis.org/api/v1/data/WS_EER/M.R.B.IN/all?startPeriod=2012-01&detail=dataonly&format=csv",
+      "usd_inr_3m_pct": "https://stats.bis.org/api/v1/data/WS_XRU/M.IN.INR.E/all?startPeriod=2012-01&detail=dataonly&format=csv",
+      "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
     },
-    "score": -0.20740453575666348,
-    "active_block_weight": 0.605,
+    "score": -0.08567923970142677,
+    "active_block_weight": 0.8,
     "block_weight_detail": {
       "global_liquidity": {
         "strategic_weight": 0.3,
@@ -193,8 +190,8 @@
       },
       "india_external_carry": {
         "strategic_weight": 0.3,
-        "internal_coverage": 0.35,
-        "effective_weight": 0.105
+        "internal_coverage": 1.0,
+        "effective_weight": 0.3
       },
       "china_industrial": {
         "strategic_weight": 0.2,
@@ -208,7 +205,7 @@
       }
     }
   },
-  "confidence": 0.86175,
+  "confidence": 0.9299999999999999,
   "history": [
     [
       "2021-05",
@@ -604,17 +601,66 @@
   "calibration": {
     "em_ex_india_history": [
       {
+        "month": "2026-01",
+        "asof": "2026-01-30",
+        "method": "largecap-fundamentals-v1",
+        "em_pe": 16.7,
+        "em_pb": 1.9,
+        "nifty_pe": 22.04,
+        "nifty_pb": 3.44,
+        "relative_log_premium": 0.4039171930023675
+      },
+      {
+        "month": "2026-02",
+        "asof": "2026-02-27",
+        "method": "largecap-fundamentals-v1",
+        "em_pe": 17.3,
+        "em_pb": 0.5,
+        "nifty_pe": 22.03,
+        "nifty_pb": 3.42,
+        "relative_log_premium": 0.9141342882400948
+      },
+      {
+        "month": "2026-03",
+        "asof": "2026-03-31",
+        "method": "largecap-fundamentals-v1",
+        "em_pe": 15.4,
+        "em_pb": 2.0,
+        "nifty_pe": 19.62,
+        "nifty_pb": 3.05,
+        "relative_log_premium": 0.3141069308543301
+      },
+      {
+        "month": "2026-04",
+        "asof": "2026-04-30",
+        "method": "largecap-fundamentals-v1",
+        "em_pe": 17.4,
+        "em_pb": 1.9,
+        "nifty_pe": 20.94,
+        "nifty_pb": 3.29,
+        "relative_log_premium": 0.3307280709750988
+      },
+      {
+        "month": "2026-05",
+        "asof": "2026-05-29",
+        "method": "largecap-fundamentals-v1",
+        "em_pe": 17.8,
+        "em_pb": 2.5,
+        "nifty_pe": 20.27,
+        "nifty_pb": 3.21,
+        "relative_log_premium": 0.17795818400662927
+      },
+      {
         "month": "2026-07",
         "asof": "2026-07-31",
-        "method": "fundamentals-v1",
-        "em_pe": 17.2,
-        "em_pb": 2.1,
+        "method": "largecap-fundamentals-v1",
+        "em_pe": 16.3,
+        "em_pb": 2.4,
         "nifty_pe": 20.78,
         "nifty_pb": 2.99,
-        "relative_log_premium": 0.2547833781802915
+        "relative_log_premium": 0.23361738673449692
       }
     ],
-    "forward_premium_history": [],
     "carry_spread_history": []
   },
   "sources": [
@@ -639,7 +685,7 @@
     {
       "name": "STOXX EM ex India Universal All Cap",
       "role": "Dated trailing fundamentals; all-cap comparison differs from NIFTY large caps",
-      "url": "https://stoxx.com/index/swexiagv/?factsheet=true"
+      "url": "https://stoxx.com/index/swexilv/"
     },
     {
       "name": "NBS China",
