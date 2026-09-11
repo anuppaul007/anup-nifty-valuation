@@ -1,27 +1,27 @@
 {
-  "generated_at": "2026-09-11T11:46:28+00:00",
+  "generated_at": "2026-09-11T17:03:37+00:00",
   "model_version": "3.3",
   "macro_stale": false,
   "macro_partial": true,
   "nifty": {
-    "date": "2026-09-10",
-    "level": 23477.8,
-    "pe": 19.85,
-    "pb": 2.84,
+    "date": "2026-09-11",
+    "level": 23398.1,
+    "pe": 19.78,
+    "pb": 2.83,
     "div_yield": 1.21,
     "gsec10": 6.88
   },
   "earnings": {
-    "eps": 1182.7607052896724,
-    "eps_growth_12m": 4.574248802789294,
-    "acceleration_6m": 1.1562440210020952,
-    "score": -0.3201937701240839
+    "eps": 1182.917087967644,
+    "eps_growth_12m": 4.588075438220707,
+    "acceleration_6m": 1.1700706564335084,
+    "score": -0.31921407600805357
   },
   "macro": {
     "us_real_10y": 2.55,
     "fed_assets_6m_pct": null,
     "usd_3m_pct": 0.06061667362635692,
-    "brent_3m_pct": 15.479094842122265,
+    "brent_3m_pct": 16.18721545409123,
     "vix": 17.84,
     "india_reer_bis": null,
     "india_reer_z": null,
@@ -45,18 +45,18 @@
       "em_ex_india_pb": 0.8,
       "em_ex_india_div_yield": 0.3,
       "asof": "2026-07-31",
-      "nifty_pe_premium_pct": -16.945606694560656,
-      "nifty_pb_premium_pct": 254.99999999999997,
-      "relative_log_premium": 0.39537437031237055,
+      "nifty_pe_premium_pct": -17.23849372384936,
+      "nifty_pb_premium_pct": 253.75,
+      "relative_log_premium": 0.3918438255420032,
       "z": null
     },
     "blocks": {
       "global_liquidity": -0.5910131508030626,
-      "india_external_carry": -0.291777058540953,
+      "india_external_carry": -0.30942640121361586,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null
     },
-    "score": -0.3061910122582852,
+    "score": -0.30968758014626563,
     "active_block_weight": 0.53,
     "sources_live": {
       "us_real_10y": "U.S. Treasury",
@@ -474,8 +474,8 @@
     ],
     [
       "2026-09",
-      19.85,
-      2.84,
+      19.78,
+      2.83,
       1.21
     ]
   ],
@@ -485,9 +485,9 @@
         "month": "2026-09",
         "em_pe": 23.9,
         "em_pb": 0.8,
-        "nifty_pe": 19.85,
-        "nifty_pb": 2.84,
-        "relative_log_premium": 0.39537437031237055
+        "nifty_pe": 19.78,
+        "nifty_pb": 2.83,
+        "relative_log_premium": 0.3918438255420032
       }
     ],
     "forward_premium_history": [],
