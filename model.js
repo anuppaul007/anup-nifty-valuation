@@ -1,7 +1,7 @@
 /* Fixed-reference research model. Parameters are assumptions, not optimized weights. */
 (function(root){
 'use strict';
-const C=Object.freeze({peM:22.44,peS:2.08,pbM:3.88,pbS:.45,roeM:17.36,roeS:1.92,dyM:1.25,dyS:.18,gapM:-2.60,gapS:.70,wPE:30,wPB:25,wGAP:30,wDY:10,beta:.60,k:1.35,zc:2.5,macroMax:6,earnMax:6});
+const C=Object.freeze({peM:22.44,peS:2.08,pbM:3.88,pbS:.45,roeM:17.36,roeS:1.92,dyM:1.25,dyS:.18,gapM:-2.60,gapS:.70,wPE:30,wPB:25,wGAP:30,wDY:10,beta:.60,k:1.35,zc:2.5,macroMax:6,earnMax:6,minMacroCoverage:.999});
 const finite=x=>typeof x==='number'&&Number.isFinite(x);
 const clip=(x,a,b)=>Math.max(a,Math.min(b,x));
 function ageDays(s,now=new Date()){
@@ -25,16 +25,23 @@ function calculate(d,now=new Date()){
  const total=L.reduce((a,x)=>a+x.planned,0),used=L.filter(x=>finite(x.z)).reduce((a,x)=>a+x.planned,0);
  L.forEach(x=>x.weight=finite(x.z)?100*x.planned/used:0);
  const z=L.reduce((a,x)=>a+(finite(x.z)?x.z*x.weight/100:0),0),core=curve(z),damp=clip(1-Math.abs(z)/C.zc,0,1);
- const m=d.macro||{},en=d.earnings||{};
- const packetFresh=fresh(d.generated_at,3,now);
- const macroEligible=d.schema_version===4&&packetFresh&&!d.macro_stale&&finite(m.score)&&finite(m.active_block_weight);
- const coverage=macroEligible?clip(m.active_block_weight,0,1):0;
+ const m=d.macro||{},en=d.earnings||{},packetFresh=fresh(d.generated_at,3,now);
+ const macroPacketValid=d.schema_version===4&&packetFresh&&!d.macro_stale&&finite(m.score)&&finite(m.active_block_weight);
+ const coverage=macroPacketValid?clip(m.active_block_weight,0,1):0;
+ const macroEligible=macroPacketValid&&coverage>=C.minMacroCoverage;
  const earningsEligible=d.schema_version===4&&packetFresh&&finite(en.score)&&fresh(en.asof,70,now);
  const earnCoverage=earningsEligible&&finite(en.coverage)?clip(en.coverage,0,1):0;
- const ea=earningsEligible?clip(en.score,-1,1)*C.earnMax*damp*earnCoverage:0;
- // Keep the available-factor score renormalized, but shrink its total allocation budget.
- const ma=macroEligible?clip(m.score,-1,1)*C.macroMax*damp*coverage:0;
- return{valid:true,allocationReady:gOK,L,z,core,damp,ea,ma,final:gOK?clip(core+ea+ma,0,100):null,coverage,earnCoverage,macroEligible,earningsEligible,gsecEligible:gOK,fundamentalCoverage:used/total,provisional:coverage<1||!earningsEligible||!packetFresh};
+ const earningsComplete=earningsEligible&&earnCoverage>=.999;
+ const ea=earningsComplete?clip(en.score,-1,1)*C.earnMax*damp:0;
+ // A final target is never computed from a partial macro engine. No missing value is neutral-filled.
+ const ma=macroEligible?clip(m.score,-1,1)*C.macroMax*damp:0;
+ const allocationReady=gOK&&macroEligible&&earningsComplete;
+ let holdReason=null;
+ if(!gOK)holdReason='current dated India ~10Y yield unavailable';
+ else if(!macroPacketValid)holdReason='macro packet is stale or invalid';
+ else if(!macroEligible)holdReason=`verified macro coverage ${(100*coverage).toFixed(1)}% is below the 100% requirement`;
+ else if(!earningsComplete)holdReason='earnings-cycle history is incomplete or stale';
+ return{valid:true,allocationReady,L,z,core,damp,ea,ma,final:allocationReady?clip(core+ea+ma,0,100):null,coverage,earnCoverage,macroEligible,macroPacketValid,earningsEligible,earningsComplete,gsecEligible:gOK,fundamentalCoverage:used/total,holdReason};
 }
 function band(z){if(z<=-2.5)return'extremely low';if(z<-.674)return'low';if(z<-.126)return'below reference';if(z<.126)return'near reference';if(z<.674)return'above reference';if(z<2.5)return'high';return'extremely high';}
 const api={C,finite,clip,ageDays,fresh,curve,calculate,band};
