@@ -10,6 +10,10 @@ on:
     # 18:45 India time, Monday-Friday (GitHub cron is UTC)
     - cron: "15 13 * * 1-5"
 
+concurrency:
+  group: anup-nifty-valuation-data-refresh
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
