@@ -1,7 +1,7 @@
 /* Fixed-reference research model. Parameters are assumptions, not optimized weights. */
 (function(root){
 'use strict';
-const C=Object.freeze({peM:22.44,peS:2.08,pbM:3.88,pbS:.45,roeM:17.36,roeS:1.92,dyM:1.25,dyS:.18,gapM:-2.60,gapS:.70,wPE:30,wPB:25,wGAP:30,wDY:10,beta:.60,k:1.35,zc:2.5,macroMax:6,earnMax:6,minMacroCoverage:.999});
+const C=Object.freeze({peM:22.44,peS:2.08,pbM:3.88,pbS:.45,roeM:17.36,roeS:1.92,dyM:1.25,dyS:.18,gapM:-2.60,gapS:.70,wPE:30,wPB:25,wGAP:30,wDY:10,beta:.60,k:1.35,zc:2.5,macroMax:6,earnMax:6,minMacroCoverage:.999,macroRequiredWeight:.80});
 const finite=x=>typeof x==='number'&&Number.isFinite(x);
 const clip=(x,a,b)=>Math.max(a,Math.min(b,x));
 function ageDays(s,now=new Date()){
@@ -27,13 +27,15 @@ function calculate(d,now=new Date()){
  const z=L.reduce((a,x)=>a+(finite(x.z)?x.z*x.weight/100:0),0),core=curve(z),damp=clip(1-Math.abs(z)/C.zc,0,1);
  const m=d.macro||{},en=d.earnings||{},packetFresh=fresh(d.generated_at,3,now);
  const macroPacketValid=d.schema_version===4&&packetFresh&&!d.macro_stale&&finite(m.score)&&finite(m.active_block_weight);
- const coverage=macroPacketValid?clip(m.active_block_weight,0,1):0;
+ // The old 20% EM-relative-valuation block is not macroeconomic evidence. It is now
+ // treated only as an optional valuation cross-check. Therefore true macro coverage
+ // is measured against the remaining 80% planned macro weight and renormalized to 100%.
+ const coverage=macroPacketValid?clip(m.active_block_weight/C.macroRequiredWeight,0,1):0;
  const macroEligible=macroPacketValid&&coverage>=C.minMacroCoverage;
  const earningsEligible=d.schema_version===4&&packetFresh&&finite(en.score)&&fresh(en.asof,70,now);
  const earnCoverage=earningsEligible&&finite(en.coverage)?clip(en.coverage,0,1):0;
  const earningsComplete=earningsEligible&&earnCoverage>=.999;
  const ea=earningsComplete?clip(en.score,-1,1)*C.earnMax*damp:0;
- // A final target is never computed from a partial macro engine. No missing value is neutral-filled.
  const ma=macroEligible?clip(m.score,-1,1)*C.macroMax*damp:0;
  const allocationReady=gOK&&macroEligible&&earningsComplete;
  let holdReason=null;
