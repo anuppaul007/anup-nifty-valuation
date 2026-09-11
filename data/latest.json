@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-09-11T12:45:00Z",
+  "nifty": {
+    "date": "2026-09-10",
+    "level": 24000,
+    "pe": 19.85,
+    "pb": 2.84,
+    "div_yield": 1.21,
+    "gsec10": 6.88
+  },
+  "earnings": {
+    "eps": 1209.07,
+    "eps_growth_12m": null,
+    "acceleration_6m": null,
+    "score": 0.0
+  },
+  "macro": {
+    "us_real_10y": null,
+    "usd_3m_pct": null,
+    "brent_3m_pct": null,
+    "fed_assets_6m_pct": null,
+    "vix": null,
+    "score": 0.0
+  },
+  "confidence": 0.4,
+  "history": [],
+  "sources": [
+    {
+      "name": "Nifty Indices / NSE",
+      "role": "NIFTY level, P/E, P/B, dividend yield, TRI"
+    },
+    {
+      "name": "FBIL / FRED fallback",
+      "role": "India 10-year G-sec"
+    },
+    {
+      "name": "FRED",
+      "role": "US real yields, broad USD, Brent, Fed assets, VIX"
+    }
+  ],
+  "note": "Seed file only. Scheduled updater replaces these fields after deployment."
+}
