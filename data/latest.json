@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
-  "model_version": "3.5",
-  "generated_at": "2026-09-11T19:34:30+00:00",
+  "model_version": "3.6",
+  "generated_at": "2026-09-11T19:49:26+00:00",
   "macro_stale": false,
   "macro_partial": true,
   "nifty": {
@@ -33,7 +33,7 @@
     "usd_3m_pct": 0.06061667362635692,
     "fed_assets_6m_pct": 1.4184489999313987,
     "vix": 17.84,
-    "brent_3m_pct": 16.098698267229228,
+    "brent_3m_pct": 15.9659224869362,
     "india_reer_bis": 90.37,
     "usd_inr_3m_pct": 0.17928493769474585,
     "india_us_10y_spread": 2.0210999999999997,
@@ -76,9 +76,9 @@
         "status": "live"
       },
       "brent_3m_pct": {
-        "value": 16.098698267229228,
-        "z": 0.7096082439096968,
-        "score": -0.44067822000576845,
+        "value": 15.9659224869362,
+        "z": 0.7031168887857558,
+        "score": -0.43718441120794116,
         "asof": "2026-09-11",
         "observations": 757,
         "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
@@ -155,16 +155,18 @@
     },
     "blocks": {
       "global_liquidity": -0.1906622595798292,
-      "india_external_carry": -0.0425217371417676,
+      "india_external_carry": -0.041473594502419414,
       "china_industrial": 0.006666567902989752,
-      "relative_em_valuation": null
+      "relative_em_valuation": null,
+      "india_domestic": null
     },
     "factor_coverage": {
       "global_liquidity": 1.0,
       "india_external_carry": 1.0,
       "china_industrial": 1.0,
       "relative_em_valuation": 0,
-      "block_weight": 0.8
+      "block_weight": 0.75,
+      "india_domestic": 0.0
     },
     "india_reer_z": -2.579902483154261,
     "india_us_spread_z": -1.4377821723798851,
@@ -180,8 +182,8 @@
       "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
     },
-    "score": -0.08577735679485135,
-    "active_block_weight": 0.8,
+    "score": -0.08831168389194088,
+    "active_block_weight": 0.75,
     "block_weight_detail": {
       "global_liquidity": {
         "strategic_weight": 0.3,
@@ -189,23 +191,30 @@
         "effective_weight": 0.3
       },
       "india_external_carry": {
-        "strategic_weight": 0.3,
+        "strategic_weight": 0.25,
         "internal_coverage": 1.0,
-        "effective_weight": 0.3
+        "effective_weight": 0.25
+      },
+      "india_domestic": {
+        "strategic_weight": 0.25,
+        "internal_coverage": 0.0,
+        "effective_weight": 0
       },
       "china_industrial": {
         "strategic_weight": 0.2,
         "internal_coverage": 1.0,
         "effective_weight": 0.2
-      },
-      "relative_em_valuation": {
-        "strategic_weight": 0.2,
-        "internal_coverage": 0.0,
-        "effective_weight": 0
       }
+    },
+    "domestic": {
+      "score": null,
+      "coverage": 0.0,
+      "status": "unavailable",
+      "factors": {},
+      "method": "economic-anchor-v1"
     }
   },
-  "confidence": 0.9299999999999999,
+  "confidence": 0.9125,
   "history": [
     [
       "2021-05",
@@ -689,12 +698,22 @@
       "url": "https://data-explorer.oecd.org/"
     },
     {
+      "name": "MoSPI via Press Information Bureau",
+      "role": "Official All-India CPI inflation and Index of Industrial Production releases",
+      "url": "https://www.pib.gov.in/newsite/pmreleases.aspx?lang=2&mincode=55&reg=48"
+    },
+    {
+      "name": "Reserve Bank of India",
+      "role": "Current policy repo rate and dated government-security yield",
+      "url": "https://www.rbi.org.in/"
+    },
+    {
       "name": "Yahoo Finance Brent futures",
       "role": "Brent 63-trading-observation momentum; contract-roll effects are possible"
     },
     {
       "name": "STOXX EM ex India Universal Large Cap",
-      "role": "Archived dated trailing P/E and P/B for relative valuation against a large-cap benchmark",
+      "role": "Relative valuation diagnostic only; not counted as a macro block",
       "url": "https://stoxx.com/index/swexilv/"
     },
     {
