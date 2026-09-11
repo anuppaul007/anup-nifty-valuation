@@ -31,7 +31,7 @@ def rz(s,n=24,floor=1e-9):
 
 def stoxx(month=None):
     url='https://stoxx.com/index/swexiagv/'+(('?d='+month+'&factsheet=true') if month else '?factsheet=true')
-    r=requests.get(url,headers=UA,timeout=35);r.raise_for_status()
+    r=requests.get(url,headers=UA,timeout=18);r.raise_for_status()
     for t in pd.read_html(StringIO(r.text)):
         for _,row in t.iterrows():
             if not any('Emerging Markets ex India' in str(v) for v in row.tolist()):continue
@@ -53,8 +53,8 @@ def relative_em(nifty,hist,old):
     except Exception as e:print('STOXX current unavailable:',e,file=sys.stderr)
     if len(by)<18:
         nh={r[0]:{'pe':r[1],'pb':r[2]} for r in hist}
-        for mon in sorted(nh)[-24:]:
-            if mon in by:continue
+        missing=[mon for mon in sorted(nh)[-24:] if mon not in by][-6:]
+        for mon in missing:
             try:
                 em=stoxx(mon);rel=.6*math.log(nh[mon]['pe']/em['pe'])+.4*math.log(nh[mon]['pb']/em['pb'])
                 by[mon]={'month':mon,'em_pe':em['pe'],'em_pb':em['pb'],'nifty_pe':nh[mon]['pe'],'nifty_pb':nh[mon]['pb'],'relative_log_premium':rel};time.sleep(.06)
