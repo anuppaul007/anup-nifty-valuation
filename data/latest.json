@@ -1,7 +1,8 @@
 {
-  "generated_at": "2026-09-11T11:28:31+00:00",
-  "model_version": "3.0",
-  "macro_stale": true,
+  "generated_at": "2026-09-11T11:41:36+00:00",
+  "model_version": "3.2",
+  "macro_stale": false,
+  "macro_partial": true,
   "nifty": {
     "date": "2026-09-10",
     "level": 23477.8,
@@ -17,14 +18,65 @@
     "score": -0.3201937701240839
   },
   "macro": {
-    "us_real_10y": null,
-    "usd_3m_pct": null,
-    "brent_3m_pct": null,
+    "us_real_10y": 2.55,
     "fed_assets_6m_pct": null,
-    "vix": null,
-    "score": 0.0
+    "usd_3m_pct": 0.06061667362635692,
+    "brent_3m_pct": 15.290993709674595,
+    "vix": 17.84,
+    "india_reer_bis": null,
+    "india_reer_z": null,
+    "us_10y": 4.95,
+    "india_us_10y_spread": 1.9299999999999997,
+    "india_us_spread_z": null,
+    "forward_premium_1m": null,
+    "forward_premium_z": null,
+    "china_pmi": {
+      "pmi": 49.8,
+      "new_orders": 50.6,
+      "period": null,
+      "score": 0.006666567902989752,
+      "source_url": "https://www.stats.gov.cn/english/PressRelease/202609/t20260901_1965170.html"
+    },
+    "relative_em": {
+      "available": true,
+      "history_count": 0,
+      "score": null,
+      "em_ex_india_pe": 23.9,
+      "em_ex_india_pb": 0.8,
+      "em_ex_india_div_yield": 0.3,
+      "asof": "2026-07-31",
+      "nifty_pe_premium_pct": -16.945606694560656,
+      "nifty_pb_premium_pct": 254.99999999999997,
+      "relative_log_premium": 0.39537437031237055,
+      "z": null
+    },
+    "blocks": {
+      "global_liquidity": -0.5910131508030626,
+      "india_external_carry": -0.28705459655098703,
+      "china_industrial": 0.006666567902989752,
+      "relative_em_valuation": null
+    },
+    "score": -0.3276087632820211,
+    "active_block_weight": 0.8,
+    "sources_live": {
+      "us_real_10y": "U.S. Treasury",
+      "us_10y": "U.S. Treasury",
+      "broad_usd": "Federal Reserve H.10",
+      "fed_assets": "Federal Reserve H.4.1",
+      "vix": "CBOE",
+      "brent": "Yahoo Finance Brent futures",
+      "india_reer": null
+    },
+    "stale_factors": [
+      "India REER"
+    ],
+    "factor_coverage": {
+      "global_liquidity": 0.75,
+      "india_external_carry": 0.35,
+      "block_weight": 0.8
+    }
   },
-  "confidence": 0.819375,
+  "confidence": 0.9299999999999999,
   "history": [
     [
       "2021-07",
@@ -405,7 +457,25 @@
       1.21
     ]
   ],
-  "calibration": {},
+  "calibration": {
+    "em_ex_india_history": [
+      {
+        "month": "2026-09",
+        "em_pe": 23.9,
+        "em_pb": 0.8,
+        "nifty_pe": 19.85,
+        "nifty_pb": 2.84,
+        "relative_log_premium": 0.39537437031237055
+      }
+    ],
+    "forward_premium_history": [],
+    "carry_spread_history": [
+      {
+        "month": "2026-09",
+        "value": 1.9299999999999997
+      }
+    ]
+  },
   "sources": [
     {
       "name": "Nifty Indices / NSE",
@@ -416,20 +486,36 @@
       "role": "India 10-year government bond yield"
     },
     {
-      "name": "FRED / Federal Reserve / BIS / OECD",
-      "role": "US yields, broad USD, Brent, Fed assets, VIX, India REER and yield-spread history"
+      "name": "U.S. Treasury",
+      "role": "US 10-year real and nominal Treasury yields"
+    },
+    {
+      "name": "Federal Reserve H.10 / H.4.1",
+      "role": "Broad USD index and Federal Reserve balance-sheet assets"
+    },
+    {
+      "name": "CBOE",
+      "role": "VIX; confidence/deployment speed only"
+    },
+    {
+      "name": "Yahoo Finance / ICE-linked market data",
+      "role": "Brent futures history used for oil momentum"
+    },
+    {
+      "name": "BIS / FRED (secondary)",
+      "role": "India REER and selected historical calibration series"
     },
     {
       "name": "STOXX",
-      "role": "Emerging Markets ex-India relative valuation fundamentals"
+      "role": "Emerging Markets ex-India relative valuation when available"
     },
     {
       "name": "National Bureau of Statistics of China",
-      "role": "Official China manufacturing PMI / new orders"
+      "role": "Official China manufacturing PMI / new orders when available"
     },
     {
       "name": "CCIL (best effort)",
-      "role": "USD/INR 1-month forward implied rate differential; excluded from score until calibrated"
+      "role": "USD/INR 1-month forward premium; excluded until calibrated"
     }
   ]
 }
