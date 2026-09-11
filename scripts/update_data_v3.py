@@ -75,11 +75,8 @@ def unavailable_macro(old,reason):
 
 def attach_domestic(mac):
     dom=m.safe('India domestic macro',dm.build)
-    if dom is None:
-        dom={'score':None,'coverage':0.0,'status':'unavailable','factors':{},'method':'economic-anchor-v1'}
-    mac['domestic']=dom
-    mac.setdefault('blocks',{})['india_domestic']=dom.get('score')
-    mac.setdefault('factor_coverage',{})['india_domestic']=float(dom.get('coverage') or 0)
+    if dom is None:dom={'score':None,'coverage':0.0,'status':'unavailable','factors':{},'method':'economic-anchor-v1'}
+    mac['domestic']=dom;mac.setdefault('blocks',{})['india_domestic']=dom.get('score');mac.setdefault('factor_coverage',{})['india_domestic']=float(dom.get('coverage') or 0)
     return m.coverage_adjust_macro(mac)
 
 
@@ -102,7 +99,7 @@ def main():
         {'name':'U.S. Treasury / Federal Reserve / CBOE','role':'Dated real/nominal yields, broad USD, Fed balance sheet and VIX'},
         {'name':'BIS Statistics API','role':'India broad REER and monthly USD/INR history from official SDMX feeds','url':'https://data.bis.org/'},
         {'name':'OECD Data Explorer','role':'Monthly India long-term government bond history used to standardise India-US carry','url':'https://data-explorer.oecd.org/'},
-        {'name':'MoSPI via Press Information Bureau','role':'Official All-India CPI inflation and Index of Industrial Production releases','url':dm.PIB_LIST},
+        {'name':'MoSPI eSankhyiki / official releases','role':'Official All-India CPI inflation and Index of Industrial Production','url':dm.ESANKHYIKI},
         {'name':'Reserve Bank of India','role':'Current policy repo rate and dated government-security yield','url':dm.RBI},
         {'name':'Yahoo Finance Brent futures','role':'Brent 63-trading-observation momentum; contract-roll effects are possible'},
         {'name':'STOXX EM ex India Universal Large Cap','role':'Relative valuation diagnostic only; not counted as a macro block','url':m.STOXX_URL},
