@@ -148,7 +148,11 @@ def btc_model(d,btc):
     }}
 
 def build(d=None,market=None):
-    d=d or json.loads(LATEST.read_text());core=latest_core_signal(d)
+    d=d or json.loads(LATEST.read_text())
+    source_latest_generated_at=d.get('generated_at')
+    if not isinstance(source_latest_generated_at,str) or not source_latest_generated_at:
+        raise RuntimeError('latest.json snapshot timestamp missing')
+    core=latest_core_signal(d)
     if market is None:market={'gold':macro.yahoo_series('GC=F'),'silver':macro.yahoo_series('SI=F'),'btc':macro.yahoo_series('BTC-USD')}
     gold,gold_s=price_features(market['gold'],'gold',7);silver,silver_s=price_features(market['silver'],'silver',7);btc,_=price_features(market['btc'],'BTC',3)
     gm=gold_model(d,gold);sm=silver_model(d,silver,gold_s,silver_s);bm=btc_model(d,btc)
@@ -158,6 +162,7 @@ def build(d=None,market=None):
     if abs(total-100)>1e-8:raise RuntimeError(f'core allocation does not sum to 100: {total}')
     return {
       'schema_version':1,'model_version':'multiasset-research-v1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'status':'live',
+      'source_latest_generated_at':source_latest_generated_at,
       'core_source':'V3.6 NIFTY equity/debt research signal; gold and silver are a diversification layer carved proportionally from both sleeves',
       'core_signal_before_metals':core,'core_allocation':allocation,'core_total_pct':total,
       'gold':dict(gm,market=gold),'silver':dict(sm,market=silver),'btc':dict(bm,market=btc),
@@ -167,10 +172,13 @@ def build(d=None,market=None):
     }
 
 def main():
+    source_latest_generated_at=None
+    try:source_latest_generated_at=json.loads(LATEST.read_text()).get('generated_at')
+    except Exception:pass
     try:out=build()
-    except Exception as e:out={'schema_version':1,'model_version':'multiasset-research-v1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'status':'withheld','error':f'{type(e).__name__}: {e}','core_allocation':None,'btc':None}
+    except Exception as e:out={'schema_version':1,'model_version':'multiasset-research-v1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'status':'withheld','source_latest_generated_at':source_latest_generated_at,'error':f'{type(e).__name__}: {e}','core_allocation':None,'btc':None}
     tmp=OUT.with_suffix('.tmp');tmp.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8');tmp.replace(OUT)
-    print(json.dumps({'status':out.get('status'),'core_allocation':out.get('core_allocation'),'btc_signal':(out.get('btc') or {}).get('tactical_signal_pct')}))
+    print(json.dumps({'status':out.get('status'),'source_latest_generated_at':out.get('source_latest_generated_at'),'core_allocation':out.get('core_allocation'),'btc_signal':(out.get('btc') or {}).get('tactical_signal_pct')}))
     if out.get('status')!='live':raise RuntimeError(out.get('error','multiasset build withheld'))
 
 if __name__=='__main__':main()
