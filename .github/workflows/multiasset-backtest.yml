@@ -1,0 +1,45 @@
+name: Multi-asset historical backtest
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/multiasset_backtest.py"
+      - ".github/workflows/multiasset-backtest.yml"
+      - "data/backtest_monthly_2000.csv"
+      - "data/india_short_rate_proxy_1999_2006.csv"
+  schedule:
+    - cron: "30 14 * * 6"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: anup-nifty-multiasset-backtest
+  cancel-in-progress: true
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run long-history multi-asset backtest
+        run: python scripts/multiasset_backtest.py
+      - name: Commit backtest result
+        run: |
+          if git diff --quiet -- data/multiasset_backtest.json; then
+            echo "No backtest data change"
+            exit 0
+          fi
+          git config user.name "anup-nifty-bot"
+          git config user.email "anup-nifty-bot@users.noreply.github.com"
+          git add data/multiasset_backtest.json
+          git commit -m "data: refresh multi-asset historical backtest"
+          git push
