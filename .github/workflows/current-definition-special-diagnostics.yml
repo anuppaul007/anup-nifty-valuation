@@ -13,6 +13,10 @@ on:
       - 'scripts/current_definition_anchor_residual_2026.py'
       - '.github/workflows/current-definition-special-diagnostics.yml'
 
+concurrency:
+  group: current-definition-special-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
