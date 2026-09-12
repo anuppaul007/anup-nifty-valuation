@@ -57,7 +57,8 @@ def fetch_panel():
     from jugaad_data.nse import index_pe_raw,index_tri_raw,index_raw
     end=date.today()
     ratios=index_pe_raw('NIFTY 50',START,end)
-    tri=index_tri_raw('NIFTY 50',START,end)
+    # jugaad-data >=0.35 uses (name, index_name, from_date, to_date).
+    tri=index_tri_raw('NIFTY 50','NIFTY 50',START,end)
     debt=index_raw('NIFTY 10 YR BENCHMARK G-SEC',START,end)
 
     rr=[]
@@ -131,8 +132,7 @@ def main():
                                 'average_equity_pct':100*float(frame['w'].mean()),'min_equity_pct':100*float(frame['w'].min()),'max_equity_pct':100*float(frame['w'].max())}
         baselines={}
         for name,w in [('60_40',.60),('70_30',.70),('100_equity',1.0)]:baselines[name]=stats(fixed_returns(panel,w).to_numpy(),None,False)
-        # Common signal diagnostics and latest completed valuation observation.
-        zall=panel.apply(valuation_z,axis=1);latest=panel.iloc[-1];latest_z=float(zall.iloc[-1])
+        zall=panel.apply(valuation_z,axis=1);latest_z=float(zall.iloc[-1])
         for month,row in panel.iterrows():
             records.append({'month':str(month),'pe':float(row.pe),'pb':float(row.pb),'dividend_yield':float(row.dy),'gsec10':float(row.gsec10),
                             'valuation_z':float(zall.loc[month]),'equity_tri':float(row.equity_tri),'debt_tri':float(row.debt_tri)})
