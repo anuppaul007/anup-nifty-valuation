@@ -57,10 +57,16 @@ def clean_market(df,name,max_age=7):
     if len(s)<260 or not finite(s.iloc[-1]) or s.iloc[-1]<=0:raise RuntimeError(f'{name}: invalid latest price')
     return q,s
 
+def value_near_or_before(s,when,max_days=15):
+    q=s[(s.index<=when)&(s.index>=when-pd.Timedelta(days=max_days))]
+    return float(q.iloc[-1]) if len(q) else None
+
 def price_features(df,name,max_age=7):
     q,s=clean_market(df,name,max_age)
-    px=float(s.iloc[-1]);ma200=float(s.iloc[-200:].mean())
-    lag=min(252,len(s)-1);mom12=100*(px/float(s.iloc[-1-lag])-1)
+    px=float(s.iloc[-1]);last=pd.Timestamp(s.index[-1]);ma200=float(s.iloc[-200:].mean())
+    prior=value_near_or_before(s,last-pd.DateOffset(years=1),20)
+    if prior is None or prior<=0:raise RuntimeError(f'{name}: one-year comparison unavailable')
+    mom12=100*(px/prior-1)
     high3=float(s.max());drawdown=100*(px/high3-1)
     return {
       'price':px,'asof':q.attrs.get('asof'),'source_url':q.attrs.get('source'),
@@ -90,10 +96,10 @@ def require_macro_factor(d,key,max_age):
 
 def gold_model(d,gold):
     real,rf=require_macro_factor(d,'us_real_10y',7);usd,uf=require_macro_factor(d,'usd_3m_pct',75);vix,vf=require_macro_factor(d,'vix',7)
-    real_score=squash(-(real-1.5),1.25)           # lower real yield supports gold
-    usd_score=squash(-usd,4.0)                   # weaker USD supports gold
+    real_score=squash(-(real-1.5),1.25)
+    usd_score=squash(-usd,4.0)
     trend_score=squash(gold['momentum_12m_pct'],20.0)
-    stress_score=squash(vix-20,10.0)             # crisis hedge, modest weight
+    stress_score=squash(vix-20,10.0)
     score=.35*real_score+.25*usd_score+.25*trend_score+.15*stress_score
     target=clip(13+5*score,8,18)
     return {'score':score,'target_pct':target,'range_pct':[8,18],'drivers':{
@@ -104,11 +110,9 @@ def gold_model(d,gold):
     }}
 
 def ratio_score(gold_s,silver_s):
-    x=pd.concat([gold_s.rename('g'),silver_s.rename('s')],axis=1).dropna()
-    x=x[(x.g>0)&(x.s>0)]
+    x=pd.concat([gold_s.rename('g'),silver_s.rename('s')],axis=1).dropna();x=x[(x.g>0)&(x.s>0)]
     if len(x)<260:raise RuntimeError('gold/silver ratio: insufficient overlap')
-    ratio=x.g/x.s;current=float(ratio.iloc[-1]);hist=ratio.iloc[:-1].tail(756)
-    sd=float(hist.std(ddof=0))
+    ratio=x.g/x.s;current=float(ratio.iloc[-1]);hist=ratio.iloc[:-1].tail(756);sd=float(hist.std(ddof=0))
     if len(hist)<250 or not finite(sd) or sd<1e-9:raise RuntimeError('gold/silver ratio: invalid history')
     z=clip((current-float(hist.mean()))/sd,-3,3)
     return current,z,squash(z,1.5),int(len(hist))
@@ -117,10 +121,8 @@ def silver_model(d,silver,gold_s,silver_s):
     ch=(d.get('macro') or {}).get('china_pmi') or {}
     if ch.get('status')!='live' or float(ch.get('coverage') or 0)<.999 or not finite(ch.get('score')) or age_days(ch.get('asof'))>70:
         raise RuntimeError('China industrial factor unavailable')
-    ratio,z,rel_score,nobs=ratio_score(gold_s,silver_s)
-    industrial=float(ch['score']);trend=squash(silver['momentum_12m_pct'],30.0)
-    score=.45*rel_score+.30*industrial+.25*trend
-    target=clip(3.5+3.5*score,0,7)
+    ratio,z,rel_score,nobs=ratio_score(gold_s,silver_s);industrial=float(ch['score']);trend=squash(silver['momentum_12m_pct'],30.0)
+    score=.45*rel_score+.30*industrial+.25*trend;target=clip(3.5+3.5*score,0,7)
     return {'score':score,'target_pct':target,'range_pct':[0,7],'drivers':{
       'gold_silver_ratio':{'value':ratio,'z':z,'score':rel_score,'weight':.45,'observations':nobs},
       'china_industrial':{'value':float(ch.get('pmi')),'score':industrial,'weight':.30,'asof':ch.get('asof')},
@@ -131,8 +133,6 @@ def btc_model(d,btc):
     m=d.get('macro') or {};liq=(m.get('blocks') or {}).get('global_liquidity')
     if not finite(liq):raise RuntimeError('global liquidity block unavailable')
     trend=squash(btc['vs_ma200_pct'],20.0);mom=squash(btc['momentum_12m_pct'],60.0)
-    # Drawdown is negative. Roughly 25% below the 3y high is neutral; deeper
-    # drawdowns increase value score, while near-high prices reduce it.
     value=squash((-btc['drawdown_from_3y_high_pct'])-25,20.0)
     score=.30*trend+.20*mom+.25*float(liq)+.25*value
     if score<-.50:target=0.0
@@ -148,10 +148,8 @@ def btc_model(d,btc):
     }}
 
 def build(d=None,market=None):
-    d=d or json.loads(LATEST.read_text())
-    core=latest_core_signal(d)
-    if market is None:
-        market={'gold':macro.yahoo_series('GC=F'),'silver':macro.yahoo_series('SI=F'),'btc':macro.yahoo_series('BTC-USD')}
+    d=d or json.loads(LATEST.read_text());core=latest_core_signal(d)
+    if market is None:market={'gold':macro.yahoo_series('GC=F'),'silver':macro.yahoo_series('SI=F'),'btc':macro.yahoo_series('BTC-USD')}
     gold,gold_s=price_features(market['gold'],'gold',7);silver,silver_s=price_features(market['silver'],'silver',7);btc,_=price_features(market['btc'],'BTC',3)
     gm=gold_model(d,gold);sm=silver_model(d,silver,gold_s,silver_s);bm=btc_model(d,btc)
     alt=clip(gm['target_pct']+sm['target_pct'],0,25);retained=(100-alt)/100
@@ -164,25 +162,13 @@ def build(d=None,market=None):
       'core_signal_before_metals':core,'core_allocation':allocation,'core_total_pct':total,
       'gold':dict(gm,market=gold),'silver':dict(sm,market=silver),'btc':dict(bm,market=btc),
       'btc_policy':'Separate tactical signal only. It is excluded from the retirement-core 100% allocation and is not funded by mechanically reducing the core portfolio.',
-      'assumptions':{
-        'gold_target_rule':'13% + 5% × score, clipped to 8–18%',
-        'silver_target_rule':'3.5% + 3.5% × score, clipped to 0–7%',
-        'metals_total_cap_pct':25,
-        'btc_signal_steps_pct':[0,2.5,5,7.5,10],
-        'optimization':'None. Parameters are transparent research assumptions pending dedicated historical validation.'
-      },
-      'sources':[
-        {'name':'Yahoo Finance Gold futures','symbol':'GC=F','url':gold['source_url']},
-        {'name':'Yahoo Finance Silver futures','symbol':'SI=F','url':silver['source_url']},
-        {'name':'Yahoo Finance Bitcoin USD','symbol':'BTC-USD','url':btc['source_url']},
-        {'name':'Existing V3.6 macro packet','role':'US real yield, broad USD, VIX, global liquidity and China industrial cycle'}
-      ]
+      'assumptions':{'gold_target_rule':'13% + 5% × score, clipped to 8–18%','silver_target_rule':'3.5% + 3.5% × score, clipped to 0–7%','metals_total_cap_pct':25,'btc_signal_steps_pct':[0,2.5,5,7.5,10],'optimization':'None. Parameters are transparent research assumptions pending dedicated historical validation.'},
+      'sources':[{'name':'Yahoo Finance Gold futures','symbol':'GC=F','url':gold['source_url']},{'name':'Yahoo Finance Silver futures','symbol':'SI=F','url':silver['source_url']},{'name':'Yahoo Finance Bitcoin USD','symbol':'BTC-USD','url':btc['source_url']},{'name':'Existing V3.6 macro packet','role':'US real yield, broad USD, VIX, global liquidity and China industrial cycle'}]
     }
 
 def main():
     try:out=build()
-    except Exception as e:
-        out={'schema_version':1,'model_version':'multiasset-research-v1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'status':'withheld','error':f'{type(e).__name__}: {e}','core_allocation':None,'btc':None}
+    except Exception as e:out={'schema_version':1,'model_version':'multiasset-research-v1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'status':'withheld','error':f'{type(e).__name__}: {e}','core_allocation':None,'btc':None}
     tmp=OUT.with_suffix('.tmp');tmp.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8');tmp.replace(OUT)
     print(json.dumps({'status':out.get('status'),'core_allocation':out.get('core_allocation'),'btc_signal':(out.get('btc') or {}).get('tactical_signal_pct')}))
     if out.get('status')!='live':raise RuntimeError(out.get('error','multiasset build withheld'))
