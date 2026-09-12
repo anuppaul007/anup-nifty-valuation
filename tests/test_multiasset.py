@@ -9,8 +9,9 @@ import multiasset as ma
 class MultiAssetTests(unittest.TestCase):
  def latest(self):
   today=str(date.today())
+  generated=today+'T00:00:00+00:00'
   return {
-   'generated_at':today+'T00:00:00+00:00',
+   'generated_at':generated,
    'nifty':{'pe':19.78,'pb':2.83,'div_yield':1.21,'gsec10':6.97},
    'earnings':{'score':-.29,'coverage':1},
    'macro':{
@@ -30,7 +31,8 @@ class MultiAssetTests(unittest.TestCase):
    q=pd.DataFrame({'date':dates,'value':np.linspace(a,b,len(dates))});q.attrs={'asof':str(dates[-1].date()),'source':source};return q
   return {'gold':series(1800,2500,'gold'),'silver':series(22,31,'silver'),'btc':series(30000,65000,'btc')}
  def test_core_sums_to_100_and_btc_is_separate(self):
-  out=ma.build(self.latest(),self.market());self.assertEqual(out['status'],'live')
+  d=self.latest();out=ma.build(d,self.market());self.assertEqual(out['status'],'live')
+  self.assertEqual(out['source_latest_generated_at'],d['generated_at'])
   self.assertAlmostEqual(sum(out['core_allocation'].values()),100)
   self.assertFalse(out['btc']['included_in_core_100pct'])
   self.assertIn(out['btc']['tactical_signal_pct'],[0,2.5,5,7.5,10])
@@ -52,5 +54,8 @@ class MultiAssetTests(unittest.TestCase):
  def test_core_signal_matches_existing_formula_shape(self):
   x=ma.latest_core_signal(self.latest())
   self.assertTrue(0<=x['equity_pct']<=100);self.assertAlmostEqual(x['equity_pct']+x['debt_pct'],100)
+ def test_missing_primary_snapshot_timestamp_is_rejected(self):
+  d=self.latest();d.pop('generated_at')
+  with self.assertRaises(RuntimeError):ma.build(d,self.market())
 
 if __name__=='__main__':unittest.main()

@@ -7,6 +7,7 @@ on:
     paths-ignore:
       - "data/latest.json"
       - "data/multiasset.json"
+      - "data/multiasset_backtest.json"
       - "data/walkforward.json"
       - "data/retrospective.json"
       - "data/robustness.json"
@@ -27,9 +28,11 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -41,6 +44,8 @@ jobs:
           node --test tests/model.test.cjs
       - name: Refresh live valuation inputs
         run: python scripts/update_data_v3.py
+      - name: Build snapshot-consistent multi-asset research
+        run: python scripts/multiasset.py || true
       - name: Update prospective no-lookahead ledger
         run: python scripts/walkforward.py
       - name: Run valuation-core retrospective sensitivity
@@ -53,12 +58,36 @@ jobs:
         run: python scripts/fund_strategy_rank.py
       - name: Commit only when data changed
         run: |
-          if git diff --quiet -- data/latest.json data/walkforward.json data/retrospective.json data/robustness.json data/backtest_monthly_2000.csv data/backtest_monthly_2000.json data/fund_strategy_rank.json; then
+          paths=(
+            data/latest.json
+            data/multiasset.json
+            data/walkforward.json
+            data/retrospective.json
+            data/robustness.json
+            data/backtest_monthly_2000.csv
+            data/backtest_monthly_2000.json
+            data/fund_strategy_rank.json
+          )
+          if git diff --quiet -- "${paths[@]}"; then
             echo "No data change"
             exit 0
           fi
           git config user.name "anup-nifty-bot"
           git config user.email "anup-nifty-bot@users.noreply.github.com"
-          git add data/latest.json data/walkforward.json data/retrospective.json data/robustness.json data/backtest_monthly_2000.csv data/backtest_monthly_2000.json data/fund_strategy_rank.json
+          git add "${paths[@]}"
           git commit -m "data: refresh valuation studies and fund research"
-          git push
+          for attempt in 1 2 3; do
+            echo "Publish attempt ${attempt}/3"
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              echo "Publish stopped because generated data conflict with newer main"
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt * 4))
+          done
+          echo "Publish failed after three non-fast-forward retries"
+          exit 1

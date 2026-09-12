@@ -2,13 +2,6 @@ name: Refresh multi-asset research
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "scripts/multiasset.py"
-      - "tests/test_multiasset.py"
-      - "data/latest.json"
-      - ".github/workflows/multiasset-refresh.yml"
   schedule:
     # Runs after the main weekday valuation refresh; also updates BTC over weekends.
     - cron: "0 14 * * *"
@@ -26,6 +19,8 @@ jobs:
     timeout-minutes: 6
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -45,4 +40,18 @@ jobs:
           git config user.email "anup-nifty-bot@users.noreply.github.com"
           git add data/multiasset.json
           git commit -m "data: refresh Gold Silver and BTC research layer"
-          git push
+          for attempt in 1 2 3; do
+            echo "Publish attempt ${attempt}/3"
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              echo "Publish stopped because multi-asset data conflict with newer main"
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt * 4))
+          done
+          echo "Publish failed after three non-fast-forward retries"
+          exit 1
