@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
-      - run: pip install -r requirements.txt pytest pypdf
+      - run: pip install -r requirements.txt pytest pypdf pdfplumber
       - name: Unit tests
         run: |
           if [ -f tests/test_current_definition_validation.py ]; then pytest -q tests/test_current_definition_validation.py; else echo 'pilot schema pass'; fi
@@ -34,4 +34,4 @@ jobs:
           path: data/current_definition_validation.json
           if-no-files-found: error
       - name: Headline
-        run: python -c "import json; x=json.load(open('data/current_definition_validation.json')); print(json.dumps({'weight_lines':x['weight_pdf']['line_count'],'financial_records':x['financials']['record_count'],'xbrl':x['xbrl']['status'],'action_records':x['corporate_actions']['record_count'],'live_model_changed':x['live_model_changed']},indent=2))"
+        run: python -c "import json; x=json.load(open('data/current_definition_validation.json')); print(json.dumps({'weight_tables':len(x['weight_pdf']['pdfplumber_tables']),'rel_q_xbrl':x['reliance_quarterly_xbrl']['status'],'rel_a_xbrl':x['reliance_annual_xbrl']['status'],'bank_q_xbrl':x['hdfcbank_quarterly_xbrl']['status'],'bank_a_xbrl':x['hdfcbank_annual_xbrl']['status'],'live_model_changed':x['live_model_changed']},indent=2))"
