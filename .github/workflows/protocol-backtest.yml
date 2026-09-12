@@ -28,14 +28,10 @@ jobs:
         run: pytest -q tests/test_protocol_backtest.py
       - name: Run exploratory protocol backtest
         run: python scripts/protocol_backtest.py
-      - name: Show headline result
-        run: python - <<'PY'
-          import json
-          x=json.load(open("data/protocol_backtest.json"))
-          print(json.dumps(x["headline"],indent=2))
-          PY
       - uses: actions/upload-artifact@v4
         with:
           name: protocol-backtest
           path: data/protocol_backtest.json
           if-no-files-found: error
+      - name: Show headline result
+        run: python -c 'import json; x=json.load(open("data/protocol_backtest.json")); print(json.dumps(x["headline"], indent=2))'
