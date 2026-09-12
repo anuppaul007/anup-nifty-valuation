@@ -11,6 +11,10 @@ on:
       - 'tests/test_current_definition_validation.py'
       - 'CURRENT_DEFINITION_VALIDATION.md'
 
+concurrency:
+  group: current-definition-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
