@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "status": "unavailable",
+  "model_version": "3.6",
+  "study": "valuation-core retrospective sensitivity",
+  "error": "TypeError: NSEIndexHistory.index_tri_raw() missing 1 required positional argument: 'to_date'"
+}
