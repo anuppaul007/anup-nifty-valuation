@@ -17,7 +17,7 @@ test('page loads history, filters debt and exports selected rows',async()=>{
  const vm=require('node:vm'),fs=require('node:fs');
  const nodes=new Map();
  function element(){return {children:[],events:{},value:'',textContent:'',appendChild(x){this.children.push(x)},replaceChildren(){this.children=[]},addEventListener(k,fn){this.events[k]=fn},click(){}};}
- for(const id of ['historyFilter','historyEra','historyRows','historyCount','evidenceStatus','frozenModel','snapshotLink','downloadHistory'])nodes.set(id,element());
+ for(const id of ['historyFilter','historyEra','historyRows','historyCount','evidenceStatus','frozenModel','snapshotLink','downloadHistory','operationalStatus'])nodes.set(id,element());
  nodes.get('historyFilter').value='equity';nodes.get('historyEra').value='all';
  let downloaded;
  const context={AnupEvidence:require('../evidence.js'),document:{getElementById:id=>nodes.get(id),createElement:element},fetch:async url=>({ok:true,json:async()=>url.includes('monthly')?require('../data/monthly_signal_screen.json'):{snapshot_count:1,decision_count:1,archive_started_at:'2026-09-12',current_model:'abc',latest_snapshot_id:'def'}}),Blob,URL:{createObjectURL:b=>{downloaded=b;return 'blob:test'},revokeObjectURL(){}},setTimeout:fn=>fn()};
@@ -27,5 +27,8 @@ test('page loads history, filters debt and exports selected rows',async()=>{
  nodes.get('historyFilter').value='debt';nodes.get('historyFilter').events.change();
  assert.equal(nodes.get('historyRows').children.length,59);
  nodes.get('downloadHistory').events.click();assert.equal((await downloaded.text()).split('\r\n').length,60);
- assert.equal(nodes.get('frozenModel').href,'data/evidence/models/abc.json');
+ assert.equal(nodes.get('frozenModel').href,'https://github.com/anuppaul007/anup-nifty-valuation/blob/main/data/evidence/models/abc.json');
+});
+test('yield age is observation age, not an asserted release lag',()=>{
+ assert.equal(require('../evidence.js').yieldAgeDays({signal_date:'2000-01-01',gsec_asof:'1999-11-30'}),32);
 });

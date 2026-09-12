@@ -1,0 +1,60 @@
+name: Monitor published data
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */4 * * *'
+  push:
+    branches: [main]
+    paths: [scripts/health_check.py, health.js, .github/workflows/health-check.yml]
+  workflow_run:
+    workflows: ['Refresh valuation data']
+    types: [completed]
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: anup-publication-monitor
+  cancel-in-progress: false
+jobs:
+  monitor:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test monitoring boundaries
+        run: |
+          python -m unittest discover -s tests -p test_health_check.py -v
+          node --test tests/health.test.cjs
+      - name: Probe the published packet and refresh
+        id: probe
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/health_check.py
+      - name: Publish health status even on detected failure
+        if: always()
+        run: |
+          if [ ! -f data/health.json ]; then exit 1; fi
+          git add data/health.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'anup-nifty-bot'
+          git config user.email 'anup-nifty-bot@users.noreply.github.com'
+          git commit -m 'data: record publication health check'
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+      - name: Mark the workflow failed when attention is required
+        if: steps.probe.outcome == 'failure'
+        run: |
+          echo '::error::Publication health check failed. See data/health.json and the website operational status.'
+          exit 1

@@ -5,7 +5,8 @@ function selectRows(rows,filter='all',era='all'){
   (era!=='current'||r.nifty_asof>='2021-03-31')&&
   (filter==='all'||(filter==='equity'&&r.core_equity>80)||(filter==='debt'&&r.core_debt>80)));
 }
-const api={selectRows};
+function yieldAgeDays(r){return Math.round((Date.parse(r.signal_date)-Date.parse(r.gsec_asof))/86400000);}
+const api={selectRows,yieldAgeDays};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 else root.AnupEvidence=api;
 })(typeof window!=='undefined'?window:this);

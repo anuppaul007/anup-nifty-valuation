@@ -42,7 +42,13 @@ function clearAllocation(message){
  q('#confbar').style.width='0%';q('#pending').textContent='No current data have been verified.';
  q('#verdict').textContent=message;q('#status').textContent=message;q('#status').className='status bad';
 }
+let lastPublishedPacket=null;
+function paintPacketAge(d){
+ const state=AnupHealth.packetState(d);q('#packetAge').textContent=state.text;q('#packetAge').className='flag '+(state.ok?'good':'bad');return state;
+}
 function render(d){
+ lastPublishedPacket=d;paintPacketAge(d);
+ if(d?.schema_version!==4){clearAllocation('Upgrade needed — this data schema is unsupported. Reload the page after the current publisher finishes; no old-schema allocation is inferred.');return;}
  const r=calculate(d),n=d.nifty||{},m=d.macro||{},en=d.earnings||{},vd=d.valuation_diagnostics||{};
  if(!r.valid){clearAllocation(r.reason);return;}
  const robustness=AnupRobustness.assess(d);
@@ -96,8 +102,10 @@ async function loadData(){
  const request=++requestNumber,controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);q('#status').textContent='Checking latest published data…';clearMultiAsset('Checking latest multi-asset research data…');
  try{
   const d=await fetchPublished('latest.json',controller.signal);if(request!==requestNumber)return;render(d);
+  if(d?.schema_version!==4){clearMultiAsset('Upgrade needed — unsupported NIFTY source schema.');return;}
   try{const ma=await fetchPublished('multiasset.json',controller.signal);if(request===requestNumber)renderMultiAsset(ma,d.generated_at);}catch(error){if(request===requestNumber)clearMultiAsset('Multi-asset research data could not be loaded; the NIFTY model remains unaffected.');}
- }catch(error){if(request===requestNumber){clearAllocation('Published data could not be loaded. Allocation is withheld; please try again later.');clearMultiAsset();}}
+ }catch(error){if(request===requestNumber){lastPublishedPacket=null;q('#packetAge').textContent='Publication unavailable — current packet age cannot be verified.';q('#packetAge').className='flag bad';clearAllocation('Published data could not be loaded. Allocation is withheld; please try again later.');clearMultiAsset();}}
  finally{clearTimeout(timer);}
 }
+setInterval(()=>{if(lastPublishedPacket){const s=paintPacketAge(lastPublishedPacket);if(!s.ok){clearAllocation(s.text);clearMultiAsset('Source packet is stale or unsupported.');}}},60000);
 loadData();

@@ -7,6 +7,7 @@ on:
     paths-ignore:
       - "data/evidence/**"
       - "data/evidence_status.json"
+      - "data/health.json"
       - "data/latest.json"
       - "data/multiasset.json"
       - "data/multiasset_backtest.json"
@@ -93,3 +94,4 @@ jobs:
           done
           echo "Publish failed after three non-fast-forward retries"
           exit 1
+
