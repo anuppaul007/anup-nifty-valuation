@@ -104,7 +104,7 @@ def stats(returns,weights=None,costed=False):
     turnover=None
     if weights is not None and len(weights)>1:turnover=float(np.sum(np.abs(np.diff(weights)))/years)
     return {'months':n,'cagr_pct':100*cagr if finite(cagr) else None,'annual_vol_pct':100*vol if finite(vol) else None,
-            'max_drawdown_pct':100*dd if finite(dd) else None,'sortino_0_pct':(100*cagr/downvol if finite(cagr) and finite(downvol) and downvol>0 else None),
+            'max_drawdown_pct':100*dd if finite(dd) else None,'sortino_0':(cagr/downvol if finite(cagr) and finite(downvol) and downvol>0 else None),
             'calmar':(cagr/abs(dd) if finite(cagr) and finite(dd) and dd<0 else None),'ending_wealth_from_100':100*wealth,
             'worst_month_pct':100*float(np.min(r)),'annual_turnover_x':turnover,'costed_10bp_turnover':bool(costed)}
 
