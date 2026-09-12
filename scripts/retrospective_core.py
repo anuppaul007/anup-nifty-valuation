@@ -112,8 +112,8 @@ def strategy_returns(panel,k):
     eq=panel.equity_tri.pct_change().shift(-1);db=panel.debt_tri.pct_change().shift(-1)
     # month-t signal -> t+1 return. Last signal has no completed next-month return.
     frame=pd.DataFrame({'w':w,'eq':eq,'db':db}).dropna()
-    gross=frame.w*frame.eq+(1-frame.w)*frame.db
-    turnover=frame.w.diff().abs().fillna(0)
+    gross=frame['w']*frame['eq']+(1-frame['w'])*frame['db']
+    turnover=frame['w'].diff().abs().fillna(0)
     net=gross-COST_PER_100_TURNOVER*turnover
     return frame,gross,net,z.loc[frame.index]
 
@@ -126,9 +126,9 @@ def main():
         panel=fetch_panel()
         candidates={};records=[]
         for k in CURVES:
-            frame,gross,net,z=strategy_returns(panel,k);weights=frame.w.to_numpy()
+            frame,gross,net,z=strategy_returns(panel,k);weights=frame['w'].to_numpy()
             candidates[str(k)]={'gross':stats(gross.to_numpy(),weights,False),'net_10bp_turnover':stats(net.to_numpy(),weights,True),
-                                'average_equity_pct':100*float(frame.w.mean()),'min_equity_pct':100*float(frame.w.min()),'max_equity_pct':100*float(frame.w.max())}
+                                'average_equity_pct':100*float(frame['w'].mean()),'min_equity_pct':100*float(frame['w'].min()),'max_equity_pct':100*float(frame['w'].max())}
         baselines={}
         for name,w in [('60_40',.60),('70_30',.70),('100_equity',1.0)]:baselines[name]=stats(fixed_returns(panel,w).to_numpy(),None,False)
         # Common signal diagnostics and latest completed valuation observation.
