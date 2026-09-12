@@ -1,0 +1,38 @@
+name: One-off NIFTY 50 TRI benchmark
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nifty-benchmark.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Calculate Jan-2000 NIFTY 50 TRI buy-and-hold
+        run: |
+          python - <<'PY'
+          import sys, json
+          sys.path.insert(0, 'scripts')
+          import pandas as pd
+          import fund_strategy_rank as f
+          s=f.nifty_tri_daily().sort_index()
+          q=s[s.index>=pd.Timestamp('2000-01-01')]
+          sv=float(q.iloc[0]); sd=q.index[0]
+          ev=float(q.iloc[-1]); ed=q.index[-1]
+          years=(ed-sd).days/365.2425
+          mult=ev/sv
+          print(json.dumps({'start_date':str(sd.date()),'start_tri':sv,'end_date':str(ed.date()),'end_tri':ev,'multiple_x':mult,'value_of_1cr_inr':10000000*mult,'cagr_pct':100*(mult**(1/years)-1)}))
+          PY
