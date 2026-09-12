@@ -7,6 +7,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 import macro_v3 as m
 import update_data_v3 as updater
 import domestic_macro as dm
+import valuation_diagnostics as vd
 
 STOXX='''<html><p>all data as of July 31, 2026</p>
 <table><tr><th>Index volatility and risk</th><th>1Y volatility</th><th>3Y</th><th>5Y</th><th>Sharpe 1Y</th><th>Sharpe 3Y</th><th>Sharpe 5Y</th></tr>
@@ -30,6 +31,10 @@ class ModelTests(unittest.TestCase):
   c={'value':4.45,'asof':str(date.today()),'status':'live','source_url':'cpi'};i={'value':6.7,'asof':str(date.today()),'status':'live','source_url':'iip'};r={'value':5.25,'asof':str(date.today()),'status':'live','source_url':'rbi'}
   with patch.object(dm,'fetch_release',side_effect=[c,i]),patch.object(dm,'fetch_repo',return_value=r):x=dm.build()
   self.assertEqual(x['coverage'],1);self.assertEqual(x['status'],'live');self.assertAlmostEqual(x['real_repo_rate'],.8);self.assertTrue(-1<=x['score']<=1)
+ def test_valuation_diagnostic_does_not_mix_pre_methodology_history(self):
+  hist=[['2021-03',100,20,.1]]+[[f'2021-{i:02d}',20+i/10,3+i/100,1+i/100] for i in range(4,13)]+[[f'2022-{i:02d}',21+i/10,3.1+i/100,1.1+i/100] for i in range(1,13)]+[[f'2023-{i:02d}',22+i/10,3.2+i/100,1.2+i/100] for i in range(1,13)]+[['2024-01',23,3.5,1.3]]
+  x=vd.build(hist,{'date':'2024-02-10','pe':19,'pb':2.9,'div_yield':1.4})
+  self.assertEqual(x['months'],34);self.assertEqual(x['first_month'],'2021-04');self.assertEqual(x['allocation_effect'],'none');self.assertGreater(x['composite_cheapness'],50)
  def test_stoxx_binds_fundamentals_not_risk_table(self):
   x=m.parse_stoxx(STOXX);self.assertEqual((x['pe'],x['pb'],x['div_yield']),(16.3,2.4,2.8));self.assertEqual(x['asof'],'2026-07-31')
  def test_missing_history_is_not_neutral(self):
