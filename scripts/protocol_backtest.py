@@ -40,7 +40,6 @@ OUT = ROOT / "data" / "protocol_backtest.json"
 
 COST_GRID_BPS = (0, 10, 25)
 BAND_GRID_PP = (0, 5, 10)
-POLICY_RATE_SEED = {pd.Period("1999-12", freq="M"): 6.0}
 
 RATE_AUDIT = {
     "cached_short_rate": {
@@ -48,6 +47,7 @@ RATE_AUDIT = {
         "identity": "OECD/FRED India short-term interest-rate observations cached for reproducibility",
         "not": "RBI policy repo rate",
         "role": "pre-Apr-2006 debt-return accrual proxy only",
+        "timing": "prior-month observation; monthly aggregate is lagged to avoid look-ahead",
         "source_urls": [
             "https://fred.stlouisfed.org/series/INDLOCOSTORSTM",
             "https://data-explorer.oecd.org/",
@@ -57,8 +57,8 @@ RATE_AUDIT = {
         "file": "data/backtest_monthly_2000.csv",
         "identity": "RBI repo/policy/LAF rate in force on the displayed calendar first day",
         "role": "historical display and sensitivity proxy; it is not an input to valuation_z",
+        "timing": "current month-start value because it was observable on the decision date",
         "source_note": "scripts/backtest_monthly_2000.py contains the effective-date history and nomenclature warning",
-        "pre_start_seed": "1999-12 = 6.0%, carried from the 1-Mar-1999 effective rate in the generator so Jan-2000 is not dropped",
     },
     "rbi_91d_tbill_check": {
         "status": "partial_verified_not_used_for_full_period",
@@ -110,14 +110,6 @@ def conservative_rate_pct(oecd_rate, policy_rate, haircut_pp=1.0):
     return max(0.0, min(vals) - float(haircut_pp))
 
 
-def policy_rate_for_prior_month(alloc, prev):
-    value = alloc["policy_rate_pct"].get(prev, np.nan)
-    if finite(value):
-        return float(value)
-    seed = POLICY_RATE_SEED.get(prev)
-    return float(seed) if finite(seed) else None
-
-
 def first_monthly(s):
     return s.sort_index().groupby(s.index.to_period("M")).first()
 
@@ -155,7 +147,7 @@ def build_return_panel():
         else:
             prev = mo - 1
             oecd = rates.get(prev, np.nan)
-            policy = policy_rate_for_prior_month(alloc, prev)
+            policy = a["policy_rate_pct"]
             if not finite(oecd) or not finite(policy):
                 continue
             cons = conservative_rate_pct(oecd, policy, 1.0)
@@ -333,8 +325,8 @@ def main():
             "debt_from_apr_2006": debt_meta.get("scheme_name") or "ICICI Prudential Short Term Fund Regular Growth NAV",
             "pre_apr_2006_debt_variants": {
                 "oecd_short_rate": "prior-month cached OECD/FRED India short-term rate, accrued monthly",
-                "rbi_policy_rate": "prior-month RBI repo/policy/LAF rate displayed by the historical screen, accrued monthly; sensitivity only, not investable total return",
-                "conservative_cash": "max(0, min(OECD short rate, RBI policy/LAF rate) - 1 percentage point), accrued monthly",
+                "rbi_policy_rate": "RBI repo/policy/LAF rate observable at current month-start, accrued monthly; sensitivity only, not investable total return",
+                "conservative_cash": "max(0, min(prior-month OECD short rate, current month-start RBI policy/LAF rate) - 1 percentage point), accrued monthly",
             },
             "rebalancing": "drift-aware at month-start; rebalance only if target gap reaches selected band",
             "rebalance_bands_pp": list(BAND_GRID_PP),
