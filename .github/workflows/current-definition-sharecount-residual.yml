@@ -1,0 +1,33 @@
+name: Current-definition share-count residual
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/current_definition_sharecount_residual.py'
+      - '.github/workflows/current-definition-sharecount-residual.yml'
+
+concurrency:
+  group: current-definition-sharecount-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt pdfplumber
+      - run: python scripts/current_definition_sharecount_residual.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: current-definition-sharecount-residual
+          path: data/current_definition_sharecount_residual.json
+          if-no-files-found: error
