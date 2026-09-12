@@ -4,6 +4,10 @@
 The anchor is chosen so the four latest completed result quarters available by
 31-Aug-2026 (Sep-2025, Dec-2025, Mar-2026, Jun-2026) are all inside NSE's
 Integrated Filing - Financials regime. Research only; no live model changes.
+
+For each quarter, consolidated results are required when available; standalone
+is accepted only when no consolidated filing exists for that quarter, matching
+the current NIFTY valuation-methodology fallback rule.
 """
 from __future__ import annotations
 from datetime import datetime, timezone
@@ -61,27 +65,38 @@ def listing(s,symbol,issuer):
             time.sleep(1.0*(attempt+1))
     return []
 
+def choose_basis(rows,quarter):
+    qrows=[x for x in rows if str(x.get('qe_Date') or '').upper().strip()==quarter]
+    cons=[x for x in qrows if str(x.get('consolidated') or '').strip().lower()=='consolidated']
+    stand=[x for x in qrows if str(x.get('consolidated') or '').strip().lower()=='standalone']
+    chosen=cons or stand
+    if not chosen:return None,None
+    # Original/revision duplicates: latest creation/revision record is the point-in-time record available now;
+    # the full ratio reconstruction will separately enforce availability by anchor date.
+    row=chosen[0]
+    return row,('consolidated' if cons else 'standalone_fallback')
+
 def audit_symbol(s,row):
     best=[];used=None
     for issuer in issuer_variants(row['security_name'])+['']:
         rows=listing(s,row['symbol'],issuer)
         if len(rows)>len(best):best=rows;used=issuer
         if rows:break
-    eligible=[]
-    for x in best:
-        q=str(x.get('qe_Date') or '').upper().strip();cons=str(x.get('consolidated') or '').lower()
-        if q in TARGET and 'consolidated' in cons:
-            eligible.append(x)
-    got={str(x.get('qe_Date') or '').upper().strip() for x in eligible}
-    return {**row,'issuer_used':used,'listing_count':len(best),'target_quarters_found':sorted(got),'target_quarters_missing':sorted(TARGET-got),'complete_four_quarters':got==TARGET}
+    found={};basis={}
+    for q in TARGET:
+        chosen,b=choose_basis(best,q)
+        if chosen is not None:
+            found[q]=chosen;basis[q]=b
+    got=set(found)
+    return {**row,'issuer_used':used,'listing_count':len(best),'target_quarters_found':sorted(got),'target_quarters_missing':sorted(TARGET-got),'basis_by_quarter':basis,'complete_four_quarters':got==TARGET}
 
 def main():
     s=session();rows,meta=weight_rows(s);out=[]
-    for i,r in enumerate(rows):
+    for r in rows:
         out.append(audit_symbol(s,r));time.sleep(.35)
     complete=sum(x['complete_four_quarters'] for x in out)
-    result={'generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'anchor_date':'2026-08-31','target_quarters':sorted(TARGET),'weight_source':meta,'coverage':{'complete':complete,'required':50,'failed':len(out)-complete},'failures':[{'symbol':x['symbol'],'security_name':x['security_name'],'listing_count':x['listing_count'],'missing':x['target_quarters_missing'],'issuer_used':x['issuer_used']} for x in out if not x['complete_four_quarters']],'constituents':out,'live_model_changed':False,'live_allocation_changed':False}
+    result={'generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'anchor_date':'2026-08-31','target_quarters':sorted(TARGET),'basis_rule':'consolidated when available; standalone only when consolidated unavailable','weight_source':meta,'coverage':{'complete':complete,'required':50,'failed':len(out)-complete},'failures':[{'symbol':x['symbol'],'security_name':x['security_name'],'listing_count':x['listing_count'],'missing':x['target_quarters_missing'],'issuer_used':x['issuer_used']} for x in out if not x['complete_four_quarters']],'standalone_fallbacks':[{'symbol':x['symbol'],'quarters':[q for q,b in x['basis_by_quarter'].items() if b=='standalone_fallback']} for x in out if any(b=='standalone_fallback' for b in x['basis_by_quarter'].values())],'constituents':out,'live_model_changed':False,'live_allocation_changed':False}
     OUT.write_text(json.dumps(result,indent=2,ensure_ascii=False),encoding='utf-8')
-    print(json.dumps({'weight_count':meta['count'],'coverage':result['coverage'],'failures':result['failures'][:15]},indent=2))
+    print(json.dumps({'weight_count':meta['count'],'coverage':result['coverage'],'standalone_fallbacks':result['standalone_fallbacks'],'failures':result['failures'][:15]},indent=2))
 
 if __name__=='__main__':main()
