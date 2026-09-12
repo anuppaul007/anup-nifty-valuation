@@ -11,6 +11,7 @@ import http_client as requests
 import update_data as b
 import macro_v3 as m
 import domestic_macro as dm
+import valuation_diagnostics as vd
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'data'/'latest.json'
@@ -91,10 +92,11 @@ def main():
         mac,cal=m.build(g10,latest,n['history'],old,gmeta);mac=attach_domestic(mac,old)
     except Exception as e:
         mac=unavailable_macro(old,str(e));cal={'em_ex_india_history':[],'carry_spread_history':[]}
+    valuation_diag=vd.build(n['history'],latest)
     coverage=mac['active_block_weight'];vf=(mac.get('factors') or {}).get('vix') or {};confidence=None
     if vf.get('status')=='live' and m.finite(vf.get('value')):
         stress=float(np.clip(1-max(0,vf['value']-18)/40,.35,1));confidence=stress*(.65+.35*coverage)
-    out={'schema_version':4,'model_version':'3.6','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<.999,'nifty':latest,'earnings':n['earnings'],'macro':mac,'confidence':confidence,'history':n['history'],'calibration':cal,'sources':[
+    out={'schema_version':4,'model_version':'3.6','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<.999,'nifty':latest,'earnings':n['earnings'],'macro':mac,'confidence':confidence,'valuation_diagnostics':valuation_diag,'history':n['history'],'calibration':cal,'sources':[
         {'name':'Nifty Indices / NSE','role':'NIFTY index and ratio history; EPS is an index-implied proxy','url':'https://www.niftyindices.com/reports/historical-data'},
         {'name':gmeta['source'],'role':'Current India ~10Y yield; its own observation date determines eligibility','url':gmeta.get('source_url')},
         {'name':'U.S. Treasury / Federal Reserve / CBOE','role':'Dated real/nominal yields, broad USD, Fed balance sheet and VIX'},
@@ -107,5 +109,5 @@ def main():
         {'name':'NBS China','role':'Official manufacturing PMI and new orders','url':(mac.get('china_pmi') or {}).get('source_url')}
     ]}
     tmp=OUT.with_suffix('.tmp');tmp.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8');tmp.replace(OUT)
-    print(json.dumps({'nifty_asof':latest['date'],'gsec_status':gmeta['status'],'macro_score':mac['score'],'coverage':coverage,'domestic_status':(mac.get('domestic') or {}).get('status'),'version':'3.6'}))
+    print(json.dumps({'nifty_asof':latest['date'],'gsec_status':gmeta['status'],'macro_score':mac['score'],'coverage':coverage,'domestic_status':(mac.get('domestic') or {}).get('status'),'valuation_cheapness':valuation_diag.get('composite_cheapness'),'valuation_months':valuation_diag.get('months'),'version':'3.6'}))
 if __name__=='__main__':main()
