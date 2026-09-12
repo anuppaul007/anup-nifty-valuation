@@ -22,6 +22,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -39,4 +41,18 @@ jobs:
             exit 0
           fi
           git commit -m "data: refresh long-run fund research"
-          git push
+          for attempt in 1 2 3; do
+            echo "Publish attempt ${attempt}/3"
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              echo "Publish stopped because research data conflict with newer main"
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt * 4))
+          done
+          echo "Publish failed after three non-fast-forward retries"
+          exit 1
