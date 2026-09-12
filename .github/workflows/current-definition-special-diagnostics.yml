@@ -5,6 +5,7 @@ on:
   pull_request:
     paths:
       - 'scripts/current_definition_special_diagnostics.py'
+      - 'scripts/current_definition_residual_probe.py'
       - '.github/workflows/current-definition-special-diagnostics.yml'
 
 permissions:
@@ -21,9 +22,9 @@ jobs:
           python-version: '3.12'
           cache: pip
       - run: pip install -r requirements.txt pypdf pdfplumber
-      - run: python scripts/current_definition_special_diagnostics.py
+      - run: python scripts/current_definition_residual_probe.py
       - uses: actions/upload-artifact@v4
         with:
-          name: current-definition-special-diagnostics
-          path: data/current_definition_special_diagnostics.json
+          name: current-definition-residual-probe
+          path: data/current_definition_residual_probe.json
           if-no-files-found: error
