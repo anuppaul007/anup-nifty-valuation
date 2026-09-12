@@ -17,12 +17,14 @@ Three full-history debt variants are reported before the ICICI Prudential Short
 Term Fund NAV becomes available in Apr-2006:
 
 1. `oecd_short_rate`: prior-month cached OECD/FRED India short-term rate,
-   accrued monthly.
-2. `rbi_policy_rate`: prior-month RBI repo/policy/LAF rate from the historical
-   screen, accrued monthly. This is a sensitivity proxy, not an investable
-   return series.
-3. `conservative_cash`: the lower of those two rates minus 1 percentage point,
-   floored at zero, accrued monthly.
+   accrued monthly. The one-month lag is deliberate because the monthly
+   aggregate is not known at the beginning of that same month.
+2. `rbi_policy_rate`: RBI repo/policy/LAF rate already in force at the current
+   month-start, accrued monthly. This is a point-in-time sensitivity proxy, not
+   an investable total-return series.
+3. `conservative_cash`: the lower of the prior-month OECD short rate and the
+   observable current month-start RBI policy/LAF rate, minus 1 percentage
+   point and floored at zero, accrued monthly.
 
 From Apr-2006 onward all three variants use the same observed short-term debt
 fund NAV return.
@@ -41,7 +43,8 @@ portfolio weight is the weight that drifted after the prior month's equity and
 debt returns. Rebalancing occurs only when the target gap reaches the selected
 band: 0, 5, or 10 percentage points. Costs are charged on one-way capital
 turnover at 0, 10, or 25 bps. Initial deployment is not charged as rebalancing
-turnover.
+turnover. Drawdown is measured against an explicit starting wealth of 1.0 so a
+loss in the first test month cannot disappear from the statistic.
 
 The report also includes NIFTY 50 TRI buy-and-hold and 60/40 annual-rebalance
 benchmarks.
