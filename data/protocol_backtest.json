@@ -1,0 +1,99 @@
+{
+  "status": "complete",
+  "generated_at": "2026-09-12T10:14:29+00:00",
+  "research_label": "exploratory; historical release vintages and pre-2021 NIFTY valuation methodology are not fully comparable/verified",
+  "live_model_changed": false,
+  "live_allocation_changed": false,
+  "period": {"start_month": "2000-01", "end_month": "2026-09", "months": 321},
+  "methodology": {
+    "signal": "data/backtest_monthly_2000.csv common-history valuation screen",
+    "equity_return": "NIFTY 50 Total Return Index",
+    "debt_from_apr_2006": "ICICI Prudential Short Term Fund - Regular Plan - Growth",
+    "pre_apr_2006_debt_variants": {
+      "oecd_short_rate": "prior-month cached OECD/FRED India short-term rate, accrued monthly",
+      "rbi_policy_rate": "RBI repo/policy/LAF rate observable at current month-start, accrued monthly; sensitivity only, not investable total return",
+      "conservative_cash": "max(0, min(prior-month OECD short rate, current month-start RBI policy/LAF rate) - 1 percentage point), accrued monthly"
+    },
+    "rebalancing": "drift-aware at month-start; rebalance only if target gap reaches selected band",
+    "rebalance_bands_pp": [0, 5, 10],
+    "one_way_cost_grid_bps": [0, 10, 25],
+    "initial_deployment_cost": "not charged; only subsequent reallocations incur turnover cost",
+    "metric_frequency": "monthly; not the validation policy's primary daily-drawdown test"
+  },
+  "rate_proxy_audit": {
+    "cached_short_rate": {
+      "file": "data/india_short_rate_proxy_1999_2006.csv",
+      "identity": "OECD/FRED India short-term interest-rate observations cached for reproducibility",
+      "not": "RBI policy repo rate",
+      "role": "pre-Apr-2006 debt-return accrual proxy only",
+      "timing": "prior-month observation; monthly aggregate is lagged to avoid look-ahead",
+      "source_urls": ["https://fred.stlouisfed.org/series/INDLOCOSTORSTM", "https://data-explorer.oecd.org/"]
+    },
+    "rbi_policy_display": {
+      "file": "data/backtest_monthly_2000.csv",
+      "identity": "RBI repo/policy/LAF rate in force on the displayed calendar first day",
+      "role": "historical display and sensitivity proxy; it is not an input to valuation_z",
+      "timing": "current month-start value because it was observable on the decision date",
+      "source_note": "scripts/backtest_monthly_2000.py contains the effective-date history and nomenclature warning"
+    },
+    "rbi_91d_tbill_check": {
+      "status": "partial_verified_not_used_for_full_period",
+      "verified_annual_weighted_average_cutoff_yields_pct": {"2001-02": 6.88, "2002-03": 5.73, "2003-04": 4.63},
+      "source_urls": ["https://www.rbi.org.in/scripts/AnnualReportPublications.aspx?Id=344", "https://www.rbi.org.in/Upload/AnnualReport/Pdfs/56232.pdf"],
+      "reason_not_used": "A clean month-by-month 2000-2006 auction-derived total-return series has not yet been reconstructed and should not be fabricated from partial annual observations."
+    }
+  },
+  "benchmarks": {
+    "nifty50_tri_buy_hold": {"months":321,"multiple_x":21.05689275307384,"cagr_pct":12.065693635682685,"max_monthly_drawdown_pct":-55.93553717016426,"annualized_monthly_volatility_pct":22.525438036114476,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-50.09459743535844,"average_monthly_one_way_turnover_pct":0.0,"rebalance_count":0},
+    "60_40_annual_rebalance_10bps_by_debt_variant": {
+      "oecd_short_rate": {"months":321,"multiple_x":17.376755200093182,"cagr_pct":11.263820779461597,"max_monthly_drawdown_pct":-30.20112709332139,"annualized_monthly_volatility_pct":13.431097318230359,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-23.589089305770095,"average_monthly_one_way_turnover_pct":0.3739233196451967,"rebalance_count":26},
+      "rbi_policy_rate": {"months":321,"multiple_x":17.777524697846633,"cagr_pct":11.358702064314663,"max_monthly_drawdown_pct":-30.20112709332139,"annualized_monthly_volatility_pct":13.43338912465906,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-23.589089305770074,"average_monthly_one_way_turnover_pct":0.3723708505576401,"rebalance_count":26},
+      "conservative_cash": {"months":321,"multiple_x":16.83584256777366,"cagr_pct":11.13236467457035,"max_monthly_drawdown_pct":-30.20112709332139,"annualized_monthly_volatility_pct":13.451161480717571,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-23.589089305770095,"average_monthly_one_way_turnover_pct":0.3740053923407011,"rebalance_count":26}
+    }
+  },
+  "scenarios": {
+    "oecd_short_rate": {
+      "band_0pp_cost_0bps": {"months":321,"multiple_x":40.6424108281513,"cagr_pct":14.854698186201043,"max_monthly_drawdown_pct":-38.39475716192631,"annualized_monthly_volatility_pct":17.40402839180906,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.78123667793381,"average_monthly_one_way_turnover_pct":9.567424722860123,"rebalance_count":320},
+      "band_0pp_cost_10bps": {"months":321,"multiple_x":39.41305515108928,"cagr_pct":14.722894861024516,"max_monthly_drawdown_pct":-38.48084240411218,"annualized_monthly_volatility_pct":17.404180140381435,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.923553928556167,"average_monthly_one_way_turnover_pct":9.567424722860123,"rebalance_count":320},
+      "band_0pp_cost_25bps": {"months":321,"multiple_x":37.63788644857683,"cagr_pct":14.52541591985499,"max_monthly_drawdown_pct":-38.60979774519168,"annualized_monthly_volatility_pct":17.404586433274854,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.136581811517747,"average_monthly_one_way_turnover_pct":9.567424722860123,"rebalance_count":320},
+      "band_5pp_cost_0bps": {"months":321,"multiple_x":39.84279102518571,"cagr_pct":14.76941263232925,"max_monthly_drawdown_pct":-37.98028831197483,"annualized_monthly_volatility_pct":17.313684733748534,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.624352157165923,"average_monthly_one_way_turnover_pct":9.045476172050487,"rebalance_count":177},
+      "band_5pp_cost_10bps": {"months":321,"multiple_x":38.70241326813642,"cagr_pct":14.644887721514866,"max_monthly_drawdown_pct":-38.06546436881884,"annualized_monthly_volatility_pct":17.314179052313854,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.7624582066221,"average_monthly_one_way_turnover_pct":9.045476172050487,"rebalance_count":177},
+      "band_5pp_cost_25bps": {"months":321,"multiple_x":37.05225958603827,"cagr_pct":14.458296626659827,"max_monthly_drawdown_pct":-38.1930630011375,"annualized_monthly_volatility_pct":17.315110643719787,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.96920074152863,"average_monthly_one_way_turnover_pct":9.045476172050487,"rebalance_count":177},
+      "band_10pp_cost_0bps": {"months":321,"multiple_x":38.35054330850882,"cagr_pct":14.605751159987701,"max_monthly_drawdown_pct":-37.98028831197483,"annualized_monthly_volatility_pct":17.096631774606745,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.225202094512014,"average_monthly_one_way_turnover_pct":7.643232639525319,"rebalance_count":112},
+      "band_10pp_cost_10bps": {"months":321,"multiple_x":37.42094041626047,"cagr_pct":14.500669503766805,"max_monthly_drawdown_pct":-38.0597770141311,"annualized_monthly_volatility_pct":17.096925117151965,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.34901124161182,"average_monthly_one_way_turnover_pct":7.643232639525319,"rebalance_count":112},
+      "band_10pp_cost_25bps": {"months":321,"multiple_x":36.06814556463805,"cagr_pct":14.34317205163358,"max_monthly_drawdown_pct":-38.178867036893784,"annualized_monthly_volatility_pct":17.09758304559125,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.534393517724677,"average_monthly_one_way_turnover_pct":7.643232639525319,"rebalance_count":112}
+    },
+    "rbi_policy_rate": {
+      "band_0pp_cost_0bps": {"months":321,"multiple_x":40.534179249589734,"cagr_pct":14.843249470423615,"max_monthly_drawdown_pct":-38.39475716192631,"annualized_monthly_volatility_pct":17.4026743387553,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.78123667793381,"average_monthly_one_way_turnover_pct":9.56792686357611,"rebalance_count":320},
+      "band_0pp_cost_10bps": {"months":321,"multiple_x":39.30803401286378,"cagr_pct":14.711452371286393,"max_monthly_drawdown_pct":-38.48084240411218,"annualized_monthly_volatility_pct":17.40281613057519,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.923553928556156,"average_monthly_one_way_turnover_pct":9.56792686357611,"rebalance_count":320},
+      "band_0pp_cost_25bps": {"months":321,"multiple_x":37.53750471829156,"cagr_pct":14.513982776550293,"max_monthly_drawdown_pct":-38.609797745191656,"annualized_monthly_volatility_pct":17.40320749945889,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.13658181151768,"average_monthly_one_way_turnover_pct":9.56792686357611,"rebalance_count":320},
+      "band_5pp_cost_0bps": {"months":321,"multiple_x":39.73764323390591,"cagr_pct":14.758075452914277,"max_monthly_drawdown_pct":-37.98028831197485,"annualized_monthly_volatility_pct":17.312201911835306,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.624352157165934,"average_monthly_one_way_turnover_pct":9.045897731564386,"rebalance_count":177},
+      "band_5pp_cost_10bps": {"months":321,"multiple_x":38.6002227796051,"cagr_pct":14.633557044369017,"max_monthly_drawdown_pct":-38.065464368818844,"annualized_monthly_volatility_pct":17.312687027657095,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.76245820662212,"average_monthly_one_way_turnover_pct":9.045897731564386,"rebalance_count":177},
+      "band_5pp_cost_25bps": {"months":321,"multiple_x":36.95435119847875,"cagr_pct":14.446975708649568,"max_monthly_drawdown_pct":-38.19306300113752,"annualized_monthly_volatility_pct":17.313604824797277,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.969200741528677,"average_monthly_one_way_turnover_pct":9.045897731564386,"rebalance_count":177},
+      "band_10pp_cost_0bps": {"months":321,"multiple_x":38.298694384060795,"cagr_pct":14.599955090050498,"max_monthly_drawdown_pct":-37.98028831197483,"annualized_monthly_volatility_pct":17.092647746532645,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.225202094511992,"average_monthly_one_way_turnover_pct":7.643216502305187,"rebalance_count":112},
+      "band_10pp_cost_10bps": {"months":321,"multiple_x":37.370350243014535,"cagr_pct":14.49487897186481,"max_monthly_drawdown_pct":-38.059777014131136,"annualized_monthly_volatility_pct":17.092920819711832,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.349011241611834,"average_monthly_one_way_turnover_pct":7.643216502305187,"rebalance_count":112},
+      "band_10pp_cost_25bps": {"months":321,"multiple_x":36.01938714757394,"cagr_pct":14.33738982690409,"max_monthly_drawdown_pct":-38.17886703689379,"annualized_monthly_volatility_pct":17.09354837865675,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.534393517724688,"average_monthly_one_way_turnover_pct":7.643216502305187,"rebalance_count":112}
+    },
+    "conservative_cash": {
+      "band_0pp_cost_0bps": {"months":321,"multiple_x":39.90281950870684,"cagr_pct":14.775872078095475,"max_monthly_drawdown_pct":-38.39475716192631,"annualized_monthly_volatility_pct":17.4100227800386,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.78123667793382,"average_monthly_one_way_turnover_pct":9.56694340799588,"rebalance_count":320},
+      "band_0pp_cost_10bps": {"months":321,"multiple_x":38.695894879261985,"cagr_pct":14.644165835987732,"max_monthly_drawdown_pct":-38.48084240411216,"annualized_monthly_volatility_pct":17.41020348878688,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.92355392855611,"average_monthly_one_way_turnover_pct":9.56694340799588,"rebalance_count":320},
+      "band_0pp_cost_25bps": {"months":321,"multiple_x":36.953112951679735,"cagr_pct":14.446832348260564,"max_monthly_drawdown_pct":-38.609797745191656,"annualized_monthly_volatility_pct":17.41065306318129,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.136581811517726,"average_monthly_one_way_turnover_pct":9.56694340799588,"rebalance_count":320},
+      "band_5pp_cost_0bps": {"months":321,"multiple_x":39.11008007910529,"cagr_pct":14.689804227177671,"max_monthly_drawdown_pct":-37.98028831197482,"annualized_monthly_volatility_pct":17.319905376210293,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.624352157165923,"average_monthly_one_way_turnover_pct":9.044983729648866,"rebalance_count":177},
+      "band_5pp_cost_10bps": {"months":321,"multiple_x":37.990734008922175,"cagr_pct":14.56537246480707,"max_monthly_drawdown_pct":-38.06546436881886,"annualized_monthly_volatility_pct":17.32042946909673,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.76245820662211,"average_monthly_one_way_turnover_pct":9.044983729648866,"rebalance_count":177},
+      "band_5pp_cost_25bps": {"months":321,"multiple_x":36.37101055892598,"cagr_pct":14.378920941050822,"max_monthly_drawdown_pct":-38.19306300113752,"annualized_monthly_volatility_pct":17.321405554406358,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.96920074152863,"average_monthly_one_way_turnover_pct":9.044983729648866,"rebalance_count":177},
+      "band_10pp_cost_0bps": {"months":321,"multiple_x":37.64444328824902,"cagr_pct":14.526161700341822,"max_monthly_drawdown_pct":-37.98028831197483,"annualized_monthly_volatility_pct":17.10632683704772,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.225202094512024,"average_monthly_one_way_turnover_pct":7.6431298620509045,"rebalance_count":112},
+      "band_10pp_cost_10bps": {"months":321,"multiple_x":36.73196813384254,"cagr_pct":14.421154432708438,"max_monthly_drawdown_pct":-38.05977701413112,"annualized_monthly_volatility_pct":17.106641924309397,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.349011241611834,"average_monthly_one_way_turnover_pct":7.6431298620509045,"rebalance_count":112},
+      "band_10pp_cost_25bps": {"months":321,"multiple_x":35.404097753744665,"cagr_pct":14.26376847953752,"max_monthly_drawdown_pct":-38.178867036893806,"annualized_monthly_volatility_pct":17.107332260554415,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-28.534393517724688,"average_monthly_one_way_turnover_pct":7.6431298620509045,"rebalance_count":112}
+    }
+  },
+  "headline": {
+    "selected_for_comparison": "band_0pp_cost_10bps",
+    "valuation_strategy": {
+      "oecd_short_rate": {"months":321,"multiple_x":39.41305515108928,"cagr_pct":14.722894861024516,"max_monthly_drawdown_pct":-38.48084240411218,"annualized_monthly_volatility_pct":17.404180140381435,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.923553928556167,"average_monthly_one_way_turnover_pct":9.567424722860123,"rebalance_count":320},
+      "rbi_policy_rate": {"months":321,"multiple_x":39.30803401286378,"cagr_pct":14.711452371286393,"max_monthly_drawdown_pct":-38.48084240411218,"annualized_monthly_volatility_pct":17.40281613057519,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.923553928556156,"average_monthly_one_way_turnover_pct":9.56792686357611,"rebalance_count":320},
+      "conservative_cash": {"months":321,"multiple_x":38.695894879261985,"cagr_pct":14.644165835987732,"max_monthly_drawdown_pct":-38.48084240411216,"annualized_monthly_volatility_pct":17.41020348878688,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-27.92355392855611,"average_monthly_one_way_turnover_pct":9.56694340799588,"rebalance_count":320}
+    },
+    "nifty50_tri_buy_hold": {"months":321,"multiple_x":21.05689275307384,"cagr_pct":12.065693635682685,"max_monthly_drawdown_pct":-55.93553717016426,"annualized_monthly_volatility_pct":22.525438036114476,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-50.09459743535844,"average_monthly_one_way_turnover_pct":0.0,"rebalance_count":0}
+  },
+  "interpretation_guardrail": "This report is a robustness/sensitivity study. Do not promote parameters or change the live allocator from these retrospective results alone."
+}
