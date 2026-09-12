@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-09-12T15:34:50+00:00",
+  "source_commit": "9f24a3838e94d8c8c234fcc984a6d26c5bec30ed",
+  "packet_generated_at": "2026-09-12T12:19:23+00:00",
+  "status": "healthy",
+  "checks": [
+    {
+      "name": "packet_freshness",
+      "ok": true,
+      "detail": "Packet age 3.26 hours; maximum 72 hours"
+    },
+    {
+      "name": "published_bytes",
+      "ok": true,
+      "detail": "Pinned commit API, raw source and checkout bytes match: 8712c5397eeb209d43b0c4570fdb938028cd4f5499e403c3d4d2e6c26b65fa0f"
+    },
+    {
+      "name": "refresh_workflow",
+      "ok": true,
+      "detail": "Latest completed refresh: success \u00b7 https://github.com/anuppaul007/anup-nifty-valuation/actions/runs/34693294758"
+    },
+    {
+      "name": "allocation_inputs",
+      "ok": true,
+      "detail": "Defined input gates passed"
+    }
+  ],
+  "scope": "Operational checks only; not investment validation. A delayed watchdog can also miss failures; the website checks this status age."
+}
