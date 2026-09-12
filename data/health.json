@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-09-12T15:34:50+00:00",
-  "source_commit": "9f24a3838e94d8c8c234fcc984a6d26c5bec30ed",
+  "checked_at": "2026-09-12T15:35:11+00:00",
+  "source_commit": "474eafa1c2e3dce4c5370fe1bff9370ce8ca993f",
   "packet_generated_at": "2026-09-12T12:19:23+00:00",
-  "status": "healthy",
+  "status": "attention_required",
   "checks": [
     {
       "name": "packet_freshness",
@@ -17,8 +17,8 @@
     },
     {
       "name": "refresh_workflow",
-      "ok": true,
-      "detail": "Latest completed refresh: success \u00b7 https://github.com/anuppaul007/anup-nifty-valuation/actions/runs/34693294758"
+      "ok": false,
+      "detail": "Latest completed refresh: failure \u00b7 https://github.com/anuppaul007/anup-nifty-valuation/actions/runs/34702650888"
     },
     {
       "name": "allocation_inputs",
