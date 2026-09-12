@@ -1,0 +1,29 @@
+name: Current-definition residual diagnostics
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/current_definition_special_diagnostics.py'
+      - '.github/workflows/current-definition-special-diagnostics.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt pypdf pdfplumber
+      - run: python scripts/current_definition_special_diagnostics.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: current-definition-special-diagnostics
+          path: data/current_definition_special_diagnostics.json
+          if-no-files-found: error
