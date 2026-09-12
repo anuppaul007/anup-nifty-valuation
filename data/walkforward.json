@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "model_version": "3.6",
-  "updated_at": "2026-09-12T03:05:49+00:00",
+  "updated_at": "2026-09-12T03:23:10+00:00",
   "candidate_macro_caps_pp": [
     0,
     3,
@@ -33,13 +33,15 @@
     "required_realized_12m_outcomes": 60,
     "eligible_for_parameter_change": false,
     "parameter_lock": "macroMax=6 pp, curve k=1.35 and extreme threshold zc=2.5 remain locked until prospective evidence gate is satisfied",
-    "note": "Forward returns are NIFTY price-index returns only. Candidate settings are recorded prospectively and never auto-selected from future outcomes."
+    "note": "Overlapping 12-month outcomes are not independent samples; this gate permits review, not proof or automatic deployment. No macro strategy return backtest is available. Forward returns are NIFTY price-index returns only. Candidate settings are recorded prospectively and never auto-selected from future outcomes."
   },
   "records": [
     {
+      "validation_method": "v3.7-source-gates-and-candidate-damping",
+      "research_only": true,
       "month": "2026-09",
       "asof": "2026-09-11",
-      "generated_at": "2026-09-12T03:05:49+00:00",
+      "generated_at": "2026-09-12T03:23:09+00:00",
       "nifty_level": 23398.1,
       "pe": 19.78,
       "pb": 2.83,
@@ -76,9 +78,9 @@
       },
       "candidate_extreme_targets": {
         "2.5": 81.55119558370151,
-        "3.0": 80.47004603681647,
-        "3.5": 79.93364977807653,
-        "4.0": 79.66408086689592
+        "3.0": 80.3300824038322,
+        "3.5": 79.69371212153206,
+        "4.0": 79.34916269268129
       },
       "candidate_grid_targets": {
         "k=0.60|zc=2.5": 72.90131123655414,
@@ -87,24 +89,24 @@
         "k=1.15|zc=2.5": 79.10849568993349,
         "k=1.35|zc=2.5": 81.55119558370151,
         "k=1.50|zc=2.5": 83.32671170544768,
-        "k=0.60|zc=3.0": 70.1759403581317,
-        "k=0.80|zc=3.0": 72.69677082499275,
-        "k=1.00|zc=3.0": 75.49298026649289,
-        "k=1.15|zc=3.0": 77.64864456722144,
-        "k=1.35|zc=3.0": 80.47004603681647,
-        "k=1.50|zc=3.0": 82.48122213277546,
-        "k=0.60|zc=3.5": 68.38856058673943,
-        "k=0.80|zc=3.5": 71.3040050567845,
-        "k=1.00|zc=3.5": 74.46746070337674,
-        "k=1.15|zc=3.5": 76.8594249712529,
-        "k=1.35|zc=3.5": 79.93364977807653,
-        "k=1.50|zc=3.5": 82.08917641155432,
-        "k=0.60|zc=4.0": 67.17304405566159,
-        "k=0.80|zc=4.0": 70.41902675026239,
-        "k=1.00|zc=4.0": 73.86539238781198,
-        "k=1.15|zc=4.0": 76.4250592535894,
-        "k=1.35|zc=4.0": 79.66408086689592,
-        "k=1.50|zc=4.0": 81.90558932595158
+        "k=0.60|zc=3.0": 70.03597672514742,
+        "k=0.80|zc=3.0": 72.55680719200848,
+        "k=1.00|zc=3.0": 75.35301663350862,
+        "k=1.15|zc=3.0": 77.50868093423716,
+        "k=1.35|zc=3.0": 80.3300824038322,
+        "k=1.50|zc=3.0": 82.34125849979118,
+        "k=0.60|zc=3.5": 68.14862293019496,
+        "k=0.80|zc=3.5": 71.06406740024003,
+        "k=1.00|zc=3.5": 74.22752304683227,
+        "k=1.15|zc=3.5": 76.61948731470844,
+        "k=1.35|zc=3.5": 79.69371212153206,
+        "k=1.50|zc=3.5": 81.84923875500985,
+        "k=0.60|zc=4.0": 66.85812588144697,
+        "k=0.80|zc=4.0": 70.10410857604776,
+        "k=1.00|zc=4.0": 73.55047421359735,
+        "k=1.15|zc=4.0": 76.11014107937477,
+        "k=1.35|zc=4.0": 79.34916269268129,
+        "k=1.50|zc=4.0": 81.59067115173696
       },
       "forward_nifty_price_return_6m": null,
       "forward_nifty_price_return_12m": null,
