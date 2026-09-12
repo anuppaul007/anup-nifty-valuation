@@ -1,6 +1,6 @@
 {
   "status": "complete",
-  "generated_at": "2026-09-12T07:44:32+00:00",
+  "generated_at": "2026-09-12T17:19:14+00:00",
   "start_month": "2000-01",
   "end_month": "2026-09",
   "months": 321,
@@ -61,11 +61,11 @@
     },
     "multiasset_with_btc": {
       "gross": {
-        "multiple_x": 75.2290665613134,
-        "ending_value_of_1cr_inr": 752290665.613134,
-        "cagr_pct": 17.566514302757376,
+        "multiple_x": 75.2314372882518,
+        "ending_value_of_1cr_inr": 752314372.8825179,
+        "cagr_pct": 17.56665307578622,
         "max_drawdown_pct": -33.26404270873171,
-        "annualized_volatility_pct": 16.220206249864173,
+        "annualized_volatility_pct": 16.22018412451353,
         "worst_calendar_year": 2008,
         "worst_calendar_year_return_pct": -19.08439032682605,
         "average_monthly_turnover_pct": 8.087622249061196,
@@ -73,11 +73,11 @@
         "cost_bps_per_one_way_turnover": 0
       },
       "turnover_10bps": {
-        "multiple_x": 73.31723464972328,
-        "ending_value_of_1cr_inr": 733172346.4972328,
-        "cagr_pct": 17.453209511917265,
+        "multiple_x": 73.31954522583051,
+        "ending_value_of_1cr_inr": 733195452.2583051,
+        "cagr_pct": 17.453348157058414,
         "max_drawdown_pct": -33.283169763563215,
-        "annualized_volatility_pct": 16.222639966345803,
+        "annualized_volatility_pct": 16.222617872500933,
         "worst_calendar_year": 2008,
         "worst_calendar_year_return_pct": -19.21430911436466,
         "average_monthly_turnover_pct": 8.087622249061196,
@@ -3978,7 +3978,7 @@
       "core_debt_pct": 18.50134548105795,
       "baseline_return_pct": -2.082250572310401,
       "multiasset_core_return_pct": -1.7012884383289721,
-      "multiasset_with_btc_return_pct": -1.6253073886383074
+      "multiasset_with_btc_return_pct": -1.6222072633211793
     }
   ]
 }

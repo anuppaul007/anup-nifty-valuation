@@ -2,7 +2,7 @@
   "status": "complete",
   "schema_version": 1,
   "audit_version": "multiasset-subperiod-v2",
-  "generated_at": "2026-09-12T07:45:27+00:00",
+  "generated_at": "2026-09-12T17:19:39+00:00",
   "live_model_changed": false,
   "periods": {
     "2006_05_to_2012_12": {
