@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths-ignore:
       - "data/latest.json"
+      - "data/multiasset.json"
       - "data/walkforward.json"
       - "data/retrospective.json"
       - "data/robustness.json"
@@ -40,6 +41,8 @@ jobs:
           node --test tests/model.test.cjs
       - name: Refresh live valuation inputs
         run: python scripts/update_data_v3.py
+      - name: Refresh experimental Gold Silver and BTC layer
+        run: python scripts/multiasset.py
       - name: Update prospective no-lookahead ledger
         run: python scripts/walkforward.py
       - name: Run valuation-core retrospective sensitivity
@@ -52,12 +55,12 @@ jobs:
         run: python scripts/fund_strategy_rank.py
       - name: Commit only when data changed
         run: |
-          if git diff --quiet -- data/latest.json data/walkforward.json data/retrospective.json data/robustness.json data/backtest_monthly_2000.csv data/backtest_monthly_2000.json data/fund_strategy_rank.json; then
+          if git diff --quiet -- data/latest.json data/multiasset.json data/walkforward.json data/retrospective.json data/robustness.json data/backtest_monthly_2000.csv data/backtest_monthly_2000.json data/fund_strategy_rank.json; then
             echo "No data change"
             exit 0
           fi
           git config user.name "anup-nifty-bot"
           git config user.email "anup-nifty-bot@users.noreply.github.com"
-          git add data/latest.json data/walkforward.json data/retrospective.json data/robustness.json data/backtest_monthly_2000.csv data/backtest_monthly_2000.json data/fund_strategy_rank.json
-          git commit -m "data: refresh valuation studies and fund research"
+          git add data/latest.json data/multiasset.json data/walkforward.json data/retrospective.json data/robustness.json data/backtest_monthly_2000.csv data/backtest_monthly_2000.json data/fund_strategy_rank.json
+          git commit -m "data: refresh valuation studies and multi-asset research"
           git push
