@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - 'scripts/current_definition_validation.py'
       - 'scripts/current_definition_anchor_validation.py'
+      - 'scripts/current_definition_anchor_validation_v2.py'
       - 'scripts/current_definition_failure_diagnostics.py'
       - '.github/workflows/current-definition-validation.yml'
       - 'tests/test_current_definition_validation.py'
@@ -27,17 +27,14 @@ jobs:
       - run: pip install -r requirements.txt pytest pypdf pdfplumber
       - name: Unit tests
         run: pytest -q tests/test_current_definition_validation.py
-      - name: Inspect official source schemas
-        run: python scripts/current_definition_validation.py
-      - name: Run all-50 anchor reconstruction
-        run: python scripts/current_definition_anchor_validation.py
-      - name: Diagnose failed XBRL contexts
+      - name: Run all-50 anchor reconstruction with controlled legacy-context recovery
+        run: python scripts/current_definition_anchor_validation_v2.py
+      - name: Diagnose remaining XBRL contexts
         run: python scripts/current_definition_failure_diagnostics.py
       - uses: actions/upload-artifact@v4
         with:
           name: current-definition-validation
           path: |
-            data/current_definition_validation.json
             data/current_definition_anchor_validation.json
             data/current_definition_failure_diagnostics.json
           if-no-files-found: error
@@ -46,5 +43,5 @@ jobs:
           python - <<'PY'
           import json
           x=json.load(open('data/current_definition_anchor_validation.json'))
-          print(json.dumps({'coverage':x['coverage'],'result':x['result'],'failed_constituents':x['failed_constituents'][:10],'live_model_changed':x['live_model_changed']},indent=2))
+          print(json.dumps({'coverage':x['coverage'],'result':x['result'],'failed_constituents':x['failed_constituents'][:15],'live_model_changed':x['live_model_changed']},indent=2))
           PY
