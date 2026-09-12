@@ -1,0 +1,47 @@
+name: Methodology and vintage audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/methodology_vintage_audit.py'
+      - 'tests/test_methodology_vintage_audit.py'
+      - 'METHODOLOGY_VINTAGE_AUDIT.md'
+      - '.github/workflows/methodology-vintage-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  methodology-vintage-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt pytest
+      - name: Unit tests
+        run: pytest -q tests/test_methodology_vintage_audit.py
+      - name: Run methodology and vintage audit
+        run: python scripts/methodology_vintage_audit.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: methodology-vintage-audit
+          path: data/methodology_vintage_audit.json
+          if-no-files-found: error
+      - name: Show headline result
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('data/methodology_vintage_audit.json'))
+          print(json.dumps({
+            'era_months': {k:v.get('months') for k,v in x['methodology_eras'].items()},
+            'breaks': {b['id']: b['allocation_jump_pp'] for b in (x.get('published_break_impacts') or [])},
+            'oecd_vintage_status': x['oecd_10y_alfred_sample']['status'],
+            'full_current_definition_history_starts': x['core_conclusions']['fully_current_ratio_definition_history_starts'],
+            'live_model_changed': x['live_model_changed'],
+          }, indent=2))
+          PY
