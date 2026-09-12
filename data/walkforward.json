@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_version": "3.6",
-  "updated_at": "2026-09-12T01:17:42+00:00",
+  "updated_at": "2026-09-12T01:22:15+00:00",
   "candidate_macro_caps_pp": [
     0,
     3,
@@ -9,6 +9,14 @@
     9,
     12,
     15
+  ],
+  "candidate_curve_slopes": [
+    0.6,
+    0.8,
+    1.0,
+    1.15,
+    1.35,
+    1.5
   ],
   "validation": {
     "status": "collecting_prospective_data",
@@ -18,22 +26,23 @@
     "required_signal_months": 84,
     "required_realized_12m_outcomes": 60,
     "eligible_for_parameter_change": false,
-    "parameter_lock": "macroMax remains 6 pp until prospective evidence gate is satisfied",
-    "note": "Forward returns are NIFTY price-index returns only. They are not debt-relative portfolio returns and are not used to auto-optimize the live model."
+    "parameter_lock": "macroMax=6 pp and allocation-curve k=1.35 remain locked until prospective evidence gate is satisfied",
+    "note": "Forward returns are NIFTY price-index returns only. Candidate settings are recorded prospectively and never auto-selected from future outcomes."
   },
   "records": [
     {
       "month": "2026-09",
       "asof": "2026-09-11",
-      "generated_at": "2026-09-12T01:17:42+00:00",
+      "generated_at": "2026-09-12T01:22:14+00:00",
       "nifty_level": 23398.1,
       "pe": 19.78,
       "pb": 2.83,
-      "div_yield": 1.21,
+      "dividend_yield": 1.21,
       "gsec10": 6.9711,
       "valuation_z": -1.052253981639432,
       "core_equity": 82.70661126795997,
       "valuation_damping": 0.5790984073442271,
+      "empirical_valuation_cheapness": 73.4375,
       "earnings_score": -0.2928771334450563,
       "macro_score": -0.039655780248963414,
       "domestic_score": 0.057009151848864285,
@@ -50,6 +59,14 @@
         "9": 81.48230178614902,
         "12": 81.41340798859652,
         "15": 81.34451419104401
+      },
+      "candidate_curve_targets": {
+        "0.6": 72.90131123655414,
+        "0.8": 74.95361497892512,
+        "1.0": 77.27935297221077,
+        "1.15": 79.10849568993349,
+        "1.35": 81.55119558370151,
+        "1.5": 83.32671170544768
       },
       "forward_nifty_price_return_6m": null,
       "forward_nifty_price_return_12m": null,
