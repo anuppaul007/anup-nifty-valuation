@@ -2974,6 +2974,11 @@
         "error": "no regular-growth match"
       },
       {
+        "query": "HDFC ELSS Tax saver",
+        "selected": "HDFC ELSS - Tax Saver Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
         "query": "HDFC Flexi Cap Fund",
         "selected": "HDFC Flexi Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
@@ -2981,11 +2986,6 @@
       {
         "query": "Franklin India Flexi Cap Fund",
         "selected": "Franklin India Flexi Cap Fund - Regular Plan - Growth",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
-        "query": "HDFC ELSS Tax saver",
-        "selected": "HDFC ELSS - Tax Saver Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -3003,17 +3003,17 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
+        "query": "Tata Mid Cap Growth Fund",
+        "selected": "Tata Mid Cap Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
         "query": "Kotak Bluechip Fund",
         "error": "no regular-growth match"
       },
       {
         "query": "ICICI Prudential Multicap Fund",
         "error": "no regular-growth match"
-      },
-      {
-        "query": "Tata Mid Cap Growth Fund",
-        "selected": "Tata Mid Cap Fund - Regular Plan - Growth Option",
-        "error": "no NAV close enough to Jan-2000"
       },
       {
         "query": "UTI Mastershare Unit Scheme",
@@ -3028,13 +3028,13 @@
         "error": "no regular-growth match"
       },
       {
-        "query": "Taurus Starshare",
-        "error": "no regular-growth match"
-      },
-      {
         "query": "Tata ELSS Tax Saver Fund",
         "selected": "Tata ELSS - Tax Saver Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "Taurus Starshare",
+        "error": "no regular-growth match"
       },
       {
         "query": "HSBC Value Fund",
