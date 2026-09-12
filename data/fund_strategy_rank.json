@@ -1,0 +1,3066 @@
+{
+  "status": "complete",
+  "generated_on": "2026-09-12",
+  "basis": {
+    "rebalancing": "monthly using backtest_monthly_2000.csv",
+    "taxes_loads_slippage": "excluded",
+    "fund_plan": "regular growth",
+    "pre_inception_equity": "NIFTY 50 TRI proxy",
+    "pre_inception_debt": "prior-month India short-term-rate proxy",
+    "ranking_scope": "screened major surviving regular-growth equity funds with NAV near Jan-2000"
+  },
+  "strategy": {
+    "start_value_inr": 10000000.0,
+    "start_date": "2000-01-01",
+    "end_date": "2026-09-11",
+    "ending_value_inr": 389801815.97503555,
+    "multiple_x": 38.98018159750355,
+    "cagr_pct": 14.708139192260216,
+    "months_used": 321,
+    "source_month_counts": {
+      "equity_fund": 246,
+      "equity_tri_proxy": 75,
+      "debt_fund": 246,
+      "debt_rate_proxy": 75
+    },
+    "equity_fund": {
+      "scheme_code": 101349,
+      "name": "ICICI Prudential Nifty 50 Index Fund - Regular Plan - Cumulative",
+      "nav_first_date": "2006-04-02",
+      "nav_last_date": "2026-09-11"
+    },
+    "debt_fund": {
+      "scheme_code": 101758,
+      "name": "ICICI Prudential Short Term Fund - Regular Plan - Growth",
+      "nav_first_date": "2006-04-02",
+      "nav_last_date": "2026-09-11"
+    },
+    "strict_actual_funds": {
+      "start_month": "2006-04",
+      "months": 246,
+      "ending_value_inr": 109758293.0627164,
+      "multiple_x": 10.97582930627164,
+      "cagr_pct": 12.430817668459149
+    },
+    "timeline": [
+      {
+        "month": "2000-01",
+        "equity_weight_pct": 7.000000000000001,
+        "equity_return_pct": -2.6823576792779136,
+        "debt_return_pct": 0.5591466326546835,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10033224.13308194
+      },
+      {
+        "month": "2000-02",
+        "equity_weight_pct": 12.0,
+        "equity_return_pct": 10.572376228585334,
+        "debt_return_pct": 0.4574785512881707,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10200906.024068873
+      },
+      {
+        "month": "2000-03",
+        "equity_weight_pct": 2.0,
+        "equity_return_pct": -10.274262880668395,
+        "debt_return_pct": 0.7384260582120161,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10253764.291336752
+      },
+      {
+        "month": "2000-04",
+        "equity_weight_pct": 17.0,
+        "equity_return_pct": -12.62851183903816,
+        "debt_return_pct": 1.2822575328109487,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10142759.780933948
+      },
+      {
+        "month": "2000-05",
+        "equity_weight_pct": 89.0,
+        "equity_return_pct": 1.1942457155293962,
+        "debt_return_pct": 0.5685468810401773,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10256908.310783412
+      },
+      {
+        "month": "2000-06",
+        "equity_weight_pct": 49.0,
+        "equity_return_pct": 10.938432292172573,
+        "debt_return_pct": 0.5677638960706055,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10836361.207840856
+      },
+      {
+        "month": "2000-07",
+        "equity_weight_pct": 24.0,
+        "equity_return_pct": -11.204502814258921,
+        "debt_return_pct": 0.6052717489626547,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10594810.68176689
+      },
+      {
+        "month": "2000-08",
+        "equity_weight_pct": 65.0,
+        "equity_return_pct": 7.651566373675922,
+        "debt_return_pct": 0.6604716091847873,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 11146237.014039328
+      },
+      {
+        "month": "2000-09",
+        "equity_weight_pct": 43.0,
+        "equity_return_pct": -10.13228828640218,
+        "debt_return_pct": 1.0786505700144389,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10729138.902059278
+      },
+      {
+        "month": "2000-10",
+        "equity_weight_pct": 79.0,
+        "equity_return_pct": -6.3293074453447336,
+        "debt_return_pct": 0.811148846743448,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10210941.704211846
+      },
+      {
+        "month": "2000-11",
+        "equity_weight_pct": 91.0,
+        "equity_return_pct": 6.285994077735535,
+        "debt_return_pct": 0.6627966804368057,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10801124.568286046
+      },
+      {
+        "month": "2000-12",
+        "equity_weight_pct": 80.0,
+        "equity_return_pct": -1.7118204087601785,
+        "debt_return_pct": 0.6480612418017673,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10667207.46489878
+      },
+      {
+        "month": "2001-01",
+        "equity_weight_pct": 83.0,
+        "equity_return_pct": 8.363712113321519,
+        "debt_return_pct": 0.7345825030471209,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 11421033.423633678
+      },
+      {
+        "month": "2001-02",
+        "equity_weight_pct": 44.0,
+        "equity_return_pct": -0.08101279727575905,
+        "debt_return_pct": 0.7813640420600843,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 11466936.639332
+      },
+      {
+        "month": "2001-03",
+        "equity_weight_pct": 64.0,
+        "equity_return_pct": -16.195770176861025,
+        "debt_return_pct": 0.6488373830854322,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10305139.706275064
+      },
+      {
+        "month": "2001-04",
+        "equity_weight_pct": 95.0,
+        "equity_return_pct": 0.0967474808759583,
+        "debt_return_pct": 0.9661385325855365,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10319589.26746526
+      },
+      {
+        "month": "2001-05",
+        "equity_weight_pct": 99.0,
+        "equity_return_pct": 1.1770487774910965,
+        "debt_return_pct": 0.6068312425728806,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10440467.425704716
+      },
+      {
+        "month": "2001-06",
+        "equity_weight_pct": 98.0,
+        "equity_return_pct": -3.8697559948834948,
+        "debt_return_pct": 0.5567950594939086,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10045689.864022939
+      },
+      {
+        "month": "2001-07",
+        "equity_weight_pct": 99.0,
+        "equity_return_pct": -3.21958531943205,
+        "debt_return_pct": 0.5912243269630357,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9726088.529109035
+      },
+      {
+        "month": "2001-08",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -1.184312428754175,
+        "debt_return_pct": 0.5654145387405274,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9610901.253827162
+      },
+      {
+        "month": "2001-09",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -13.02242026101198,
+        "debt_return_pct": 0.5638479650491801,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 8359329.301682919
+      },
+      {
+        "month": "2001-10",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 9.291282778171507,
+        "debt_return_pct": 0.6449560181262415,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9136018.22546083
+      },
+      {
+        "month": "2001-11",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 7.198903165442294,
+        "debt_return_pct": 0.6875607554133634,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9793711.330688914
+      },
+      {
+        "month": "2001-12",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -0.9479942619125881,
+        "debt_return_pct": 0.5285288923099429,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9700867.509245701
+      },
+      {
+        "month": "2002-01",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 2.528332504514874,
+        "debt_return_pct": 0.6441795475137013,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9946137.695701882
+      },
+      {
+        "month": "2002-02",
+        "equity_weight_pct": 96.0,
+        "equity_return_pct": 9.059811604931966,
+        "debt_return_pct": 0.5340319419983031,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10813319.601503294
+      },
+      {
+        "month": "2002-03",
+        "equity_weight_pct": 89.0,
+        "equity_return_pct": -3.314451570619359,
+        "debt_return_pct": 0.5779374741892163,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10501215.971565573
+      },
+      {
+        "month": "2002-04",
+        "equity_weight_pct": 93.0,
+        "equity_return_pct": -3.8549686082732126,
+        "debt_return_pct": 0.7981776278479069,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10130601.977875696
+      },
+      {
+        "month": "2002-05",
+        "equity_weight_pct": 95.0,
+        "equity_return_pct": -4.741440813825637,
+        "debt_return_pct": 0.5301015303724066,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9676967.429659765
+      },
+      {
+        "month": "2002-06",
+        "equity_weight_pct": 99.0,
+        "equity_return_pct": 2.919148486236911,
+        "debt_return_pct": 0.4946515448805977,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9957106.300102834
+      },
+      {
+        "month": "2002-07",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -9.84375668849793,
+        "debt_return_pct": 0.43923222705009035,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 8976952.982705612
+      },
+      {
+        "month": "2002-08",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 6.184774041611685,
+        "debt_return_pct": 0.4654003787317951,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9532157.240507673
+      },
+      {
+        "month": "2002-09",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -5.640314791629397,
+        "debt_return_pct": 0.4622324722702187,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 8994513.565709947
+      },
+      {
+        "month": "2002-10",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -0.15543108432137798,
+        "debt_return_pct": 0.4638165628538804,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 8980533.29574533
+      },
+      {
+        "month": "2002-11",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 12.252607998177488,
+        "debt_return_pct": 0.44875659696987924,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10080882.836618815
+      },
+      {
+        "month": "2002-12",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 3.0814243554292853,
+        "debt_return_pct": 0.43843808093919634,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10391517.615588678
+      },
+      {
+        "month": "2003-01",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -4.038523063797673,
+        "debt_return_pct": 0.4590634665871063,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9971853.780004531
+      },
+      {
+        "month": "2003-02",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 0.33425088478176157,
+        "debt_return_pct": 0.49623002383452075,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10005184.78949334
+      },
+      {
+        "month": "2003-03",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -7.01292504835177,
+        "debt_return_pct": 0.5214486701150101,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9303528.67925708
+      },
+      {
+        "month": "2003-04",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -4.45857538162694,
+        "debt_return_pct": 0.5167254725905179,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 8888723.839941122
+      },
+      {
+        "month": "2003-05",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 8.523860672088368,
+        "debt_return_pct": 0.3922590062980902,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 9646386.275584405
+      },
+      {
+        "month": "2003-06",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 12.162424885118428,
+        "debt_return_pct": 0.4042242847743793,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 10819620.760480732
+      },
+      {
+        "month": "2003-07",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 6.2896401755395015,
+        "debt_return_pct": 0.3994400555316968,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 11500135.97467294
+      },
+      {
+        "month": "2003-08",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 15.643485093324227,
+        "debt_return_pct": 0.4026298203094747,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 13299158.031582918
+      },
+      {
+        "month": "2003-09",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 3.486314979809002,
+        "debt_return_pct": 0.3530627382636986,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 13762808.570226464
+      },
+      {
+        "month": "2003-10",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 12.861027321321284,
+        "debt_return_pct": 0.3786793663815624,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 15532847.140624437
+      },
+      {
+        "month": "2003-11",
+        "equity_weight_pct": 98.0,
+        "equity_return_pct": 3.516214540126117,
+        "debt_return_pct": 0.36668052630131065,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 16069231.124198452
+      },
+      {
+        "month": "2003-12",
+        "equity_weight_pct": 95.0,
+        "equity_return_pct": 15.44109850493054,
+        "debt_return_pct": 0.35145930840192463,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 18429257.481156
+      },
+      {
+        "month": "2004-01",
+        "equity_weight_pct": 68.0,
+        "equity_return_pct": -7.416014144986094,
+        "debt_return_pct": 0.35947364110451296,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 17521089.832182195
+      },
+      {
+        "month": "2004-02",
+        "equity_weight_pct": 86.0,
+        "equity_return_pct": 4.769416211550759,
+        "debt_return_pct": 0.3522610585598107,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 18248392.80994513
+      },
+      {
+        "month": "2004-03",
+        "equity_weight_pct": 60.0,
+        "equity_return_pct": -1.7726265553093645,
+        "debt_return_pct": 0.35145930840192463,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 18079961.565891095
+      },
+      {
+        "month": "2004-04",
+        "equity_weight_pct": 78.0,
+        "equity_return_pct": -2.890566256000915,
+        "debt_return_pct": 0.35947364110451296,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 17686621.609909523
+      },
+      {
+        "month": "2004-05",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -14.331094797762455,
+        "debt_return_pct": 0.3410301391423509,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 15151935.100471849
+      },
+      {
+        "month": "2004-06",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 2.2120766173420403,
+        "debt_return_pct": 0.3586725245666944,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 15487107.513904227
+      },
+      {
+        "month": "2004-07",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 6.926809359695252,
+        "debt_return_pct": 0.3362126519063313,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 16559869.926723411
+      },
+      {
+        "month": "2004-08",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 0.0,
+        "debt_return_pct": 0.3474495003497502,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 16559869.926723411
+      },
+      {
+        "month": "2004-09",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 8.936788311881095,
+        "debt_return_pct": 0.3562687527984387,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 18039790.446797542
+      },
+      {
+        "month": "2004-10",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 1.3148802398123438,
+        "debt_return_pct": 0.39545128129423457,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 18276992.086686037
+      },
+      {
+        "month": "2004-11",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 9.163960883014077,
+        "debt_return_pct": 0.39385528336748354,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 19951888.492101524
+      },
+      {
+        "month": "2004-12",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 8.194478055219445,
+        "debt_return_pct": 0.3914607630530309,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 21586841.616188638
+      },
+      {
+        "month": "2005-01",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -2.5343738689461826,
+        "debt_return_pct": 0.44240812097819937,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 21039750.343137152
+      },
+      {
+        "month": "2005-02",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 1.2237813299285971,
+        "debt_return_pct": 0.4432019218941319,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 21297230.879700053
+      },
+      {
+        "month": "2005-03",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -0.7852431986809627,
+        "debt_return_pct": 0.4273127766158069,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 21129995.82270983
+      },
+      {
+        "month": "2005-04",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -7.285153409917111,
+        "debt_return_pct": 0.4273127766158069,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 19590643.21151634
+      },
+      {
+        "month": "2005-05",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 9.074654956085325,
+        "debt_return_pct": 0.4026298203094747,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 21368426.4866392
+      },
+      {
+        "month": "2005-06",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 6.393712691702502,
+        "debt_return_pct": 0.4082092278075322,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 22734662.282932572
+      },
+      {
+        "month": "2005-07",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 4.951848448106766,
+        "debt_return_pct": 0.45510066248739545,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 23860448.304372285
+      },
+      {
+        "month": "2005-08",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 4.228875856334491,
+        "debt_return_pct": 0.26202404401427515,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 24869477.041929055
+      },
+      {
+        "month": "2005-09",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 9.424904338985929,
+        "debt_return_pct": 0.4098027180359898,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 27213401.462736934
+      },
+      {
+        "month": "2005-10",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -9.206689204882712,
+        "debt_return_pct": 0.41059935884708576,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 24707948.167985737
+      },
+      {
+        "month": "2005-11",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 13.08784446370963,
+        "debt_return_pct": 0.4376438657516468,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 27941685.994385704
+      },
+      {
+        "month": "2005-12",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 5.3341627708239026,
+        "debt_return_pct": 0.43923222705009035,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 29432141.006238744
+      },
+      {
+        "month": "2006-01",
+        "equity_weight_pct": 97.0,
+        "equity_return_pct": 4.873742043631024,
+        "debt_return_pct": 0.5025412138836227,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 30827991.49704425
+      },
+      {
+        "month": "2006-02",
+        "equity_weight_pct": 94.0,
+        "equity_return_pct": 5.138137574444124,
+        "debt_return_pct": 0.5966897775609548,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 32327973.88316037
+      },
+      {
+        "month": "2006-03",
+        "equity_weight_pct": 87.0,
+        "equity_return_pct": 11.24970243891883,
+        "debt_return_pct": 0.5371750547560561,
+        "equity_source": "NIFTY 50 TRI proxy",
+        "debt_source": "India short-term-rate proxy (prior month)",
+        "end_value": 35514566.1524001
+      },
+      {
+        "month": "2006-04",
+        "equity_weight_pct": 57.99999999999999,
+        "equity_return_pct": 3.7016049787094607,
+        "debt_return_pct": 0.7194352884514199,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 36384351.15774653
+      },
+      {
+        "month": "2006-05",
+        "equity_weight_pct": 57.99999999999999,
+        "equity_return_pct": -18.111439951232,
+        "debt_return_pct": 0.5357222911280823,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 32644173.822476193
+      },
+      {
+        "month": "2006-06",
+        "equity_weight_pct": 98.0,
+        "equity_return_pct": 7.323536218467952,
+        "debt_return_pct": 0.5655679833525218,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 34990760.0576341
+      },
+      {
+        "month": "2006-07",
+        "equity_weight_pct": 88.0,
+        "equity_return_pct": 0.6986598238255981,
+        "debt_return_pct": 0.4995713736734686,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 35226866.93278058
+      },
+      {
+        "month": "2006-08",
+        "equity_weight_pct": 95.0,
+        "equity_return_pct": 9.340057318043748,
+        "debt_return_pct": 0.5897405729748728,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 38362953.373854175
+      },
+      {
+        "month": "2006-09",
+        "equity_weight_pct": 79.0,
+        "equity_return_pct": 3.8147806019695807,
+        "debt_return_pct": 0.6491512785648634,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 39571385.80822397
+      },
+      {
+        "month": "2006-10",
+        "equity_weight_pct": 62.0,
+        "equity_return_pct": 5.323410302847376,
+        "debt_return_pct": 0.5447335163637934,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 40959357.358789615
+      },
+      {
+        "month": "2006-11",
+        "equity_weight_pct": 69.0,
+        "equity_return_pct": 5.880070093946177,
+        "debt_return_pct": 0.6277450300508525,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 42700887.517820835
+      },
+      {
+        "month": "2006-12",
+        "equity_weight_pct": 47.0,
+        "equity_return_pct": 0.25939167014403797,
+        "debt_return_pct": 0.4515401899483962,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 42855136.09847331
+      },
+      {
+        "month": "2007-01",
+        "equity_weight_pct": 46.0,
+        "equity_return_pct": 3.119270183016676,
+        "debt_return_pct": 0.6567569499035253,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 43622034.346037686
+      },
+      {
+        "month": "2007-02",
+        "equity_weight_pct": 63.0,
+        "equity_return_pct": -7.8475434156557995,
+        "debt_return_pct": 0.24281322551100715,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 41504572.17844898
+      },
+      {
+        "month": "2007-03",
+        "equity_weight_pct": 85.0,
+        "equity_return_pct": -4.205236866403106,
+        "debt_return_pct": 0.8258316748234629,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 40072425.12906405
+      },
+      {
+        "month": "2007-04",
+        "equity_weight_pct": 93.0,
+        "equity_return_pct": 14.23099023175638,
+        "debt_return_pct": 0.854892980324129,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 45399919.17587008
+      },
+      {
+        "month": "2007-05",
+        "equity_weight_pct": 64.0,
+        "equity_return_pct": 3.5381644706951487,
+        "debt_return_pct": 0.8086422332734378,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 46560130.66559136
+      },
+      {
+        "month": "2007-06",
+        "equity_weight_pct": 52.0,
+        "equity_return_pct": 0.6002335112093249,
+        "debt_return_pct": 0.9638304487511684,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 46920859.95313256
+      },
+      {
+        "month": "2007-07",
+        "equity_weight_pct": 52.0,
+        "equity_return_pct": 0.6750634170152425,
+        "debt_return_pct": 0.9559980838979021,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 47300877.65519686
+      },
+      {
+        "month": "2007-08",
+        "equity_weight_pct": 67.0,
+        "equity_return_pct": 3.7709961856768004,
+        "debt_return_pct": 0.5870111911717713,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 48587594.50791847
+      },
+      {
+        "month": "2007-09",
+        "equity_weight_pct": 59.0,
+        "equity_return_pct": 13.348128965556661,
+        "debt_return_pct": 0.8093373676655968,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 52575287.42480888
+      },
+      {
+        "month": "2007-10",
+        "equity_weight_pct": 24.0,
+        "equity_return_pct": 15.633660761269951,
+        "debt_return_pct": 0.808187494150836,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 54870882.76653631
+      },
+      {
+        "month": "2007-11",
+        "equity_weight_pct": 2.0,
+        "equity_return_pct": -0.15548501844963036,
+        "debt_return_pct": 0.6352658766735519,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 55210780.921048895
+      },
+      {
+        "month": "2007-12",
+        "equity_weight_pct": 2.0,
+        "equity_return_pct": 4.649974741815788,
+        "debt_return_pct": 0.9086655991987325,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 55753774.414213635
+      },
+      {
+        "month": "2008-01",
+        "equity_weight_pct": 0.0,
+        "equity_return_pct": -13.031374819207798,
+        "debt_return_pct": 0.8175525662792227,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 56209590.82773457
+      },
+      {
+        "month": "2008-02",
+        "equity_weight_pct": 21.0,
+        "equity_return_pct": -6.944983494631063,
+        "debt_return_pct": 0.18589046064563242,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 55472349.72978374
+      },
+      {
+        "month": "2008-03",
+        "equity_weight_pct": 45.0,
+        "equity_return_pct": -3.550358219999783,
+        "debt_return_pct": 0.36333309628326926,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 54696941.69519734
+      },
+      {
+        "month": "2008-04",
+        "equity_weight_pct": 53.0,
+        "equity_return_pct": 10.070631123262697,
+        "debt_return_pct": 0.7498019208842965,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 57809110.92728983
+      },
+      {
+        "month": "2008-05",
+        "equity_weight_pct": 23.0,
+        "equity_return_pct": -9.44558738419815,
+        "debt_return_pct": 0.5198043540807662,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 56784597.199151516
+      },
+      {
+        "month": "2008-06",
+        "equity_weight_pct": 63.0,
+        "equity_return_pct": -17.957683237738475,
+        "debt_return_pct": 0.17809665559922472,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 50397781.04400408
+      },
+      {
+        "month": "2008-07",
+        "equity_weight_pct": 98.0,
+        "equity_return_pct": 14.595528969581872,
+        "debt_return_pct": 0.6133411217920104,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 57612669.52797433
+      },
+      {
+        "month": "2008-08",
+        "equity_weight_pct": 87.0,
+        "equity_return_pct": -1.4000119086605811,
+        "debt_return_pct": 0.7717841276252191,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 56968745.151202336
+      },
+      {
+        "month": "2008-09",
+        "equity_weight_pct": 89.0,
+        "equity_return_pct": -8.875385292822536,
+        "debt_return_pct": 0.9612554559857767,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 52528968.710506044
+      },
+      {
+        "month": "2008-10",
+        "equity_weight_pct": 98.0,
+        "equity_return_pct": -22.539983211469227,
+        "debt_return_pct": 0.21771222289761472,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 40928035.63627908
+      },
+      {
+        "month": "2008-11",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -11.910609825219321,
+        "debt_return_pct": 2.756029782203706,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 36053257.00251516
+      },
+      {
+        "month": "2008-12",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 13.419475458397256,
+        "debt_return_pct": 7.166949754857677,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 40891414.97792057
+      },
+      {
+        "month": "2009-01",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -9.267782725352514,
+        "debt_return_pct": -0.7587466629197737,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 37101687.48444463
+      },
+      {
+        "month": "2009-02",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": -3.396029052643179,
+        "debt_return_pct": 0.9474727452923659,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 35841703.398452014
+      },
+      {
+        "month": "2009-03",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 15.340245297381339,
+        "debt_return_pct": 0.7915937345720714,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 41339908.618534416
+      },
+      {
+        "month": "2009-04",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 19.309254409802847,
+        "debt_return_pct": 1.6358768555986503,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 49322336.74646724
+      },
+      {
+        "month": "2009-05",
+        "equity_weight_pct": 98.0,
+        "equity_return_pct": 24.149702122121063,
+        "debt_return_pct": -0.19003494014171451,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 60993435.60886745
+      },
+      {
+        "month": "2009-06",
+        "equity_weight_pct": 70.0,
+        "equity_return_pct": -4.16323165704865,
+        "debt_return_pct": 1.0759886091159965,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 59412811.72071245
+      },
+      {
+        "month": "2009-07",
+        "equity_weight_pct": 74.0,
+        "equity_return_pct": 8.535272546460316,
+        "debt_return_pct": 0.045599635202919764,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 63172429.249148466
+      },
+      {
+        "month": "2009-08",
+        "equity_weight_pct": 61.0,
+        "equity_return_pct": -1.8957476245888172,
+        "debt_return_pct": -0.1546425315796407,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 62403799.79164615
+      },
+      {
+        "month": "2009-09",
+        "equity_weight_pct": 66.0,
+        "equity_return_pct": 9.748762491827767,
+        "debt_return_pct": 0.8510360793648308,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 66599541.43121924
+      },
+      {
+        "month": "2009-10",
+        "equity_weight_pct": 39.0,
+        "equity_return_pct": -10.153776764135202,
+        "debt_return_pct": 0.5275438227797524,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 64176536.091462605
+      },
+      {
+        "month": "2009-11",
+        "equity_weight_pct": 77.0,
+        "equity_return_pct": 12.00622297575691,
+        "debt_return_pct": 0.8555071935504754,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 70235801.19088316
+      },
+      {
+        "month": "2009-12",
+        "equity_weight_pct": 40.0,
+        "equity_return_pct": 2.0728992471602092,
+        "debt_return_pct": 0.18548832858540365,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 70896335.67675078
+      },
+      {
+        "month": "2010-01",
+        "equity_weight_pct": 33.0,
+        "equity_return_pct": -6.4397469833103465,
+        "debt_return_pct": 0.3734728197728465,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 69567107.57066208
+      },
+      {
+        "month": "2010-02",
+        "equity_weight_pct": 62.0,
+        "equity_return_pct": 2.302522347815694,
+        "debt_return_pct": 0.003171163552750933,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 70561060.76672783
+      },
+      {
+        "month": "2010-03",
+        "equity_weight_pct": 57.99999999999999,
+        "equity_return_pct": 5.359395658731558,
+        "debt_return_pct": 0.909038058041034,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 73023814.99121162
+      },
+      {
+        "month": "2010-04",
+        "equity_weight_pct": 41.0,
+        "equity_return_pct": -1.435642547598015,
+        "debt_return_pct": 0.7730541399772806,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 72927050.03720121
+      },
+      {
+        "month": "2010-05",
+        "equity_weight_pct": 46.0,
+        "equity_return_pct": -4.63804959366535,
+        "debt_return_pct": 0.2219253977246094,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 71458544.94191255
+      },
+      {
+        "month": "2010-06",
+        "equity_weight_pct": 64.0,
+        "equity_return_pct": 6.360430205269618,
+        "debt_return_pct": 0.5118391984815895,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 74499061.32674457
+      },
+      {
+        "month": "2010-07",
+        "equity_weight_pct": 47.0,
+        "equity_return_pct": 3.5461736004108957,
+        "debt_return_pct": -0.14497913022841757,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 75683494.07974224
+      },
+      {
+        "month": "2010-08",
+        "equity_weight_pct": 38.0,
+        "equity_return_pct": 0.7731974103739825,
+        "debt_return_pct": 0.31363025731114824,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 76053030.67901729
+      },
+      {
+        "month": "2010-09",
+        "equity_weight_pct": 42.0,
+        "equity_return_pct": 12.292580546083155,
+        "debt_return_pct": 0.4882898010270642,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 80194948.63314164
+      },
+      {
+        "month": "2010-10",
+        "equity_weight_pct": 15.0,
+        "equity_return_pct": -0.3380421956612034,
+        "debt_return_pct": 0.20605346113433676,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 80294742.51558277
+      },
+      {
+        "month": "2010-11",
+        "equity_weight_pct": 18.0,
+        "equity_return_pct": -2.641204049857937,
+        "debt_return_pct": 0.2670117700015906,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 80088812.9360082
+      },
+      {
+        "month": "2010-12",
+        "equity_weight_pct": 31.0,
+        "equity_return_pct": 3.344042847694806,
+        "debt_return_pct": 0.31272478688288974,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 81091871.96745728
+      },
+      {
+        "month": "2011-01",
+        "equity_weight_pct": 22.0,
+        "equity_return_pct": -12.128174461626696,
+        "debt_return_pct": 0.2603848814028309,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 79092877.71227345
+      },
+      {
+        "month": "2011-02",
+        "equity_weight_pct": 70.0,
+        "equity_return_pct": 2.0026027468132312,
+        "debt_return_pct": 0.4382583289372022,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 80305608.34864423
+      },
+      {
+        "month": "2011-03",
+        "equity_weight_pct": 65.0,
+        "equity_return_pct": 5.298570063010866,
+        "debt_return_pct": 1.140862995434544,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 83392052.08763415
+      },
+      {
+        "month": "2011-04",
+        "equity_weight_pct": 50.0,
+        "equity_return_pct": -2.1405373760353896,
+        "debt_return_pct": 0.5867167331612189,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 82744170.62770712
+      },
+      {
+        "month": "2011-05",
+        "equity_weight_pct": 62.0,
+        "equity_return_pct": -1.7604507238502265,
+        "debt_return_pct": 0.36288360917782203,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 81955135.72268441
+      },
+      {
+        "month": "2011-06",
+        "equity_weight_pct": 72.0,
+        "equity_return_pct": 0.9435016707842081,
+        "debt_return_pct": 0.9872732758577918,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 82738428.2594583
+      },
+      {
+        "month": "2011-07",
+        "equity_weight_pct": 72.0,
+        "equity_return_pct": -1.7448941799951934,
+        "debt_return_pct": 0.8635003355063731,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 81899010.73512046
+      },
+      {
+        "month": "2011-08",
+        "equity_weight_pct": 81.0,
+        "equity_return_pct": -8.166723013014055,
+        "debt_return_pct": 0.8609638132975883,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 76615326.7565572
+      },
+      {
+        "month": "2011-09",
+        "equity_weight_pct": 95.0,
+        "equity_return_pct": -3.5551220585559484,
+        "debt_return_pct": 0.6225175128186544,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 74051593.98521611
+      },
+      {
+        "month": "2011-10",
+        "equity_weight_pct": 98.0,
+        "equity_return_pct": 8.209916220419933,
+        "debt_return_pct": 0.6392405668953938,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 80019043.69135018
+      },
+      {
+        "month": "2011-11",
+        "equity_weight_pct": 90.0,
+        "equity_return_pct": -5.918546495480104,
+        "debt_return_pct": 0.7925489935055596,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 75820094.82838905
+      },
+      {
+        "month": "2011-12",
+        "equity_weight_pct": 96.0,
+        "equity_return_pct": -5.9652767153160475,
+        "debt_return_pct": 0.8872599657548941,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 71505040.35845013
+      },
+      {
+        "month": "2012-01",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 12.404614263518997,
+        "debt_return_pct": 0.7410628290365651,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 80374964.79388945
+      },
+      {
+        "month": "2012-02",
+        "equity_weight_pct": 93.0,
+        "equity_return_pct": 1.8211360235506069,
+        "debt_return_pct": 0.5898815131783364,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 81769428.80512063
+      },
+      {
+        "month": "2012-03",
+        "equity_weight_pct": 92.0,
+        "equity_return_pct": -0.6459092083107132,
+        "debt_return_pct": 0.5767331986084479,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 81321252.35188264
+      },
+      {
+        "month": "2012-04",
+        "equity_weight_pct": 93.0,
+        "equity_return_pct": -1.6131795052647502,
+        "debt_return_pct": 0.8661027212507166,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 80150527.41043323
+      },
+      {
+        "month": "2012-05",
+        "equity_weight_pct": 96.0,
+        "equity_return_pct": -7.133054770390402,
+        "debt_return_pct": 0.5557677963943242,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 74679851.66504748
+      },
+      {
+        "month": "2012-06",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 9.158239504185083,
+        "debt_return_pct": 0.8349238799084446,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 81519211.34190269
+      },
+      {
+        "month": "2012-07",
+        "equity_weight_pct": 97.0,
+        "equity_return_pct": -0.6122226308196477,
+        "debt_return_pct": 0.9396978613463558,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 81058085.68197787
+      },
+      {
+        "month": "2012-08",
+        "equity_weight_pct": 98.0,
+        "equity_return_pct": 0.36390397814136666,
+        "debt_return_pct": 0.8349663836046073,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 81360695.96374455
+      },
+      {
+        "month": "2012-09",
+        "equity_weight_pct": 97.0,
+        "equity_return_pct": 8.423709381418654,
+        "debt_return_pct": 1.0501590883050138,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 88034309.38735859
+      },
+      {
+        "month": "2012-10",
+        "equity_weight_pct": 89.0,
+        "equity_return_pct": -1.2946882286124284,
+        "debt_return_pct": 0.7540307281695302,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 87092932.86091821
+      },
+      {
+        "month": "2012-11",
+        "equity_weight_pct": 93.0,
+        "equity_return_pct": 3.7171561928628583,
+        "debt_return_pct": 0.6159373241570343,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 90141247.2356003
+      },
+      {
+        "month": "2012-12",
+        "equity_weight_pct": 92.0,
+        "equity_return_pct": 1.2372872386048117,
+        "debt_return_pct": 0.8281243950389872,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 91227047.42513241
+      },
+      {
+        "month": "2013-01",
+        "equity_weight_pct": 91.0,
+        "equity_return_pct": 0.8017982777920984,
+        "debt_return_pct": 0.8243094488390668,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 91960352.58516952
+      },
+      {
+        "month": "2013-02",
+        "equity_weight_pct": 92.0,
+        "equity_return_pct": -4.635900150393146,
+        "debt_return_pct": 0.4113241081630026,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 88068478.07928617
+      },
+      {
+        "month": "2013-03",
+        "equity_weight_pct": 96.0,
+        "equity_return_pct": -0.34091100872529756,
+        "debt_return_pct": 1.0696133714314549,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 87817932.03647871
+      },
+      {
+        "month": "2013-04",
+        "equity_weight_pct": 97.0,
+        "equity_return_pct": 4.98420386144558,
+        "debt_return_pct": 1.4289884079726534,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 92101293.29536211
+      },
+      {
+        "month": "2013-05",
+        "equity_weight_pct": 94.0,
+        "equity_return_pct": -0.6305247083957743,
+        "debt_return_pct": 1.1313603045464138,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 91617935.01738061
+      },
+      {
+        "month": "2013-06",
+        "equity_weight_pct": 95.0,
+        "equity_return_pct": -0.4891510199664495,
+        "debt_return_pct": -0.006910597197562485,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 91191875.88962889
+      },
+      {
+        "month": "2013-07",
+        "equity_weight_pct": 95.0,
+        "equity_return_pct": -2.5130592077836855,
+        "debt_return_pct": -1.7867161011781318,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 88933288.35104933
+      },
+      {
+        "month": "2013-08",
+        "equity_weight_pct": 98.0,
+        "equity_return_pct": -2.867326202512588,
+        "debt_return_pct": -0.27816066261843186,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 86429333.47251323
+      },
+      {
+        "month": "2013-09",
+        "equity_weight_pct": 100.0,
+        "equity_return_pct": 4.497436025044466,
+        "debt_return_pct": 1.6603366332523795,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 90316437.45231186
+      },
+      {
+        "month": "2013-10",
+        "equity_weight_pct": 99.0,
+        "equity_return_pct": 9.131990174510518,
+        "debt_return_pct": 1.6128044423575627,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 98496215.03963788
+      },
+      {
+        "month": "2013-11",
+        "equity_weight_pct": 95.0,
+        "equity_return_pct": -1.528246117281351,
+        "debt_return_pct": 0.3041809816567209,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 97081194.02441625
+      },
+      {
+        "month": "2013-12",
+        "equity_weight_pct": 94.0,
+        "equity_return_pct": 1.287934055594575,
+        "debt_return_pct": 0.5664564822010831,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 98289510.64126243
+      },
+      {
+        "month": "2014-01",
+        "equity_weight_pct": 93.0,
+        "equity_return_pct": -4.687731391106508,
+        "debt_return_pct": 0.6672349782501419,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 94050398.31352812
+      },
+      {
+        "month": "2014-02",
+        "equity_weight_pct": 98.0,
+        "equity_return_pct": 3.5508213624871,
+        "debt_return_pct": 0.2896589384712156,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 97328617.22336033
+      },
+      {
+        "month": "2014-03",
+        "equity_weight_pct": 97.0,
+        "equity_return_pct": 8.07537080958316,
+        "debt_return_pct": 1.152132826710539,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 104986115.21411212
+      },
+      {
+        "month": "2014-04",
+        "equity_weight_pct": 90.0,
+        "equity_return_pct": -0.45452537516881275,
+        "debt_return_pct": 1.132768769284187,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 104675570.52598824
+      },
+      {
+        "month": "2014-05",
+        "equity_weight_pct": 91.0,
+        "equity_return_pct": 10.318289229072208,
+        "debt_return_pct": 1.4170719759938555,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 114637732.65013358
+      },
+      {
+        "month": "2014-06",
+        "equity_weight_pct": 78.0,
+        "equity_return_pct": 4.0668206737233925,
+        "debt_return_pct": 0.9507836358726873,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 118513969.73551627
+      },
+      {
+        "month": "2014-07",
+        "equity_weight_pct": 73.0,
+        "equity_return_pct": -0.11333830310057413,
+        "debt_return_pct": 0.43060416439058,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 118553702.9223322
+      },
+      {
+        "month": "2014-08",
+        "equity_weight_pct": 80.0,
+        "equity_return_pct": 5.595258990628249,
+        "debt_return_pct": 0.5424181496263891,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 123989023.65986076
+      },
+      {
+        "month": "2014-09",
+        "equity_weight_pct": 70.0,
+        "equity_return_pct": -1.023239499295836,
+        "debt_return_pct": 1.0323471253217864,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 123484929.53088562
+      },
+      {
+        "month": "2014-10",
+        "equity_weight_pct": 74.0,
+        "equity_return_pct": 4.72358792212908,
+        "debt_return_pct": 1.611908551424146,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 128318810.4275392
+      },
+      {
+        "month": "2014-11",
+        "equity_weight_pct": 64.0,
+        "equity_return_pct": 2.7090196692455493,
+        "debt_return_pct": 0.9928696549668992,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 131002220.65931235
+      },
+      {
+        "month": "2014-12",
+        "equity_weight_pct": 59.0,
+        "equity_return_pct": -3.1851448424577766,
+        "debt_return_pct": 0.746687585914052,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 128941433.17992283
+      },
+      {
+        "month": "2015-01",
+        "equity_weight_pct": 68.0,
+        "equity_return_pct": 6.055545890566649,
+        "debt_return_pct": 1.365865506538233,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 134814519.68649572
+      },
+      {
+        "month": "2015-02",
+        "equity_weight_pct": 49.0,
+        "equity_return_pct": 1.7580641298881705,
+        "debt_return_pct": 0.20226009802919442,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 136114946.03524998
+      },
+      {
+        "month": "2015-03",
+        "equity_weight_pct": 34.0,
+        "equity_return_pct": -3.9251032225193994,
+        "debt_return_pct": 0.8682442055512718,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 135078438.9969901
+      },
+      {
+        "month": "2015-04",
+        "equity_weight_pct": 47.0,
+        "equity_return_pct": -3.0336617656964604,
+        "debt_return_pct": 0.2346288471461122,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 133320436.68854666
+      },
+      {
+        "month": "2015-05",
+        "equity_weight_pct": 57.99999999999999,
+        "equity_return_pct": 1.222757614605885,
+        "debt_return_pct": 0.7119777120020654,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 134664613.4013808
+      },
+      {
+        "month": "2015-06",
+        "equity_weight_pct": 48.0,
+        "equity_return_pct": 0.5677450911885984,
+        "debt_return_pct": 0.0891019353769229,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 135093992.39675534
+      },
+      {
+        "month": "2015-07",
+        "equity_weight_pct": 48.0,
+        "equity_return_pct": 1.2608472317690689,
+        "debt_return_pct": 1.0772426452828388,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 136668341.10180008
+      },
+      {
+        "month": "2015-08",
+        "equity_weight_pct": 47.0,
+        "equity_return_pct": -8.746054540464232,
+        "debt_return_pct": 0.7735478056640321,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 131610703.23063798
+      },
+      {
+        "month": "2015-09",
+        "equity_weight_pct": 74.0,
+        "equity_return_pct": 2.0275287378700657,
+        "debt_return_pct": 1.1487049545734873,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 133978425.25879982
+      },
+      {
+        "month": "2015-10",
+        "equity_weight_pct": 65.0,
+        "equity_return_pct": 1.2969682134213567,
+        "debt_return_pct": 0.708322030322206,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 135440052.23698717
+      },
+      {
+        "month": "2015-11",
+        "equity_weight_pct": 67.0,
+        "equity_return_pct": -1.2146227640755347,
+        "debt_return_pct": 0.10076220120516233,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 134382880.69859186
+      },
+      {
+        "month": "2015-12",
+        "equity_weight_pct": 72.0,
+        "equity_return_pct": 0.0019727627226906463,
+        "debt_return_pct": 0.5617734900053462,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 134596169.1301463
+      },
+      {
+        "month": "2016-01",
+        "equity_weight_pct": 72.0,
+        "equity_return_pct": -5.129213409261291,
+        "debt_return_pct": 0.5715191838838285,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 129840875.32593438
+      },
+      {
+        "month": "2016-02",
+        "equity_weight_pct": 85.0,
+        "equity_return_pct": -4.391095264698086,
+        "debt_return_pct": 0.15405739212697167,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 125024658.69703297
+      },
+      {
+        "month": "2016-03",
+        "equity_weight_pct": 91.0,
+        "equity_return_pct": 7.090111107405761,
+        "debt_return_pct": 1.8543724028454944,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 133299909.1101994
+      },
+      {
+        "month": "2016-04",
+        "equity_weight_pct": 75.0,
+        "equity_return_pct": 1.1081881360911927,
+        "debt_return_pct": 0.6829708103234688,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 134635419.31118667
+      },
+      {
+        "month": "2016-05",
+        "equity_weight_pct": 73.0,
+        "equity_return_pct": 4.862087528020376,
+        "debt_return_pct": 0.5289820772940601,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 139606359.67476287
+      },
+      {
+        "month": "2016-06",
+        "equity_weight_pct": 55.00000000000001,
+        "equity_return_pct": 2.073715947270216,
+        "debt_return_pct": 0.8484713517640685,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 141731665.2991378
+      },
+      {
+        "month": "2016-07",
+        "equity_weight_pct": 51.0,
+        "equity_return_pct": 3.7546633038334942,
+        "debt_return_pct": 1.7691019157910048,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 145674269.20784009
+      },
+      {
+        "month": "2016-08",
+        "equity_weight_pct": 43.0,
+        "equity_return_pct": 1.5863254788759162,
+        "debt_return_pct": 0.7935400877233878,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 147326853.19123
+      },
+      {
+        "month": "2016-09",
+        "equity_weight_pct": 38.0,
+        "equity_return_pct": -0.47205083953120175,
+        "debt_return_pct": 1.176633401503846,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 148137347.40293944
+      },
+      {
+        "month": "2016-10",
+        "equity_weight_pct": 42.0,
+        "equity_return_pct": -1.2482752287669596,
+        "debt_return_pct": 0.5176433397874325,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 147805456.8471125
+      },
+      {
+        "month": "2016-11",
+        "equity_weight_pct": 48.0,
+        "equity_return_pct": -4.97771873679127,
+        "debt_return_pct": 2.2473948726012605,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 146001255.26023835
+      },
+      {
+        "month": "2016-12",
+        "equity_weight_pct": 70.0,
+        "equity_return_pct": -0.2133873558777477,
+        "debt_return_pct": -0.2871710545773065,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 145657389.50420657
+      },
+      {
+        "month": "2017-01",
+        "equity_weight_pct": 65.0,
+        "equity_return_pct": 6.558212221057569,
+        "debt_return_pct": 0.5881567824887801,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 152166370.80722427
+      },
+      {
+        "month": "2017-02",
+        "equity_weight_pct": 48.0,
+        "equity_return_pct": 2.6321797178014528,
+        "debt_return_pct": -0.37831207355119023,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 153789565.9837042
+      },
+      {
+        "month": "2017-03",
+        "equity_weight_pct": 46.0,
+        "equity_return_pct": 3.25574407773912,
+        "debt_return_pct": 1.0915925470986076,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 156999311.4774504
+      },
+      {
+        "month": "2017-04",
+        "equity_weight_pct": 43.0,
+        "equity_return_pct": 0.7378558868876617,
+        "debt_return_pct": 0.17479497457129067,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 157653859.13890475
+      },
+      {
+        "month": "2017-05",
+        "equity_weight_pct": 40.0,
+        "equity_return_pct": 3.253150313771802,
+        "debt_return_pct": 1.0133278774770549,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 160663876.24694875
+      },
+      {
+        "month": "2017-06",
+        "equity_weight_pct": 31.0,
+        "equity_return_pct": 0.19431351053598167,
+        "debt_return_pct": 0.7569291131256151,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 161599772.68953592
+      },
+      {
+        "month": "2017-07",
+        "equity_weight_pct": 28.000000000000004,
+        "equity_return_pct": 5.372868130643171,
+        "debt_return_pct": 1.0659835794878614,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 165271176.11140302
+      },
+      {
+        "month": "2017-08",
+        "equity_weight_pct": 16.0,
+        "equity_return_pct": -1.3657759030625605,
+        "debt_return_pct": 0.7078011564635389,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 165892643.37620363
+      },
+      {
+        "month": "2017-09",
+        "equity_weight_pct": 14.000000000000002,
+        "equity_return_pct": -1.2482805944847852,
+        "debt_return_pct": 0.1749307330726424,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 165852300.18847916
+      },
+      {
+        "month": "2017-10",
+        "equity_weight_pct": 22.0,
+        "equity_return_pct": 5.889771218708262,
+        "debt_return_pct": 0.2047621998276128,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 168266221.01603174
+      },
+      {
+        "month": "2017-11",
+        "equity_weight_pct": 13.0,
+        "equity_return_pct": -3.113131453949791,
+        "debt_return_pct": 0.25128382423622586,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 167953094.13287294
+      },
+      {
+        "month": "2017-12",
+        "equity_weight_pct": 19.0,
+        "equity_return_pct": 3.0039045517473717,
+        "debt_return_pct": -0.13738304917472188,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 168724774.09802848
+      },
+      {
+        "month": "2018-01",
+        "equity_weight_pct": 13.0,
+        "equity_return_pct": 5.497338838588162,
+        "debt_return_pct": 0.10668852845636678,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 170087181.20921898
+      },
+      {
+        "month": "2018-02",
+        "equity_weight_pct": 7.000000000000001,
+        "equity_return_pct": -5.004029176534686,
+        "debt_return_pct": 0.3014945716953932,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 169968303.72229198
+      },
+      {
+        "month": "2018-03",
+        "equity_weight_pct": 21.0,
+        "equity_return_pct": -2.2887728859864898,
+        "debt_return_pct": 1.3718011811023612,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 170993349.63410494
+      },
+      {
+        "month": "2018-04",
+        "equity_weight_pct": 25.0,
+        "equity_return_pct": 4.8450518803374365,
+        "debt_return_pct": -0.4658821971765703,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 172467058.07880384
+      },
+      {
+        "month": "2018-05",
+        "equity_weight_pct": 14.000000000000002,
+        "equity_return_pct": -0.07279321866539012,
+        "debt_return_pct": 0.015518956682725182,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 172472499.8493343
+      },
+      {
+        "month": "2018-06",
+        "equity_weight_pct": 12.0,
+        "equity_return_pct": -0.219316801417635,
+        "debt_return_pct": 0.6189994596915938,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 173366599.89005685
+      },
+      {
+        "month": "2018-07",
+        "equity_weight_pct": 21.0,
+        "equity_return_pct": 6.515403464926717,
+        "debt_return_pct": 0.7900555985449254,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 176820719.0133383
+      },
+      {
+        "month": "2018-08",
+        "equity_weight_pct": 7.000000000000001,
+        "equity_return_pct": 2.115975555966343,
+        "debt_return_pct": 0.43305064370178226,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 177794745.47034612
+      },
+      {
+        "month": "2018-09",
+        "equity_weight_pct": 6.0,
+        "equity_return_pct": -4.979814589951658,
+        "debt_return_pct": 0.18553128051947976,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 177573587.52572957
+      },
+      {
+        "month": "2018-10",
+        "equity_weight_pct": 15.0,
+        "equity_return_pct": -5.665002098393435,
+        "debt_return_pct": 0.5275948679655196,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 176860994.1712516
+      },
+      {
+        "month": "2018-11",
+        "equity_weight_pct": 31.0,
+        "equity_return_pct": 4.7403343307336865,
+        "debt_return_pct": 0.9443084885121911,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 180612351.15557843
+      },
+      {
+        "month": "2018-12",
+        "equity_weight_pct": 18.0,
+        "equity_return_pct": 0.22105923261139804,
+        "debt_return_pct": 0.791514366601187,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 181856467.62546945
+      },
+      {
+        "month": "2019-01",
+        "equity_weight_pct": 19.0,
+        "equity_return_pct": -0.12276202167811334,
+        "debt_return_pct": 0.5086653640302474,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 182563333.096068
+      },
+      {
+        "month": "2019-02",
+        "equity_weight_pct": 18.0,
+        "equity_return_pct": -0.2052044893249727,
+        "debt_return_pct": 0.6460849260937929,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 183463101.65218124
+      },
+      {
+        "month": "2019-03",
+        "equity_weight_pct": 17.0,
+        "equity_return_pct": 7.388697043068793,
+        "debt_return_pct": 1.6591695229297043,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 188294032.23335442
+      },
+      {
+        "month": "2019-04",
+        "equity_weight_pct": 3.0,
+        "equity_return_pct": 0.42379780849464144,
+        "debt_return_pct": -0.09061431861130398,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 188152469.09915316
+      },
+      {
+        "month": "2019-05",
+        "equity_weight_pct": 3.0,
+        "equity_return_pct": 3.179999432949865,
+        "debt_return_pct": 1.506698879859436,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 191081810.93268067
+      },
+      {
+        "month": "2019-06",
+        "equity_weight_pct": 2.0,
+        "equity_return_pct": -1.684529242902133,
+        "debt_return_pct": 0.26448696148011486,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 191512713.0991836
+      },
+      {
+        "month": "2019-07",
+        "equity_weight_pct": 4.0,
+        "equity_return_pct": -7.197258852568112,
+        "debt_return_pct": 1.3496667724531841,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 193442758.58686495
+      },
+      {
+        "month": "2019-08",
+        "equity_weight_pct": 16.0,
+        "equity_return_pct": -1.5331490542757398,
+        "debt_return_pct": 0.9125957248535155,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 194451130.34476867
+      },
+      {
+        "month": "2019-09",
+        "equity_weight_pct": 22.0,
+        "equity_return_pct": 5.214059254713832,
+        "debt_return_pct": 0.31377689072917825,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 197157577.03386
+      },
+      {
+        "month": "2019-10",
+        "equity_weight_pct": 20.0,
+        "equity_return_pct": 4.804683951379918,
+        "debt_return_pct": 1.1707556087879656,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 200898723.43941456
+      },
+      {
+        "month": "2019-11",
+        "equity_weight_pct": 10.0,
+        "equity_return_pct": 1.2748023913271345,
+        "debt_return_pct": 0.7589970378813593,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 202527163.43651164
+      },
+      {
+        "month": "2019-12",
+        "equity_weight_pct": 7.000000000000001,
+        "equity_return_pct": 1.0806452717275983,
+        "debt_return_pct": 0.37748948855638176,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 203391367.8923096
+      },
+      {
+        "month": "2020-01",
+        "equity_weight_pct": 6.0,
+        "equity_return_pct": -3.8417377785981643,
+        "debt_return_pct": 0.8682256032233271,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 204582484.28612596
+      },
+      {
+        "month": "2020-02",
+        "equity_weight_pct": 26.0,
+        "equity_return_pct": -4.977585148697072,
+        "debt_return_pct": 0.9801547436084856,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 203418701.21791258
+      },
+      {
+        "month": "2020-03",
+        "equity_weight_pct": 33.0,
+        "equity_return_pct": -25.620978144831263,
+        "debt_return_pct": -0.04724989018555226,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 186155409.96833268
+      },
+      {
+        "month": "2020-04",
+        "equity_weight_pct": 98.0,
+        "equity_return_pct": 12.257001072727425,
+        "debt_return_pct": 0.6537345058745814,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 208540478.39614648
+      },
+      {
+        "month": "2020-05",
+        "equity_weight_pct": 82.0,
+        "equity_return_pct": 5.769779302001643,
+        "debt_return_pct": 1.7358242982360883,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 219058566.52357772
+      },
+      {
+        "month": "2020-06",
+        "equity_weight_pct": 66.0,
+        "equity_return_pct": 6.144339243497576,
+        "debt_return_pct": 1.7375247347896972,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 229236076.39740548
+      },
+      {
+        "month": "2020-07",
+        "equity_weight_pct": 25.0,
+        "equity_return_pct": 4.569935524434876,
+        "debt_return_pct": 1.2677768074370155,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 234034712.97806555
+      },
+      {
+        "month": "2020-08",
+        "equity_weight_pct": 8.0,
+        "equity_return_pct": 5.382912969039677,
+        "debt_return_pct": 0.31792994283115217,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 235727084.8862638
+      },
+      {
+        "month": "2020-09",
+        "equity_weight_pct": 0.0,
+        "equity_return_pct": -0.5051529004801214,
+        "debt_return_pct": 0.14050523527893155,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 236058293.7814994
+      },
+      {
+        "month": "2020-10",
+        "equity_weight_pct": 0.0,
+        "equity_return_pct": 2.3297667167682112,
+        "debt_return_pct": 1.262996989875842,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 239039702.926312
+      },
+      {
+        "month": "2020-11",
+        "equity_weight_pct": 1.0,
+        "equity_return_pct": 12.323776125189422,
+        "debt_return_pct": 0.7191298727744266,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 241036105.95712057
+      },
+      {
+        "month": "2020-12",
+        "equity_weight_pct": 0.0,
+        "equity_return_pct": 6.89175037359242,
+        "debt_return_pct": 0.47028315880845994,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 242169658.17008463
+      },
+      {
+        "month": "2021-01",
+        "equity_weight_pct": 0.0,
+        "equity_return_pct": 1.8514794810074564,
+        "debt_return_pct": -0.1822019532574326,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 241728420.32270187
+      },
+      {
+        "month": "2021-02",
+        "equity_weight_pct": 0.0,
+        "equity_return_pct": 3.4377163838950064,
+        "debt_return_pct": -0.020379005679815876,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 241679158.4741946
+      },
+      {
+        "month": "2021-03",
+        "equity_weight_pct": 0.0,
+        "equity_return_pct": 0.6812577494810457,
+        "debt_return_pct": 0.6671649216782649,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 243291557.04254162
+      },
+      {
+        "month": "2021-04",
+        "equity_weight_pct": 0.0,
+        "equity_return_pct": -1.5628632313057,
+        "debt_return_pct": 0.5697763785561971,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 244677774.86559162
+      },
+      {
+        "month": "2021-05",
+        "equity_weight_pct": 0.0,
+        "equity_return_pct": 6.55846935311446,
+        "debt_return_pct": 0.4104606858330362,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 245682080.93838593
+      },
+      {
+        "month": "2021-06",
+        "equity_weight_pct": 1.0,
+        "equity_return_pct": 0.8795032989618479,
+        "debt_return_pct": 0.2820083826345021,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 246389604.3807024
+      },
+      {
+        "month": "2021-07",
+        "equity_weight_pct": 4.0,
+        "equity_return_pct": 1.4547373280145326,
+        "debt_return_pct": 0.40892321187466774,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 247500219.75519383
+      },
+      {
+        "month": "2021-08",
+        "equity_weight_pct": 7.000000000000001,
+        "equity_return_pct": 7.500647690933504,
+        "debt_return_pct": 0.6710547164397784,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 250344309.68647787
+      },
+      {
+        "month": "2021-09",
+        "equity_weight_pct": 9.0,
+        "equity_return_pct": 2.6643669767890676,
+        "debt_return_pct": 0.38157223072996516,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 251813890.2608264
+      },
+      {
+        "month": "2021-10",
+        "equity_weight_pct": 8.0,
+        "equity_return_pct": 2.3418476210719685,
+        "debt_return_pct": 0.19556990723672563,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 252738732.48497948
+      },
+      {
+        "month": "2021-11",
+        "equity_weight_pct": 10.0,
+        "equity_return_pct": -4.222588408750905,
+        "debt_return_pct": 0.34173791493348205,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 252448854.50990713
+      },
+      {
+        "month": "2021-12",
+        "equity_weight_pct": 28.999999999999996,
+        "equity_return_pct": 2.69708023326678,
+        "debt_return_pct": 0.06638664848586107,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 254542382.03148624
+      },
+      {
+        "month": "2022-01",
+        "equity_weight_pct": 21.0,
+        "equity_return_pct": -0.27594952275872275,
+        "debt_return_pct": -0.2521019022425963,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 253887928.36109412
+      },
+      {
+        "month": "2022-02",
+        "equity_weight_pct": 28.999999999999996,
+        "equity_return_pct": -5.42734637536072,
+        "debt_return_pct": 0.4529033320594289,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 250708314.44059592
+      },
+      {
+        "month": "2022-03",
+        "equity_weight_pct": 60.0,
+        "equity_return_pct": 6.336914529215321,
+        "debt_return_pct": 0.36489292830779174,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 260606544.1668675
+      },
+      {
+        "month": "2022-04",
+        "equity_weight_pct": 31.0,
+        "equity_return_pct": -3.3892805146593097,
+        "debt_return_pct": 0.22387809638695355,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 258270985.5216384
+      },
+      {
+        "month": "2022-05",
+        "equity_weight_pct": 48.0,
+        "equity_return_pct": -2.858095672592764,
+        "debt_return_pct": -0.2841852971721348,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 254346138.7812639
+      },
+      {
+        "month": "2022-06",
+        "equity_weight_pct": 74.0,
+        "equity_return_pct": -4.545944809895341,
+        "debt_return_pct": 0.3281636040159075,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 246006951.3893748
+      },
+      {
+        "month": "2022-07",
+        "equity_weight_pct": 83.0,
+        "equity_return_pct": 10.203500516225073,
+        "debt_return_pct": 0.9860746459133596,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 267253435.5197172
+      },
+      {
+        "month": "2022-08",
+        "equity_weight_pct": 65.0,
+        "equity_return_pct": 1.331170181787944,
+        "debt_return_pct": 0.7828529353365532,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 270298144.7256186
+      },
+      {
+        "month": "2022-09",
+        "equity_weight_pct": 70.0,
+        "equity_return_pct": -3.7667773544671324,
+        "debt_return_pct": 0.3238431023266264,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 263433676.78129324
+      },
+      {
+        "month": "2022-10",
+        "equity_weight_pct": 74.0,
+        "equity_return_pct": 7.540032313050848,
+        "debt_return_pct": 0.5308365943815119,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 278495869.8154939
+      },
+      {
+        "month": "2022-11",
+        "equity_weight_pct": 51.0,
+        "equity_return_pct": 3.6474311877910504,
+        "debt_return_pct": 0.79581479959141,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 284762414.4344365
+      },
+      {
+        "month": "2022-12",
+        "equity_weight_pct": 42.0,
+        "equity_return_pct": -3.3014072420190943,
+        "debt_return_pct": 0.3546936855641558,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 281399744.2015662
+      },
+      {
+        "month": "2023-01",
+        "equity_weight_pct": 52.0,
+        "equity_return_pct": -3.2112641195892966,
+        "debt_return_pct": 0.4793669057801653,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 277348259.79051566
+      },
+      {
+        "month": "2023-02",
+        "equity_weight_pct": 71.0,
+        "equity_return_pct": -0.8948508495525087,
+        "debt_return_pct": 0.39039273509149375,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 275900140.73922414
+      },
+      {
+        "month": "2023-03",
+        "equity_weight_pct": 73.0,
+        "equity_return_pct": -0.34956094215827793,
+        "debt_return_pct": 0.7881191830841683,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 275783194.0958507
+      },
+      {
+        "month": "2023-04",
+        "equity_weight_pct": 74.0,
+        "equity_return_pct": 4.313661453944251,
+        "debt_return_pct": 0.8692142248005963,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 285209753.7232753
+      },
+      {
+        "month": "2023-05",
+        "equity_weight_pct": 67.0,
+        "equity_return_pct": 2.1043427506957757,
+        "debt_return_pct": 0.7712949595128915,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 289956890.333687
+      },
+      {
+        "month": "2023-06",
+        "equity_weight_pct": 59.0,
+        "equity_return_pct": 4.62946840699503,
+        "debt_return_pct": 0.4204592349199121,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 298376585.0008147
+      },
+      {
+        "month": "2023-07",
+        "equity_weight_pct": 46.0,
+        "equity_return_pct": 2.213493218537521,
+        "debt_return_pct": 0.6201006427801525,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 302413802.88478285
+      },
+      {
+        "month": "2023-08",
+        "equity_weight_pct": 34.0,
+        "equity_return_pct": -1.3203165319112364,
+        "debt_return_pct": 0.5935466967710523,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 302240922.58794886
+      },
+      {
+        "month": "2023-09",
+        "equity_weight_pct": 50.0,
+        "equity_return_pct": 0.43691436042709864,
+        "debt_return_pct": 0.4697757792570867,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 303611116.90954655
+      },
+      {
+        "month": "2023-10",
+        "equity_weight_pct": 62.0,
+        "equity_return_pct": -2.692683803758744,
+        "debt_return_pct": 0.38199295867271665,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 298983152.5128272
+      },
+      {
+        "month": "2023-11",
+        "equity_weight_pct": 80.0,
+        "equity_return_pct": 6.7486128187649985,
+        "debt_return_pct": 0.6298647414364478,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 315501562.6900726
+      },
+      {
+        "month": "2023-12",
+        "equity_weight_pct": 64.0,
+        "equity_return_pct": 7.2130069753401305,
+        "debt_return_pct": 0.7431057972819399,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 330910162.25855494
+      },
+      {
+        "month": "2024-01",
+        "equity_weight_pct": 43.0,
+        "equity_return_pct": -0.15362942560128712,
+        "debt_return_pct": 0.6823681903663115,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 331978635.48548216
+      },
+      {
+        "month": "2024-02",
+        "equity_weight_pct": 50.0,
+        "equity_return_pct": 3.0555278103622463,
+        "debt_return_pct": 0.5571896063208959,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 337975360.4774077
+      },
+      {
+        "month": "2024-03",
+        "equity_weight_pct": 41.0,
+        "equity_return_pct": 0.5434802208541978,
+        "debt_return_pct": 0.6800933925855679,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 340084603.84013814
+      },
+      {
+        "month": "2024-04",
+        "equity_weight_pct": 41.0,
+        "equity_return_pct": 0.7768280522536308,
+        "debt_return_pct": 0.47520167588526174,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 342121263.37254566
+      },
+      {
+        "month": "2024-05",
+        "equity_weight_pct": 50.0,
+        "equity_return_pct": 3.0442972703385474,
+        "debt_return_pct": 0.8288586185202007,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 348746708.3022215
+      },
+      {
+        "month": "2024-06",
+        "equity_weight_pct": 49.0,
+        "equity_return_pct": 3.90979852372777,
+        "debt_return_pct": 0.4570947637255518,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 356240994.6926491
+      },
+      {
+        "month": "2024-07",
+        "equity_weight_pct": 40.0,
+        "equity_return_pct": 3.6257317717217186,
+        "debt_return_pct": 0.8502639808749324,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 363224925.181826
+      },
+      {
+        "month": "2024-08",
+        "equity_weight_pct": 33.0,
+        "equity_return_pct": 1.2466729058453474,
+        "debt_return_pct": 0.6452571629095294,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 366289542.3501969
+      },
+      {
+        "month": "2024-09",
+        "equity_weight_pct": 32.0,
+        "equity_return_pct": 2.0140522271405947,
+        "debt_return_pct": 0.7204598134631812,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 370444765.29796773
+      },
+      {
+        "month": "2024-10",
+        "equity_weight_pct": 28.000000000000004,
+        "equity_return_pct": -6.911350909830649,
+        "debt_return_pct": 0.6185191922866817,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 364925714.5725885
+      },
+      {
+        "month": "2024-11",
+        "equity_weight_pct": 50.0,
+        "equity_return_pct": 1.1848178170576151,
+        "debt_return_pct": 0.6447332159601693,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 368263965.66294366
+      },
+      {
+        "month": "2024-12",
+        "equity_weight_pct": 54.0,
+        "equity_return_pct": -2.2268548915258757,
+        "debt_return_pct": 0.3695719662484276,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 364461645.60536087
+      },
+      {
+        "month": "2025-01",
+        "equity_weight_pct": 60.0,
+        "equity_return_pct": -1.5229628980135912,
+        "debt_return_pct": 0.6637879353936338,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 362098977.1943914
+      },
+      {
+        "month": "2025-02",
+        "equity_weight_pct": 70.0,
+        "equity_return_pct": -5.240380293567459,
+        "debt_return_pct": 0.43914690879587326,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 349293266.7230577
+      },
+      {
+        "month": "2025-03",
+        "equity_weight_pct": 86.0,
+        "equity_return_pct": 4.6881874895535525,
+        "debt_return_pct": 1.4393768830057274,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 364080087.2178051
+      },
+      {
+        "month": "2025-04",
+        "equity_weight_pct": 72.0,
+        "equity_return_pct": 5.067464209599248,
+        "debt_return_pct": 1.0153772127192484,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 378398919.6075781
+      },
+      {
+        "month": "2025-05",
+        "equity_weight_pct": 60.0,
+        "equity_return_pct": 1.6981896901170357,
+        "debt_return_pct": 0.8996724347007934,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 383616218.7809182
+      },
+      {
+        "month": "2025-06",
+        "equity_weight_pct": 52.0,
+        "equity_return_pct": 3.571145884317972,
+        "debt_return_pct": 0.3844868770789045,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 391447934.01076335
+      },
+      {
+        "month": "2025-07",
+        "equity_weight_pct": 45.0,
+        "equity_return_pct": -3.6570843922756557,
+        "debt_return_pct": 0.6141806343497258,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 386328230.99873734
+      },
+      {
+        "month": "2025-08",
+        "equity_weight_pct": 68.0,
+        "equity_return_pct": 0.35772767045183507,
+        "debt_return_pct": 0.04772853326924231,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 387326997.4412945
+      },
+      {
+        "month": "2025-09",
+        "equity_weight_pct": 68.0,
+        "equity_return_pct": 0.8377985678181155,
+        "debt_return_pct": 0.6616295959979812,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 390353665.48215884
+      },
+      {
+        "month": "2025-10",
+        "equity_weight_pct": 63.0,
+        "equity_return_pct": 3.7987784784410117,
+        "debt_return_pct": 0.674766920242198,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 400670299.87412
+      },
+      {
+        "month": "2025-11",
+        "equity_weight_pct": 53.0,
+        "equity_return_pct": 1.6183158696131406,
+        "debt_return_pct": 0.5764198661134534,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 405192364.03625804
+      },
+      {
+        "month": "2025-12",
+        "equity_weight_pct": 50.0,
+        "equity_return_pct": -0.14309118669760812,
+        "debt_return_pct": 0.32053196039347753,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 405551852.2691093
+      },
+      {
+        "month": "2026-01",
+        "equity_weight_pct": 51.0,
+        "equity_return_pct": -4.019015037751005,
+        "debt_return_pct": 0.014318326975892859,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 397267718.8432666
+      },
+      {
+        "month": "2026-02",
+        "equity_weight_pct": 66.0,
+        "equity_return_pct": -0.8703027387635953,
+        "debt_return_pct": 0.7481461225409047,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 395996342.4624128
+      },
+      {
+        "month": "2026-03",
+        "equity_weight_pct": 63.0,
+        "equity_return_pct": -8.80106438678041,
+        "debt_return_pct": -0.37057674898335335,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 373496685.79104656
+      },
+      {
+        "month": "2026-04",
+        "equity_weight_pct": 84.0,
+        "equity_return_pct": 6.316637451133644,
+        "debt_return_pct": 0.8536858974358852,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 393824486.4445577
+      },
+      {
+        "month": "2026-05",
+        "equity_weight_pct": 72.0,
+        "equity_return_pct": -2.9279708470577703,
+        "debt_return_pct": 0.06340106176916382,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 385592031.7090097
+      },
+      {
+        "month": "2026-06",
+        "equity_weight_pct": 81.0,
+        "equity_return_pct": 2.9478119624562593,
+        "debt_return_pct": 1.7634653801812172,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 396090877.9966826
+      },
+      {
+        "month": "2026-07",
+        "equity_weight_pct": 75.0,
+        "equity_return_pct": 3.4239353819972784,
+        "debt_return_pct": 0.27089825554631464,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 406530550.6038444
+      },
+      {
+        "month": "2026-08",
+        "equity_weight_pct": 73.0,
+        "equity_return_pct": -2.896874747380618,
+        "debt_return_pct": 0.1434869826804075,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 398091069.549037
+      },
+      {
+        "month": "2026-09",
+        "equity_weight_pct": 78.0,
+        "equity_return_pct": -2.7138218937248104,
+        "debt_return_pct": 0.15695683997705157,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 389801815.97503555
+      }
+    ]
+  },
+  "ranking": {
+    "cohort_size_including_methodology": 1,
+    "methodology_rank": 1,
+    "rows": [
+      {
+        "name": "Anup monthly allocation methodology (reconstructed)",
+        "scheme_code": null,
+        "start_date": "2000-01-01",
+        "end_date": "2026-09-11",
+        "cagr_pct": 14.708139192260216,
+        "value_of_1cr_inr": 389801815.97503555,
+        "multiple_x": 38.98018159750355,
+        "is_methodology": true,
+        "rank": 1
+      }
+    ],
+    "errors": [
+      {
+        "query": "Franklin India Prima Fund",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "Franklin India Bluechip Fund",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "HDFC Large Cap Fund",
+        "selected": "HDFC Focused Large-Cap Fund-Growth",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "Nippon India Growth Fund",
+        "selected": "Nippon India Multi Asset Allocation Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "SBI Long Term Equity Fund",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "HDFC ELSS Tax saver",
+        "selected": "HDFC ELSS - Tax Saver Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "Franklin India Flexi Cap Fund",
+        "selected": "Franklin India Flexi Cap Fund - Regular Plan - Growth",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "HDFC Flexi Cap Fund",
+        "selected": "HDFC Flexi Cap Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "Nippon India Vision Fund",
+        "selected": "Nippon India Vision Large & Mid Cap Fund - Regular Plan - GROWTH Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "SBI Contra Fund",
+        "selected": "SBI CONTRA FUND - Regular Plan - Growth",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "Aditya Birla Sun Life Tax Relief 96",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "Tata Mid Cap Growth Fund",
+        "selected": "Tata Mid Cap Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "Kotak Bluechip Fund",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "ICICI Prudential Multicap Fund",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "UTI Mastershare Unit Scheme",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "JM Flexicap Fund",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "Sundaram Diversified Equity",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "Tata ELSS Tax Saver Fund",
+        "selected": "Tata ELSS - Tax Saver Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "Taurus Starshare",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "HSBC Value Fund",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "Tata Large & Mid Cap Fund",
+        "selected": "Tata Large & Mid Cap Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "Canara Robeco ELSS Tax Saver",
+        "selected": "Canara Robeco ELSS - Tax Saver Fund - Regular Plan - GROWTH OPTION",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "LIC MF Large & Mid Cap Fund",
+        "selected": "LIC MF Large & Mid Cap Fund - Regular Plan - Growth",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "DSP Flexi Cap Fund",
+        "selected": "DSP Flexi Cap Fund - Regular Plan - Growth",
+        "error": "no NAV close enough to Jan-2000"
+      }
+    ],
+    "warning": "Screened surviving-fund cohort, not a complete Jan-2000 universe; survivorship and selection bias apply."
+  }
+}
