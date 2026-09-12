@@ -5,6 +5,29 @@ const fmt=(x,d=2)=>finite(x)?x.toFixed(d):'—';
 const signed=(x,d=1)=>finite(x)?(x>=0?'+':'')+x.toFixed(d):'—';
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const stance=x=>!finite(x)?['not scored','warn']:x>.15?['supportive','good']:x<-.15?['headwind','bad']:['near neutral','warn'];
+function clearMultiAsset(message='Multi-asset research data are unavailable.'){
+ for(const id of ['maEq','maDebt','maGold','maSilver','maBtc']){const n=q('#'+id);if(n)n.textContent='—';}
+ for(const id of ['maGoldScore','maSilverScore','maBtcScore']){const n=q('#'+id);if(n)n.textContent='score —';}
+ if(q('#maDrivers'))q('#maDrivers').innerHTML='';
+ if(q('#maStatus'))q('#maStatus').textContent=message;
+ if(q('#maNote')){q('#maNote').textContent='The NIFTY equity/debt model remains available independently; no missing multi-asset input is neutral-filled.';q('#maNote').className='flag bad';}
+}
+function renderMultiAsset(ma){
+ if(!ma||ma.status!=='live'||!fresh(ma.generated_at,3)||!ma.core_allocation){clearMultiAsset(ma?.error||'Multi-asset research data are unavailable or stale.');return;}
+ const a=ma.core_allocation,g=ma.gold||{},s=ma.silver||{},b=ma.btc||{};
+ if(![a.equity_pct,a.debt_pct,a.gold_pct,a.silver_pct].every(finite)){clearMultiAsset('Multi-asset core allocation failed validation.');return;}
+ q('#maEq').textContent=fmt(a.equity_pct,1)+'%';q('#maDebt').textContent=fmt(a.debt_pct,1)+'%';q('#maGold').textContent=fmt(a.gold_pct,1)+'%';q('#maSilver').textContent=fmt(a.silver_pct,1)+'%';q('#maBtc').textContent=finite(b.tactical_signal_pct)?fmt(b.tactical_signal_pct,1)+'%':'—';
+ q('#maGoldScore').textContent='score '+signed(g.score,2);q('#maSilverScore').textContent='score '+signed(s.score,2);q('#maBtcScore').textContent=finite(b.score)?'score '+signed(b.score,2)+' · outside core':'outside core 100%';
+ q('#maStatus').innerHTML=`<strong>Core allocation = 100%:</strong> NIFTY ${fmt(a.equity_pct,1)}% · Debt ${fmt(a.debt_pct,1)}% · Gold ${fmt(a.gold_pct,1)}% · Silver ${fmt(a.silver_pct,1)}%. BTC is a separate tactical signal.`;
+ const gp=g.market||{},sp=s.market||{},bp=b.market||{},gs=s.drivers?.gold_silver_ratio||{};
+ const rows=[
+  ['Gold',`$${fmt(gp.price,1)}/oz · 12m ${signed(gp.momentum_12m_pct,1)}%`,signed(g.score,2),`core range ${fmt(g.range_pct?.[0],0)}–${fmt(g.range_pct?.[1],0)}%`],
+  ['Silver',`$${fmt(sp.price,2)}/oz · Gold/Silver ${fmt(gs.value,1)}`,signed(s.score,2),`core range ${fmt(s.range_pct?.[0],0)}–${fmt(s.range_pct?.[1],0)}%`],
+  ['Bitcoin',`$${finite(bp.price)?Math.round(bp.price).toLocaleString('en-US'):'—'} · vs 200d ${signed(bp.vs_ma200_pct,1)}%`,signed(b.score,2),`tactical step ${fmt(b.tactical_signal_pct,1)}% · excluded from core`]
+ ];
+ q('#maDrivers').innerHTML=rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join('');
+ q('#maNote').className='flag warn';q('#maNote').textContent='Research-v1 only: Gold/Silver/BTC weights are transparent assumptions, not optimized or yet validated as one historical portfolio. Gold and Silver are carved proportionally from the existing equity/debt signal; BTC remains a separate tactical sleeve.';
+}
 function clearAllocation(message){
  for(const id of ['eq','debt','pct','erp','core','eadj','madj','damp','final'])q('#'+id).textContent='—';
  q('#eqbar').style.width='0%';q('#barEq').textContent='Allocation withheld';q('#barDebt').textContent='';
@@ -53,14 +76,23 @@ function render(d){
  const sourceList=(d.sources||[]).filter(s=>!/^STOXX/i.test(String(s.name||'')));q('#sources').innerHTML=sourceList.map(s=>`<p><b>${esc(s.name)}</b><br>${esc(s.role)}${s.url&&/^https:\/\//.test(s.url)?`<br><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">Source</a>`:''}</p>`).join('');
  const old=!packetOk;q('#status').textContent=`${old?'Old published file — target withheld':'Published data'} · NIFTY ${n.date} · refresh ${new Date(d.generated_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST`;q('#status').className='status '+(old?'bad':r.allocationReady?'good':'warn');
 }
+async function fetchPublished(name,signal){
+ const urls=[`https://api.github.com/repos/anuppaul007/anup-nifty-valuation/contents/data/${name}`,`https://raw.githubusercontent.com/anuppaul007/anup-nifty-valuation/main/data/${name}`];let lastError;
+ for(const url of urls){
+  try{
+   const response=await fetch(url+'?t='+Date.now(),{cache:'no-store',signal,headers:{Accept:'application/vnd.github.raw+json'}});if(!response.ok)throw Error('HTTP '+response.status);
+   const payload=await response.json();const d=payload.encoding==='base64'&&typeof payload.content==='string'?JSON.parse(atob(payload.content)):payload;if(!d)throw Error('Unexpected published data format');return d;
+  }catch(error){lastError=error;}
+ }
+ throw lastError||Error('Data unavailable');
+}
 let requestNumber=0;
 async function loadData(){
- const request=++requestNumber,controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);q('#status').textContent='Checking latest published data…';
+ const request=++requestNumber,controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);q('#status').textContent='Checking latest published data…';clearMultiAsset('Checking latest multi-asset research data…');
  try{
-  const urls=['https://api.github.com/repos/anuppaul007/anup-nifty-valuation/contents/data/latest.json','https://raw.githubusercontent.com/anuppaul007/anup-nifty-valuation/main/data/latest.json'];let d,lastError;
-  for(const url of urls){try{const response=await fetch(url+'?t='+Date.now(),{cache:'no-store',signal:controller.signal,headers:{Accept:'application/vnd.github.raw+json'}});if(!response.ok)throw Error('HTTP '+response.status);const payload=await response.json();d=payload.encoding==='base64'&&typeof payload.content==='string'?JSON.parse(atob(payload.content)):payload;if(!d.nifty)throw Error('Unexpected published data format');break;}catch(error){lastError=error;}}
-  if(!d)throw lastError||Error('Data unavailable');if(request===requestNumber)render(d);
- }catch(error){if(request===requestNumber)clearAllocation('Published data could not be loaded. Allocation is withheld; please try again later.');}
+  const d=await fetchPublished('latest.json',controller.signal);if(request!==requestNumber)return;render(d);
+  try{const ma=await fetchPublished('multiasset.json',controller.signal);if(request===requestNumber)renderMultiAsset(ma);}catch(error){if(request===requestNumber)clearMultiAsset('Multi-asset research data could not be loaded; the NIFTY model remains unaffected.');}
+ }catch(error){if(request===requestNumber){clearAllocation('Published data could not be loaded. Allocation is withheld; please try again later.');clearMultiAsset();}}
  finally{clearTimeout(timer);}
 }
 loadData();
