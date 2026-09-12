@@ -18,6 +18,14 @@ def test_conservative_rate_never_exceeds_inputs():
     assert p.conservative_rate_pct(None, 6.0, 1.0) == 5.0
 
 
+def test_policy_seed_keeps_january_2000_eligible():
+    alloc = pd.DataFrame(
+        {"policy_rate_pct": [6.0]},
+        index=pd.PeriodIndex(["2000-01"], freq="M"),
+    )
+    assert p.policy_rate_for_prior_month(alloc, pd.Period("1999-12", "M")) == 6.0
+
+
 def test_zero_band_rebalances_to_each_new_target():
     target = _s([0.5, 0.6, 0.4])
     eq = _s([0.10, 0.00, 0.00])
@@ -44,6 +52,14 @@ def test_cost_uses_drift_to_target_turnover():
     with_cost = p.simulate(target, eq, debt, band_pp=0, cost_bps=100)
     assert no_cost["one_way_turnover"] > 0
     assert with_cost["ending_multiple"] < no_cost["ending_multiple"]
+
+
+def test_drawdown_is_anchored_to_starting_wealth():
+    target = _s([0.0])
+    eq = _s([0.0])
+    debt = _s([-0.10])
+    m = p.metrics(p.simulate(target, eq, debt, band_pp=0, cost_bps=0))
+    assert round(m["max_monthly_drawdown_pct"], 8) == -10.0
 
 
 def test_cached_rate_series_is_not_silent_repo_series():
