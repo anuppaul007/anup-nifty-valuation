@@ -1,25 +1,21 @@
 #!/usr/bin/env python3
 """Strict 50/50 current-definition NIFTY 50 anchor at 31-Aug-2026.
 
-Research-only independent reconstruction using:
-- official Aug-2026 NIFTY 50 constituent weights / close prices;
-- four NSE Integrated Filing quarters (Sep-2025 through Jun-2026), with
-  consolidated results preferred and standalone used only when consolidated is
-  unavailable for that issuer/quarter;
-- latest annual (Mar-2026) equity/net worth from the same filing set;
-- rolling 12-month dividends from official NSE corporate actions;
-- only filings created/broadcast no later than the anchor timestamp.
+Research-only independent reconstruction using official Aug-2026 NIFTY 50
+weights/prices, NSE Integrated Filing financials, annual net worth and official
+corporate actions. Consolidated results are preferred; standalone is used only
+when consolidated financials are unavailable for that issuer/period.
 
-Pre-declared acceptance tolerances remain identical to the Sep-2023 pilot:
+Pre-declared acceptance tolerances (unchanged from the Sep-2023 pilot):
 P/E and P/B <= 1.5% relative error; dividend yield <= 0.05 percentage point.
-No live model/allocation files are modified.
+No live model/allocation files are modified and partial coverage is never
+normalised to a complete index.
 """
 from __future__ import annotations
 from datetime import date,datetime,timezone
 from pathlib import Path
-import json,math,re,time,xml.etree.ElementTree as ET
+import json,re,time,xml.etree.ElementTree as ET
 import pandas as pd
-import requests
 import current_definition_integrated_coverage as cov
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -30,14 +26,21 @@ TOL={'pe_relative_pct':1.5,'pb_relative_pct':1.5,'dy_absolute_pp':0.05}
 UA=cov.UA
 
 PROFIT_NAMES=[
- 'ProfitOrLossAttributableToOwnersOfParent','ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates',
+ 'ProfitOrLossAttributableToOwnersOfParent',
+ 'ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates',
  'ProfitLossForThePeriod','ProfitLossForPeriod','ProfitLossFromOrdinaryActivitiesAfterTax',
- 'ProfitLossForPeriodFromContinuingAndDiscontinuedOperations','ProfitAfterTax'
+ 'ProfitLossForPeriodFromContinuingAndDiscontinuedOperations',
+ # Life-insurance integrated-filing taxonomy. These are PAT measures, not
+ # shareholder-fund balances.
+ 'ProfitLossAfterTaxAndExtraordinaryItems','ProfitLossAfterTaxBeforeExtraordinaryItems',
+ 'ProfitAfterTax'
 ]
 CAP_NAMES=['PaidUpValueOfEquityShareCapital','PaidUpEquityShareCapital','EquityShareCapital']
 FACE_NAMES=['FaceValueOfEquityShareCapital','FaceValuePerShare']
 EQUITY_NAMES=['EquityAttributableToOwnersOfParent','TotalEquityAttributableToOwnersOfParent','Equity','NetWorth','TotalEquity']
 OTHER_EQUITY_NAMES=['OtherEquity','ReservesAndSurplus','ReserveExcludingRevaluationReserves']
+INSURANCE_RESERVE_NAMES=['ReservesAndSurplusExcludingRevaluationReserve']
+INSURANCE_FV_NAMES=['FairValueChangeAccountAndRevaluationReserveShareholders']
 
 
 def local(tag):return tag.split('}')[-1].split(':')[-1]
@@ -53,11 +56,7 @@ def filing_time(row):
     return None
 
 def eligible_rows(rows):
-    out=[]
-    for r in rows:
-        t=filing_time(r)
-        if t is not None and t<=ANCHOR:out.append(r)
-    return out
+    return [r for r in rows if filing_time(r) is not None and filing_time(r)<=ANCHOR]
 
 def choose_quarter(rows,q):
     qr=[x for x in eligible_rows(rows) if str(x.get('qe_Date') or '').upper().strip()==q]
@@ -93,17 +92,15 @@ def numeric_facts(root):
     return out
 
 def pick(fs,names,contexts):
+    wanted={x.lower() for x in contexts}
     for name in names:
-        q=[f for f in fs if f['name'].lower()==name.lower() and f['context'].lower() in {x.lower() for x in contexts}]
+        q=[f for f in fs if f['name'].lower()==name.lower() and f['context'].lower() in wanted]
         if not q:continue
         vals={round(float(x['value']),6) for x in q}
         if len(vals)==1:return q[0]
-        # prefer the canonical context order supplied by caller
         for c in contexts:
             qc=[x for x in q if x['context'].lower()==c.lower()]
-            if qc:
-                vals2={round(float(x['value']),6) for x in qc}
-                if len(vals2)==1:return qc[0]
+            if qc and len({round(float(x['value']),6) for x in qc})==1:return qc[0]
     return None
 
 def profit_from(fs):
@@ -111,33 +108,52 @@ def profit_from(fs):
     if not f:raise ValueError('profit_fact_missing')
     return f
 
-def cap_face_from(fs):
-    c=pick(fs,CAP_NAMES,['OneD','FourD','OneI']);fv=pick(fs,FACE_NAMES,['OneD','FourD','OneI'])
-    if not c or not fv or c['value']<=0 or fv['value']<=0:raise ValueError('capital_or_face_missing')
-    return c,fv
+def capital_from(fs):
+    c=pick(fs,CAP_NAMES,['OneD','FourD','OneI'])
+    if not c or c['value']<=0:raise ValueError('capital_missing')
+    return c
+
+def face_from_xbrl(fs):
+    f=pick(fs,FACE_NAMES,['OneD','FourD','OneI'])
+    return f if f and f['value']>0 else None
 
 def networth_from(fs):
+    # Standard IndAS/banking pathway.
     f=pick(fs,EQUITY_NAMES,['OneI'])
     if f and f['value']>0:return f,'direct'
     cap=pick(fs,CAP_NAMES,['OneI']);other=pick(fs,OTHER_EQUITY_NAMES,['OneI'])
     if cap and other and cap['value']>0 and other['value']>=0:
-        return {'name':cap['name']+'+'+other['name'],'context':'OneI','value':cap['value']+other['value']},'sum'
+        return {'name':cap['name']+'+'+other['name'],'context':'OneI','value':cap['value']+other['value']},'capital_plus_other_equity'
+    # Life-insurance financial-result format reports shareholders' capital,
+    # reserves/surplus excluding revaluation and the shareholder fair-value /
+    # revaluation account as separate facts. Sum only these shareholder items;
+    # policyholder liabilities/investments are explicitly excluded.
+    icap=pick(fs,['PaidUpEquityShareCapital'],['OneI'])
+    reserve=pick(fs,INSURANCE_RESERVE_NAMES,['OneI','OneD','FourD'])
+    fv=pick(fs,INSURANCE_FV_NAMES,['OneI','OneD','FourD'])
+    if icap and reserve and icap['value']>0 and reserve['value']>=0:
+        value=icap['value']+reserve['value']+(fv['value'] if fv and fv['value']>=0 else 0.0)
+        names=[icap['name'],reserve['name']]+([fv['name']] if fv else [])
+        return {'name':'+'.join(names),'context':'insurance_shareholders_fund','value':value},'insurance_shareholders_fund'
     raise ValueError('networth_fact_missing')
 
 def parse_dividend(subject,face):
-    s=str(subject or '')
-    if 'dividend' not in s.lower():return None
-    m=re.search(r'(?:Rs\.?|Re\.?|₹)\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*share)?',s,re.I)
+    text=str(subject or '')
+    if 'dividend' not in text.lower():return None
+    m=re.search(r'(?:Rs\.?|Re\.?|₹)\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*share)?',text,re.I)
     if m:return float(m.group(1))
-    m=re.search(r'([0-9]+(?:\.[0-9]+)?)\s*%',s)
-    if m and face>0:return float(m.group(1))*face/100.0
+    m=re.search(r'([0-9]+(?:\.[0-9]+)?)\s*%',text)
+    if m and face and face>0:return float(m.group(1))*face/100.0
     return None
 
-def dividends(s,symbol,face):
+def corporate_actions(s,symbol):
+    # One window serves both rolling dividends and an independent official face-
+    # value fallback. Face fallback is accepted only if positive faceVal records
+    # inside the recent window agree; otherwise the constituent fails closed.
     start=date(2025,9,1);end=date(2026,8,31)
     p={'index':'equities','from_date':start.strftime('%d-%m-%Y'),'to_date':end.strftime('%d-%m-%Y'),'symbol':symbol}
-    rows=[]
-    for attempt in range(4):
+    rows=[];last=None
+    for attempt in range(5):
         try:
             r=s.get('https://www.nseindia.com/api/corporates-corporateActions',params=p,headers={**UA,'referer':'https://www.nseindia.com/companies-listing/corporate-filings-actions'},timeout=30)
             if r.status_code in (401,403,500):
@@ -145,14 +161,31 @@ def dividends(s,symbol,face):
                 except Exception:pass
                 time.sleep(1+attempt);continue
             r.raise_for_status();d=r.json();rows=d if isinstance(d,list) else d.get('data',[]) if isinstance(d,dict) else [];break
-        except Exception:
-            time.sleep(1+attempt)
+        except Exception as e:
+            last=e;time.sleep(1+attempt)
+    if not rows and last:raise last
+    return rows
+
+def face_from_actions(rows):
     vals=[]
+    for r in rows:
+        try:v=float(r.get('faceVal'))
+        except Exception:continue
+        if v>0:vals.append(v)
+    uniq=sorted({round(v,8) for v in vals})
+    if len(uniq)==1:return {'name':'NSE_corporate_actions.faceVal','context':'official_corporate_actions','value':uniq[0]}
+    return None
+
+def dividends_from_actions(rows,face):
+    start=date(2025,9,1);end=date(2026,8,31);vals=[]
     for r in rows:
         ex=parse_dt(r.get('exDate'))
         if ex is None or not(start<=ex.date()<=end):continue
-        v=parse_dividend(r.get('subject'),float(r.get('faceVal') or face))
-        if v is not None:vals.append({'exDate':str(ex.date()),'subject':r.get('subject'),'amount':v})
+        rowface=None
+        try:rowface=float(r.get('faceVal'))
+        except Exception:rowface=face
+        v=parse_dividend(r.get('subject'),rowface or face)
+        if v is not None:vals.append({'exDate':str(ex.date()),'subject':r.get('subject'),'amount':v,'faceVal':rowface})
     return sum(x['amount'] for x in vals),vals
 
 def listings_for(s,row):
@@ -171,17 +204,23 @@ def reconstruct_one(s,row):
         selected[q]=r;basis[q]=b
     parsed={}
     for q in TARGET:
-        root=fetch_xml(s,selected[q]['xbrl']);parsed[q]=numeric_facts(root);time.sleep(.22)
+        parsed[q]=numeric_facts(fetch_xml(s,selected[q]['xbrl']));time.sleep(.20)
     profits=[];profit_meta=[]
     for q in TARGET:
         f=profit_from(parsed[q]);profits.append(f['value']);profit_meta.append({'quarter':q,'basis':basis[q],'tag':f['name'],'context':f['context'],'filing_time':str(filing_time(selected[q])),'xbrl':selected[q]['xbrl']})
-    c,fv=cap_face_from(parsed['30-JUN-2026']);shares=c['value']/fv['value']
+    c=capital_from(parsed['30-JUN-2026'])
+    actions=corporate_actions(s,row['symbol'])
+    fv=face_from_xbrl(parsed['30-JUN-2026']);face_source='xbrl'
+    if fv is None:
+        fv=face_from_actions(actions);face_source='NSE_corporate_actions_agreeing_faceVal'
+    if fv is None or fv['value']<=0:raise ValueError('face_value_missing_or_ambiguous')
+    shares=c['value']/fv['value']
     nw,nwmode=networth_from(parsed['31-MAR-2026'])
     if shares<=0 or nw['value']<=0:raise ValueError('nonpositive_structure')
     full_mcap=row['price']*shares;ttm=sum(profits)
     if full_mcap<=0 or ttm<=0:raise ValueError('nonpositive_earnings_or_mcap')
-    dps,divs=dividends(s,row['symbol'],fv['value'])
-    return {**row,'status':'ok','issuer_used':issuer,'basis_by_quarter':basis,'ttm_profit':ttm,'share_count':shares,'paid_up_capital':c['value'],'face_value':fv['value'],'capital_tag':c['name'],'face_tag':fv['name'],'full_mcap':full_mcap,'earnings_yield':ttm/full_mcap,'networth':nw['value'],'networth_tag':nw['name'],'networth_mode':nwmode,'book_yield':nw['value']/full_mcap,'dividend_ps_12m':dps,'dividend_yield_pct':100*dps/row['price'],'profit_quarters':profit_meta,'dividends':divs}
+    dps,divs=dividends_from_actions(actions,fv['value'])
+    return {**row,'status':'ok','issuer_used':issuer,'basis_by_quarter':basis,'ttm_profit':ttm,'share_count':shares,'paid_up_capital':c['value'],'face_value':fv['value'],'capital_tag':c['name'],'face_tag':fv['name'],'face_source':face_source,'full_mcap':full_mcap,'earnings_yield':ttm/full_mcap,'networth':nw['value'],'networth_tag':nw['name'],'networth_mode':nwmode,'book_yield':nw['value']/full_mcap,'dividend_ps_12m':dps,'dividend_yield_pct':100*dps/row['price'],'profit_quarters':profit_meta,'dividends':divs}
 
 def published_ratios():
     from jugaad_data.nse import index_pe_raw
@@ -198,11 +237,12 @@ def published_ratios():
 
 def main():
     s=cov.session();rows,weight_meta=cov.weight_rows(s);done=[];errors=[]
-    for i,row in enumerate(rows):
+    for row in rows:
         try:done.append(reconstruct_one(s,row))
         except Exception as e:errors.append({'symbol':row['symbol'],'error':f'{type(e).__name__}: {e}'})
-        time.sleep(.28)
+        time.sleep(.25)
     done=sorted(done,key=lambda x:x['symbol']);errors=sorted(errors,key=lambda x:x['symbol']);pub=published_ratios();result=None
+    # Hard 50/50 gate. Never renormalise a partial constituent set.
     if len(done)==50 and not errors:
         total=sum(x['index_mcap_cr'] for x in done)
         for x in done:x['weight']=x['index_mcap_cr']/total
@@ -212,7 +252,7 @@ def main():
         err={'pe_relative_pct':100*abs(pe-pub['pe'])/pub['pe'] if pub['pe'] else None,'pb_relative_pct':100*abs(pb-pub['pb'])/pub['pb'] if pub['pb'] else None,'dy_absolute_pp':abs(dy-pub['dy']) if pub['dy'] is not None else None}
         passed=all([err['pe_relative_pct'] is not None and err['pe_relative_pct']<=TOL['pe_relative_pct'],err['pb_relative_pct'] is not None and err['pb_relative_pct']<=TOL['pb_relative_pct'],err['dy_absolute_pp'] is not None and err['dy_absolute_pp']<=TOL['dy_absolute_pp']])
         result={'reconstructed':{'pe':pe,'pb':pb,'dy':dy},'published':{'pe':pub['pe'],'pb':pub['pb'],'dy':pub['dy']},'errors':err,'passed':passed}
-    out={'schema_version':1,'generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'anchor_date':'2026-08-31','predeclared_tolerances':TOL,'basis_rule':'consolidated when available; standalone only when consolidated unavailable','weight_source':weight_meta,'coverage':{'ok':len(done),'required':50,'failed':len(errors)},'result':result,'failed_constituents':errors,'constituents':done,'published_raw':pub['raw'],'live_model_changed':False,'live_allocation_changed':False}
+    out={'schema_version':2,'generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'anchor_date':'2026-08-31','predeclared_tolerances':TOL,'basis_rule':'consolidated when available; standalone only when consolidated unavailable','weight_source':weight_meta,'coverage':{'ok':len(done),'required':50,'failed':len(errors)},'result':result,'failed_constituents':errors,'constituents':done,'published_raw':pub['raw'],'live_model_changed':False,'live_allocation_changed':False}
     OUT.write_text(json.dumps(out,indent=2,ensure_ascii=False,default=str),encoding='utf-8')
     print(json.dumps({'coverage':out['coverage'],'result':result,'failures':errors[:15]},indent=2))
 
