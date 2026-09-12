@@ -1,23 +1,22 @@
 {
   "schema_version": 4,
   "model_version": "3.6",
-  "generated_at": "2026-09-12T07:10:02+00:00",
+  "generated_at": "2026-09-12T07:38:46+00:00",
   "macro_stale": false,
-  "macro_partial": false,
+  "macro_partial": true,
   "nifty": {
     "date": "2026-09-11",
     "level": 23398.1,
     "pe": 19.78,
     "pb": 2.83,
     "div_yield": 1.21,
-    "gsec10": 6.9711,
+    "gsec10": 6.78,
     "gsec_meta": {
-      "asof": "2026-09-10",
-      "source_url": "https://www.rbi.org.in/",
-      "source": "RBI dated government bond near 10 years",
-      "security": "6.94% GS 2036",
-      "status": "live",
-      "max_age_days": 7
+      "asof": "2026-07-31",
+      "source_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/IND.M.IRLT.PA.....?startPeriod=2012-01&dimensionAtObservation=AllDimensions&format=csvfile",
+      "source": "OECD monthly India long-term government bond yield",
+      "status": "lagged",
+      "max_age_days": 100
     }
   },
   "earnings": {
@@ -36,7 +35,7 @@
     "brent_3m_pct": 15.744637961244745,
     "india_reer_bis": 90.37,
     "usd_inr_3m_pct": 0.17928493769474585,
-    "india_us_10y_spread": 2.0111,
+    "india_us_10y_spread": 1.8200000000000003,
     "us_10y": 4.96,
     "factors": {
       "us_real_10y": {
@@ -104,15 +103,15 @@
         "status": "live"
       },
       "india_us_10y_spread": {
-        "value": 2.0111,
-        "z": -1.4584667790779038,
-        "score": -0.7497181627269922,
+        "value": 1.8200000000000003,
+        "z": -1.8537496130770474,
+        "score": -0.8442629740329035,
         "asof": "2026-09-11",
         "observations": 924,
         "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
         "status": "live",
-        "india_asof": "2026-09-10",
-        "india_source_url": "https://www.rbi.org.in/",
+        "india_asof": "2026-07-31",
+        "india_source_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/IND.M.IRLT.PA.....?startPeriod=2012-01&dimensionAtObservation=AllDimensions&format=csvfile",
         "history_source_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/IND.M.IRLT.PA.....?startPeriod=2012-01&dimensionAtObservation=AllDimensions&format=csvfile"
       },
       "us_10y": {
@@ -138,38 +137,38 @@
     "relative_em": {
       "available": true,
       "score": null,
-      "history_count": 5,
+      "history_count": 6,
       "status": "pending_history",
-      "em_ex_india_pe": 16.3,
+      "em_ex_india_pe": 13.6,
       "em_ex_india_pb": 2.4,
       "em_ex_india_div_yield": 2.8,
-      "asof": "2026-07-31",
+      "asof": "2026-08-31",
       "source_url": "https://stoxx.com/index/swexilv/?factsheet=true",
       "pe_basis": "Trailing, including negative earnings",
       "method": "largecap-fundamentals-v1",
-      "comparison_month": "2026-07",
-      "relative_log_premium": 0.23361738673449692,
-      "nifty_pe_premium_pct": 27.484662576687114,
-      "nifty_pb_premium_pct": 24.583333333333357,
+      "comparison_month": "2026-08",
+      "relative_log_premium": 0.32054739093470563,
+      "nifty_pe_premium_pct": 49.705882352941174,
+      "nifty_pb_premium_pct": 21.66666666666668,
       "z": null
     },
     "blocks": {
       "global_liquidity": -0.1511669019371614,
-      "india_external_carry": -0.041010165293256684,
+      "india_external_carry": -0.06464636811973451,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null,
-      "india_domestic": 0.057009151848864285
+      "india_domestic": null
     },
     "factor_coverage": {
       "global_liquidity": 1.0,
       "india_external_carry": 1.0,
       "china_industrial": 1.0,
       "relative_em_valuation": 0,
-      "block_weight": 1.0,
-      "india_domestic": 1.0
+      "block_weight": 0.75,
+      "india_domestic": 0.0
     },
     "india_reer_z": -2.579902483154261,
-    "india_us_spread_z": -1.4584667790779038,
+    "india_us_spread_z": -1.8537496130770474,
     "stale_factors": [],
     "sources_live": {
       "us_real_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
@@ -182,8 +181,8 @@
       "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
     },
-    "score": -0.04001701036164857,
-    "active_block_weight": 1.0,
+    "score": -0.08023779870731214,
+    "active_block_weight": 0.75,
     "block_weight_detail": {
       "global_liquidity": {
         "strategic_weight": 0.3,
@@ -197,8 +196,8 @@
       },
       "india_domestic": {
         "strategic_weight": 0.25,
-        "internal_coverage": 1.0,
-        "effective_weight": 0.25
+        "internal_coverage": 0.0,
+        "effective_weight": 0
       },
       "china_industrial": {
         "strategic_weight": 0.2,
@@ -207,52 +206,14 @@
       }
     },
     "domestic": {
-      "score": 0.057009151848864285,
-      "coverage": 1.0,
-      "status": "live",
-      "factors": {
-        "india_cpi_yoy": {
-          "value": 4.45,
-          "asof": "2026-07-31",
-          "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2298247",
-          "status": "live",
-          "label": "All-India CPI inflation, YoY",
-          "source": "MoSPI/NSO via PIB",
-          "score": -0.291312612451591,
-          "reference": 4.0,
-          "reference_label": "RBI inflation target"
-        },
-        "india_iip_yoy": {
-          "value": 6.7,
-          "asof": "2026-07-31",
-          "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2304222",
-          "status": "live",
-          "label": "India IIP growth, YoY",
-          "source": "MoSPI/NSO via PIB",
-          "score": 0.40113428494794595,
-          "reference": 5.0,
-          "reference_label": "medium-growth anchor"
-        },
-        "india_repo_rate": {
-          "value": 5.25,
-          "asof": "2026-09-12",
-          "source_url": "https://www.rbi.org.in/",
-          "status": "live",
-          "label": "RBI policy repo rate",
-          "date_basis": "retrieval date; current policy rate remains effective until changed",
-          "score": 0.1325487883908785,
-          "real_repo": 0.7999999999999998,
-          "reference_real_rate": 1.0,
-          "reference_label": "real policy-rate anchor"
-        }
-      },
-      "inflation_gap_pp": 0.4500000000000002,
-      "real_repo_rate": 0.7999999999999998,
-      "method": "economic-anchor-v1",
-      "source_policy": "official-PIB-discovery-with-prior-release-carry-forward"
+      "score": null,
+      "coverage": 0.0,
+      "status": "unavailable",
+      "factors": {},
+      "method": "economic-anchor-v1"
     }
   },
-  "confidence": 1.0,
+  "confidence": 0.9125,
   "valuation_diagnostics": {
     "status": "live",
     "months": 64,
@@ -784,9 +745,9 @@
       "url": "https://www.niftyindices.com/reports/historical-data"
     },
     {
-      "name": "RBI dated government bond near 10 years",
+      "name": "OECD monthly India long-term government bond yield",
       "role": "Current India ~10Y yield; its own observation date determines eligibility",
-      "url": "https://www.rbi.org.in/"
+      "url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/IND.M.IRLT.PA.....?startPeriod=2012-01&dimensionAtObservation=AllDimensions&format=csvfile"
     },
     {
       "name": "U.S. Treasury / Federal Reserve / CBOE",
