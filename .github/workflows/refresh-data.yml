@@ -58,13 +58,9 @@ jobs:
         run: python scripts/backtest_monthly_2000.py
       - name: Research real-fund implementation and long-lived fund ranking
         run: python scripts/fund_strategy_rank.py
-      - name: Archive inputs and exact rules before publishing
-        run: python scripts/archive_evidence.py
       - name: Commit only when data changed
         run: |
           paths=(
-            data/evidence
-            data/evidence_status.json
             data/latest.json
             data/multiasset.json
             data/walkforward.json
