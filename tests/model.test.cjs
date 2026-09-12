@@ -49,7 +49,7 @@ test('invalid, stale and future NIFTY withhold allocation',()=>{
 });
 test('failed browser reload clears a previously displayed allocation',()=>{
  const nodes=new Map();const node=id=>nodes.get(id)||nodes.set(id,{textContent:'81%',style:{},className:'',innerHTML:''}).get(id);
- const context={AnupModel:M,document:{querySelector:node},AbortController,Date,console,setTimeout:()=>0,clearTimeout:()=>{},fetch:()=>new Promise(()=>{})};
+ const context={AnupHealth:require('../health.js'),setInterval:()=>0,AnupModel:M,document:{querySelector:node},AbortController,Date,console,setTimeout:()=>0,clearTimeout:()=>{},fetch:()=>new Promise(()=>{})};
  vm.createContext(context);vm.runInContext(fs.readFileSync(require.resolve('../app.js'),'utf8'),context);
  vm.runInContext("clearAllocation('unavailable')",context);
  assert.equal(node('#eq').textContent,'—');assert.equal(node('#debt').textContent,'—');assert.equal(node('#eqbar').style.width,'0%');
@@ -68,3 +68,4 @@ test('macro worsens allocation monotonically for every valuation and has zero au
   }
  }
 });
+

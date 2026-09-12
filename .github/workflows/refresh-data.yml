@@ -44,7 +44,7 @@ jobs:
       - name: Test data parsing and allocation safeguards
         run: |
           python -m unittest discover -s tests -p 'test_*.py' -v
-          node --test tests/model.test.cjs
+          node --test tests/*.test.cjs
       - name: Refresh live valuation inputs
         run: python scripts/update_data_v3.py
       - name: Build snapshot-consistent multi-asset research
