@@ -10,6 +10,7 @@ on:
       - 'scripts/current_definition_integrated_anchor.py'
       - 'scripts/current_definition_integrated_anchor_v2.py'
       - 'scripts/current_definition_integrated_anchor_v3.py'
+      - 'scripts/current_definition_integrated_anchor_v4.py'
       - 'scripts/current_definition_anchor_residual_2026.py'
       - '.github/workflows/current-definition-special-diagnostics.yml'
 
@@ -34,7 +35,7 @@ jobs:
       - run: python scripts/current_definition_integrated_probe.py
       - run: python scripts/current_definition_integrated_coverage.py
       - run: python scripts/current_definition_integrated_schema_probe.py
-      - run: python scripts/current_definition_integrated_anchor_v3.py
+      - run: python scripts/current_definition_integrated_anchor_v4.py
       - run: python scripts/current_definition_anchor_residual_2026.py
       - uses: actions/upload-artifact@v4
         with:
