@@ -42,6 +42,7 @@ jobs:
       - name: Refresh live valuation inputs
         run: python scripts/update_data_v3.py
       - name: Refresh experimental Gold Silver and BTC layer
+        continue-on-error: true
         run: python scripts/multiasset.py
       - name: Update prospective no-lookahead ledger
         run: python scripts/walkforward.py
