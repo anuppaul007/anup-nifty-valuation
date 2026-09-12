@@ -1,0 +1,480 @@
+{
+  "status": "complete",
+  "schema_version": 1,
+  "audit_version": "multiasset-robustness-v2",
+  "generated_at": "2026-09-12T07:38:54+00:00",
+  "history_start": "2000-01",
+  "history_end": "2026-09",
+  "months": 321,
+  "live_model_changed": false,
+  "static_vs_dynamic": {
+    "common_start": "2006-05",
+    "baseline": {
+      "cagr_pct": 12.221289238402289,
+      "max_drawdown_pct": -38.082535568453615,
+      "annualized_volatility_pct": 15.63427035241981,
+      "calmar": 0.32091584911499493,
+      "sortino": 1.093706083189489,
+      "average_monthly_turnover_pct": 9.534693877551021,
+      "months": 245
+    },
+    "dynamic_research_v1": {
+      "cagr_pct": 13.051734102140887,
+      "max_drawdown_pct": -33.283169763563215,
+      "annualized_volatility_pct": 13.28814227836812,
+      "calmar": 0.39214216058319323,
+      "sortino": 1.3103571832762175,
+      "average_monthly_turnover_pct": 8.238043603714486,
+      "months": 245
+    },
+    "static_gold_10": {
+      "cagr_pct": 12.681708463875063,
+      "max_drawdown_pct": -34.0941406617859,
+      "annualized_volatility_pct": 13.988091783822465,
+      "calmar": 0.3719615223529959,
+      "sortino": 1.205610840415106,
+      "average_monthly_turnover_pct": 8.581224489795918,
+      "months": 245
+    },
+    "static_gold_15": {
+      "cagr_pct": 12.887405160782395,
+      "max_drawdown_pct": -32.38944719525794,
+      "annualized_volatility_pct": 13.261378509912088,
+      "calmar": 0.3978890125259442,
+      "sortino": 1.262783404876214,
+      "average_monthly_turnover_pct": 8.104489795918369,
+      "months": 245
+    },
+    "static_gold10_silver5": {
+      "cagr_pct": 12.933836085182083,
+      "max_drawdown_pct": -33.984179415764245,
+      "annualized_volatility_pct": 13.67378508364538,
+      "calmar": 0.38058403373372207,
+      "sortino": 1.2692424166979643,
+      "average_monthly_turnover_pct": 8.104489795918369,
+      "months": 245
+    },
+    "static_neutral_13_3_5": {
+      "cagr_pct": 12.979728429436154,
+      "max_drawdown_pct": -32.99961847163909,
+      "annualized_volatility_pct": 13.344118015045856,
+      "calmar": 0.3933296513894953,
+      "sortino": 1.2924275584709473,
+      "average_monthly_turnover_pct": 7.961469387755102,
+      "months": 245
+    },
+    "dynamic_minus_static_neutral": {
+      "cagr_pp": 0.07200567270473357,
+      "max_drawdown_pp": -0.28355129192412676,
+      "volatility_pp": -0.05597573667773581,
+      "calmar_delta": -0.001187490806302094
+    }
+  },
+  "funding_rule_audit": {
+    "common_start": "2006-05",
+    "baseline": {
+      "cagr_pct": 12.221289238402289,
+      "max_drawdown_pct": -38.082535568453615,
+      "annualized_volatility_pct": 15.63427035241981,
+      "calmar": 0.32091584911499493,
+      "sortino": 1.093706083189489,
+      "average_monthly_turnover_pct": 9.534693877551021,
+      "months": 245
+    },
+    "variants": {
+      "proportional": {
+        "cagr_pct": 13.051734102140887,
+        "max_drawdown_pct": -33.283169763563215,
+        "annualized_volatility_pct": 13.28814227836812,
+        "calmar": 0.39214216058319323,
+        "sortino": 1.3103571832762175,
+        "average_monthly_turnover_pct": 8.238043603714486,
+        "months": 245
+      },
+      "equity_first": {
+        "cagr_pct": 13.344058030073569,
+        "max_drawdown_pct": -33.04999033484021,
+        "annualized_volatility_pct": 12.760460855405785,
+        "calmar": 0.4037537649748328,
+        "sortino": 1.3461231852691404,
+        "average_monthly_turnover_pct": 9.037577221074919,
+        "months": 245
+      },
+      "debt_first": {
+        "cagr_pct": 13.150479290313122,
+        "max_drawdown_pct": -34.388910950403925,
+        "annualized_volatility_pct": 14.28966407477782,
+        "calmar": 0.3824046451857371,
+        "sortino": 1.257819856222494,
+        "average_monthly_turnover_pct": 8.812060527514957,
+        "months": 245
+      }
+    }
+  },
+  "gold_silver_ratio_lookback_audit": {
+    "common_start": "2008-10",
+    "baseline": {
+      "cagr_pct": 11.700444866785165,
+      "max_drawdown_pct": -14.321936346259678,
+      "annualized_volatility_pct": 14.935293075722958,
+      "calmar": 0.8169597032066728,
+      "sortino": 1.0952779719371517,
+      "average_monthly_turnover_pct": 8.63888888888889,
+      "months": 216
+    },
+    "variants": {
+      "live_3y_legacy": {
+        "first_eligible": "2006-05",
+        "performance": {
+          "cagr_pct": 12.584196155820027,
+          "max_drawdown_pct": -9.587454919767069,
+          "annualized_volatility_pct": 12.86700451911001,
+          "calmar": 1.3125690040924611,
+          "sortino": 1.2992163654323516,
+          "average_monthly_turnover_pct": 7.515025776080179,
+          "months": 216
+        }
+      },
+      "3y_full": {
+        "first_eligible": "2006-05",
+        "performance": {
+          "cagr_pct": 12.584196155820027,
+          "max_drawdown_pct": -9.587454919767069,
+          "annualized_volatility_pct": 12.86700451911001,
+          "calmar": 1.3125690040924611,
+          "sortino": 1.2992163654323516,
+          "average_monthly_turnover_pct": 7.515025776080179,
+          "months": 216
+        }
+      },
+      "5y": {
+        "first_eligible": "2006-05",
+        "performance": {
+          "cagr_pct": 12.615651482570755,
+          "max_drawdown_pct": -9.593082266832342,
+          "annualized_volatility_pct": 12.876579252074308,
+          "calmar": 1.3150780043019972,
+          "sortino": 1.3174859759900808,
+          "average_monthly_turnover_pct": 7.5062574357338745,
+          "months": 216
+        }
+      },
+      "7y": {
+        "first_eligible": "2006-06",
+        "performance": {
+          "cagr_pct": 12.601436709165403,
+          "max_drawdown_pct": -9.613236636589628,
+          "annualized_volatility_pct": 12.88762479645737,
+          "calmar": 1.3108422465335112,
+          "sortino": 1.3105030877667434,
+          "average_monthly_turnover_pct": 7.50394111054474,
+          "months": 216
+        }
+      },
+      "10y": {
+        "first_eligible": "2008-10",
+        "performance": {
+          "cagr_pct": 12.596656556082554,
+          "max_drawdown_pct": -9.609234756506657,
+          "annualized_volatility_pct": 12.89153965639444,
+          "calmar": 1.3108907082900683,
+          "sortino": 1.3108955668704985,
+          "average_monthly_turnover_pct": 7.489823201699278,
+          "months": 216
+        }
+      },
+      "expanding": {
+        "first_eligible": "2006-05",
+        "performance": {
+          "cagr_pct": 12.633577027421005,
+          "max_drawdown_pct": -9.609234756506657,
+          "annualized_volatility_pct": 12.898027929453736,
+          "calmar": 1.3147328947153143,
+          "sortino": 1.313627480551579,
+          "average_monthly_turnover_pct": 7.470251785413032,
+          "months": 216
+        }
+      },
+      "5y_robust_median_mad": {
+        "first_eligible": "2006-05",
+        "performance": {
+          "cagr_pct": 12.6263036944531,
+          "max_drawdown_pct": -9.592756147728988,
+          "annualized_volatility_pct": 12.875511900868391,
+          "calmar": 1.3162331555193636,
+          "sortino": 1.3184613102045855,
+          "average_monthly_turnover_pct": 7.509861101693262,
+          "months": 216
+        }
+      }
+    }
+  },
+  "factor_ablation": {
+    "common_start": "2006-05",
+    "gold": {
+      "full": {
+        "cagr_pct": 13.051734102140887,
+        "max_drawdown_pct": -33.283169763563215,
+        "annualized_volatility_pct": 13.28814227836812,
+        "calmar": 0.39214216058319323,
+        "sortino": 1.3103571832762175,
+        "average_monthly_turnover_pct": 8.238043603714486,
+        "months": 245
+      },
+      "drop_real_yield": {
+        "cagr_pct": 13.138243480264089,
+        "max_drawdown_pct": -33.022000746290246,
+        "annualized_volatility_pct": 13.268256173454187,
+        "calmar": 0.39786333908735266,
+        "sortino": 1.3252047908008484,
+        "average_monthly_turnover_pct": 8.344032096440012,
+        "months": 245,
+        "delta_cagr_pp_vs_full": 0.08650937812320159,
+        "delta_calmar_vs_full": 0.00572117850415943
+      },
+      "drop_broad_usd_3m": {
+        "cagr_pct": 13.056461116567908,
+        "max_drawdown_pct": -32.92391013740883,
+        "annualized_volatility_pct": 13.201634100823812,
+        "calmar": 0.3965647173156655,
+        "sortino": 1.3272061242263753,
+        "average_monthly_turnover_pct": 8.192360826230916,
+        "months": 245,
+        "delta_cagr_pp_vs_full": 0.004727014427020393,
+        "delta_calmar_vs_full": 0.0044225567324722714
+      },
+      "drop_gold_12m_momentum": {
+        "cagr_pct": 12.968828891445527,
+        "max_drawdown_pct": -33.55913127558896,
+        "annualized_volatility_pct": 13.345797076598528,
+        "calmar": 0.386447097958078,
+        "sortino": 1.3062041487150668,
+        "average_monthly_turnover_pct": 8.309918803814485,
+        "months": 245,
+        "delta_cagr_pp_vs_full": -0.08290521069536005,
+        "delta_calmar_vs_full": -0.00569506262511521
+      },
+      "drop_vix_stress": {
+        "cagr_pct": 13.052108211595481,
+        "max_drawdown_pct": -33.555544249908294,
+        "annualized_volatility_pct": 13.334562627787664,
+        "calmar": 0.388970243319214,
+        "sortino": 1.3090494547558973,
+        "average_monthly_turnover_pct": 8.25178834564986,
+        "months": 245,
+        "delta_cagr_pp_vs_full": 0.00037410945459370737,
+        "delta_calmar_vs_full": -0.0031719172639792514
+      }
+    },
+    "silver": {
+      "full": {
+        "cagr_pct": 13.051734102140887,
+        "max_drawdown_pct": -33.283169763563215,
+        "annualized_volatility_pct": 13.28814227836812,
+        "calmar": 0.39214216058319323,
+        "sortino": 1.3103571832762175,
+        "average_monthly_turnover_pct": 8.238043603714486,
+        "months": 245
+      },
+      "drop_gold_silver_ratio": {
+        "cagr_pct": 12.91483109718592,
+        "max_drawdown_pct": -33.69931000157359,
+        "annualized_volatility_pct": 13.35304138327365,
+        "calmar": 0.3832372560916784,
+        "sortino": 1.2988744637099257,
+        "average_monthly_turnover_pct": 8.303213080960107,
+        "months": 245,
+        "delta_cagr_pp_vs_full": -0.1369030049549682,
+        "delta_calmar_vs_full": -0.00890490449151482
+      },
+      "drop_china_industrial": {
+        "cagr_pct": 13.148260584806092,
+        "max_drawdown_pct": -33.19849069446563,
+        "annualized_volatility_pct": 13.300560725348213,
+        "calmar": 0.3960499501562575,
+        "sortino": 1.3241910094262428,
+        "average_monthly_turnover_pct": 8.273257661033693,
+        "months": 245,
+        "delta_cagr_pp_vs_full": 0.09652648266520458,
+        "delta_calmar_vs_full": 0.0039077895730642576
+      },
+      "drop_silver_12m_momentum": {
+        "cagr_pct": 13.057875802178254,
+        "max_drawdown_pct": -33.057101252308286,
+        "annualized_volatility_pct": 13.2426989834556,
+        "calmar": 0.39500970464754404,
+        "sortino": 1.3181702320286233,
+        "average_monthly_turnover_pct": 8.32120809997212,
+        "months": 245,
+        "delta_cagr_pp_vs_full": 0.006141700037366249,
+        "delta_calmar_vs_full": 0.002867544064350802
+      }
+    }
+  },
+  "parameter_perturbation": {
+    "seed": 20260912,
+    "variants": 500,
+    "perturbation_ranges": {
+      "factor_weights": "each published weight multiplied independently by U(0.8,1.2), then renormalized",
+      "gold_center_pct": [
+        11.5,
+        14.5
+      ],
+      "gold_slope_pct": [
+        4.0,
+        6.0
+      ],
+      "silver_center_pct": [
+        2.75,
+        4.25
+      ],
+      "silver_slope_pct": [
+        2.8,
+        4.2
+      ],
+      "allocation_clips": "unchanged at Gold 8-18%, Silver 0-7%"
+    },
+    "reference": {
+      "baseline": {
+        "cagr_pct": 12.221289238402289,
+        "max_drawdown_pct": -38.082535568453615,
+        "annualized_volatility_pct": 15.63427035241981,
+        "calmar": 0.32091584911499493,
+        "sortino": 1.093706083189489,
+        "average_monthly_turnover_pct": 9.534693877551021,
+        "months": 245
+      },
+      "published_dynamic": {
+        "cagr_pct": 13.051734102140887,
+        "max_drawdown_pct": -33.283169763563215,
+        "annualized_volatility_pct": 13.28814227836812,
+        "calmar": 0.39214216058319323,
+        "sortino": 1.3103571832762175,
+        "average_monthly_turnover_pct": 8.238043603714486,
+        "months": 245
+      },
+      "static_neutral_13_3_5": {
+        "cagr_pct": 12.979728429436154,
+        "max_drawdown_pct": -32.99961847163909,
+        "annualized_volatility_pct": 13.344118015045856,
+        "calmar": 0.3933296513894953,
+        "sortino": 1.2924275584709473,
+        "average_monthly_turnover_pct": 7.961469387755102,
+        "months": 245
+      }
+    },
+    "distribution": {
+      "cagr_pct": {
+        "min": 12.938107183824044,
+        "p10": 12.99562778518253,
+        "median": 13.054758179526726,
+        "p90": 13.112538101816794,
+        "max": 13.164002682598298
+      },
+      "max_drawdown_pct": {
+        "min": -33.95930560372231,
+        "p10": -33.69920108588515,
+        "median": -33.25839461512426,
+        "p90": -32.85248248907709,
+        "max": -32.68184962497871
+      },
+      "annualized_volatility_pct": {
+        "min": 13.087929467983484,
+        "p10": 13.1402717402637,
+        "median": 13.283209143600272,
+        "p90": 13.441626209604253,
+        "max": 13.513491281770046
+      },
+      "calmar": {
+        "min": 0.38147993784724715,
+        "p10": 0.38602300512717647,
+        "median": 0.3923999624194436,
+        "p90": 0.39905249815312843,
+        "max": 0.4023407472576129
+      }
+    },
+    "pass_rates_pct": {
+      "cagr_above_baseline": 100.0,
+      "calmar_above_baseline": 100.0,
+      "calmar_above_static_neutral": 45.6,
+      "cagr_above_baseline_and_drawdown_no_worse": 100.0
+    }
+  },
+  "btc_era_audit": {
+    "status": "complete",
+    "period_start": "2015-10",
+    "period_end": "2026-09",
+    "core_without_funded_btc": {
+      "cagr_pct": 11.754076413980496,
+      "max_drawdown_pct": -6.989289855125191,
+      "annualized_volatility_pct": 7.531821642372852,
+      "calmar": 1.6817268503124567,
+      "sortino": 2.3384100745513225,
+      "average_monthly_turnover_pct": 7.749010375725805,
+      "months": 131
+    },
+    "funded_btc_variant": {
+      "cagr_pct": 17.08967758612765,
+      "max_drawdown_pct": -8.921195867517085,
+      "annualized_volatility_pct": 9.268739974618875,
+      "calmar": 1.9156263173587273,
+      "sortino": 3.172447686115993,
+      "average_monthly_turnover_pct": 7.632725297348662,
+      "months": 131
+    },
+    "signal_distribution": {
+      "10.0%": 12,
+      "2.5%": 15,
+      "5.0%": 54,
+      "7.5%": 50
+    },
+    "btc_return_by_signal": {
+      "10.0%": {
+        "months": 12,
+        "mean_btc_month_return_pct": 1.0414505581730515,
+        "median_btc_month_return_pct": -2.67512185418729,
+        "positive_btc_month_pct": 25.0
+      },
+      "2.5%": {
+        "months": 15,
+        "mean_btc_month_return_pct": -0.7558820646113062,
+        "median_btc_month_return_pct": -0.44653658474641533,
+        "positive_btc_month_pct": 46.666666666666664
+      },
+      "5.0%": {
+        "months": 54,
+        "mean_btc_month_return_pct": 4.018816588457379,
+        "median_btc_month_return_pct": 4.566198215844064,
+        "positive_btc_month_pct": 53.70370370370371
+      },
+      "7.5%": {
+        "months": 50,
+        "mean_btc_month_return_pct": 13.071214907061263,
+        "median_btc_month_return_pct": 11.687276316124063,
+        "positive_btc_month_pct": 66.0
+      }
+    },
+    "momentum_value_opposition_rate_pct": 68.70229007633588,
+    "note": "This isolates the BTC-available era; pre-BTC crises such as 2008 cannot determine the BTC variant's max drawdown."
+  },
+  "decision_gate": {
+    "live_model_change_authorized": false,
+    "dynamic_metals_evidence": "insufficient",
+    "rule": "The audit never edits live parameters. Any future change requires explicit review of these results plus the existing prospective walk-forward governance.",
+    "key_checks": {
+      "dynamic_beats_static_neutral_on_cagr_and_calmar": false,
+      "at_least_70pct_parameter_perturbations_beat_static_neutral_calmar": false,
+      "funding_rules_compared": true,
+      "ratio_lookbacks_compared": true,
+      "factor_ablations_completed": true,
+      "btc_post_2015_risk_isolated": true
+    }
+  },
+  "limitations": [
+    "Base NIFTY allocation is the existing common-history valuation reconstruction, not a release-vintage reconstruction of the full modern V3.6 stack.",
+    "Historical macro series are latest-revised rather than vintage releases.",
+    "Gold/Silver/BTC returns use continuous Yahoo USD price series converted to synthetic INR with BIS USD/INR; they are not Indian ETF total-return series.",
+    "Taxes, product expense ratios, tracking error and exit loads are excluded; metrics use a 10 bps one-way turnover sensitivity.",
+    "Parameter perturbation is a stability test, not an optimizer and not permission to choose the best historical parameter set."
+  ]
+}
