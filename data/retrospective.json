@@ -1,7 +1,895 @@
 {
   "schema_version": 1,
-  "status": "unavailable",
+  "status": "complete",
   "model_version": "3.6",
   "study": "valuation-core retrospective sensitivity",
-  "error": "TypeError: NSEIndexHistory.index_tri_raw() missing 1 required positional argument: 'to_date'"
+  "methodology": {
+    "start": "2021-04",
+    "end_completed_month": "2026-07",
+    "signal_rule": "month-end valuation signal applied to next completed month return",
+    "equity_benchmark": "NIFTY 50 Total Return Index",
+    "debt_benchmark": "NIFTY 10 YR BENCHMARK G-SEC total-return index",
+    "transaction_cost_sensitivity": "10 bps per 100% one-way allocation turnover; taxes excluded",
+    "important_limit": "Retrospective sensitivity only. Fixed reference constants were not proven to have been frozen at the start date, so this is not out-of-sample validation."
+  },
+  "comparable_months": 64,
+  "performance_months": 63,
+  "latest_completed_signal": {
+    "month": "2026-07",
+    "valuation_z": -0.7958660100066309,
+    "candidate_core_equity_pct": {
+      "0.6": 68.44638089914736,
+      "0.8": 70.22146336075313,
+      "1.0": 72.29083267714108,
+      "1.15": 73.96708844833844,
+      "1.35": 76.28282605540394,
+      "1.5": 78.03009852476575
+    }
+  },
+  "candidate_curve_slopes": [
+    0.6,
+    0.8,
+    1.0,
+    1.15,
+    1.35,
+    1.5
+  ],
+  "candidates": {
+    "0.6": {
+      "gross": {
+        "months": 63,
+        "cagr_pct": 8.727581461412704,
+        "annual_vol_pct": 8.366696604845282,
+        "max_drawdown_pct": -9.095630269938193,
+        "sortino_0_pct": 188.0200757269385,
+        "calmar": 0.9595356454030546,
+        "ending_wealth_from_100": 155.1613574183864,
+        "worst_month_pct": -7.313569874495236,
+        "annual_turnover_x": 0.7825462432535808,
+        "costed_10bp_turnover": false
+      },
+      "net_10bp_turnover": {
+        "months": 63,
+        "cagr_pct": 8.643471104457202,
+        "annual_vol_pct": 8.362389464882119,
+        "max_drawdown_pct": -9.103411971928132,
+        "sortino_0_pct": 185.88348726747114,
+        "calmar": 0.9494759911021017,
+        "ending_wealth_from_100": 154.53222986207248,
+        "worst_month_pct": -7.314619376153756,
+        "annual_turnover_x": 0.7825462432535808,
+        "costed_10bp_turnover": true
+      },
+      "average_equity_pct": 52.014180640373,
+      "min_equity_pct": 1.0246031700398426,
+      "max_equity_pct": 78.40771019623438
+    },
+    "0.8": {
+      "gross": {
+        "months": 63,
+        "cagr_pct": 8.7988082439036,
+        "annual_vol_pct": 8.464879715551808,
+        "max_drawdown_pct": -9.201775344418195,
+        "sortino_0_pct": 187.78117865544036,
+        "calmar": 0.9562076789063281,
+        "ending_wealth_from_100": 155.695738471045,
+        "worst_month_pct": -7.3966657925742165,
+        "annual_turnover_x": 0.8469610265220863,
+        "costed_10bp_turnover": false
+      },
+      "net_10bp_turnover": {
+        "months": 63,
+        "cagr_pct": 8.707716605365334,
+        "annual_vol_pct": 8.46032607589785,
+        "max_drawdown_pct": -9.210370333243855,
+        "sortino_0_pct": 185.48619454151643,
+        "calmar": 0.9454252424504316,
+        "ending_wealth_from_100": 155.0125858447597,
+        "worst_month_pct": -7.397822101880111,
+        "annual_turnover_x": 0.8469610265220863,
+        "costed_10bp_turnover": true
+      },
+      "average_equity_pct": 52.33885073857903,
+      "min_equity_pct": 0.8086514461084614,
+      "max_equity_pct": 80.53653037058233
+    },
+    "1.0": {
+      "gross": {
+        "months": 63,
+        "cagr_pct": 8.882354285466088,
+        "annual_vol_pct": 8.582046518003434,
+        "max_drawdown_pct": -9.329661531031707,
+        "sortino_0_pct": 187.40800778693972,
+        "calmar": 0.95205536191449,
+        "ending_wealth_from_100": 156.32444280098278,
+        "worst_month_pct": -7.496783511186256,
+        "annual_turnover_x": 0.9217104986064726,
+        "costed_10bp_turnover": false
+      },
+      "net_10bp_turnover": {
+        "months": 63,
+        "cagr_pct": 8.78314640953124,
+        "annual_vol_pct": 8.577262103104196,
+        "max_drawdown_pct": -9.339225289058673,
+        "sortino_0_pct": 184.9344174167348,
+        "calmar": 0.9404577079665372,
+        "ending_wealth_from_100": 155.57810750379798,
+        "worst_month_pct": -7.498065966356618,
+        "annual_turnover_x": 0.9217104986064726,
+        "costed_10bp_turnover": true
+      },
+      "average_equity_pct": 52.731800577753276,
+      "min_equity_pct": 0.6112026217902244,
+      "max_equity_pct": 82.8847146504837
+    },
+    "1.15": {
+      "gross": {
+        "months": 63,
+        "cagr_pct": 8.950403627633552,
+        "annual_vol_pct": 8.679130083650492,
+        "max_drawdown_pct": -9.43696919485475,
+        "sortino_0_pct": 187.02706750414504,
+        "calmar": 0.9484404836791791,
+        "ending_wealth_from_100": 156.8380479961956,
+        "worst_month_pct": -7.580788855042406,
+        "annual_turnover_x": 0.982092433580334,
+        "costed_10bp_turnover": false
+      },
+      "net_10bp_turnover": {
+        "months": 63,
+        "cagr_pct": 8.844627337461187,
+        "annual_vol_pct": 8.674207070349226,
+        "max_drawdown_pct": -9.44733584509918,
+        "sortino_0_pct": 184.4134850705556,
+        "calmar": 0.936203336314052,
+        "ending_wealth_from_100": 156.0402843372833,
+        "worst_month_pct": -7.582174852387562,
+        "annual_turnover_x": 0.982092433580334,
+        "costed_10bp_turnover": true
+      },
+      "average_equity_pct": 53.06192422266446,
+      "min_equity_pct": 0.48449697090991234,
+      "max_equity_pct": 84.68140537803997
+    },
+    "1.35": {
+      "gross": {
+        "months": 63,
+        "cagr_pct": 9.045010677152131,
+        "annual_vol_pct": 8.816607563007395,
+        "max_drawdown_pct": -9.591566632090288,
+        "sortino_0_pct": 186.37881512375162,
+        "calmar": 0.9430170298656368,
+        "ending_wealth_from_100": 157.5543675064212,
+        "worst_month_pct": -7.701804118780295,
+        "annual_turnover_x": 1.0654533284309091,
+        "costed_10bp_turnover": false
+      },
+      "net_10bp_turnover": {
+        "months": 63,
+        "cagr_pct": 8.93014750986556,
+        "annual_vol_pct": 8.811570620240504,
+        "max_drawdown_pct": -9.603072739789308,
+        "sortino_0_pct": 183.57858054282087,
+        "calmar": 0.9299260509466356,
+        "ending_wealth_from_100": 156.68502154006282,
+        "worst_month_pct": -7.703335271798715,
+        "annual_turnover_x": 1.0654533284309091,
+        "costed_10bp_turnover": true
+      },
+      "average_equity_pct": 53.536467520187294,
+      "min_equity_pct": 0.3472141825185254,
+      "max_equity_pct": 87.0082244804561
+    },
+    "1.5": {
+      "gross": {
+        "months": 63,
+        "cagr_pct": 9.116945549305356,
+        "annual_vol_pct": 8.923109770433582,
+        "max_drawdown_pct": -9.71388646740331,
+        "sortino_0_pct": 185.79109221187696,
+        "calmar": 0.9385476739818716,
+        "ending_wealth_from_100": 158.10079461679817,
+        "worst_month_pct": -7.797537779152114,
+        "annual_turnover_x": 1.128470038030893,
+        "costed_10bp_turnover": false
+      },
+      "net_10bp_turnover": {
+        "months": 63,
+        "cagr_pct": 8.995198015532724,
+        "annual_vol_pct": 8.918051562439974,
+        "max_drawdown_pct": -9.726278596180338,
+        "sortino_0_pct": 182.8550861030707,
+        "calmar": 0.9248345013544316,
+        "ending_wealth_from_100": 157.17688039745937,
+        "worst_month_pct": -7.7991801442228015,
+        "annual_turnover_x": 1.128470038030893,
+        "costed_10bp_turnover": true
+      },
+      "average_equity_pct": 53.90981873927496,
+      "min_equity_pct": 0.2666422795480122,
+      "max_equity_pct": 88.64444814519669
+    }
+  },
+  "baselines": {
+    "60_40": {
+      "months": 63,
+      "cagr_pct": 9.179864438016239,
+      "annual_vol_pct": 8.748440133637352,
+      "max_drawdown_pct": -9.449510121289052,
+      "sortino_0_pct": 183.47183920552473,
+      "calmar": 0.9714645860143246,
+      "ending_wealth_from_100": 158.57999190636636,
+      "worst_month_pct": -7.501133646277328,
+      "annual_turnover_x": null,
+      "costed_10bp_turnover": false
+    },
+    "70_30": {
+      "months": 63,
+      "cagr_pct": 9.80086757719838,
+      "annual_vol_pct": 9.913754394369834,
+      "max_drawdown_pct": -10.769194350418964,
+      "sortino_0_pct": 171.23503854990605,
+      "calmar": 0.910083638412291,
+      "ending_wealth_from_100": 163.3730064458254,
+      "worst_month_pct": -8.451249042994068,
+      "annual_turnover_x": null,
+      "costed_10bp_turnover": false
+    },
+    "100_equity": {
+      "months": 63,
+      "cagr_pct": 11.584215485152205,
+      "annual_vol_pct": 13.481047107157732,
+      "max_drawdown_pct": -14.675218557186653,
+      "sortino_0_pct": 146.0617535396773,
+      "calmar": 0.7893726038907446,
+      "ending_wealth_from_100": 177.79294060437846,
+      "worst_month_pct": -11.30159523314429,
+      "annual_turnover_x": null,
+      "costed_10bp_turnover": false
+    }
+  },
+  "best_net_cagr_slope": 1.5,
+  "best_net_calmar_slope": 0.6,
+  "records": [
+    {
+      "month": "2021-04",
+      "pe": 32.21,
+      "pb": 4.19,
+      "dividend_yield": 1.0,
+      "gsec10": 6.2801,
+      "valuation_z": 2.428260636625675,
+      "equity_tri": 20811.13,
+      "debt_tri": 2045.84
+    },
+    {
+      "month": "2021-05",
+      "pe": 29.22,
+      "pb": 4.39,
+      "dividend_yield": 1.06,
+      "gsec10": 6.225375,
+      "valuation_z": 1.722424516445644,
+      "equity_tri": 22203.59,
+      "debt_tri": 2057.91
+    },
+    {
+      "month": "2021-06",
+      "pe": 28.33,
+      "pb": 4.24,
+      "dividend_yield": 1.26,
+      "gsec10": 6.267675,
+      "valuation_z": 1.357932806858076,
+      "equity_tri": 22455.7,
+      "debt_tri": 2063.75
+    },
+    {
+      "month": "2021-07",
+      "pe": 27.01,
+      "pb": 4.12,
+      "dividend_yield": 1.18,
+      "gsec10": 6.20842,
+      "valuation_z": 1.0059688134794122,
+      "equity_tri": 22554.26,
+      "debt_tri": 2041.08
+    },
+    {
+      "month": "2021-08",
+      "pe": 26.25,
+      "pb": 4.33,
+      "dividend_yield": 1.05,
+      "gsec10": 6.280325,
+      "valuation_z": 0.9713883656026514,
+      "equity_tri": 24525.71,
+      "debt_tri": 2049.98
+    },
+    {
+      "month": "2021-09",
+      "pe": 26.98,
+      "pb": 4.41,
+      "dividend_yield": 1.17,
+      "gsec10": 6.1883,
+      "valuation_z": 1.0761301232591467,
+      "equity_tri": 25234.57,
+      "debt_tri": 2060.18
+    },
+    {
+      "month": "2021-10",
+      "pe": 25.71,
+      "pb": 4.43,
+      "dividend_yield": 1.13,
+      "gsec10": 6.35978,
+      "valuation_z": 0.8403706697555003,
+      "equity_tri": 25340.83,
+      "debt_tri": 2045.6
+    },
+    {
+      "month": "2021-11",
+      "pe": 23.43,
+      "pb": 4.25,
+      "dividend_yield": 1.19,
+      "gsec10": 6.354375,
+      "valuation_z": 0.10596663549776938,
+      "equity_tri": 24368.53,
+      "debt_tri": 2065.15
+    },
+    {
+      "month": "2021-12",
+      "pe": 24.11,
+      "pb": 4.37,
+      "dividend_yield": 1.19,
+      "gsec10": 6.44032,
+      "valuation_z": 0.37359935616300904,
+      "equity_tri": 24908.71,
+      "debt_tri": 2057.66
+    },
+    {
+      "month": "2022-01",
+      "pe": 23.42,
+      "pb": 4.37,
+      "dividend_yield": 1.2,
+      "gsec10": 6.643025,
+      "valuation_z": 0.2553981556894272,
+      "equity_tri": 24894.62,
+      "debt_tri": 2034.92
+    },
+    {
+      "month": "2022-02",
+      "pe": 21.59,
+      "pb": 4.23,
+      "dividend_yield": 1.26,
+      "gsec10": 6.750475,
+      "valuation_z": -0.3309313745432929,
+      "equity_tri": 24153.01,
+      "debt_tri": 2033.57
+    },
+    {
+      "month": "2022-03",
+      "pe": 22.92,
+      "pb": 4.46,
+      "dividend_yield": 1.13,
+      "gsec10": 6.819825,
+      "valuation_z": 0.24502607926044132,
+      "equity_tri": 25118.14,
+      "debt_tri": 2036.93
+    },
+    {
+      "month": "2022-04",
+      "pe": 22.01,
+      "pb": 4.37,
+      "dividend_yield": 1.16,
+      "gsec10": 7.1058,
+      "valuation_z": 0.05179130055827306,
+      "equity_tri": 24606.78,
+      "debt_tri": 2003.49
+    },
+    {
+      "month": "2022-05",
+      "pe": 20.44,
+      "pb": 4.24,
+      "dividend_yield": 1.43,
+      "gsec10": 7.38565,
+      "valuation_z": -0.5247838450559633,
+      "equity_tri": 23958.1,
+      "debt_tri": 1977.13
+    },
+    {
+      "month": "2022-06",
+      "pe": 19.5,
+      "pb": 4.03,
+      "dividend_yield": 1.41,
+      "gsec10": 7.529625,
+      "valuation_z": -0.8137190733243367,
+      "equity_tri": 22828.93,
+      "debt_tri": 1986.11
+    },
+    {
+      "month": "2022-07",
+      "pe": 20.73,
+      "pb": 4.12,
+      "dividend_yield": 1.29,
+      "gsec10": 7.40206,
+      "valuation_z": -0.35931193254575117,
+      "equity_tri": 24862.7,
+      "debt_tri": 2014.7
+    },
+    {
+      "month": "2022-08",
+      "pe": 21.2,
+      "pb": 4.12,
+      "dividend_yield": 1.41,
+      "gsec10": 7.27475,
+      "valuation_z": -0.3310832293602905,
+      "equity_tri": 25786.59,
+      "debt_tri": 2044.81
+    },
+    {
+      "month": "2022-09",
+      "pe": 20.64,
+      "pb": 4.02,
+      "dividend_yield": 1.32,
+      "gsec10": 7.280374,
+      "valuation_z": -0.4806679199638932,
+      "equity_tri": 24821.08,
+      "debt_tri": 2020.35
+    },
+    {
+      "month": "2022-10",
+      "pe": 21.42,
+      "pb": 4.23,
+      "dividend_yield": 1.25,
+      "gsec10": 7.464925,
+      "valuation_z": -0.057955815794603446,
+      "equity_tri": 26182.36,
+      "debt_tri": 2025.11
+    },
+    {
+      "month": "2022-11",
+      "pe": 22.54,
+      "pb": 4.4,
+      "dividend_yield": 1.28,
+      "gsec10": 7.357575,
+      "valuation_z": 0.26885030988615194,
+      "equity_tri": 27276.01,
+      "debt_tri": 2060.01
+    },
+    {
+      "month": "2022-12",
+      "pe": 21.79,
+      "pb": 4.25,
+      "dividend_yield": 1.27,
+      "gsec10": 7.29416,
+      "valuation_z": -0.023028427117971595,
+      "equity_tri": 26326.37,
+      "debt_tri": 2065.94
+    },
+    {
+      "month": "2023-01",
+      "pe": 20.73,
+      "pb": 4.14,
+      "dividend_yield": 1.39,
+      "gsec10": 7.39,
+      "valuation_z": -0.4194702497086535,
+      "equity_tri": 25685.94,
+      "debt_tri": 2074.54
+    },
+    {
+      "month": "2023-02",
+      "pe": 20.39,
+      "pb": 4.05,
+      "dividend_yield": 1.44,
+      "gsec10": 7.334525,
+      "valuation_z": -0.605362538824646,
+      "equity_tri": 25184.47,
+      "debt_tri": 2073.91
+    },
+    {
+      "month": "2023-03",
+      "pe": 20.44,
+      "pb": 4.06,
+      "dividend_yield": 1.44,
+      "gsec10": 7.36,
+      "valuation_z": -0.5750464650763338,
+      "equity_tri": 25266.06,
+      "debt_tri": 2103.72
+    },
+    {
+      "month": "2023-04",
+      "pe": 20.87,
+      "pb": 4.23,
+      "dividend_yield": 1.38,
+      "gsec10": 7.18,
+      "valuation_z": -0.44432073081355616,
+      "equity_tri": 26302.92,
+      "debt_tri": 2143.65
+    },
+    {
+      "month": "2023-05",
+      "pe": 21.59,
+      "pb": 4.33,
+      "dividend_yield": 1.36,
+      "gsec10": 7.0125,
+      "valuation_z": -0.2508148540851303,
+      "equity_tri": 27057.44,
+      "debt_tri": 2175.55
+    },
+    {
+      "month": "2023-06",
+      "pe": 22.36,
+      "pb": 4.5,
+      "dividend_yield": 1.41,
+      "gsec10": 7.054,
+      "valuation_z": 0.02121387248682187,
+      "equity_tri": 28059.65,
+      "debt_tri": 2170.41
+    },
+    {
+      "month": "2023-07",
+      "pe": 23.01,
+      "pb": 4.83,
+      "dividend_yield": 1.28,
+      "gsec10": 7.1125,
+      "valuation_z": 0.40109999030605625,
+      "equity_tri": 28910.43,
+      "debt_tri": 2174.23
+    },
+    {
+      "month": "2023-08",
+      "pe": 21.97,
+      "pb": 4.4,
+      "dividend_yield": 1.38,
+      "gsec10": 7.185,
+      "valuation_z": -0.047597258964435035,
+      "equity_tri": 28243.74,
+      "debt_tri": 2188.05
+    },
+    {
+      "month": "2023-09",
+      "pe": 22.21,
+      "pb": 3.46,
+      "dividend_yield": 1.37,
+      "gsec10": 7.172,
+      "valuation_z": -0.17284513017729472,
+      "equity_tri": 28807.77,
+      "debt_tri": 2188.69
+    },
+    {
+      "month": "2023-10",
+      "pe": 20.45,
+      "pb": 3.36,
+      "dividend_yield": 1.41,
+      "gsec10": 7.35,
+      "valuation_z": -0.686479065194804,
+      "equity_tri": 28017.36,
+      "debt_tri": 2180.98
+    },
+    {
+      "month": "2023-11",
+      "pe": 21.52,
+      "pb": 3.55,
+      "dividend_yield": 1.35,
+      "gsec10": 7.27,
+      "valuation_z": -0.3096606510676664,
+      "equity_tri": 29585.36,
+      "debt_tri": 2204.73
+    },
+    {
+      "month": "2023-12",
+      "pe": 23.17,
+      "pb": 3.83,
+      "dividend_yield": 1.28,
+      "gsec10": 7.224,
+      "valuation_z": 0.2712841250676022,
+      "equity_tri": 31933.93,
+      "debt_tri": 2232.79
+    },
+    {
+      "month": "2024-01",
+      "pe": 22.46,
+      "pb": 3.83,
+      "dividend_yield": 1.23,
+      "gsec10": 7.2025,
+      "valuation_z": 0.07850973759489482,
+      "equity_tri": 31939.59,
+      "debt_tri": 2251.03
+    },
+    {
+      "month": "2024-02",
+      "pe": 22.7,
+      "pb": 3.87,
+      "dividend_yield": 1.22,
+      "gsec10": 7.09,
+      "valuation_z": 0.1150064956811994,
+      "equity_tri": 32360.25,
+      "debt_tri": 2274.25
+    },
+    {
+      "month": "2024-03",
+      "pe": 22.88,
+      "pb": 3.94,
+      "dividend_yield": 1.2,
+      "gsec10": 7.068,
+      "valuation_z": 0.18654585911164795,
+      "equity_tri": 32867.23,
+      "debt_tri": 2290.54
+    },
+    {
+      "month": "2024-04",
+      "pe": 22.0,
+      "pb": 3.96,
+      "dividend_yield": 1.16,
+      "gsec10": 7.15,
+      "valuation_z": -0.017967412704255028,
+      "equity_tri": 33276.41,
+      "debt_tri": 2281.82
+    },
+    {
+      "month": "2024-05",
+      "pe": 21.4,
+      "pb": 3.95,
+      "dividend_yield": 1.28,
+      "gsec10": 7.054,
+      "valuation_z": -0.32354498005137494,
+      "equity_tri": 33285.9,
+      "debt_tri": 2322.94
+    },
+    {
+      "month": "2024-06",
+      "pe": 22.85,
+      "pb": 4.14,
+      "dividend_yield": 1.25,
+      "gsec10": 7.0225,
+      "valuation_z": 0.17275650693248323,
+      "equity_tri": 35539.16,
+      "debt_tri": 2331.82
+    },
+    {
+      "month": "2024-07",
+      "pe": 23.4,
+      "pb": 4.21,
+      "dividend_yield": 1.19,
+      "gsec10": 7.0075,
+      "valuation_z": 0.38233966326071567,
+      "equity_tri": 36959.48,
+      "debt_tri": 2359.49
+    },
+    {
+      "month": "2024-08",
+      "pe": 23.47,
+      "pb": 4.26,
+      "dividend_yield": 1.21,
+      "gsec10": 6.91,
+      "valuation_z": 0.35916937060950627,
+      "equity_tri": 37461.73,
+      "debt_tri": 2382.19
+    },
+    {
+      "month": "2024-09",
+      "pe": 24.26,
+      "pb": 3.87,
+      "dividend_yield": 1.16,
+      "gsec10": 6.8325,
+      "valuation_z": 0.488718119839307,
+      "equity_tri": 38315.21,
+      "debt_tri": 2414.22
+    },
+    {
+      "month": "2024-10",
+      "pe": 22.58,
+      "pb": 3.63,
+      "dividend_yield": 1.27,
+      "gsec10": 6.785,
+      "valuation_z": -0.1410007781598856,
+      "equity_tri": 35971.14,
+      "debt_tri": 2410.74
+    },
+    {
+      "month": "2024-11",
+      "pe": 22.21,
+      "pb": 3.6,
+      "dividend_yield": 1.27,
+      "gsec10": 6.812,
+      "valuation_z": -0.24673798929492183,
+      "equity_tri": 35878.82,
+      "debt_tri": 2432.76
+    },
+    {
+      "month": "2024-12",
+      "pe": 21.79,
+      "pb": 3.53,
+      "dividend_yield": 1.27,
+      "gsec10": 6.7775,
+      "valuation_z": -0.40542819109882783,
+      "equity_tri": 35155.77,
+      "debt_tri": 2445.95
+    },
+    {
+      "month": "2025-01",
+      "pe": 21.33,
+      "pb": 3.51,
+      "dividend_yield": 1.38,
+      "gsec10": 6.758,
+      "valuation_z": -0.6257554873877333,
+      "equity_tri": 34998.01,
+      "debt_tri": 2470.5
+    },
+    {
+      "month": "2025-02",
+      "pe": 19.67,
+      "pb": 3.29,
+      "dividend_yield": 1.45,
+      "gsec10": 6.7325,
+      "valuation_z": -1.2595907778780437,
+      "equity_tri": 32973.36,
+      "debt_tri": 2479.28
+    },
+    {
+      "month": "2025-03",
+      "pe": 21.37,
+      "pb": 3.48,
+      "dividend_yield": 1.32,
+      "gsec10": 6.6825,
+      "valuation_z": -0.6181623668496556,
+      "equity_tri": 35054.08,
+      "debt_tri": 2516.36
+    },
+    {
+      "month": "2025-04",
+      "pe": 21.94,
+      "pb": 3.6,
+      "dividend_yield": 1.29,
+      "gsec10": 6.455,
+      "valuation_z": -0.5018787868509594,
+      "equity_tri": 36274.87,
+      "debt_tri": 2568.97
+    },
+    {
+      "month": "2025-05",
+      "pe": 22.32,
+      "pb": 3.62,
+      "dividend_yield": 1.25,
+      "gsec10": 6.272,
+      "valuation_z": -0.4410440337817248,
+      "equity_tri": 36972.5,
+      "debt_tri": 2600.81
+    },
+    {
+      "month": "2025-06",
+      "pe": 22.97,
+      "pb": 3.7,
+      "dividend_yield": 1.24,
+      "gsec10": 6.3075,
+      "valuation_z": -0.20741700399262958,
+      "equity_tri": 38217.32,
+      "debt_tri": 2595.75
+    },
+    {
+      "month": "2025-07",
+      "pe": 21.93,
+      "pb": 3.38,
+      "dividend_yield": 1.38,
+      "gsec10": 6.35,
+      "valuation_z": -0.6511055603862868,
+      "equity_tri": 37158.88,
+      "debt_tri": 2598.34
+    },
+    {
+      "month": "2025-08",
+      "pe": 21.46,
+      "pb": 3.27,
+      "dividend_yield": 1.37,
+      "gsec10": 6.522,
+      "valuation_z": -0.734007419197982,
+      "equity_tri": 36709.0,
+      "debt_tri": 2572.43
+    },
+    {
+      "month": "2025-09",
+      "pe": 21.76,
+      "pb": 3.37,
+      "dividend_yield": 1.35,
+      "gsec10": 6.585,
+      "valuation_z": -0.5813986308507884,
+      "equity_tri": 36992.7,
+      "debt_tri": 2590.31
+    },
+    {
+      "month": "2025-10",
+      "pe": 22.64,
+      "pb": 3.52,
+      "dividend_yield": 1.29,
+      "gsec10": 6.482,
+      "valuation_z": -0.2958520372236201,
+      "equity_tri": 38700.6,
+      "debt_tri": 2610.01
+    },
+    {
+      "month": "2025-11",
+      "pe": 22.81,
+      "pb": 3.56,
+      "dividend_yield": 1.28,
+      "gsec10": 6.5375,
+      "valuation_z": -0.20580625818979334,
+      "equity_tri": 39443.91,
+      "debt_tri": 2616.64
+    },
+    {
+      "month": "2025-12",
+      "pe": 22.75,
+      "pb": 3.55,
+      "dividend_yield": 1.28,
+      "gsec10": 6.6325,
+      "valuation_z": -0.18289267123853628,
+      "equity_tri": 39333.55,
+      "debt_tri": 2613.56
+    },
+    {
+      "month": "2026-01",
+      "pe": 22.04,
+      "pb": 3.44,
+      "dividend_yield": 1.3,
+      "gsec10": 6.732,
+      "valuation_z": -0.3859975961356231,
+      "equity_tri": 38138.83,
+      "debt_tri": 2609.88
+    },
+    {
+      "month": "2026-02",
+      "pe": 22.03,
+      "pb": 3.42,
+      "dividend_yield": 1.24,
+      "gsec10": 6.77,
+      "valuation_z": -0.34102701059363016,
+      "equity_tri": 37943.67,
+      "debt_tri": 2628.8
+    },
+    {
+      "month": "2026-03",
+      "pe": 19.62,
+      "pb": 3.05,
+      "dividend_yield": 1.39,
+      "gsec10": 6.84,
+      "valuation_z": -1.2327033474063893,
+      "equity_tri": 33655.43,
+      "debt_tri": 2581.47
+    },
+    {
+      "month": "2026-04",
+      "pe": 20.94,
+      "pb": 3.29,
+      "dividend_yield": 1.3,
+      "gsec10": 7.05,
+      "valuation_z": -0.6133033340091097,
+      "equity_tri": 36174.8,
+      "debt_tri": 2596.52
+    },
+    {
+      "month": "2026-05",
+      "pe": 20.27,
+      "pb": 3.21,
+      "dividend_yield": 1.35,
+      "gsec10": 7.02,
+      "valuation_z": -0.8860428778041017,
+      "equity_tri": 35552.64,
+      "debt_tri": 2611.13
+    },
+    {
+      "month": "2026-06",
+      "pe": 20.58,
+      "pb": 3.12,
+      "dividend_yield": 1.24,
+      "gsec10": 6.89,
+      "valuation_z": -0.7968236216241443,
+      "equity_tri": 36145.88,
+      "debt_tri": 2671.22
+    },
+    {
+      "month": "2026-07",
+      "pe": 20.78,
+      "pb": 2.99,
+      "dividend_yield": 1.22,
+      "gsec10": 6.78,
+      "valuation_z": -0.7958660100066309,
+      "equity_tri": 37000.72,
+      "debt_tri": 2668.64
+    }
+  ]
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
   "model_version": "3.6",
-  "generated_at": "2026-09-12T02:46:26+00:00",
+  "generated_at": "2026-09-12T02:49:08+00:00",
   "macro_stale": false,
   "macro_partial": false,
   "nifty": {
@@ -136,10 +136,22 @@
       "source_url": "https://www.stats.gov.cn/english/PressRelease/202609/t20260901_1965170.html"
     },
     "relative_em": {
-      "available": false,
+      "available": true,
       "score": null,
-      "history_count": 0,
-      "status": "unavailable"
+      "history_count": 5,
+      "status": "pending_history",
+      "em_ex_india_pe": 16.3,
+      "em_ex_india_pb": 2.4,
+      "em_ex_india_div_yield": 2.8,
+      "asof": "2026-07-31",
+      "source_url": "https://stoxx.com/index/swexilv/?factsheet=true",
+      "pe_basis": "Trailing, including negative earnings",
+      "method": "largecap-fundamentals-v1",
+      "comparison_month": "2026-07",
+      "relative_log_premium": 0.23361738673449692,
+      "nifty_pe_premium_pct": 27.484662576687114,
+      "nifty_pb_premium_pct": 24.583333333333357,
+      "z": null
     },
     "blocks": {
       "global_liquidity": -0.1511669019371614,
