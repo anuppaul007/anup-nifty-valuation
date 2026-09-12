@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
 import current_definition_anchor_validation as legacy
-import current_definition_integrated_anchor_v2 as hardened
+import current_definition_integrated_anchor_v3 as hardened
 ia=hardened.a
 
 
@@ -73,23 +73,46 @@ def test_iso_date_is_not_day_month_inverted():
     assert str(ia.parse_dt('20-Jul-2026').date())=='2026-07-20'
 
 
+def test_zero_owner_placeholder_does_not_override_real_pat():
+    fs=[
+        {'name':'ProfitOrLossAttributableToOwnersOfParent','context':'OneD','value':0.0},
+        {'name':'ProfitLossForPeriod','context':'OneD','value':958.68},
+    ]
+    f=ia.profit_from(fs)
+    assert f['name']=='ProfitLossForPeriod' and f['value']==958.68
+
+
+def test_negative_profit_is_valid_not_missing():
+    fs=[{'name':'ProfitOrLossAttributableToOwnersOfParent','context':'OneD','value':-253.63}]
+    assert ia.profit_from(fs)['value']==-253.63
+
+
 def test_life_insurance_pat_tag_is_explicitly_supported():
     fs=[{'name':'ProfitLossAfterTaxAndExtraordinaryItems','context':'OneD','value':611.19}]
-    f=ia.profit_from(fs)
-    assert f['value']==611.19
+    assert ia.profit_from(fs)['value']==611.19
 
 
-def test_life_insurance_shareholders_fund_excludes_policyholder_items():
+def test_direct_life_shareholders_funds_is_preferred():
     fs=[
-        {'name':'PaidUpEquityShareCapital','context':'OneI','value':20.0},
-        {'name':'ReservesAndSurplusExcludingRevaluationReserve','context':'OneD','value':170.0},
-        {'name':'FairValueChangeAccountAndRevaluationReserveShareholders','context':'OneI','value':-5.0},
+        {'name':'ShareholdersFunds','context':'OneI','value':177.4954},
+        {'name':'PaidUpEquityShareCapital','context':'OneI','value':21.5782},
+        {'name':'ReservesAndSurplusExcludingRevaluationReserve','context':'OneD','value':153.0175},
         {'name':'PolicyholdersLiabilitiesToShareholdersFund','context':'OneD','value':900.0},
-        {'name':'InvestmentsShareholdersFund','context':'OneI','value':800.0},
     ]
     nw,mode=ia.networth_from(fs)
-    assert mode=='insurance_shareholders_fund'
-    assert nw['value']==185.0
+    assert mode=='direct_shareholders_funds'
+    assert nw['value']==177.4954
+
+
+def test_bank_networth_uses_capital_plus_reserves_onei():
+    fs=[
+        {'name':'Capital','context':'OneI','value':6.2},
+        {'name':'ReservesAndSurplus','context':'OneI','value':2129.5},
+        {'name':'CapitalAndLiabilities','context':'OneI','value':19460.0},
+    ]
+    nw,mode=ia.networth_from(fs)
+    assert mode=='bank_capital_plus_reserves'
+    assert nw['value']==2135.7
 
 
 def test_face_value_action_fallback_requires_agreement():
@@ -98,6 +121,10 @@ def test_face_value_action_fallback_requires_agreement():
 
 
 def test_live_change_files_are_not_written_by_hardened_anchor():
-    text=(ROOT/'scripts'/'current_definition_integrated_anchor.py').read_text()+(ROOT/'scripts'/'current_definition_integrated_anchor_v2.py').read_text()
+    text=''.join((ROOT/'scripts'/p).read_text() for p in [
+        'current_definition_integrated_anchor.py',
+        'current_definition_integrated_anchor_v2.py',
+        'current_definition_integrated_anchor_v3.py',
+    ])
     for forbidden in ('model.js','latest.json','multiasset.py'):
         assert forbidden not in text
