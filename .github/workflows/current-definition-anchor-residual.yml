@@ -1,0 +1,29 @@
+name: Current-definition 2026 anchor residuals
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/current_definition_anchor_residual_2026.py'
+      - '.github/workflows/current-definition-anchor-residual.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  residuals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt pdfplumber
+      - run: python scripts/current_definition_anchor_residual_2026.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: current-definition-anchor-residual-2026
+          path: data/current_definition_anchor_residual_2026.json
+          if-no-files-found: error
