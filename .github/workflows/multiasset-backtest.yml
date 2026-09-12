@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - "scripts/multiasset_backtest.py"
+      - "scripts/multiasset_robustness.py"
+      - "tests/test_multiasset_robustness.py"
       - ".github/workflows/multiasset-backtest.yml"
       - "data/backtest_monthly_2000.csv"
       - "data/india_short_rate_proxy_1999_2006.csv"
@@ -22,7 +24,7 @@ concurrency:
 jobs:
   backtest:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,6 +34,8 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - name: Test multi-asset robustness helpers
+        run: python -m unittest discover -s tests -p 'test_multiasset_robustness.py'
       - name: Run long-history multi-asset backtest
         run: |
           ok=0
@@ -47,26 +51,45 @@ jobs:
             echo "Backtest failed after three attempts"
             exit 1
           fi
-      - name: Commit backtest result
+      - name: Run multi-asset robustness audit V2
+        run: |
+          ok=0
+          for attempt in 1 2 3; do
+            echo "Robustness audit attempt ${attempt}/3"
+            if python scripts/multiasset_robustness.py; then
+              ok=1
+              break
+            fi
+            sleep $((attempt * 8))
+          done
+          if [ "$ok" -ne 1 ]; then
+            echo "Robustness audit failed after three attempts"
+            exit 1
+          fi
+      - name: Commit backtest and robustness results
         run: |
           if [ ! -f data/multiasset_backtest.json ]; then
             echo "Backtest output missing"
             exit 1
           fi
+          if [ ! -f data/multiasset_robustness.json ]; then
+            echo "Robustness audit output missing"
+            exit 1
+          fi
           git config user.name "anup-nifty-bot"
           git config user.email "anup-nifty-bot@users.noreply.github.com"
-          git add data/multiasset_backtest.json
+          git add data/multiasset_backtest.json data/multiasset_robustness.json
           if git diff --cached --quiet; then
-            echo "No backtest data change"
+            echo "No multi-asset research data change"
             exit 0
           fi
-          git commit -m "data: refresh multi-asset historical backtest"
+          git commit -m "data: refresh multi-asset backtest and robustness audit"
           for attempt in 1 2 3; do
             echo "Publish attempt ${attempt}/3"
             git fetch origin main
             if ! git rebase origin/main; then
               git rebase --abort || true
-              echo "Publish stopped because backtest data conflict with newer main"
+              echo "Publish stopped because multi-asset research data conflict with newer main"
               exit 1
             fi
             if git push origin HEAD:main; then
