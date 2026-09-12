@@ -2952,11 +2952,11 @@
     ],
     "errors": [
       {
-        "query": "Franklin India Bluechip Fund",
+        "query": "Franklin India Prima Fund",
         "error": "no regular-growth match"
       },
       {
-        "query": "Franklin India Prima Fund",
+        "query": "Franklin India Bluechip Fund",
         "error": "no regular-growth match"
       },
       {
