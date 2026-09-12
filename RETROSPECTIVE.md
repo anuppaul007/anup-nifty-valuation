@@ -1,3 +1,5 @@
+> Superseded calculations: see [V3.7 robustness audit](ROBUSTNESS_AUDIT.md) for corrected drawdown and drift-aware turnover costs. The original numerical tables below are retained as an audit trail. This was never a full macro backtest.
+
 # Valuation-core retrospective sensitivity — 12 September 2026
 
 ## Questions tested

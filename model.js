@@ -9,7 +9,33 @@ function ageDays(s,now=new Date()){
  const t=Date.parse(s);return Number.isFinite(t)?(now.getTime()-t)/86400000:Infinity;
 }
 const fresh=(s,days,now)=>{const age=ageDays(s,now);return age>=0&&age<=days;};
-function curve(z){const f=x=>100/(1+Math.exp(C.k*x)),lo=f(C.zc),hi=f(-C.zc);return clip((f(z)-lo)/(hi-lo)*100,0,100);}
+function curve(z,k=C.k,zc=C.zc){const f=x=>100/(1+Math.exp(k*x)),lo=f(zc),hi=f(-zc);return clip((f(z)-lo)/(hi-lo)*100,0,100);}
+const FACTORS=Object.freeze({us_real_10y:[7,.30*.40],fed_assets_6m_pct:[15,.30*.25],usd_3m_pct:[75,.30*.20],vix:[7,.30*.15],brent_3m_pct:[7,.25*.30],india_us_10y_spread:[7,.25*.25],india_reer_bis:[100,.25*.25],usd_inr_3m_pct:[75,.25*.20]});
+function verifyMacro(m,now){
+ const issues=[];let reconstructed=0;
+ for(const [key,[days,weight]] of Object.entries(FACTORS)){
+  const f=m.factors?.[key];
+  if(!f||f.status!=='live'||!finite(f.value)||!finite(f.score)||Math.abs(f.score)>1||!fresh(f.asof,days,now))issues.push(key);
+  else reconstructed+=weight*f.score;
+ }
+ const ch=m.china_pmi;
+ if(!ch||ch.status!=='live'||ch.coverage<.999||!finite(ch.pmi)||!finite(ch.new_orders)||!finite(ch.score)||Math.abs(ch.score)>1||!fresh(ch.asof,70,now))issues.push('china_pmi');
+ else reconstructed+=.20*ch.score;
+ const dom=m.domestic;
+ if(!dom||dom.status!=='live'||dom.coverage<.999||!finite(dom.score)||Math.abs(dom.score)>1)issues.push('india_domestic');
+ else {
+  let subtotal=0;
+  for(const [key,days,weight] of [['india_cpi_yoy',75,.4],['india_iip_yoy',90,.35],['india_repo_rate',7,.25]]){
+   const f=dom.factors?.[key];
+   if(!f||f.status!=='live'||!finite(f.value)||!finite(f.score)||Math.abs(f.score)>1||!fresh(f.asof,days,now))issues.push(key);
+   else subtotal+=f.score*weight;
+  }
+  if(Math.abs(subtotal-dom.score)>1e-8)issues.push('domestic_score_mismatch');
+  reconstructed+=.25*dom.score;
+ }
+ if(!finite(m.score)||Math.abs(reconstructed-m.score)>1e-8)issues.push('macro_score_mismatch');
+ return issues;
+}
 function calculate(d,now=new Date()){
  const n=d?.nifty;
  if(!n||['level','pe','pb','div_yield'].some(k=>!finite(n[k])||n[k]<=0))return{valid:false,reason:'Missing or invalid NIFTY valuation inputs.'};
@@ -26,7 +52,8 @@ function calculate(d,now=new Date()){
  L.forEach(x=>x.weight=finite(x.z)?100*x.planned/used:0);
  const z=L.reduce((a,x)=>a+(finite(x.z)?x.z*x.weight/100:0),0),core=curve(z),damp=clip(1-Math.abs(z)/C.zc,0,1);
  const m=d.macro||{},en=d.earnings||{},packetFresh=fresh(d.generated_at,3,now);
- const macroPacketValid=d.schema_version===4&&packetFresh&&!d.macro_stale&&finite(m.score)&&finite(m.active_block_weight);
+ const macroIssues=verifyMacro(m,now);
+ const macroPacketValid=d.schema_version===4&&packetFresh&&!d.macro_stale&&finite(m.score)&&finite(m.active_block_weight)&&macroIssues.length===0;
  const coverage=macroPacketValid?clip(m.active_block_weight/C.macroRequiredWeight,0,1):0;
  const macroEligible=macroPacketValid&&coverage>=C.minMacroCoverage;
  const earningsEligible=d.schema_version===4&&packetFresh&&finite(en.score)&&fresh(en.asof,70,now);
@@ -37,12 +64,12 @@ function calculate(d,now=new Date()){
  const allocationReady=gOK&&macroEligible&&earningsComplete;
  let holdReason=null;
  if(!gOK)holdReason='current dated India ~10Y yield unavailable';
- else if(!macroPacketValid)holdReason='macro packet is stale or invalid';
+ else if(!macroPacketValid)holdReason='macro packet or individual observations are stale, incomplete or inconsistent'+(macroIssues.length?': '+macroIssues.join(', '):'');
  else if(!macroEligible)holdReason=`verified macro coverage ${(100*coverage).toFixed(1)}% is below the 100% requirement`;
  else if(!earningsComplete)holdReason='earnings-cycle history is incomplete or stale';
- return{valid:true,allocationReady,L,z,core,damp,ea,ma,final:allocationReady?clip(core+ea+ma,0,100):null,coverage,earnCoverage,macroEligible,macroPacketValid,earningsEligible,earningsComplete,gsecEligible:gOK,fundamentalCoverage:used/total,holdReason};
+ return{valid:true,allocationReady,L,z,core,damp,ea,ma,final:allocationReady?clip(core+ea+ma,0,100):null,coverage,earnCoverage,macroEligible,macroPacketValid,earningsEligible,earningsComplete,macroIssues,gsecEligible:gOK,fundamentalCoverage:used/total,holdReason};
 }
 function band(z){if(z<=-2.5)return'extremely low';if(z<-.674)return'low';if(z<-.126)return'below reference';if(z<.126)return'near reference';if(z<.674)return'above reference';if(z<2.5)return'high';return'extremely high';}
-const api={C,finite,clip,ageDays,fresh,curve,calculate,band};
+const api={C,FACTORS,verifyMacro,finite,clip,ageDays,fresh,curve,calculate,band};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.AnupModel=api;
 })(typeof window!=='undefined'?window:this);

@@ -37,4 +37,11 @@ class RetrospectiveTests(unittest.TestCase):
   keys={r.grid_key(k,zc) for zc in r.EXTREMES for k in r.CURVES}
   self.assertEqual(len(keys),len(r.EXTREMES)*len(r.CURVES))
 
+ def test_first_month_loss_is_a_drawdown(self):
+  self.assertAlmostEqual(r.max_drawdown([-.2,.1]),-.2)
+ def test_flat_target_still_requires_rebalancing_after_different_returns(self):
+  self.assertAlmostEqual(r.rebalance_turnover([.5,.5],[.2,0],[0,0])[1],.5*1.2/1.1-.5)
+ def test_missing_calendar_month_is_rejected(self):
+  with self.assertRaisesRegex(ValueError,'Missing calendar month'):r.strategy_returns(self.panel().drop(pd.Period('2024-02','M')))
+
 if __name__=='__main__':unittest.main()

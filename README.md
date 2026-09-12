@@ -1,3 +1,5 @@
+> V3.7 independent audit: read [ROBUSTNESS_AUDIT.md](ROBUSTNESS_AUDIT.md). The full macro allocation remains unvalidated; new source gates, corrected historical comparisons and live stress scenarios are published.
+
 # Anup Nifty Valuation — Web V3.4
 
 Automatic NIFTY valuation research dashboard with a valuation-driven equity/debt target. Opening the website loads the latest published data. No daily data entry or browser API key is needed.

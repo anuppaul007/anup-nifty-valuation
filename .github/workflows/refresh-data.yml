@@ -8,6 +8,7 @@ on:
       - "data/latest.json"
       - "data/walkforward.json"
       - "data/retrospective.json"
+      - "data/robustness.json"
   schedule:
     # 18:45 India time, Monday-Friday (GitHub cron is UTC)
     - cron: "15 13 * * 1-5"
@@ -40,14 +41,16 @@ jobs:
         run: python scripts/walkforward.py
       - name: Run valuation-core retrospective sensitivity
         run: python scripts/retrospective_core.py
+      - name: Run independent robustness comparisons
+        run: python scripts/robustness_audit.py
       - name: Commit only when data changed
         run: |
-          if git diff --quiet -- data/latest.json data/walkforward.json data/retrospective.json; then
+          if git diff --quiet -- data/latest.json data/walkforward.json data/retrospective.json data/robustness.json; then
             echo "No data change"
             exit 0
           fi
           git config user.name "anup-nifty-bot"
           git config user.email "anup-nifty-bot@users.noreply.github.com"
-          git add data/latest.json data/walkforward.json data/retrospective.json
+          git add data/latest.json data/walkforward.json data/retrospective.json data/robustness.json
           git commit -m "data: refresh valuation, validation and retrospective study"
           git push

@@ -92,7 +92,7 @@ def valuation_z(row):
     return sum(v*w for v,w in lenses)/sum(w for _,w in lenses)
 
 def max_drawdown(returns):
-    wealth=np.cumprod(1+np.asarray(returns,float));peak=np.maximum.accumulate(wealth);dd=wealth/peak-1
+    wealth=np.r_[1.0,np.cumprod(1+np.asarray(returns,float))];peak=np.maximum.accumulate(wealth);dd=wealth/peak-1
     return float(np.min(dd)) if len(dd) else None
 
 def stats(returns,weights=None,costed=False):
@@ -107,20 +107,34 @@ def stats(returns,weights=None,costed=False):
             'calmar':(cagr/abs(dd) if finite(cagr) and finite(dd) and dd<0 else None),'ending_wealth_from_100':100*wealth,
             'worst_month_pct':100*float(np.min(r)),'annual_turnover_x':turnover,'costed_10bp_turnover':bool(costed)}
 
+def validate_panel(panel):
+    if not isinstance(panel.index,pd.PeriodIndex) or panel.index.has_duplicates or not panel.index.is_monotonic_increasing:
+        raise ValueError('Unique ordered monthly observations required')
+    if len(panel)>1 and not (np.diff(panel.index.asi8)==1).all():
+        raise ValueError('Missing calendar month: cannot annualize a multi-month return as one month')
+
+def rebalance_turnover(weights,eq,db):
+    # Drifted previous holdings, not previous target, determine actual trades.
+    w=np.asarray(weights,float);er=np.asarray(eq,float);dr=np.asarray(db,float)
+    drift=w*(1+er)/(1+w*er+(1-w)*dr)
+    return np.r_[0.0,np.abs(w[1:]-drift[:-1])]
+
 def strategy_returns(panel,k=LIVE_K,zc=LIVE_ZC):
+    validate_panel(panel)
     z=panel.apply(valuation_z,axis=1);w=z.map(lambda x:curve(float(x),k,zc)/100)
     eq=panel.equity_tri.pct_change().shift(-1);db=panel.debt_tri.pct_change().shift(-1)
     frame=pd.DataFrame({'w':w,'eq':eq,'db':db}).dropna()
     gross=frame['w']*frame['eq']+(1-frame['w'])*frame['db']
-    turnover=frame['w'].diff().abs().fillna(0);net=gross-COST_PER_100_TURNOVER*turnover
+    turnover=rebalance_turnover(frame['w'],frame['eq'],frame['db']);frame['turnover']=turnover;net=(1-COST_PER_100_TURNOVER*turnover)*(1+gross)-1
     return frame,gross,net,z.loc[frame.index]
 
 def candidate_stats(panel,k,zc):
     frame,gross,net,_=strategy_returns(panel,k,zc);weights=frame['w'].to_numpy()
-    return {'gross':stats(gross.to_numpy(),weights,False),'net_10bp_turnover':stats(net.to_numpy(),weights,True),
+    return {'gross':stats(gross.to_numpy(),weights,False),'net_10bp_turnover':dict(stats(net.to_numpy(),weights,True),annual_turnover_x=float(frame.turnover.sum()/(len(frame)/12))),
             'average_equity_pct':100*float(frame['w'].mean()),'min_equity_pct':100*float(frame['w'].min()),'max_equity_pct':100*float(frame['w'].max())}
 
 def fixed_returns(panel,w):
+    validate_panel(panel)
     eq=panel.equity_tri.pct_change().shift(-1);db=panel.debt_tri.pct_change().shift(-1)
     return (w*eq+(1-w)*db).dropna()
 
@@ -143,7 +157,7 @@ def main():
              'methodology':{'start':'2021-04','end_completed_month':str(panel.index[-1]),'signal_rule':'month-end valuation signal applied to next completed month return',
                             'equity_benchmark':'NIFTY 50 Total Return Index','debt_benchmark':'NIFTY 10 YR BENCHMARK G-SEC total-return index',
                             'transaction_cost_sensitivity':'10 bps per 100% one-way allocation turnover; taxes excluded',
-                            'important_limit':'Retrospective sensitivity only. Fixed reference constants were not proven frozen at the start date; grid winners are not eligible for automatic adoption.'},
+                            'drawdown_basis':'Month-end observations including initial portfolio value; intramonth drawdowns can be larger','yield_timing_limit':'Current-vintage monthly OECD yield, not proven available at signal date','important_limit':'Retrospective sensitivity only; macro and earnings overlays are excluded. Fixed reference constants were not proven frozen at the start date; grid winners are not eligible for automatic adoption.'},
              'live_parameters':{'curve_slope_k':LIVE_K,'extreme_threshold_zc':LIVE_ZC},'comparable_months':int(len(panel)),'performance_months':int(len(panel)-1),
              'latest_completed_signal':{'month':str(panel.index[-1]),'valuation_z':latest_z,
                 'candidate_core_equity_by_slope_pct':{str(k):curve(latest_z,k,LIVE_ZC) for k in CURVES},

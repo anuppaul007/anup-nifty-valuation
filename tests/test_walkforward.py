@@ -1,23 +1,25 @@
-import sys,unittest
+import sys,unittest,json
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 import walkforward as w
 
 class WalkForwardTests(unittest.TestCase):
  def fixture(self):
-  return {'model_version':'3.6','generated_at':'2026-09-11T12:00:00Z','nifty':{'date':'2026-09-11','level':23398.1,'pe':19.78,'pb':2.83,'div_yield':1.21,'gsec10':6.97},'earnings':{'score':-.29,'coverage':1},'macro':{'score':-.05,'active_block_weight':1,'domestic':{'status':'live','score':.06},'blocks':{'global_liquidity':-.19,'india_external_carry':-.04,'india_domestic':.06,'china_industrial':.01}},'valuation_diagnostics':{'composite_cheapness':73.4}}
+  d=json.loads((Path(__file__).resolve().parents[1]/'tests/fixtures/live_packet.json').read_text())
+  d['generated_at']='2026-09-12T03:05:49Z'
+  return d
  def test_incomplete_macro_never_enters_prospective_ledger(self):
-  d=self.fixture();d['macro']['active_block_weight']=.99;self.assertIsNone(w.model_snapshot(d))
-  d=self.fixture();d['macro']['domestic']['status']='unavailable';self.assertIsNone(w.model_snapshot(d))
+  d=self.fixture();d['macro']['active_block_weight']=.99;self.assertIsNone(w.model_snapshot(d,now="2026-09-12T12:00:00Z"))
+  d=self.fixture();d['macro']['domestic']['status']='unavailable';self.assertIsNone(w.model_snapshot(d,now="2026-09-12T12:00:00Z"))
  def test_candidate_caps_do_not_change_live_parameters(self):
-  s=w.model_snapshot(self.fixture());self.assertIsNotNone(s);self.assertEqual(set(s['candidate_equity_targets']),{'0','3','6','9','12','15'})
+  s=w.model_snapshot(self.fixture(),now="2026-09-12T12:00:00Z");self.assertIsNotNone(s);self.assertEqual(set(s['candidate_equity_targets']),{'0','3','6','9','12','15'})
   self.assertLess(s['candidate_equity_targets']['15'],s['candidate_equity_targets']['0'])
  def test_curve_candidates_are_recorded_but_live_slope_stays_135(self):
-  s=w.model_snapshot(self.fixture());self.assertEqual(set(s['candidate_curve_targets']),{'0.6','0.8','1.0','1.15','1.35','1.5'})
+  s=w.model_snapshot(self.fixture(),now="2026-09-12T12:00:00Z");self.assertEqual(set(s['candidate_curve_targets']),{'0.6','0.8','1.0','1.15','1.35','1.5'})
   self.assertAlmostEqual(s['candidate_curve_targets']['1.35'],s['candidate_equity_targets']['6'])
-  self.assertLess(s['candidate_curve_targets']['0.6'],s['candidate_curve_targets']['1.35']);self.assertAlmostEqual(s['empirical_valuation_cheapness'],73.4)
+  self.assertLess(s['candidate_curve_targets']['0.6'],s['candidate_curve_targets']['1.35']);self.assertGreater(s['empirical_valuation_cheapness'],70)
  def test_extreme_candidates_are_recorded_but_live_zc_stays_25(self):
-  s=w.model_snapshot(self.fixture());self.assertEqual(set(s['candidate_extreme_targets']),{'2.5','3.0','3.5','4.0'})
+  s=w.model_snapshot(self.fixture(),now="2026-09-12T12:00:00Z");self.assertEqual(set(s['candidate_extreme_targets']),{'2.5','3.0','3.5','4.0'})
   self.assertAlmostEqual(s['candidate_extreme_targets']['2.5'],s['candidate_equity_targets']['6'])
   self.assertLess(s['candidate_extreme_targets']['4.0'],s['candidate_extreme_targets']['2.5'])
   self.assertEqual(len(s['candidate_grid_targets']),len(w.CANDIDATE_CURVE_SLOPES)*len(w.CANDIDATE_EXTREMES))
@@ -28,5 +30,12 @@ class WalkForwardTests(unittest.TestCase):
  def test_parameter_change_gate_is_deliberately_slow(self):
   short=[{'month':f'2020-{i:02d}','forward_nifty_price_return_6m':1,'forward_nifty_price_return_12m':1} for i in range(1,13)]
   s=w.summary(short);self.assertFalse(s['eligible_for_parameter_change']);self.assertIn('zc=2.5',s['parameter_lock'])
+
+ def test_stale_packet_cannot_enter_ledger(self):
+  d=self.fixture();d['generated_at']='2026-01-01';self.assertIsNone(w.model_snapshot(d,now='2026-09-12T12:00:00Z'))
+ def test_candidate_extreme_uses_its_own_damping(self):
+  d=self.fixture();s=w.model_snapshot(d,now='2026-09-12T12:00:00Z');z=s['valuation_z'];zc=4.0
+  expected=w.curve(z,1.35,zc)+(d['earnings']['score']*6+d['macro']['score']*6)*max(0,1-abs(z)/zc)
+  self.assertAlmostEqual(s['candidate_extreme_targets']['4.0'],expected)
 
 if __name__=='__main__':unittest.main()

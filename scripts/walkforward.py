@@ -12,7 +12,7 @@ same live signal so future evidence can be compared without rewriting history.
 from __future__ import annotations
 from datetime import datetime,timezone
 from pathlib import Path
-import json,math
+import json,math,subprocess
 import pandas as pd
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -40,8 +40,13 @@ def curve(z,k=None,zc=None):
     return clip((f(z)-lo)/(hi-lo)*100,0,100)
 def add_month(month,n):return str(pd.Period(month,freq='M')+n)
 
-def model_snapshot(d):
+def model_snapshot(d,now=None):
     n=d.get('nifty') or {};m=d.get('macro') or {};e=d.get('earnings') or {}
+    # Use the live engine itself: dates and per-factor gates cannot diverge.
+    now=now or datetime.now(timezone.utc).isoformat()
+    result=subprocess.run(['node','-e',"const fs=require('fs'),M=require('./model.js');const x=JSON.parse(fs.readFileSync(0,'utf8'));process.stdout.write(JSON.stringify(M.calculate(x.d,new Date(x.now))));"],cwd=ROOT,input=json.dumps({'d':d,'now':now}),text=True,capture_output=True,check=True)
+    checked=json.loads(result.stdout)
+    if not checked.get('allocationReady'):return None
     required=['level','pe','pb','div_yield','gsec10']
     if d.get('model_version')!='3.6' or any(not finite(n.get(k)) for k in required):return None
     if not finite(m.get('score')) or float(m.get('active_block_weight') or 0)<.999:return None
@@ -55,11 +60,14 @@ def model_snapshot(d):
     ea=clip(e['score'],-1,1)*C['earnMax']*damp;ms=clip(m['score'],-1,1)
     macro_candidates={str(cap):clip(core+ea+ms*cap*damp,0,100) for cap in CANDIDATE_MACRO_CAPS}
     curve_candidates={str(k):clip(curve(z,k,C['zc'])+ea+ms*C['macroMax']*damp,0,100) for k in CANDIDATE_CURVE_SLOPES}
-    extreme_candidates={str(zc):clip(curve(z,C['k'],zc)+ea+ms*C['macroMax']*damp,0,100) for zc in CANDIDATE_EXTREMES}
-    grid_candidates={f'k={k:.2f}|zc={zc:.1f}':clip(curve(z,k,zc)+ea+ms*C['macroMax']*damp,0,100) for zc in CANDIDATE_EXTREMES for k in CANDIDATE_CURVE_SLOPES}
+    def candidate(k,zc):
+        damping=clip(1-abs(z)/zc,0,1)
+        return clip(curve(z,k,zc)+(clip(e['score'],-1,1)*C['earnMax']+ms*C['macroMax'])*damping,0,100)
+    extreme_candidates={str(zc):candidate(C['k'],zc) for zc in CANDIDATE_EXTREMES}
+    grid_candidates={f'k={k:.2f}|zc={zc:.1f}':candidate(k,zc) for zc in CANDIDATE_EXTREMES for k in CANDIDATE_CURVE_SLOPES}
     vd=d.get('valuation_diagnostics') or {}
     return {
-      'month':str(n['date'])[:7],'asof':n['date'],'generated_at':d.get('generated_at'),
+      'validation_method':'v3.7-source-gates-and-candidate-damping','research_only':True,'month':str(n['date'])[:7],'asof':n['date'],'generated_at':d.get('generated_at'),
       'nifty_level':float(n['level']),'pe':pe,'pb':pb,'dividend_yield':dy,'gsec10':gsec,
       'valuation_z':z,'core_equity':core,'valuation_damping':damp,
       'empirical_valuation_cheapness':float(vd['composite_cheapness']) if finite(vd.get('composite_cheapness')) else None,
@@ -87,7 +95,7 @@ def summary(records):
     return {'status':'eligible_for_review' if eligible else 'collecting_prospective_data','signal_months':len(records),'realized_6m_outcomes':realized6,'realized_12m_outcomes':realized12,
       'required_signal_months':MIN_SIGNAL_MONTHS,'required_realized_12m_outcomes':MIN_REALIZED_12M,'eligible_for_parameter_change':eligible,
       'parameter_lock':'macroMax=6 pp, curve k=1.35 and extreme threshold zc=2.5 remain locked until prospective evidence gate is satisfied',
-      'note':'Forward returns are NIFTY price-index returns only. Candidate settings are recorded prospectively and never auto-selected from future outcomes.'}
+      'note':'Overlapping 12-month outcomes are not independent samples; this gate permits review, not proof or automatic deployment. No macro strategy return backtest is available. Forward returns are NIFTY price-index returns only. Candidate settings are recorded prospectively and never auto-selected from future outcomes.'}
 
 def main():
     d=json.loads(LATEST.read_text())
@@ -95,7 +103,7 @@ def main():
     except (OSError,ValueError):w={'schema_version':1,'records':[]}
     records=[r for r in w.get('records',[]) if isinstance(r,dict) and r.get('month')]
     snap=model_snapshot(d);current_month=str(pd.Period(datetime.now(timezone.utc).date(),freq='M'))
-    if snap:
+    if snap and snap['month']==current_month:
         records=[r for r in records if r['month']!=snap['month']];records.append(snap)
     records=sorted(records,key=lambda r:r['month'])[-180:];records=update_outcomes(records,current_month)
     out={'schema_version':2,'model_version':'3.6','updated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),

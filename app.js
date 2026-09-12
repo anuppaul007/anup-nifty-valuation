@@ -10,17 +10,22 @@ function clearAllocation(message){
  q('#eqbar').style.width='0%';q('#barEq').textContent='Allocation withheld';q('#barDebt').textContent='';
  for(const id of ['lens','macroBlocks','macroDiag','market','earn','sources'])q('#'+id).innerHTML='';
  for(const id of ['mscore','mstance','mcov','vix','carry','conf'])q('#'+id).textContent='—';
+ for(const id of ['robustRange','stressCases','returnCases'])q('#'+id).innerHTML='';
  q('#confbar').style.width='0%';q('#pending').textContent='No current data have been verified.';
  q('#verdict').textContent=message;q('#status').textContent=message;q('#status').className='status bad';
 }
 function render(d){
  const r=calculate(d),n=d.nifty||{},m=d.macro||{},en=d.earnings||{},vd=d.valuation_diagnostics||{};
  if(!r.valid){clearAllocation(r.reason);return;}
+ const robustness=AnupRobustness.assess(d);
+ q('#robustRange').textContent=robustness?`Assumption range: ${robustness.min.toFixed(0)}–${robustness.max.toFixed(0)}% equity across 24 curve settings. This is a sensitivity range, not a confidence interval. Maximum current macro influence: ±${robustness.macroAuthority.toFixed(1)} percentage points.`:'Scenario calculations require eligible current inputs.';
+ q('#stressCases').innerHTML=robustness?robustness.stress.map(([label,v])=>`<tr><td>${esc(label)}</td><td>${v.toFixed(1)}%</td><td>${(100-v).toFixed(1)}%</td></tr>`).join(''):'';
+ q('#returnCases').innerHTML=robustness?robustness.scenarios.map(x=>`<tr><td>${x.growth}%</td><td>${x.exitPE}×</td><td>${signed(x.annual,1)}%</td><td>${signed(x.excess,1)} pp</td></tr>`).join(''):'';
  const eq=r.allocationReady?Math.round(r.final):null,db=r.allocationReady?100-eq:null;
  q('#eq').textContent=r.allocationReady?eq+'%':'—';q('#debt').textContent=r.allocationReady?db+'%':'—';q('#pct').textContent=signed(r.z,2);q('#erp').textContent=Math.round(r.fundamentalCoverage*100)+'%';
  q('#eqbar').style.width=(eq||0)+'%';q('#barEq').textContent=r.allocationReady?'Equity '+eq+'%':'Complete-data gate active';q('#barDebt').textContent=r.allocationReady?'Debt '+db+'%':'';
  const rankText=vd.status==='live'&&finite(vd.composite_cheapness)?` Independent current-methodology sanity check: ${vd.composite_cheapness.toFixed(1)}/100 cheapness across ${vd.months} completed months (${vd.label}). It is diagnostic only and does not alter the allocation.`:'';
- q('#verdict').textContent=r.allocationReady?`Valuation is ${band(r.z)} against the model’s fixed references. With every required macroeconomic block verified, the model-implied target is ${r.final.toFixed(1)}% equity / ${(100-r.final).toFixed(1)}% debt.${rankText} The fixed-reference allocation curve remains an assumption until sufficient walk-forward evidence exists.`:`No equity/debt target is published because ${r.holdReason||'the complete-data gate is not satisfied'}. Fundamental valuation is still shown, but incomplete macro evidence is never converted into a precise allocation.${rankText}`;
+ q('#verdict').textContent=r.allocationReady?`Valuation is ${band(r.z)} against the model’s fixed references. With the defined input set eligible, the unvalidated research model gives ${r.final.toFixed(1)}% equity / ${(100-r.final).toFixed(1)}% debt.${rankText} The fixed-reference allocation curve remains an assumption until sufficient walk-forward evidence exists.`:`No equity/debt target is published because ${r.holdReason||'the complete-data gate is not satisfied'}. Fundamental valuation is still shown, but incomplete macro evidence is never converted into a precise allocation.${rankText}`;
  q('#lens').innerHTML=r.L.map(x=>`<tr><td>${esc(x.label)}</td><td>${fmt(x.now)}</td><td>${fmt(x.reference)}</td><td>${signed(x.z,2)}</td><td>${x.weight.toFixed(1)}%</td></tr>`).join('');
  q('#core').textContent=fmt(r.core,1)+'%';q('#eadj').textContent=r.earningsComplete?signed(r.ea,2)+' pp':'Withheld';q('#madj').textContent=r.macroEligible?signed(r.ma,2)+' pp':'Withheld';q('#damp').textContent=fmt(100*r.damp,0)+'%';q('#final').textContent=r.allocationReady?fmt(r.final,1)+'%':'Withheld';
  q('#overlayNote').textContent=r.allocationReady?`Macro adjustment = fully verified macro score × 6 pp × ${(100*r.damp).toFixed(1)}% valuation damping. Macro coverage is 100%; no missing factor is neutral-filled.`:`Complete-data rule: final allocation requires 100% verified macro coverage plus current earnings and India bond data. Current verified macro coverage is ${(100*r.coverage).toFixed(1)}%.`;
@@ -38,7 +43,7 @@ function render(d){
  const requiredFactorNames={us_real_10y:'US real yield',usd_3m_pct:'broad USD',fed_assets_6m_pct:'Fed assets',vix:'VIX',brent_3m_pct:'Brent',india_us_10y_spread:'India-US carry',india_reer_bis:'India REER',usd_inr_3m_pct:'USD/INR'};
  const issues=Object.entries(requiredFactorNames).filter(([k])=>factors[k]?.status!=='live').map(([,v])=>v);if(ch.status!=='live')issues.push('China PMI');if(dom.status!=='live')issues.push('India domestic regime');
  q('#pending').className='flag '+(r.allocationReady?'good':'bad');
- q('#pending').textContent=r.allocationReady?'Complete-data gate passed: every macroeconomic factor used by the allocation is verified and scored.':`Allocation withheld. ${issues.length?`Required inputs not yet eligible: ${issues.join(', ')}. `:''}No missing, stale, cached or pending-history value is displayed as a scored input.`;
+ q('#pending').textContent=r.allocationReady?'Defined-input coverage is complete. This does not mean all economic risks are measured, or that the allocation has been validated.':`Allocation withheld. ${issues.length?`Required inputs not yet eligible: ${issues.join(', ')}. `:''}No missing, stale, cached or pending-history value is displayed as a scored input.`;
  const gm=n.gsec_meta||{};const marketRows=[['NIFTY 50',n.level.toLocaleString('en-IN')],['P/E',fmt(n.pe)],['P/B',fmt(n.pb)],['Dividend yield',fmt(n.div_yield)+'%'],['NIFTY date',n.date],['India ~10Y',fmt(n.gsec10)+'%'],['India yield date',gm.asof||'Not verified'],['India yield instrument',gm.security||gm.source||'Not verified']];
  if(vd.status==='live'&&finite(vd.composite_cheapness)){marketRows.push(['Valuation-era cheapness',fmt(vd.composite_cheapness,1)+'/100']);marketRows.push(['Comparable completed months',String(vd.months)]);}
  q('#market').innerHTML=marketRows.map(x=>`<div>${esc(x[0])}</div><div>${esc(x[1])}</div>`).join('');

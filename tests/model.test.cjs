@@ -4,7 +4,16 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const M=require('../model.js');
 const now=new Date('2026-09-11T12:00:00Z');
-function fixture(){return{schema_version:4,generated_at:'2026-09-11T11:46:28Z',nifty:{date:'2026-09-10',level:23477.8,pe:19.85,pb:2.84,div_yield:1.21,gsec10:6.88,gsec_meta:{asof:'2026-09-10',status:'live',max_age_days:7}},earnings:{score:-.3201937701240839,asof:'2026-08-31',coverage:1},macro:{score:-.3061910122582852,active_block_weight:1}};}
+function fixture(){
+ const d=JSON.parse(fs.readFileSync(require.resolve('./fixtures/live_packet.json'),'utf8'));
+ d.generated_at='2026-09-11T11:46:28Z';d.nifty={date:'2026-09-10',level:23477.8,pe:19.85,pb:2.84,div_yield:1.21,gsec10:6.88,gsec_meta:{asof:'2026-09-10',status:'live',max_age_days:7}};
+ d.earnings={score:-.3201937701240839,asof:'2026-08-31',coverage:1};
+ const score=-.3061910122582852;d.macro.score=score;d.macro.active_block_weight=1;
+ for(const f of Object.values(d.macro.factors)){f.score=score;f.status='live';f.asof='2026-09-10';}
+ d.macro.china_pmi.score=score;d.macro.domestic.score=score;
+ for(const f of Object.values(d.macro.domestic.factors)){f.score=score;f.status='live';f.asof='2026-09-10';}
+ return d;
+}
 test('known snapshot arithmetic works when complete macroeconomic gate passes',()=>{
  const r=M.calculate(fixture(),now);
  assert(Math.abs(r.core-83.1)<.06);assert.equal(r.coverage,1);
@@ -44,4 +53,18 @@ test('failed browser reload clears a previously displayed allocation',()=>{
  vm.createContext(context);vm.runInContext(fs.readFileSync(require.resolve('../app.js'),'utf8'),context);
  vm.runInContext("clearAllocation('unavailable')",context);
  assert.equal(node('#eq').textContent,'—');assert.equal(node('#debt').textContent,'—');assert.equal(node('#eqbar').style.width,'0%');
+});
+
+test('fresh wrapper cannot revive a stale or missing individual factor',()=>{
+ for(const mutate of [d=>d.macro.factors.vix.asof='2026-01-01',d=>delete d.macro.factors.vix,d=>d.macro.factors.vix.score=NaN,d=>d.macro.china_pmi.new_orders=null,d=>d.macro.domestic.factors.india_cpi_yoy.asof='2026-01-01',d=>d.macro.score=.9]){
+  const d=fixture();mutate(d);assert.equal(M.calculate(d,now).allocationReady,false);
+ }
+});
+test('macro worsens allocation monotonically for every valuation and has zero authority at endpoints',()=>{
+ for(let pe=8;pe<=45;pe+=1){let previous=-1;
+  for(const score of [-1,-.5,0,.5,1]){const d=fixture();d.nifty.pe=pe;d.macro.score=score;for(const f of Object.values(d.macro.factors))f.score=score;d.macro.china_pmi.score=score;d.macro.domestic.score=score;for(const f of Object.values(d.macro.domestic.factors))f.score=score;
+   const r=M.calculate(d,now);assert(r.allocationReady);assert(r.final>=0&&r.final<=100);assert(r.final>=previous-1e-9);previous=r.final;
+   if(Math.abs(r.z)>=2.5)assert(Math.abs(r.ma)===0);
+  }
+ }
 });

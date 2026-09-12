@@ -93,7 +93,10 @@ def _sdmx_csv(url,source):
     dc=next((norm[k] for k in ('timeperiod','date','period') if k in norm),None)
     vc=next((norm[k] for k in ('obsvalue','value') if k in norm),None)
     if dc is None or vc is None:raise RuntimeError('SDMX CSV does not contain TIME_PERIOD/OBS_VALUE')
-    return clean(pd.DataFrame({'date':_period_dates(t[dc]),'value':t[vc]}),source)
+    dates=_period_dates(t[dc])
+    if pd.Series(dates).duplicated().any():
+        raise RuntimeError('Ambiguous SDMX response: multiple series or duplicate periods')
+    return clean(pd.DataFrame({'date':dates,'value':t[vc]}),source)
 
 def bis_series(flow,key,start='2012-01'):
     url=f'https://stats.bis.org/api/v1/data/{flow}/{key}/all'
@@ -328,7 +331,7 @@ def build(india_g10,nifty,nifty_hist,old,gsec_meta=None):
     factors['brent_3m_pct']=factor(oil3,rz(oil3s,60,1,756),ds['oil'],7,-1) if ds['oil'] is not None else factor(None,None,None,7)
     reer=ds['reer']
     if reer is not None:
-        reer12,reer12s=pc(reer,12);zl=rz(reer.value,48,1,120);zm=rz(reer12s,36,.5,120);zr,_=weighted([(zl,.7),(zm,.3)])
+        reer12,reer12s=pc(reer,12);zl=rz(reer.value,48,1,120);zm=rz(reer12s,36,.5,120);zr=.7*zl+.3*zm if finite(zl) and finite(zm) else None
         factors['india_reer_bis']=factor(float(reer.value.iloc[-1]),zr,reer,100,-1);factors['india_reer_bis']['momentum_12m_pct']=reer12
     else:factors['india_reer_bis']=factor(None,None,None,100)
     inr=ds['inr']
