@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_version": "3.6",
-  "updated_at": "2026-09-11T20:04:39+00:00",
+  "updated_at": "2026-09-12T01:10:27+00:00",
   "candidate_macro_caps_pp": [
     0,
     3,
@@ -12,7 +12,7 @@
   ],
   "validation": {
     "status": "collecting_prospective_data",
-    "signal_months": 0,
+    "signal_months": 1,
     "realized_6m_outcomes": 0,
     "realized_12m_outcomes": 0,
     "required_signal_months": 84,
@@ -21,5 +21,39 @@
     "parameter_lock": "macroMax remains 6 pp until prospective evidence gate is satisfied",
     "note": "Forward returns are NIFTY price-index returns only. They are not debt-relative portfolio returns and are not used to auto-optimize the live model."
   },
-  "records": []
+  "records": [
+    {
+      "month": "2026-09",
+      "asof": "2026-09-11",
+      "generated_at": "2026-09-12T01:10:26+00:00",
+      "nifty_level": 23398.1,
+      "pe": 19.78,
+      "pb": 2.83,
+      "div_yield": 1.21,
+      "gsec10": 6.9711,
+      "valuation_z": -1.052253981639432,
+      "core_equity": 82.70661126795997,
+      "valuation_damping": 0.5790984073442271,
+      "earnings_score": -0.2928771334450563,
+      "macro_score": -0.039655780248963414,
+      "domestic_score": 0.057009151848864285,
+      "macro_blocks": {
+        "global_liquidity": -0.1511669019371614,
+        "india_external_carry": -0.039565244842516056,
+        "china_industrial": 0.006666567902989752,
+        "india_domestic": 0.057009151848864285
+      },
+      "candidate_equity_targets": {
+        "0": 81.68898317880652,
+        "3": 81.62008938125402,
+        "6": 81.55119558370151,
+        "9": 81.48230178614902,
+        "12": 81.41340798859652,
+        "15": 81.34451419104401
+      },
+      "forward_nifty_price_return_6m": null,
+      "forward_nifty_price_return_12m": null,
+      "outcome_status": "awaiting_future_data"
+    }
+  ]
 }
