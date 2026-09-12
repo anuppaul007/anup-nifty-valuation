@@ -23,7 +23,7 @@ Important limitations:
 """
 from __future__ import annotations
 
-from datetime import date, timezone, datetime
+from datetime import timezone, datetime
 from pathlib import Path
 import json
 import math
@@ -40,6 +40,7 @@ OUT = ROOT / "data" / "protocol_backtest.json"
 
 COST_GRID_BPS = (0, 10, 25)
 BAND_GRID_PP = (0, 5, 10)
+POLICY_RATE_SEED = {pd.Period("1999-12", freq="M"): 6.0}
 
 RATE_AUDIT = {
     "cached_short_rate": {
@@ -57,6 +58,7 @@ RATE_AUDIT = {
         "identity": "RBI repo/policy/LAF rate in force on the displayed calendar first day",
         "role": "historical display and sensitivity proxy; it is not an input to valuation_z",
         "source_note": "scripts/backtest_monthly_2000.py contains the effective-date history and nomenclature warning",
+        "pre_start_seed": "1999-12 = 6.0%, carried from the 1-Mar-1999 effective rate in the generator so Jan-2000 is not dropped",
     },
     "rbi_91d_tbill_check": {
         "status": "partial_verified_not_used_for_full_period",
@@ -108,6 +110,14 @@ def conservative_rate_pct(oecd_rate, policy_rate, haircut_pp=1.0):
     return max(0.0, min(vals) - float(haircut_pp))
 
 
+def policy_rate_for_prior_month(alloc, prev):
+    value = alloc["policy_rate_pct"].get(prev, np.nan)
+    if finite(value):
+        return float(value)
+    seed = POLICY_RATE_SEED.get(prev)
+    return float(seed) if finite(seed) else None
+
+
 def first_monthly(s):
     return s.sort_index().groupby(s.index.to_period("M")).first()
 
@@ -145,7 +155,7 @@ def build_return_panel():
         else:
             prev = mo - 1
             oecd = rates.get(prev, np.nan)
-            policy = alloc["policy_rate_pct"].get(prev, np.nan)
+            policy = policy_rate_for_prior_month(alloc, prev)
             if not finite(oecd) or not finite(policy):
                 continue
             cons = conservative_rate_pct(oecd, policy, 1.0)
@@ -234,7 +244,8 @@ def metrics(sim):
     rets.iloc[0] = wealth.iloc[0] - 1.0
     months = len(wealth)
     cagr = wealth.iloc[-1] ** (12.0 / months) - 1.0
-    dd = wealth / wealth.cummax() - 1.0
+    wealth_curve = np.concatenate(([1.0], wealth.to_numpy(dtype=float)))
+    dd = wealth_curve / np.maximum.accumulate(wealth_curve) - 1.0
     vol = rets.std(ddof=0) * math.sqrt(12.0)
     annual = (1.0 + rets).groupby(rets.index.year).prod() - 1.0
     worst_year = int(annual.idxmin()) if len(annual) else None
@@ -270,13 +281,18 @@ def fixed_6040_annual(eq_ret, debt_ret, cost_bps=10.0):
     rebalances = 0
     series = []
     for mo in eq_ret.index:
-        er = float(eq_ret.loc[mo]); dr = float(debt_ret.loc[mo])
+        er = float(eq_ret.loc[mo])
+        dr = float(debt_ret.loc[mo])
         if current_w is None:
-            w = 0.6; turnover = 0.0
+            w = 0.6
+            turnover = 0.0
         elif mo.month == 1:
-            turnover = abs(0.6 - current_w); w = 0.6; rebalances += 1
+            turnover = abs(0.6 - current_w)
+            w = 0.6
+            rebalances += 1
         else:
-            turnover = 0.0; w = current_w
+            turnover = 0.0
+            w = current_w
         cost = wealth * turnover * cost_rate
         wealth_after_cost = wealth - cost
         factor = w * (1 + er) + (1 - w) * (1 + dr)
