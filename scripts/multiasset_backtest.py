@@ -96,16 +96,14 @@ def fed_official_history():
     fed_url=('https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=2200&'
              'layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package')
     with ThreadPoolExecutor(max_workers=2) as pool:
-        fu=pool.submit(macro._fed_table,usd_url,'Nominal Broad Dollar Index')
-        ff=pool.submit(macro._fed_table,fed_url,'Assets: Total Assets')
+        fu=pool.submit(macro._fed_table,usd_url,'Nominal Broad Dollar Index');ff=pool.submit(macro._fed_table,fed_url,'Assets: Total Assets')
         usd=to_series(fu.result(),'Federal Reserve broad dollar');fed=to_series(ff.result(),'Federal Reserve total assets')
     return usd,fed
 
 def china_pmi():
     """NBS manufacturing PMI mirror; official NBS is the stated primary source."""
     url='https://chinadata.live/api/v2/data/china-pmi'
-    r=requests.get(url,headers=HEAD,timeout=30);r.raise_for_status();j=r.json()
-    rows=(((j or {}).get('data') or {}).get('data') or []);pts=[]
+    r=requests.get(url,headers=HEAD,timeout=30);r.raise_for_status();j=r.json();rows=(((j or {}).get('data') or {}).get('data') or []);pts=[]
     for x in rows:
         try:pts.append((pd.Period(str(x['date']),freq='M'),float(x['value'])))
         except Exception:pass
@@ -115,13 +113,9 @@ def china_pmi():
 def build_macro():
     """Historical macro packet using official sources; deliberately no FRED dependency."""
     with ThreadPoolExecutor(max_workers=4) as pool:
-        fr=pool.submit(treasury_real_history)
-        ff=pool.submit(fed_official_history)
-        fv=pool.submit(macro.cboe_vix)
-        fx=pool.submit(macro.bis_series,'WS_XRU','M.IN.INR.E','1999-01')
+        fr=pool.submit(treasury_real_history);ff=pool.submit(fed_official_history);fv=pool.submit(macro.cboe_vix);fx=pool.submit(macro.bis_series,'WS_XRU','M.IN.INR.E','1999-01')
         real=fr.result();usd,fed=ff.result();vix=to_series(fv.result(),'CBOE VIX');inr=to_series(fx.result(),'BIS USDINR')
-    usd_m=usd.groupby(usd.index.to_period('M')).mean();usd3=100*(usd_m/usd_m.shift(3)-1)
-    fed6=100*(fed/fed.shift(26)-1)
+    usd_m=usd.groupby(usd.index.to_period('M')).mean();usd3=100*(usd_m/usd_m.shift(3)-1);fed6=100*(fed/fed.shift(26)-1)
     return {'real':real,'usd':usd,'usd_m':usd_m,'usd3':usd3,'vix':vix,'fed':fed,'fed6':fed6,'fx':inr,'china':china_pmi()}
 
 def first_monthly(s):
@@ -142,8 +136,7 @@ def rolling_price_features(s,dt):
     if len(q)<260:return None
     px=float(q.iloc[-1]);ma200=float(q.iloc[-200:].mean());mom=pct_near_year(q,q.index[-1]);window=q[q.index>=q.index[-1]-pd.DateOffset(years=3)]
     if not finite(mom) or len(window)<250:return None
-    hi=float(window.max())
-    return {'price':px,'vs_ma200_pct':100*(px/ma200-1),'momentum_12m_pct':mom,'drawdown_3y_pct':100*(px/hi-1)}
+    hi=float(window.max());return {'price':px,'vs_ma200_pct':100*(px/ma200-1),'momentum_12m_pct':mom,'drawdown_3y_pct':100*(px/hi-1)}
 
 def zhist(current,hist,n,floor=1e-9,max_obs=None):
     h=pd.Series(hist,dtype=float).replace([np.inf,-np.inf],np.nan).dropna()
@@ -158,30 +151,25 @@ def gold_target(gold_usd,mac,dt):
     if mo not in mac['usd3'].index:return None
     usd3=float(mac['usd3'].loc[mo]);mom=pct_near_year(gold_usd,dt)
     if not all(finite(x) for x in (real,vix,usd3,mom)):return None
-    rs=squash(-(real-1.5),1.25);us=squash(-usd3,4.0);ts=squash(mom,20.0);vs=squash(vix-20,10.0)
-    score=.35*rs+.25*us+.25*ts+.15*vs
+    rs=squash(-(real-1.5),1.25);us=squash(-usd3,4.0);ts=squash(mom,20.0);vs=squash(vix-20,10.0);score=.35*rs+.25*us+.25*ts+.15*vs
     return {'score':score,'target':clip(13+5*score,8,18)}
 
 def silver_target(gold_usd,silver_usd,mac,dt):
-    dt=pd.Timestamp(dt);g=gold_usd[gold_usd.index<=dt];s=silver_usd[silver_usd.index<=dt];x=pd.concat([g.rename('g'),s.rename('s')],axis=1).dropna();x=x[(x.g>0)&(x.s>0)]
-    feat=rolling_price_features(silver_usd,dt);pmi_m=pd.Period(dt,freq='M')-1
+    dt=pd.Timestamp(dt);g=gold_usd[gold_usd.index<=dt];s=silver_usd[silver_usd.index<=dt];x=pd.concat([g.rename('g'),s.rename('s')],axis=1).dropna();x=x[(x.g>0)&(x.s>0)];feat=rolling_price_features(silver_usd,dt);pmi_m=pd.Period(dt,freq='M')-1
     if len(x)<260 or feat is None or pmi_m not in mac['china'].index:return None
     ratio=x.g/x.s;cur=float(ratio.iloc[-1]);hist=ratio.iloc[:-1].tail(756);z=zhist(cur,hist,250,1e-9,756)
     if not finite(z):return None
-    rel=squash(z,1.5);pmi=float(mac['china'].loc[pmi_m]);industrial=squash((pmi-50)/1.75,1.5);trend=squash(feat['momentum_12m_pct'],30.0)
-    score=.45*rel+.30*industrial+.25*trend
+    rel=squash(z,1.5);pmi=float(mac['china'].loc[pmi_m]);industrial=squash((pmi-50)/1.75,1.5);trend=squash(feat['momentum_12m_pct'],30.0);score=.45*rel+.30*industrial+.25*trend
     return {'score':score,'target':clip(3.5+3.5*score,0,7),'pmi':pmi}
 
 def global_liquidity(mac,dt):
     dt=pd.Timestamp(dt);real_q=mac['real'][mac['real'].index<=dt];vix_q=mac['vix'][mac['vix'].index<=dt];fed6_q=mac['fed6'][mac['fed6'].index<=dt]
     if not len(real_q) or not len(vix_q) or not len(fed6_q):return None
-    rv=float(real_q.iloc[-1]);vv=float(vix_q.iloc[-1]);fv=float(fed6_q.iloc[-1]);rz=zhist(rv,real_q.iloc[:-1],60,.15,756);vz=zhist(vv,vix_q.iloc[:-1],60,1,756);fz=zhist(fv,fed6_q.iloc[:-1],40,.4,156)
-    mo=pd.Period(dt,freq='M')-1
+    rv=float(real_q.iloc[-1]);vv=float(vix_q.iloc[-1]);fv=float(fed6_q.iloc[-1]);rz=zhist(rv,real_q.iloc[:-1],60,.15,756);vz=zhist(vv,vix_q.iloc[:-1],60,1,756);fz=zhist(fv,fed6_q.iloc[:-1],40,.4,156);mo=pd.Period(dt,freq='M')-1
     if mo not in mac['usd3'].index:return None
     uv=float(mac['usd3'].loc[mo]);uz=zhist(uv,mac['usd3'].loc[:mo].iloc[:-1],36,.4,120)
     if not all(finite(x) for x in (rz,vz,fz,uz)):return None
-    scores=[squash(-rz),squash(fz),squash(-uz),squash(-vz)]
-    return .40*scores[0]+.25*scores[1]+.20*scores[2]+.15*scores[3]
+    scores=[squash(-rz),squash(fz),squash(-uz),squash(-vz)];return .40*scores[0]+.25*scores[1]+.20*scores[2]+.15*scores[3]
 
 def btc_target(btc_usd,mac,dt):
     feat=rolling_price_features(btc_usd,dt);liq=global_liquidity(mac,dt)
@@ -195,10 +183,10 @@ def btc_target(btc_usd,mac,dt):
     return {'score':score,'target':t}
 
 def inr_series(usd,fx):
-    # BIS FX is monthly; a 45-day backward tolerance safely carries the latest
-    # already-observed month-end rate without pulling a future observation.
-    left=usd.rename('usd').reset_index().rename(columns={'index':'date'}).sort_values('date');right=fx.rename('fx').reset_index().rename(columns={'index':'date'}).sort_values('date')
-    z=pd.merge_asof(left,right,on='date',direction='backward',tolerance=pd.Timedelta(days=45)).dropna();s=(z.usd*z.fx);s.index=z.date
+    # BIS FX is monthly; carry only the latest already-observed month-end rate.
+    left=usd.rename('usd').reset_index().rename(columns={'index':'date'});right=fx.rename('fx').reset_index().rename(columns={'index':'date'})
+    left['date']=pd.to_datetime(left['date']).astype('datetime64[ns]');right['date']=pd.to_datetime(right['date']).astype('datetime64[ns]');left=left.sort_values('date');right=right.sort_values('date')
+    z=pd.merge_asof(left,right,on='date',direction='backward',tolerance=pd.Timedelta(days=45)).dropna();s=(z.usd*z.fx);s.index=pd.DatetimeIndex(z.date)
     return s.sort_index()
 
 def monthly_return(s,mo,last_partial=True):
@@ -234,8 +222,7 @@ def metrics(months,rets,weights,cost_bps=0):
 def build():
     alloc=pd.read_csv(ALLOC);alloc['month']=pd.to_datetime(alloc.Date).dt.to_period('M');alloc=alloc.set_index('month')
     tri=fs.nifty_tri_daily();tri_m=first_monthly(tri);eq_nav,_=fs.mf_history(fs.EQUITY_CODE);eq_m=first_monthly(eq_nav);db_nav,_=fs.mf_history(fs.DEBT_CODE);db_m=first_monthly(db_nav);rates=fs.short_rate_monthly()
-    gold=yahoo_history('GC=F','1999-01-01');silver=yahoo_history('SI=F','1999-01-01');btc=yahoo_history('BTC-USD','2014-01-01');mac=build_macro()
-    gold_inr=inr_series(gold,mac['fx']);silver_inr=inr_series(silver,mac['fx']);btc_inr=inr_series(btc,mac['fx']);months=pd.period_range('2000-01',pd.Period(date.today(),freq='M'),freq='M')
+    gold=yahoo_history('GC=F','1999-01-01');silver=yahoo_history('SI=F','1999-01-01');btc=yahoo_history('BTC-USD','2014-01-01');mac=build_macro();gold_inr=inr_series(gold,mac['fx']);silver_inr=inr_series(silver,mac['fx']);btc_inr=inr_series(btc,mac['fx']);months=pd.period_range('2000-01',pd.Period(date.today(),freq='M'),freq='M')
     results={'baseline':[],'multiasset_core':[],'multiasset_with_btc':[],'nifty100':[]};weights={k:[] for k in results};used=[];rows=[];first_metals=None;first_btc=None
     for mo in months:
         if mo not in alloc.index:continue
@@ -251,13 +238,11 @@ def build():
             bw=bt['target']/100;btc_w={k:v*(1-bw) for k,v in core_w.items()};btc_w['btc']=bw;btc_r=(1-bw)*core_r+bw*br
             if bw>0 and first_btc is None:first_btc=str(mo)
         else:btc_w=dict(core_w,btc=0.0);btc_r=core_r
-        base_w={'equity':eq,'debt':debt};base_r=eq*er+debt*dr
-        results['baseline'].append(base_r);weights['baseline'].append(base_w);results['multiasset_core'].append(core_r);weights['multiasset_core'].append(core_w);results['multiasset_with_btc'].append(btc_r);weights['multiasset_with_btc'].append(btc_w);results['nifty100'].append(tri_r);weights['nifty100'].append({'equity':1.0});used.append(mo)
+        base_w={'equity':eq,'debt':debt};base_r=eq*er+debt*dr;results['baseline'].append(base_r);weights['baseline'].append(base_w);results['multiasset_core'].append(core_r);weights['multiasset_core'].append(core_w);results['multiasset_with_btc'].append(btc_r);weights['multiasset_with_btc'].append(btc_w);results['nifty100'].append(tri_r);weights['nifty100'].append({'equity':1.0});used.append(mo)
         rows.append({'month':str(mo),'base_equity_pct':100*eq,'gold_pct':100*g,'silver_pct':100*s,'btc_funded_test_pct':100*btc_w.get('btc',0),'core_equity_pct':100*we,'core_debt_pct':100*wd,'baseline_return_pct':100*base_r,'multiasset_core_return_pct':100*core_r,'multiasset_with_btc_return_pct':100*btc_r})
     if len(used)<250:raise RuntimeError(f'Insufficient backtest months {len(used)}')
     perf={key:{'gross':metrics(used,results[key],weights[key],0),'turnover_10bps':metrics(used,results[key],weights[key],10)} for key in results}
-    out={'status':'complete','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'start_month':str(used[0]),'end_month':str(used[-1]),'months':len(used),'first_month_metals_model_eligible':first_metals,'first_month_btc_funded_test_active':first_btc,'performance':perf,'methodology':{
-      'base_signal':'data/backtest_monthly_2000.csv common-history NIFTY valuation reconstruction','baseline_returns':'ICICI Prudential Nifty 50 Index Fund Regular Growth where available, NIFTY 50 TRI before NAV history; ICICI Prudential Short Term Fund Regular Growth where available, prior-month India short-rate proxy before NAV history','nifty100_return':'NIFTY 50 TRI','gold_silver_returns':'Yahoo continuous USD futures converted to synthetic INR with BIS USD/INR; not ETF total return','gold_signal':'research-v1 live formula: US 10Y real yield 35%, broad USD 3m 25%, gold 12m momentum 25%, VIX 15%; target 8-18%','silver_signal':'research-v1 live formula: gold/silver ratio 45%, China NBS PMI 30%, silver 12m momentum 25%; target 0-7%','metals_activation':'0% until both Gold and Silver models are simultaneously eligible; remaining equity/debt ratio preserved','btc_signal':'research-v1 live formula using 200d trend, 12m momentum, reconstructed global liquidity, 3y drawdown value; 0/2.5/5/7.5/10%','btc_policy':'multiasset_with_btc is research-only and funds BTC by proportional haircut to the 100% core. Live retirement policy keeps BTC outside the core.','macro_sources':'U.S. Treasury real yield; Federal Reserve H.10 broad dollar and H.4.1 assets; CBOE VIX; BIS USD/INR; NBS PMI mirror','lookahead':'signals use only observations dated on/before the monthly signal date; China PMI and broad-USD monthly changes use prior-month observations. Historical macro series are latest-revised, not release-vintage.','taxes_loads_expenses':'excluded','turnover_sensitivity':'10 bps per one-way portfolio turnover reported separately'},'timeline':rows}
+    out={'status':'complete','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'start_month':str(used[0]),'end_month':str(used[-1]),'months':len(used),'first_month_metals_model_eligible':first_metals,'first_month_btc_funded_test_active':first_btc,'performance':perf,'methodology':{'base_signal':'data/backtest_monthly_2000.csv common-history NIFTY valuation reconstruction','baseline_returns':'ICICI Prudential Nifty 50 Index Fund Regular Growth where available, NIFTY 50 TRI before NAV history; ICICI Prudential Short Term Fund Regular Growth where available, prior-month India short-rate proxy before NAV history','nifty100_return':'NIFTY 50 TRI','gold_silver_returns':'Yahoo continuous USD futures converted to synthetic INR with BIS USD/INR; not ETF total return','gold_signal':'research-v1 live formula: US 10Y real yield 35%, broad USD 3m 25%, gold 12m momentum 25%, VIX 15%; target 8-18%','silver_signal':'research-v1 live formula: gold/silver ratio 45%, China NBS PMI 30%, silver 12m momentum 25%; target 0-7%','metals_activation':'0% until both Gold and Silver models are simultaneously eligible; remaining equity/debt ratio preserved','btc_signal':'research-v1 live formula using 200d trend, 12m momentum, reconstructed global liquidity, 3y drawdown value; 0/2.5/5/7.5/10%','btc_policy':'multiasset_with_btc is research-only and funds BTC by proportional haircut to the 100% core. Live retirement policy keeps BTC outside the core.','macro_sources':'U.S. Treasury real yield; Federal Reserve H.10 broad dollar and H.4.1 assets; CBOE VIX; BIS USD/INR; NBS PMI mirror','lookahead':'signals use only observations dated on/before the monthly signal date; China PMI and broad-USD monthly changes use prior-month observations. Historical macro series are latest-revised, not release-vintage.','taxes_loads_expenses':'excluded','turnover_sensitivity':'10 bps per one-way portfolio turnover reported separately'},'timeline':rows}
     OUT.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8');return out
 
 if __name__=='__main__':
