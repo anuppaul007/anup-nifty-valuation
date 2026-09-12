@@ -2974,6 +2974,11 @@
         "error": "no regular-growth match"
       },
       {
+        "query": "Franklin India Flexi Cap Fund",
+        "selected": "Franklin India Flexi Cap Fund - Regular Plan - Growth",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
         "query": "HDFC Flexi Cap Fund",
         "selected": "HDFC Flexi Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
@@ -2981,11 +2986,6 @@
       {
         "query": "HDFC ELSS Tax saver",
         "selected": "HDFC ELSS - Tax Saver Fund - Regular Plan - Growth Option",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
-        "query": "Franklin India Flexi Cap Fund",
-        "selected": "Franklin India Flexi Cap Fund - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -3011,13 +3011,13 @@
         "error": "no regular-growth match"
       },
       {
-        "query": "UTI Mastershare Unit Scheme",
-        "error": "no regular-growth match"
-      },
-      {
         "query": "Tata Mid Cap Growth Fund",
         "selected": "Tata Mid Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "UTI Mastershare Unit Scheme",
+        "error": "no regular-growth match"
       },
       {
         "query": "JM Flexicap Fund",
