@@ -1,10 +1,11 @@
 # Valuation-core retrospective sensitivity — 12 September 2026
 
-## Question tested
+## Questions tested
 
-Does a gentler valuation-to-equity curve (roughly `k = 0.8–1.0`) give a better historical risk/reward result than the live V3.6 curve (`k = 1.35`)?
+1. Does a gentler valuation-to-equity curve (`k`) improve historical risk/reward versus the live V3.6 slope `k = 1.35`?
+2. Does the live extreme threshold `zc = 2.5` push the model toward 0%/100% equity too readily, and do wider thresholds (`3.0`, `3.5`, `4.0`) improve the trade-off?
 
-This study isolates the **valuation core only**. It does not use the earnings or macro overlays when generating historical allocations.
+This study isolates the **valuation core only**. Earnings and macro overlays are not used in the historical allocations.
 
 ## Method
 
@@ -12,16 +13,16 @@ This study isolates the **valuation core only**. It does not use the earnings or
 - 64 comparable completed months, ending **July 2026**.
 - 63 next-month performance observations.
 - Equity benchmark: **NIFTY 50 Total Return Index**.
-- Debt benchmark: **NIFTY 10 Yr Benchmark G-Sec**, which is a total-return fixed-income index (not the clean-price version).
+- Debt benchmark: **NIFTY 10 Yr Benchmark G-Sec** total-return index.
 - Signal timing: month-end valuation signal is applied only to the **following completed month's** return.
 - Cost sensitivity for dynamic strategies: **10 bps per 100% one-way allocation turnover**. Taxes are excluded.
-- All candidate curves retain the same current fixed valuation references and the same `zc = 2.5` 0%/100% endpoint threshold.
+- The current fixed valuation reference constants remain unchanged in every candidate.
 
-Important limitation: this is a **retrospective sensitivity study, not true out-of-sample validation**. The current fixed reference constants have not been shown to have been frozen in April 2021. Results therefore must not be used to optimize the live model after seeing the outcome.
+Important limitation: this is a **retrospective sensitivity study, not true out-of-sample validation**. The current fixed reference constants were not proven to have been frozen in April 2021. A historical grid winner therefore cannot be adopted automatically.
 
-## Results
+## A. Curve-slope test with the live extreme threshold `zc = 2.5`
 
-Dynamic results below use the 10-bp turnover-cost sensitivity.
+Dynamic results use the 10-bp turnover-cost sensitivity.
 
 | Curve slope `k` | CAGR | Annual vol. | Max drawdown | Calmar | Avg. equity | Min equity | Max equity |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -32,34 +33,58 @@ Dynamic results below use the 10-bp turnover-cost sensitivity.
 | **1.35 — live** | **8.93%** | **8.81%** | **-9.60%** | **0.930** | **53.5%** | **0.35%** | **87.0%** |
 | 1.50 | 9.00% | 8.92% | -9.73% | 0.925 | 53.9% | 0.27% | 88.6% |
 
+## B. Extreme-threshold test with the live slope `k = 1.35`
+
+| Extreme threshold `zc` | CAGR | Annual vol. | Max drawdown | Calmar | Avg. equity | Min equity | Max equity |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| **2.5 — live** | **8.93%** | 8.81% | -9.60% | 0.930 | 53.54% | **0.35%** | 87.01% |
+| 3.0 | 8.92% | 8.76% | -9.55% | 0.933 | 53.42% | 1.99% | 85.78% |
+| 3.5 | 8.91% | 8.73% | -9.53% | 0.935 | 53.36% | 2.80% | 85.18% |
+| 4.0 | 8.91% | **8.72%** | **-9.52%** | **0.936** | 53.33% | **3.21%** | 84.87% |
+
+Widening the endpoint from 2.5 to 4.0 therefore reduced turnover, volatility and drawdown modestly while sacrificing only about **0.02 percentage points of annualized return** in this sample. It also stopped the live slope from going quite as close to zero equity, although a 3.2% minimum equity allocation is still an extreme defensive position.
+
+## C. Full `k × zc` grid
+
+The full grid tests 24 combinations: six slopes × four extreme thresholds.
+
+- **Highest net CAGR:** `k = 1.50`, `zc = 2.5` — approximately **9.00% CAGR**.
+- **Highest net Calmar:** `k = 0.60`, `zc = 4.0` — approximately **8.63% CAGR**, **8.13% volatility**, **-8.87% max drawdown**, **0.972 Calmar**. Its allocation range in the sample was about **12.7% to 71.6% equity**.
+- The high-Calmar grid winner is therefore much less extreme, but it also gives up return and behaves much more like a permanently balanced portfolio.
+
 For context, fixed allocations over the same return window were:
 
 | Fixed allocation | CAGR | Annual vol. | Max drawdown | Calmar |
 | --- | ---: | ---: | ---: | ---: |
-| 60% equity / 40% debt | 9.18% | 8.75% | -9.45% | 0.971 |
+| **60% equity / 40% debt** | **9.18%** | 8.75% | -9.45% | **0.971** |
 | 70% equity / 30% debt | 9.80% | 9.91% | -10.77% | 0.910 |
 | 100% equity | 11.58% | 13.48% | -14.68% | 0.789 |
 
-## What the study says
+No tested dynamic combination beat fixed 60/40 on both return and Calmar. The best grid Calmar (0.972) was essentially the same as 60/40 (0.971), but its CAGR was lower (8.63% versus 9.18%). This is an important negative result: the current valuation-timing rule has **not** demonstrated superior risk-adjusted performance in this short common-methodology era.
 
-1. **The original suspicion that `k = 0.8–1.0` would clearly improve the model is not supported by this sample.** Gentler curves reduced volatility and drawdown slightly, but they also reduced return. Within the dynamic candidates, the highest net CAGR occurred at `k = 1.50`, while the best Calmar occurred at `k = 0.60`.
+## Effect on today's V3.6 signal
 
-2. **No tested dynamic slope beat fixed 60/40 on both return and Calmar.** This is an important negative result. The valuation timing rule has not demonstrated superior risk-adjusted performance in the common post-2021 methodology era.
+For the current September 2026 signal (`valuation z ≈ -1.052`), keeping the live slope `k = 1.35` and all earnings/macro inputs unchanged gives these candidate final targets:
 
-3. **The live `k = 1.35` curve is not uniquely responsible for the aggressive de-risking.** All tested slopes share `zc = 2.5`. In April 2021 the valuation z-score was about +2.43, very close to that endpoint, so every curve pushed equity close to zero. The live curve reached a minimum equity allocation of about 0.35% during this study. Changing slope alone cannot solve that endpoint behavior.
+| `zc` | Candidate final equity target |
+| ---: | ---: |
+| **2.5 — live** | **81.55%** |
+| 3.0 | 80.47% |
+| 3.5 | 79.93% |
+| 4.0 | 79.66% |
 
-4. **The more important parameter to challenge next is the definition of “extreme”.** The current `zc = 2.5` means 0% equity at +2.5 and 100% equity at -2.5. The retrospective result suggests that this may move the model to an extreme allocation too early, but the 2021–2026 sample is too short to justify changing it after the fact.
-
-5. **The strategy did reduce risk versus 100% equity.** The live valuation core had roughly 8.8% annualized volatility and a -9.6% maximum drawdown versus 13.5% volatility and a -14.7% maximum drawdown for 100% equity. The cost was materially lower CAGR in this particular period.
+So widening the extreme threshold alone **does not solve the current 81% concern**. Even `zc = 4.0` lowers today's target by only about **1.9 percentage points**. The present high target is driven mainly by the valuation composite itself and the chosen mapping of moderately cheap valuation into strategic equity, not by one single endpoint parameter.
 
 ## Decision for V3.6
 
-**Do not change the live curve slope from 1.35 based on this retrospective study.** The prospective walk-forward lock remains in force. The result is evidence against casually tuning the model to make today's allocation look more comfortable.
+**Do not change either live parameter (`k = 1.35`, `zc = 2.5`) from this retrospective evidence.** The prospective walk-forward lock remains active.
 
-The current live target should therefore continue to be described as a **model-implied allocation**, not a historically proven return-maximizing target.
+The prospective ledger now records all four endpoint candidates (`2.5`, `3.0`, `3.5`, `4.0`) and the full slope × threshold grid every month. The parameter gate requires a long enough genuinely forward sample before any live change can be considered.
 
-## Next research step
+## Interpretation
 
-The next sensitivity test should vary the endpoint threshold separately from the slope, for example `zc = 2.5, 3.0, 3.5, 4.0`, while keeping the same no-lookahead monthly return convention. That test should answer whether the model reaches 0%/100% equity too easily. Any candidate settings should then be recorded prospectively rather than automatically adopted from the retrospective winner.
+The endpoint test gives a useful directional signal: **wider extreme thresholds are somewhat more stable and less prone to near-zero equity allocations, but the improvement is modest and the sample is too short to establish superiority.** More importantly, neither slope nor endpoint tuning has justified a retrospective rewrite of the live model.
 
-The machine-readable results are stored in [`data/retrospective.json`](data/retrospective.json), and the live prospective ledger remains in [`data/walkforward.json`](data/walkforward.json).
+The next research question should therefore move one level higher: test whether the **fixed valuation references and lens weights themselves** are robust under rolling / expanding-window calibration, rather than continuing to optimize the shape of the allocation curve after observing outcomes.
+
+The machine-readable results are stored in [`data/retrospective.json`](data/retrospective.json), and the prospective ledger is stored in [`data/walkforward.json`](data/walkforward.json).
