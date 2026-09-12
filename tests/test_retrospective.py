@@ -26,5 +26,8 @@ class RetrospectiveTests(unittest.TestCase):
   p=self.panel();x=r.fixed_returns(p,1.0)
   expected=p.equity_tri.pct_change().shift(-1).dropna()
   self.assertEqual(len(x),len(expected));self.assertAlmostEqual(float((x-expected).abs().max()),0)
+ def test_sortino_is_dimensionless_not_percent_scaled(self):
+  s=r.stats([.01,-.01,.02,-.005,.015,.003])
+  self.assertIn('sortino_0',s);self.assertNotIn('sortino_0_pct',s);self.assertLess(abs(s['sortino_0']),20)
 
 if __name__=='__main__':unittest.main()
