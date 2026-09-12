@@ -6,7 +6,6 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 from difflib import SequenceMatcher
-from io import StringIO
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import json, math, re, time
 import numpy as np
@@ -16,9 +15,10 @@ import update_data as b
 
 ROOT=Path(__file__).resolve().parents[1]
 ALLOC=ROOT/'data'/'backtest_monthly_2000.csv'
+RATE_CACHE=ROOT/'data'/'india_short_rate_proxy_1999_2006.csv'
 OUT=ROOT/'data'/'fund_strategy_rank.json'
 START=pd.Timestamp('2000-01-01'); TODAY=pd.Timestamp(date.today())
-MFAPI='https://api.mfapi.in'; HEAD={'User-Agent':'Mozilla/5.0 AnupNiftyValuationResearch/1.1'}
+MFAPI='https://api.mfapi.in'; HEAD={'User-Agent':'Mozilla/5.0 AnupNiftyValuationResearch/1.2'}
 EQUITY_CODE=101349
 DEBT_CODE=101758
 CANDIDATES=[
@@ -67,14 +67,14 @@ def nifty_tri_daily():
     return pd.DataFrame(pts,columns=['date','value']).drop_duplicates('date').set_index('date').value.sort_index()
 
 def short_rate_monthly():
-    # Prior-month India short-term interest rate. Direct requests are used rather
-    # than the dashboard HTTP wrapper because FRED occasionally stalls on runners.
-    url='https://fred.stlouisfed.org/graph/fredgraph.csv?id=INDLOCOSTORSTM'
-    text=get(url,timeout=60,retries=4)
-    q=pd.read_csv(StringIO(text)); q.columns=['date','value'];q['date']=pd.to_datetime(q.date,errors='coerce');q['value']=pd.to_numeric(q.value,errors='coerce')
-    q=q.dropna().sort_values('date'); q['month']=q.date.dt.to_period('M')
-    s=q.groupby('month').value.last().astype(float).sort_index()
-    if pd.Period('1999-12','M') not in s.index: raise RuntimeError('Short-rate proxy lacks Dec-1999')
+    # Reproducible cache of OECD/FRED India short-term rate observations. Only
+    # pre-debt-fund-NAV months need this proxy, so no live network dependency is
+    # appropriate here.
+    q=pd.read_csv(RATE_CACHE)
+    q['month']=pd.PeriodIndex(q['month'].astype(str),freq='M');q['rate_pct']=pd.to_numeric(q['rate_pct'],errors='coerce')
+    s=q.dropna().drop_duplicates('month').set_index('month').rate_pct.astype(float).sort_index()
+    if pd.Period('1999-12','M') not in s.index or pd.Period('2006-03','M') not in s.index:
+        raise RuntimeError('Cached short-rate proxy is incomplete')
     return s
 
 def rate_return(rate,days=None):
