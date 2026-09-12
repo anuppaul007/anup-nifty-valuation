@@ -31,12 +31,12 @@ jobs:
         run: python scripts/fund_strategy_rank.py
       - name: Commit research output
         run: |
-          if git diff --quiet -- data/fund_strategy_rank.json; then
+          git config user.name "anup-nifty-bot"
+          git config user.email "anup-nifty-bot@users.noreply.github.com"
+          git add -f data/fund_strategy_rank.json
+          if git diff --cached --quiet; then
             echo "No research data change"
             exit 0
           fi
-          git config user.name "anup-nifty-bot"
-          git config user.email "anup-nifty-bot@users.noreply.github.com"
-          git add data/fund_strategy_rank.json
           git commit -m "data: refresh long-run fund research"
           git push
