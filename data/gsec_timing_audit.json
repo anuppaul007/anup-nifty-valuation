@@ -1,0 +1,78 @@
+{
+  "status": "complete",
+  "generated_at": "2026-09-12T11:07:21+00:00",
+  "research_only": true,
+  "live_model_changed": false,
+  "live_allocation_changed": false,
+  "source_screen_generated_at": "2026-09-12T03:33:10.958501+00:00",
+  "source_screen_scope": "Current fixed-reference valuation core only. No historical full-macro allocation is claimed.",
+  "incumbent_yield_rule": "Two calendar-month lag; RBI archived SGL tenor yields before OECD coverage, then OECD monthly long-term yields. Series definitions differ. Publication times and historical vintages are not verified.",
+  "official_rbi_verification": {
+    "rbi_table_definition": "Month-end Yield of SGL Transactions in Government Dated Securities for Various Maturities",
+    "interpretation": "The 10-year row is a month-end secondary-market transaction-yield observation, so its observation date is the month-end date rather than a later macro-release month.",
+    "sources": [
+      {
+        "url": "https://www.rbi.org.in/scripts/PublicationsView.aspx?id=17320",
+        "label": "RBI Handbook 2015-16, Table 187",
+        "coverage_visible": "2013-14 to 2016-17"
+      },
+      {
+        "url": "https://www.rbi.org.in/Scripts/PublicationsView.aspx?id=22654",
+        "label": "RBI Handbook 2023-24, Table 180",
+        "coverage_visible": "2021-22 to 2024-25 partial"
+      }
+    ],
+    "availability_convention": "Decision timestamp is after the previous trading-day close and before the first trading session of the new month; therefore the previous month-end market observation is eligible when it exists."
+  },
+  "integrity": {
+    "max_abs_incumbent_recompute_z_diff": 8.881784197001252e-16,
+    "max_abs_incumbent_recompute_equity_diff_pp": 2.842170943040401e-14,
+    "rbi_observation_count": 145,
+    "all_observation_count": 321
+  },
+  "variant_definitions": {
+    "incumbent": "Stored V3.9 two-calendar-month yield timing.",
+    "rbi_timing_corrected": "For RBI SGL month-end rows only, use the latest archived RBI month-end observation strictly before the month-start signal. OECD rows remain at incumbent timing because release timing/vintages are unverified.",
+    "observation_date_only": "Use the latest stored yield observation strictly before signal across RBI and OECD. This is a sensitivity bound only and is NOT point-in-time safe for OECD monthly data without publication-vintage verification."
+  },
+  "comparisons": {
+    "rbi_timing_corrected_vs_incumbent": {
+      "months": 321,
+      "timing_changed_months": 144,
+      "max_abs_z_delta": 0.8196541353383457,
+      "mean_abs_z_delta": 0.048988967746469034,
+      "max_abs_equity_delta_pp": 9.898910691818855,
+      "mean_abs_equity_delta_pp": 0.6623714896823081,
+      "bucket_crossing_count": 5,
+      "bucket_crossings": [
+        {"signal_date":"2000-05-01","incumbent_gsec_asof":"2000-03-31","challenger_gsec_asof":"2000-04-30","incumbent_gsec10":10.8663,"challenger_gsec10":10.3663,"z_delta":-0.2255639097744362,"equity_delta_pp":5.867733990360897,"incumbent_equity":18.851494780088213,"challenger_equity":24.71922877044911,"incumbent_bucket":"debt_gt_80","challenger_bucket":"middle","methodology_era":"Pre-April 2021: non-comparable"},
+        {"signal_date":"2001-01-01","incumbent_gsec_asof":"2000-11-30","challenger_gsec_asof":"2000-12-31","incumbent_gsec10":11.4009,"challenger_gsec10":10.9359,"z_delta":-0.20977443609022572,"equity_delta_pp":5.597776043210732,"incumbent_equity":19.92750653448101,"challenger_equity":25.525282577691744,"incumbent_bucket":"debt_gt_80","challenger_bucket":"middle","methodology_era":"Pre-April 2021: non-comparable"},
+        {"signal_date":"2001-03-01","incumbent_gsec_asof":"2001-01-31","challenger_gsec_asof":"2001-02-28","incumbent_gsec10":10.4842,"challenger_gsec10":10.0447,"z_delta":-0.1982706766917287,"equity_delta_pp":5.002571606430962,"incumbent_equity":18.176736367266464,"challenger_equity":23.179307973697426,"incumbent_bucket":"debt_gt_80","challenger_bucket":"middle","methodology_era":"Pre-April 2021: non-comparable"},
+        {"signal_date":"2001-06-01","incumbent_gsec_asof":"2001-04-30","challenger_gsec_asof":"2001-05-31","incumbent_gsec10":10.0779,"challenger_gsec10":9.7149,"z_delta":-0.16375939849624033,"equity_delta_pp":3.992420029777122,"incumbent_equity":78.48483024960613,"challenger_equity":82.47725027938326,"incumbent_bucket":"middle","challenger_bucket":"equity_gt_80","methodology_era":"Pre-April 2021: non-comparable"},
+        {"signal_date":"2006-07-01","incumbent_gsec_asof":"2006-05-31","challenger_gsec_asof":"2006-06-30","incumbent_gsec10":7.6809,"challenger_gsec10":8.1318,"z_delta":0.2034135338345865,"equity_delta_pp":-4.828067558427335,"incumbent_equity":83.6889161539426,"challenger_equity":78.86084859551526,"incumbent_bucket":"equity_gt_80","challenger_bucket":"middle","methodology_era":"Pre-April 2021: non-comparable"}
+      ],
+      "incumbent_counts": {"equity_gt_80":100,"debt_gt_80":59,"saturated_equity_100":44,"saturated_debt_100":9},
+      "challenger_counts": {"equity_gt_80":100,"debt_gt_80":56,"saturated_equity_100":45,"saturated_debt_100":10},
+      "largest_equity_shifts": [
+        {"signal_date":"2008-08-01","incumbent_gsec_asof":"2008-06-30","challenger_gsec_asof":"2008-07-31","incumbent_gsec10":8.6518,"challenger_gsec10":9.35,"z_delta":0.31497744360902236,"equity_delta_pp":-9.898910691818855,"incumbent_equity":73.94923569875087,"challenger_equity":64.05032500693201,"incumbent_bucket":"middle","challenger_bucket":"middle","methodology_era":"Pre-April 2021: non-comparable"},
+        {"signal_date":"2008-09-01","incumbent_gsec_asof":"2008-07-31","challenger_gsec_asof":"2008-08-31","incumbent_gsec10":9.35,"challenger_gsec10":8.7121,"z_delta":-0.28777443609022557,"equity_delta_pp":9.323128310270093,"incumbent_equity":62.26448777362015,"challenger_equity":71.58761608389024,"incumbent_bucket":"middle","challenger_bucket":"middle","methodology_era":"Pre-April 2021: non-comparable"},
+        {"signal_date":"2009-09-01","incumbent_gsec_asof":"2009-07-31","challenger_gsec_asof":"2009-08-31","incumbent_gsec10":6.9926,"challenger_gsec10":7.4969,"z_delta":0.22750375939849615,"equity_delta_pp":-7.810725477616927,"incumbent_equity":65.62689854132078,"challenger_equity":57.81617306370386,"incumbent_bucket":"middle","challenger_bucket":"middle","methodology_era":"Pre-April 2021: non-comparable"},
+        {"signal_date":"2011-11-01","incumbent_gsec_asof":"2011-09-30","challenger_gsec_asof":"2011-10-31","incumbent_gsec10":8.3975,"challenger_gsec10":8.8849,"z_delta":0.2198796992481199,"equity_delta_pp":-6.542718573919657,"incumbent_equity":75.6303760251621,"challenger_equity":69.08765745124244,"incumbent_bucket":"middle","challenger_bucket":"middle","methodology_era":"Pre-April 2021: non-comparable"}
+      ]
+    },
+    "observation_date_only_vs_incumbent": {
+      "months":321,"timing_changed_months":320,"max_abs_z_delta":0.8196541353383457,"mean_abs_z_delta":0.07960439041529059,"max_abs_equity_delta_pp":10.57808158725453,"mean_abs_equity_delta_pp":1.4411669095107953,"bucket_crossing_count":10,
+      "incumbent_counts":{"equity_gt_80":100,"debt_gt_80":59,"saturated_equity_100":44,"saturated_debt_100":9},
+      "challenger_counts":{"equity_gt_80":101,"debt_gt_80":56,"saturated_equity_100":45,"saturated_debt_100":10},
+      "bucket_crossings": [],
+      "largest_equity_shifts": []
+    }
+  },
+  "backtest": {
+    "incumbent": {"months":321,"multiple_x":42.72431287538084,"cagr_pct":15.06939145428936,"max_monthly_drawdown_pct":-34.19901671839879,"annualized_monthly_volatility_pct":16.44628973667377,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-21.681690344289983,"average_monthly_one_way_turnover_pct":8.522371264402787,"rebalance_count":320},
+    "rbi_timing_corrected": {"months":321,"multiple_x":41.89964056421925,"cagr_pct":14.985578786267872,"max_monthly_drawdown_pct":-34.696597372520486,"annualized_monthly_volatility_pct":16.438841379206554,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-22.286252275404017,"average_monthly_one_way_turnover_pct":8.542037038548202,"rebalance_count":320},
+    "observation_date_only": {"months":321,"multiple_x":41.953203503612094,"cagr_pct":14.991070483924606,"max_monthly_drawdown_pct":-34.696597372520486,"annualized_monthly_volatility_pct":16.447540711445082,"worst_calendar_year":2008,"worst_calendar_year_return_pct":-22.286252275404017,"average_monthly_one_way_turnover_pct":8.540343671078986,"rebalance_count":320}
+  },
+  "backtest_basis": "Exploratory fixed-core screen only; NIFTY 50 TRI, conservative debt proxy, 0pp band, 10bps one-way turnover cost. Not the full modern macro/earnings model and not the validation policy's daily-drawdown protocol.",
+  "promotion_rule": "No automatic live-model change. A historical timing correction may replace the evidence screen only after source coverage and point-in-time assumptions are explicit and tests pass."
+}
