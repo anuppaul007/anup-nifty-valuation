@@ -1,0 +1,46 @@
+name: Current-definition reconstruction audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/current_definition_reconstruction.py'
+      - 'tests/test_current_definition_reconstruction.py'
+      - 'CURRENT_DEFINITION_RECONSTRUCTION.md'
+      - '.github/workflows/current-definition-reconstruction.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  current-definition-reconstruction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt pytest
+      - name: Unit tests
+        run: pytest -q tests/test_current_definition_reconstruction.py
+      - name: Run source coverage and reconstruction audit
+        run: python scripts/current_definition_reconstruction.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: current-definition-reconstruction
+          path: data/current_definition_reconstruction.json
+          if-no-files-found: error
+      - name: Show headline result
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('data/current_definition_reconstruction.json'))
+          print(json.dumps({
+            'weight_history_verified_start': x['historical_weight_evidence']['verified_start'],
+            'probe_summary': x['probe_summary'],
+            'earliest_fully_reconstructed_month': x['reconstruction_gate']['earliest_fully_reconstructed_month'],
+            'live_model_changed': x['live_model_changed'],
+          }, indent=2))
+          PY
