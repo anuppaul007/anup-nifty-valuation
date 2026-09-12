@@ -47,12 +47,16 @@ jobs:
           fi
       - name: Commit backtest result
         run: |
-          if git diff --quiet -- data/multiasset_backtest.json; then
-            echo "No backtest data change"
-            exit 0
+          if [ ! -f data/multiasset_backtest.json ]; then
+            echo "Backtest output missing"
+            exit 1
           fi
           git config user.name "anup-nifty-bot"
           git config user.email "anup-nifty-bot@users.noreply.github.com"
           git add data/multiasset_backtest.json
+          if git diff --cached --quiet; then
+            echo "No backtest data change"
+            exit 0
+          fi
           git commit -m "data: refresh multi-asset historical backtest"
           git push
