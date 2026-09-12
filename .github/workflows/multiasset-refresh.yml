@@ -37,7 +37,7 @@ jobs:
         run: python scripts/multiasset.py || true
       - name: Commit published multi-asset packet
         run: |
-          if git diff --quiet -- data/multiasset.json; then
+          if [ -z "$(git status --porcelain -- data/multiasset.json)" ]; then
             echo "No multi-asset data change"
             exit 0
           fi
