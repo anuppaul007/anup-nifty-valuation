@@ -73,8 +73,9 @@ def unavailable_macro(old,reason):
     return m.coverage_adjust_macro(mac)
 
 
-def attach_domestic(mac):
-    dom=m.safe('India domestic macro',dm.build)
+def attach_domestic(mac,old):
+    prior=(old.get('macro') or {}).get('domestic') or {}
+    dom=m.safe('India domestic macro',lambda:dm.build(prior))
     if dom is None:dom={'score':None,'coverage':0.0,'status':'unavailable','factors':{},'method':'economic-anchor-v1'}
     mac['domestic']=dom;mac.setdefault('blocks',{})['india_domestic']=dom.get('score');mac.setdefault('factor_coverage',{})['india_domestic']=float(dom.get('coverage') or 0)
     return m.coverage_adjust_macro(mac)
@@ -87,7 +88,7 @@ def main():
     if any(not m.finite(latest.get(k)) or latest[k]<=0 for k in ['level','pe','pb','div_yield']):raise RuntimeError('Mandatory NIFTY input validation failed; retaining saved data')
     if not m.fresh(latest.get('date'),7):raise RuntimeError('Mandatory NIFTY observation date is stale')
     try:
-        mac,cal=m.build(g10,latest,n['history'],old,gmeta);mac=attach_domestic(mac)
+        mac,cal=m.build(g10,latest,n['history'],old,gmeta);mac=attach_domestic(mac,old)
     except Exception as e:
         mac=unavailable_macro(old,str(e));cal={'em_ex_india_history':[],'carry_spread_history':[]}
     coverage=mac['active_block_weight'];vf=(mac.get('factors') or {}).get('vix') or {};confidence=None
@@ -99,7 +100,7 @@ def main():
         {'name':'U.S. Treasury / Federal Reserve / CBOE','role':'Dated real/nominal yields, broad USD, Fed balance sheet and VIX'},
         {'name':'BIS Statistics API','role':'India broad REER and monthly USD/INR history from official SDMX feeds','url':'https://data.bis.org/'},
         {'name':'OECD Data Explorer','role':'Monthly India long-term government bond history used to standardise India-US carry','url':'https://data-explorer.oecd.org/'},
-        {'name':'MoSPI eSankhyiki / official releases','role':'Official All-India CPI inflation and Index of Industrial Production','url':dm.ESANKHYIKI},
+        {'name':'MoSPI / NSO via Press Information Bureau','role':'Official All-India CPI inflation and Index of Industrial Production releases; newest URL is discovered and prior verified URL is carried forward','url':dm.PIB_ALL},
         {'name':'Reserve Bank of India','role':'Current policy repo rate and dated government-security yield','url':dm.RBI},
         {'name':'Yahoo Finance Brent futures','role':'Brent 63-trading-observation momentum; contract-roll effects are possible'},
         {'name':'STOXX EM ex India Universal Large Cap','role':'Relative valuation diagnostic only; not counted as a macro block','url':m.STOXX_URL},
