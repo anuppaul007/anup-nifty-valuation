@@ -12,8 +12,13 @@ function clearMultiAsset(message='Multi-asset research data are unavailable.'){
  if(q('#maStatus'))q('#maStatus').textContent=message;
  if(q('#maNote')){q('#maNote').textContent='The NIFTY equity/debt model remains available independently; no missing multi-asset input is neutral-filled.';q('#maNote').className='flag bad';}
 }
-function renderMultiAsset(ma){
- if(!ma||ma.status!=='live'||!fresh(ma.generated_at,3)||!ma.core_allocation){clearMultiAsset(ma?.error||'Multi-asset research data are unavailable or stale.');return;}
+function renderMultiAsset(ma,sourceGeneratedAt){
+ const sameSnapshot=typeof sourceGeneratedAt==='string'&&ma?.source_latest_generated_at===sourceGeneratedAt;
+ if(!ma||ma.status!=='live'||!fresh(ma.generated_at,3)||!ma.core_allocation||!sameSnapshot){
+  const mismatch=ma&&ma.status==='live'&&!sameSnapshot;
+  clearMultiAsset(ma?.error||(mismatch?'Multi-asset packet does not match the current NIFTY snapshot; allocation is withheld until the synchronized refresh completes.':'Multi-asset research data are unavailable or stale.'));
+  return;
+ }
  const a=ma.core_allocation,g=ma.gold||{},s=ma.silver||{},b=ma.btc||{};
  if(![a.equity_pct,a.debt_pct,a.gold_pct,a.silver_pct].every(finite)){clearMultiAsset('Multi-asset core allocation failed validation.');return;}
  q('#maEq').textContent=fmt(a.equity_pct,1)+'%';q('#maDebt').textContent=fmt(a.debt_pct,1)+'%';q('#maGold').textContent=fmt(a.gold_pct,1)+'%';q('#maSilver').textContent=fmt(a.silver_pct,1)+'%';q('#maBtc').textContent=finite(b.tactical_signal_pct)?fmt(b.tactical_signal_pct,1)+'%':'—';
@@ -91,7 +96,7 @@ async function loadData(){
  const request=++requestNumber,controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);q('#status').textContent='Checking latest published data…';clearMultiAsset('Checking latest multi-asset research data…');
  try{
   const d=await fetchPublished('latest.json',controller.signal);if(request!==requestNumber)return;render(d);
-  try{const ma=await fetchPublished('multiasset.json',controller.signal);if(request===requestNumber)renderMultiAsset(ma);}catch(error){if(request===requestNumber)clearMultiAsset('Multi-asset research data could not be loaded; the NIFTY model remains unaffected.');}
+  try{const ma=await fetchPublished('multiasset.json',controller.signal);if(request===requestNumber)renderMultiAsset(ma,d.generated_at);}catch(error){if(request===requestNumber)clearMultiAsset('Multi-asset research data could not be loaded; the NIFTY model remains unaffected.');}
  }catch(error){if(request===requestNumber){clearAllocation('Published data could not be loaded. Allocation is withheld; please try again later.');clearMultiAsset();}}
  finally{clearTimeout(timer);}
 }
