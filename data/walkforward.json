@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "model_version": "3.6",
-  "updated_at": "2026-09-12T10:18:28+00:00",
+  "updated_at": "2026-09-12T11:12:03+00:00",
   "candidate_macro_caps_pp": [
     0,
     3,
@@ -41,7 +41,7 @@
       "research_only": true,
       "month": "2026-09",
       "asof": "2026-09-11",
-      "generated_at": "2026-09-12T10:18:27+00:00",
+      "generated_at": "2026-09-12T11:12:01+00:00",
       "nifty_level": 23398.1,
       "pe": 19.78,
       "pb": 2.83,
