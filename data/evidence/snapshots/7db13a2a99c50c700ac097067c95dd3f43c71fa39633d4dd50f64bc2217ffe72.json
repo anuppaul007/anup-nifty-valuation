@@ -1,0 +1,891 @@
+{
+  "schema_version": 1,
+  "first_seen_at": "2026-09-12T11:15:23+00:00",
+  "id": "7db13a2a99c50c700ac097067c95dd3f43c71fa39633d4dd50f64bc2217ffe72",
+  "model_version": "f45b8acb9def1bf5eef2e005efe79c631e839e5ffd29498d07f907a91bd2c334",
+  "packet": {
+    "schema_version": 4,
+    "model_version": "3.6",
+    "generated_at": "2026-09-12T11:12:01+00:00",
+    "macro_stale": false,
+    "macro_partial": false,
+    "nifty": {
+      "date": "2026-09-11",
+      "level": 23398.1,
+      "pe": 19.78,
+      "pb": 2.83,
+      "div_yield": 1.21,
+      "gsec10": 6.9711,
+      "gsec_meta": {
+        "asof": "2026-09-10",
+        "source_url": "https://www.rbi.org.in/",
+        "source": "RBI dated government bond near 10 years",
+        "security": "6.94% GS 2036",
+        "status": "live",
+        "max_age_days": 7
+      }
+    },
+    "earnings": {
+      "eps": 1182.7308447937132,
+      "asof": "2026-08-31",
+      "coverage": 1.0,
+      "eps_growth_12m": 3.9078060792655966,
+      "acceleration_6m": 2.295826311410698,
+      "score": -0.2928771334450563
+    },
+    "macro": {
+      "us_real_10y": 2.6,
+      "usd_3m_pct": 0.06061667362635692,
+      "fed_assets_6m_pct": 1.4184489999313987,
+      "vix": 15.84,
+      "brent_3m_pct": 15.744637961244745,
+      "india_reer_bis": 90.37,
+      "usd_inr_3m_pct": 0.17928493769474585,
+      "india_us_10y_spread": 2.0111,
+      "us_10y": 4.96,
+      "factors": {
+        "us_real_10y": {
+          "value": 2.6,
+          "z": 2.9438309029543253,
+          "score": -0.9612842347127127,
+          "asof": "2026-09-11",
+          "observations": 924,
+          "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
+          "status": "live"
+        },
+        "usd_3m_pct": {
+          "value": 0.06061667362635692,
+          "z": -0.0399358076743089,
+          "score": 0.02661758296140187,
+          "asof": "2026-08-31",
+          "observations": 120,
+          "source_url": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=120&layout=seriescolumn&rel=H10&series=847be2166a425bda9b4d92465f797544&type=package",
+          "status": "live"
+        },
+        "fed_assets_6m_pct": {
+          "value": 1.4184489999313987,
+          "z": 1.558696546600374,
+          "score": 0.7775446872753102,
+          "asof": "2026-09-09",
+          "observations": 180,
+          "source_url": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package",
+          "status": "live"
+        },
+        "vix": {
+          "value": 15.84,
+          "z": -0.34218586588055594,
+          "score": 0.22424735691210518,
+          "asof": "2026-09-11",
+          "observations": 9271,
+          "source_url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+          "status": "live"
+        },
+        "brent_3m_pct": {
+          "value": 15.744637961244745,
+          "z": 0.690866736132497,
+          "score": -0.4305550369065502,
+          "asof": "2026-09-11",
+          "observations": 756,
+          "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
+          "status": "live"
+        },
+        "india_reer_bis": {
+          "value": 90.37,
+          "z": -2.579902483154261,
+          "score": 0.9378552030103554,
+          "asof": "2026-07-31",
+          "observations": 175,
+          "source_url": "https://stats.bis.org/api/v1/data/WS_EER/M.R.B.IN/all?startPeriod=2012-01&detail=dataonly&format=csv",
+          "status": "live",
+          "momentum_12m_pct": -8.057788177841086
+        },
+        "usd_inr_3m_pct": {
+          "value": 0.17928493769474585,
+          "z": -0.31287548420971334,
+          "score": 0.20561042853933786,
+          "asof": "2026-08-31",
+          "observations": 176,
+          "source_url": "https://stats.bis.org/api/v1/data/WS_XRU/M.IN.INR.E/all?startPeriod=2012-01&detail=dataonly&format=csv",
+          "status": "live"
+        },
+        "india_us_10y_spread": {
+          "value": 2.0111,
+          "z": -1.4584667790779038,
+          "score": -0.7497181627269922,
+          "asof": "2026-09-11",
+          "observations": 924,
+          "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
+          "status": "live",
+          "india_asof": "2026-09-10",
+          "india_source_url": "https://www.rbi.org.in/",
+          "history_source_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/IND.M.IRLT.PA.....?startPeriod=2012-01&dimensionAtObservation=AllDimensions&format=csvfile"
+        },
+        "us_10y": {
+          "value": 4.96,
+          "z": 0,
+          "score": 0.0,
+          "asof": "2026-09-11",
+          "observations": 924,
+          "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
+          "status": "live"
+        }
+      },
+      "china_pmi": {
+        "pmi": 49.8,
+        "new_orders": 50.6,
+        "period": "2026-08",
+        "asof": "2026-08-31",
+        "score": 0.006666567902989752,
+        "coverage": 1.0,
+        "status": "live",
+        "source_url": "https://www.stats.gov.cn/english/PressRelease/202609/t20260901_1965170.html"
+      },
+      "relative_em": {
+        "available": true,
+        "score": null,
+        "history_count": 6,
+        "status": "pending_history",
+        "em_ex_india_pe": 13.6,
+        "em_ex_india_pb": 2.4,
+        "em_ex_india_div_yield": 2.8,
+        "asof": "2026-08-31",
+        "source_url": "https://stoxx.com/index/swexilv/?factsheet=true",
+        "pe_basis": "Trailing, including negative earnings",
+        "method": "largecap-fundamentals-v1",
+        "comparison_month": "2026-08",
+        "relative_log_premium": 0.32054739093470563,
+        "nifty_pe_premium_pct": 49.705882352941174,
+        "nifty_pb_premium_pct": 21.66666666666668,
+        "z": null
+      },
+      "blocks": {
+        "global_liquidity": -0.1511669019371614,
+        "india_external_carry": -0.041010165293256684,
+        "china_industrial": 0.006666567902989752,
+        "relative_em_valuation": null,
+        "india_domestic": 0.057009151848864285
+      },
+      "factor_coverage": {
+        "global_liquidity": 1.0,
+        "india_external_carry": 1.0,
+        "china_industrial": 1.0,
+        "relative_em_valuation": 0,
+        "block_weight": 1.0,
+        "india_domestic": 1.0
+      },
+      "india_reer_z": -2.579902483154261,
+      "india_us_spread_z": -1.4584667790779038,
+      "stale_factors": [],
+      "sources_live": {
+        "us_real_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
+        "usd_3m_pct": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=120&layout=seriescolumn&rel=H10&series=847be2166a425bda9b4d92465f797544&type=package",
+        "fed_assets_6m_pct": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package",
+        "vix": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
+        "brent_3m_pct": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
+        "india_reer_bis": "https://stats.bis.org/api/v1/data/WS_EER/M.R.B.IN/all?startPeriod=2012-01&detail=dataonly&format=csv",
+        "usd_inr_3m_pct": "https://stats.bis.org/api/v1/data/WS_XRU/M.IN.INR.E/all?startPeriod=2012-01&detail=dataonly&format=csv",
+        "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
+        "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
+      },
+      "score": -0.04001701036164857,
+      "active_block_weight": 1.0,
+      "block_weight_detail": {
+        "global_liquidity": {
+          "strategic_weight": 0.3,
+          "internal_coverage": 1.0,
+          "effective_weight": 0.3
+        },
+        "india_external_carry": {
+          "strategic_weight": 0.25,
+          "internal_coverage": 1.0,
+          "effective_weight": 0.25
+        },
+        "india_domestic": {
+          "strategic_weight": 0.25,
+          "internal_coverage": 1.0,
+          "effective_weight": 0.25
+        },
+        "china_industrial": {
+          "strategic_weight": 0.2,
+          "internal_coverage": 1.0,
+          "effective_weight": 0.2
+        }
+      },
+      "domestic": {
+        "score": 0.057009151848864285,
+        "coverage": 1.0,
+        "status": "live",
+        "factors": {
+          "india_cpi_yoy": {
+            "value": 4.45,
+            "asof": "2026-07-31",
+            "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2298247",
+            "status": "live",
+            "label": "All-India CPI inflation, YoY",
+            "source": "MoSPI/NSO via PIB",
+            "score": -0.291312612451591,
+            "reference": 4.0,
+            "reference_label": "RBI inflation target"
+          },
+          "india_iip_yoy": {
+            "value": 6.7,
+            "asof": "2026-07-31",
+            "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2304222",
+            "status": "live",
+            "label": "India IIP growth, YoY",
+            "source": "MoSPI/NSO via PIB",
+            "score": 0.40113428494794595,
+            "reference": 5.0,
+            "reference_label": "medium-growth anchor"
+          },
+          "india_repo_rate": {
+            "value": 5.25,
+            "asof": "2026-09-12",
+            "source_url": "https://www.rbi.org.in/",
+            "status": "live",
+            "label": "RBI policy repo rate",
+            "date_basis": "retrieval date; current policy rate remains effective until changed",
+            "score": 0.1325487883908785,
+            "real_repo": 0.7999999999999998,
+            "reference_real_rate": 1.0,
+            "reference_label": "real policy-rate anchor"
+          }
+        },
+        "inflation_gap_pp": 0.4500000000000002,
+        "real_repo_rate": 0.7999999999999998,
+        "method": "economic-anchor-v1",
+        "source_policy": "official-PIB-discovery-with-prior-release-carry-forward"
+      }
+    },
+    "confidence": 1.0,
+    "valuation_diagnostics": {
+      "status": "live",
+      "months": 64,
+      "first_month": "2021-05",
+      "last_completed_month": "2026-08",
+      "methodology_start": "2021-04",
+      "methodology_note": "Common post-31-Mar-2021 NSE Indices regime only; pre-change P/E and dividend-yield values are not mixed into current-methodology ranks.",
+      "allocation_effect": "none",
+      "purpose": "independent sanity check on fixed-reference valuation core",
+      "current": {
+        "pe": 19.78,
+        "pb": 2.83,
+        "dividend_yield": 1.21
+      },
+      "cheapness_percentiles": {
+        "pe_cheapness": 95.3125,
+        "pb_cheapness": 100.0,
+        "dividend_yield_cheapness": 25.0
+      },
+      "composite_cheapness": 73.4375,
+      "label": "below typical valuation within current-methodology era",
+      "pe_stats": {
+        "median": 22.005000000000003,
+        "q25": 21.134999999999998,
+        "q75": 22.89,
+        "mad": 0.8949999999999978,
+        "robust_sigma": 1.3269269999999966,
+        "min": 19.5,
+        "max": 29.22,
+        "observations": 64
+      },
+      "pb_stats": {
+        "median": 3.955,
+        "q25": 3.5175,
+        "q75": 4.2425,
+        "mad": 0.385,
+        "robust_sigma": 0.570801,
+        "min": 2.92,
+        "max": 4.83,
+        "observations": 64
+      },
+      "dividend_yield_stats": {
+        "median": 1.28,
+        "q25": 1.2175,
+        "q75": 1.3625,
+        "mad": 0.07500000000000007,
+        "robust_sigma": 0.1111950000000001,
+        "min": 1.05,
+        "max": 1.45,
+        "observations": 64
+      },
+      "vs_median_pct": {
+        "pe": -10.111338332197228,
+        "pb": -28.44500632111252,
+        "dividend_yield": -5.46875
+      }
+    },
+    "history": [
+      [
+        "2021-05",
+        29.22,
+        4.39,
+        1.06
+      ],
+      [
+        "2021-06",
+        28.33,
+        4.24,
+        1.26
+      ],
+      [
+        "2021-07",
+        27.01,
+        4.12,
+        1.18
+      ],
+      [
+        "2021-08",
+        26.25,
+        4.33,
+        1.05
+      ],
+      [
+        "2021-09",
+        26.98,
+        4.41,
+        1.17
+      ],
+      [
+        "2021-10",
+        25.71,
+        4.43,
+        1.13
+      ],
+      [
+        "2021-11",
+        23.43,
+        4.25,
+        1.19
+      ],
+      [
+        "2021-12",
+        24.11,
+        4.37,
+        1.19
+      ],
+      [
+        "2022-01",
+        23.42,
+        4.37,
+        1.2
+      ],
+      [
+        "2022-02",
+        21.59,
+        4.23,
+        1.26
+      ],
+      [
+        "2022-03",
+        22.92,
+        4.46,
+        1.13
+      ],
+      [
+        "2022-04",
+        22.01,
+        4.37,
+        1.16
+      ],
+      [
+        "2022-05",
+        20.44,
+        4.24,
+        1.43
+      ],
+      [
+        "2022-06",
+        19.5,
+        4.03,
+        1.41
+      ],
+      [
+        "2022-07",
+        20.73,
+        4.12,
+        1.29
+      ],
+      [
+        "2022-08",
+        21.2,
+        4.12,
+        1.41
+      ],
+      [
+        "2022-09",
+        20.64,
+        4.02,
+        1.32
+      ],
+      [
+        "2022-10",
+        21.42,
+        4.23,
+        1.25
+      ],
+      [
+        "2022-11",
+        22.54,
+        4.4,
+        1.28
+      ],
+      [
+        "2022-12",
+        21.79,
+        4.25,
+        1.27
+      ],
+      [
+        "2023-01",
+        20.73,
+        4.14,
+        1.39
+      ],
+      [
+        "2023-02",
+        20.39,
+        4.05,
+        1.44
+      ],
+      [
+        "2023-03",
+        20.44,
+        4.06,
+        1.44
+      ],
+      [
+        "2023-04",
+        20.87,
+        4.23,
+        1.38
+      ],
+      [
+        "2023-05",
+        21.59,
+        4.33,
+        1.36
+      ],
+      [
+        "2023-06",
+        22.36,
+        4.5,
+        1.41
+      ],
+      [
+        "2023-07",
+        23.01,
+        4.83,
+        1.28
+      ],
+      [
+        "2023-08",
+        21.97,
+        4.4,
+        1.38
+      ],
+      [
+        "2023-09",
+        22.21,
+        3.46,
+        1.37
+      ],
+      [
+        "2023-10",
+        20.45,
+        3.36,
+        1.41
+      ],
+      [
+        "2023-11",
+        21.52,
+        3.55,
+        1.35
+      ],
+      [
+        "2023-12",
+        23.17,
+        3.83,
+        1.28
+      ],
+      [
+        "2024-01",
+        22.46,
+        3.83,
+        1.23
+      ],
+      [
+        "2024-02",
+        22.7,
+        3.87,
+        1.22
+      ],
+      [
+        "2024-03",
+        22.88,
+        3.94,
+        1.2
+      ],
+      [
+        "2024-04",
+        22.0,
+        3.96,
+        1.16
+      ],
+      [
+        "2024-05",
+        21.4,
+        3.95,
+        1.28
+      ],
+      [
+        "2024-06",
+        22.85,
+        4.14,
+        1.25
+      ],
+      [
+        "2024-07",
+        23.4,
+        4.21,
+        1.19
+      ],
+      [
+        "2024-08",
+        23.47,
+        4.26,
+        1.21
+      ],
+      [
+        "2024-09",
+        24.26,
+        3.87,
+        1.16
+      ],
+      [
+        "2024-10",
+        22.58,
+        3.63,
+        1.27
+      ],
+      [
+        "2024-11",
+        22.21,
+        3.6,
+        1.27
+      ],
+      [
+        "2024-12",
+        21.79,
+        3.53,
+        1.27
+      ],
+      [
+        "2025-01",
+        21.33,
+        3.51,
+        1.38
+      ],
+      [
+        "2025-02",
+        19.67,
+        3.29,
+        1.45
+      ],
+      [
+        "2025-03",
+        21.37,
+        3.48,
+        1.32
+      ],
+      [
+        "2025-04",
+        21.94,
+        3.6,
+        1.29
+      ],
+      [
+        "2025-05",
+        22.32,
+        3.62,
+        1.25
+      ],
+      [
+        "2025-06",
+        22.97,
+        3.7,
+        1.24
+      ],
+      [
+        "2025-07",
+        21.93,
+        3.38,
+        1.38
+      ],
+      [
+        "2025-08",
+        21.46,
+        3.27,
+        1.37
+      ],
+      [
+        "2025-09",
+        21.76,
+        3.37,
+        1.35
+      ],
+      [
+        "2025-10",
+        22.64,
+        3.52,
+        1.29
+      ],
+      [
+        "2025-11",
+        22.81,
+        3.56,
+        1.28
+      ],
+      [
+        "2025-12",
+        22.75,
+        3.55,
+        1.28
+      ],
+      [
+        "2026-01",
+        22.04,
+        3.44,
+        1.3
+      ],
+      [
+        "2026-02",
+        22.03,
+        3.42,
+        1.24
+      ],
+      [
+        "2026-03",
+        19.62,
+        3.05,
+        1.39
+      ],
+      [
+        "2026-04",
+        20.94,
+        3.29,
+        1.3
+      ],
+      [
+        "2026-05",
+        20.27,
+        3.21,
+        1.35
+      ],
+      [
+        "2026-06",
+        20.58,
+        3.12,
+        1.24
+      ],
+      [
+        "2026-07",
+        20.78,
+        2.99,
+        1.22
+      ],
+      [
+        "2026-08",
+        20.36,
+        2.92,
+        1.17
+      ],
+      [
+        "2026-09",
+        19.78,
+        2.83,
+        1.21
+      ]
+    ],
+    "calibration": {
+      "em_ex_india_history": [
+        {
+          "month": "2026-01",
+          "asof": "2026-01-30",
+          "method": "largecap-fundamentals-v1",
+          "em_pe": 16.7,
+          "em_pb": 1.9,
+          "nifty_pe": 22.04,
+          "nifty_pb": 3.44,
+          "relative_log_premium": 0.4039171930023675
+        },
+        {
+          "month": "2026-02",
+          "asof": "2026-02-27",
+          "method": "largecap-fundamentals-v1",
+          "em_pe": 17.3,
+          "em_pb": 0.5,
+          "nifty_pe": 22.03,
+          "nifty_pb": 3.42,
+          "relative_log_premium": 0.9141342882400948
+        },
+        {
+          "month": "2026-03",
+          "asof": "2026-03-31",
+          "method": "largecap-fundamentals-v1",
+          "em_pe": 15.4,
+          "em_pb": 2.0,
+          "nifty_pe": 19.62,
+          "nifty_pb": 3.05,
+          "relative_log_premium": 0.3141069308543301
+        },
+        {
+          "month": "2026-04",
+          "asof": "2026-04-30",
+          "method": "largecap-fundamentals-v1",
+          "em_pe": 17.4,
+          "em_pb": 1.9,
+          "nifty_pe": 20.94,
+          "nifty_pb": 3.29,
+          "relative_log_premium": 0.3307280709750988
+        },
+        {
+          "month": "2026-05",
+          "asof": "2026-05-29",
+          "method": "largecap-fundamentals-v1",
+          "em_pe": 17.8,
+          "em_pb": 2.5,
+          "nifty_pe": 20.27,
+          "nifty_pb": 3.21,
+          "relative_log_premium": 0.17795818400662927
+        },
+        {
+          "month": "2026-07",
+          "asof": "2026-07-31",
+          "method": "largecap-fundamentals-v1",
+          "em_pe": 16.3,
+          "em_pb": 2.4,
+          "nifty_pe": 20.78,
+          "nifty_pb": 2.99,
+          "relative_log_premium": 0.23361738673449692
+        },
+        {
+          "month": "2026-08",
+          "asof": "2026-08-31",
+          "method": "largecap-fundamentals-v1",
+          "em_pe": 13.6,
+          "em_pb": 2.4,
+          "nifty_pe": 20.36,
+          "nifty_pb": 2.92,
+          "relative_log_premium": 0.32054739093470563
+        }
+      ],
+      "carry_spread_history": []
+    },
+    "sources": [
+      {
+        "name": "Nifty Indices / NSE",
+        "role": "NIFTY index and ratio history; EPS is an index-implied proxy",
+        "url": "https://www.niftyindices.com/reports/historical-data"
+      },
+      {
+        "name": "RBI dated government bond near 10 years",
+        "role": "Current India ~10Y yield; its own observation date determines eligibility",
+        "url": "https://www.rbi.org.in/"
+      },
+      {
+        "name": "U.S. Treasury / Federal Reserve / CBOE",
+        "role": "Dated real/nominal yields, broad USD, Fed balance sheet and VIX"
+      },
+      {
+        "name": "BIS Statistics API",
+        "role": "India broad REER and monthly USD/INR history from official SDMX feeds",
+        "url": "https://data.bis.org/"
+      },
+      {
+        "name": "OECD Data Explorer",
+        "role": "Monthly India long-term government bond history used to standardise India-US carry",
+        "url": "https://data-explorer.oecd.org/"
+      },
+      {
+        "name": "MoSPI / NSO via Press Information Bureau",
+        "role": "Official All-India CPI inflation and Index of Industrial Production releases; newest URL is discovered and prior verified URL is carried forward",
+        "url": "https://www.pib.gov.in/AllRelease.aspx?MenuId=22&PMO=1&lang=1&reg=1"
+      },
+      {
+        "name": "Reserve Bank of India",
+        "role": "Current policy repo rate and dated government-security yield",
+        "url": "https://www.rbi.org.in/"
+      },
+      {
+        "name": "Yahoo Finance Brent futures",
+        "role": "Brent 63-trading-observation momentum; contract-roll effects are possible"
+      },
+      {
+        "name": "STOXX EM ex India Universal Large Cap",
+        "role": "Relative valuation diagnostic only; not counted as a macro block",
+        "url": "https://stoxx.com/index/swexilv/"
+      },
+      {
+        "name": "NBS China",
+        "role": "Official manufacturing PMI and new orders",
+        "url": "https://www.stats.gov.cn/english/PressRelease/202609/t20260901_1965170.html"
+      }
+    ]
+  },
+  "calculation": {
+    "valid": true,
+    "allocationReady": true,
+    "L": [
+      {
+        "label": "Trailing P/E",
+        "now": 19.78,
+        "reference": 22.44,
+        "z": -1.278846153846154,
+        "planned": 30,
+        "weight": 31.57894736842105
+      },
+      {
+        "label": "P/B, implied-profitability adjustment",
+        "now": 2.83,
+        "reference": 3.88,
+        "z": -1.379389956184698,
+        "planned": 25,
+        "weight": 26.31578947368421
+      },
+      {
+        "label": "Earnings yield \u2212 G-sec",
+        "now": -1.9154882709807888,
+        "reference": -2.6,
+        "z": -0.9778738985988734,
+        "planned": 30,
+        "weight": 31.57894736842105
+      },
+      {
+        "label": "Dividend yield",
+        "now": 1.21,
+        "reference": 1.25,
+        "z": 0.22222222222222243,
+        "planned": 10,
+        "weight": 10.526315789473685
+      }
+    ],
+    "z": -1.052253981639432,
+    "core": 82.70661126795997,
+    "damp": 0.5790984073442271,
+    "ea": -1.0176280891534486,
+    "ma": -0.13904272180264873,
+    "final": 81.54994045700387,
+    "coverage": 1,
+    "earnCoverage": 1,
+    "macroEligible": true,
+    "macroPacketValid": true,
+    "earningsEligible": true,
+    "earningsComplete": true,
+    "macroIssues": [],
+    "gsecEligible": true,
+    "fundamentalCoverage": 1,
+    "holdReason": null
+  },
+  "availability_basis": "First observed by this project. This is not the original source publication timestamp."
+}
