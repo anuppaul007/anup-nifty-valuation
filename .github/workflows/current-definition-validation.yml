@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/current_definition_validation.py'
       - 'scripts/current_definition_anchor_validation.py'
+      - 'scripts/current_definition_failure_diagnostics.py'
       - '.github/workflows/current-definition-validation.yml'
       - 'tests/test_current_definition_validation.py'
       - 'CURRENT_DEFINITION_VALIDATION.md'
@@ -30,12 +31,15 @@ jobs:
         run: python scripts/current_definition_validation.py
       - name: Run all-50 anchor reconstruction
         run: python scripts/current_definition_anchor_validation.py
+      - name: Diagnose failed XBRL contexts
+        run: python scripts/current_definition_failure_diagnostics.py
       - uses: actions/upload-artifact@v4
         with:
           name: current-definition-validation
           path: |
             data/current_definition_validation.json
             data/current_definition_anchor_validation.json
+            data/current_definition_failure_diagnostics.json
           if-no-files-found: error
       - name: Headline
         run: |
