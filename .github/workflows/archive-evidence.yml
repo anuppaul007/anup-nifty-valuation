@@ -1,0 +1,48 @@
+name: Archive prospective model evidence
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '50 13 * * 1-5'
+  push:
+    branches: [main]
+    paths:
+      - data/latest.json
+      - model.js
+      - scripts/archive_evidence.py
+      - validation_policy.json
+      - .github/workflows/archive-evidence.yml
+permissions:
+  contents: write
+concurrency:
+  group: anup-evidence-archive
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test archive integrity and threshold boundaries
+        run: |
+          python -m unittest discover -s tests -p 'test_archive_evidence.py' -v
+          node --test tests/evidence.test.cjs
+      - name: Record as-observed input and parameter evidence
+        run: python scripts/archive_evidence.py
+      - name: Publish immutable evidence
+        run: |
+          git add data/evidence data/evidence_status.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'anup-nifty-bot'
+          git config user.email 'anup-nifty-bot@users.noreply.github.com'
+          git commit -m 'data: archive observed model evidence'
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main

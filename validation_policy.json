@@ -1,0 +1,17 @@
+{
+  "protocol_version": "2026-09-12-v1",
+  "status": "Prospective research protocol; evaluation implementation incomplete",
+  "objective": "Evaluate whether valuation-guided deployment and rebalancing improve downside outcomes while reporting the return sacrificed.",
+  "first_process_review": "2027-09-12",
+  "review_date_is_not_validation_deadline": true,
+  "primary_metric": "Maximum daily drawdown of a net total-return equity/debt portfolio",
+  "mandatory_companion_metrics": ["CAGR", "95% monthly expected shortfall", "Ulcer index", "time under water", "turnover", "average equity exposure"],
+  "benchmarks": ["NIFTY 50 total-return buy and hold", "60% NIFTY / 40% short-duration debt, annual rebalance", "Valuation-only rule with the same costs and observations"],
+  "cashflow_tests": ["Lump sum: immediate deployment versus 6- and 12-month equal instalments; undeployed money earns the same debt return", "Equal monthly contributions; report terminal wealth and money-weighted return", "Inflation-linked retirement withdrawals; publish all withdrawal assumptions before comparing outcomes"],
+  "implementation_tests": ["Short-duration debt versus 10-year government-bond total returns", "Actual instrument availability, expense ratios, tracking difference, slippage and date-applicable taxes", "Rebalance bands of 0, 5 and 10 percentage points"],
+  "macro_challengers_pp": [0, 3, 6, 9, 12, 15],
+  "promotion_rule": "No automatic winner selection. Record all trials, assess serial dependence and multiple testing, require held-out or prospective evidence, and report return/drawdown tradeoffs. A smaller drawdown alone does not establish skill if it only reflects lower equity exposure.",
+  "statistical_plan": "Evaluate non-overlapping monthly portfolio returns; use paired time-block resampling for comparisons and disclose block lengths and all tested variants. Overlapping annual outcomes are not independent observations.",
+  "historical_limits": ["Current-vintage historical inputs are not certified point-in-time", "Freezing a version now does not validate earlier periods", "Pre-April 2021 NIFTY ratios are not directly comparable with the current methodology", "Daily archives capture what this project observed, not every original economic release"],
+  "automatic_parameter_changes": false
+}
