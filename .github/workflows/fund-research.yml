@@ -2,12 +2,6 @@ name: Long-run fund research
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "scripts/fund_strategy_rank.py"
-      - "data/india_short_rate_proxy_1999_2006.csv"
-      - ".github/workflows/fund-research.yml"
 
 permissions:
   contents: write
