@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
   "model_version": "3.6",
-  "generated_at": "2026-09-12T01:10:26+00:00",
+  "generated_at": "2026-09-12T01:17:42+00:00",
   "macro_stale": false,
   "macro_partial": false,
   "nifty": {
@@ -253,6 +253,63 @@
     }
   },
   "confidence": 1.0,
+  "valuation_diagnostics": {
+    "status": "live",
+    "months": 64,
+    "first_month": "2021-05",
+    "last_completed_month": "2026-08",
+    "methodology_start": "2021-04",
+    "methodology_note": "Common post-31-Mar-2021 NSE Indices regime only; pre-change P/E and dividend-yield values are not mixed into current-methodology ranks.",
+    "allocation_effect": "none",
+    "purpose": "independent sanity check on fixed-reference valuation core",
+    "current": {
+      "pe": 19.78,
+      "pb": 2.83,
+      "dividend_yield": 1.21
+    },
+    "cheapness_percentiles": {
+      "pe_cheapness": 95.3125,
+      "pb_cheapness": 100.0,
+      "dividend_yield_cheapness": 25.0
+    },
+    "composite_cheapness": 73.4375,
+    "label": "below typical valuation within current-methodology era",
+    "pe_stats": {
+      "median": 22.005000000000003,
+      "q25": 21.134999999999998,
+      "q75": 22.89,
+      "mad": 0.8949999999999978,
+      "robust_sigma": 1.3269269999999966,
+      "min": 19.5,
+      "max": 29.22,
+      "observations": 64
+    },
+    "pb_stats": {
+      "median": 3.955,
+      "q25": 3.5175,
+      "q75": 4.2425,
+      "mad": 0.385,
+      "robust_sigma": 0.570801,
+      "min": 2.92,
+      "max": 4.83,
+      "observations": 64
+    },
+    "dividend_yield_stats": {
+      "median": 1.28,
+      "q25": 1.2175,
+      "q75": 1.3625,
+      "mad": 0.07500000000000007,
+      "robust_sigma": 0.1111950000000001,
+      "min": 1.05,
+      "max": 1.45,
+      "observations": 64
+    },
+    "vs_median_pct": {
+      "pe": -10.111338332197228,
+      "pb": -28.44500632111252,
+      "dividend_yield": -5.46875
+    }
+  },
   "history": [
     [
       "2021-05",
