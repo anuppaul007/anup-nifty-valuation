@@ -7,6 +7,7 @@ on:
     paths-ignore:
       - "data/latest.json"
       - "data/walkforward.json"
+      - "data/retrospective.json"
   schedule:
     # 18:45 India time, Monday-Friday (GitHub cron is UTC)
     - cron: "15 13 * * 1-5"
@@ -37,14 +38,16 @@ jobs:
         run: python scripts/update_data_v3.py
       - name: Update prospective no-lookahead ledger
         run: python scripts/walkforward.py
+      - name: Run valuation-core retrospective sensitivity
+        run: python scripts/retrospective_core.py
       - name: Commit only when data changed
         run: |
-          if git diff --quiet -- data/latest.json data/walkforward.json; then
+          if git diff --quiet -- data/latest.json data/walkforward.json data/retrospective.json; then
             echo "No data change"
             exit 0
           fi
           git config user.name "anup-nifty-bot"
           git config user.email "anup-nifty-bot@users.noreply.github.com"
-          git add data/latest.json data/walkforward.json
-          git commit -m "data: refresh valuation inputs and walk-forward ledger"
+          git add data/latest.json data/walkforward.json data/retrospective.json
+          git commit -m "data: refresh valuation, validation and retrospective study"
           git push
