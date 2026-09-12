@@ -2,7 +2,7 @@
   "status": "complete",
   "schema_version": 1,
   "audit_version": "multiasset-robustness-v2",
-  "generated_at": "2026-09-12T07:38:54+00:00",
+  "generated_at": "2026-09-12T07:45:11+00:00",
   "history_start": "2000-01",
   "history_end": "2026-09",
   "months": 321,
@@ -414,11 +414,11 @@
       "months": 131
     },
     "funded_btc_variant": {
-      "cagr_pct": 17.08967758612765,
+      "cagr_pct": 17.08969541672758,
       "max_drawdown_pct": -8.921195867517085,
-      "annualized_volatility_pct": 9.268739974618875,
-      "calmar": 1.9156263173587273,
-      "sortino": 3.172447686115993,
+      "annualized_volatility_pct": 9.268735087735958,
+      "calmar": 1.9156283160369532,
+      "sortino": 3.172451752334177,
       "average_monthly_turnover_pct": 7.632725297348662,
       "months": 131
     },
@@ -443,7 +443,7 @@
       },
       "5.0%": {
         "months": 54,
-        "mean_btc_month_return_pct": 4.018816588457379,
+        "mean_btc_month_return_pct": 4.018877334547663,
         "median_btc_month_return_pct": 4.566198215844064,
         "positive_btc_month_pct": 53.70370370370371
       },
