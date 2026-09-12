@@ -22,7 +22,7 @@ concurrency:
 jobs:
   backtest:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -31,7 +31,20 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - name: Run long-history multi-asset backtest
-        run: python scripts/multiasset_backtest.py
+        run: |
+          ok=0
+          for attempt in 1 2 3; do
+            echo "Backtest attempt ${attempt}/3"
+            if python scripts/multiasset_backtest.py; then
+              ok=1
+              break
+            fi
+            sleep $((attempt * 8))
+          done
+          if [ "$ok" -ne 1 ]; then
+            echo "Backtest failed after three attempts"
+            exit 1
+          fi
       - name: Commit backtest result
         run: |
           if git diff --quiet -- data/multiasset_backtest.json; then
