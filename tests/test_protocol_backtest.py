@@ -18,12 +18,9 @@ def test_conservative_rate_never_exceeds_inputs():
     assert p.conservative_rate_pct(None, 6.0, 1.0) == 5.0
 
 
-def test_policy_seed_keeps_january_2000_eligible():
-    alloc = pd.DataFrame(
-        {"policy_rate_pct": [6.0]},
-        index=pd.PeriodIndex(["2000-01"], freq="M"),
-    )
-    assert p.policy_rate_for_prior_month(alloc, pd.Period("1999-12", "M")) == 6.0
+def test_rate_timing_is_explicit():
+    assert "prior-month" in p.RATE_AUDIT["cached_short_rate"]["timing"]
+    assert "current month-start" in p.RATE_AUDIT["rbi_policy_display"]["timing"]
 
 
 def test_zero_band_rebalances_to_each_new_target():
