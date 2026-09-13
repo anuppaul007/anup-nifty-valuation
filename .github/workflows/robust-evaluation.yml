@@ -19,6 +19,10 @@ on:
       - 'model.js'
       - 'robustness.js'
       - 'app.js'
+      - 'index.html'
+      - 'ROBUSTNESS_AUDIT.md'
+      - 'MULTIASSET.md'
+      - '.github/workflows/refresh-data.yml'
       - '.github/workflows/robust-evaluation.yml'
 
 permissions:
@@ -51,6 +55,9 @@ jobs:
           assert d['decision'] in {'NOT_ELIGIBLE_FOR_PROMOTION','ELIGIBLE_FOR_SEPARATE_PROMOTION_REVIEW'}
           assert 'gate_matrix' in d and 'multiple_testing_and_overfit' in d
           assert d['multiple_testing_and_overfit']['trial_count']==24
+          assert 'fair_null_and_timing' in d
+          assert 'beta_matched_static_net' in d['fair_null_and_timing']
+          assert 'placebo' in d['fair_null_and_timing']
           assert d['governance']
           print(json.dumps({'decision':d['decision'],'gates':d['gate_matrix']},separators=(',',':')))
           PY
