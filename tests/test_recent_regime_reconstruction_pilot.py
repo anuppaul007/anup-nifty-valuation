@@ -32,19 +32,32 @@ def test_dashboard_parser_uses_last_three_fields():
     assert x["dividend_yield_pct"] == 1.37
 
 
-def test_weight_parser_requires_50_and_near_100_percent():
-    rows = ["Company Name                     Industry                   Weight (%)"]
+def test_weight_parser_reads_symbol_close_mcap_weight():
+    rows = ["Symbol Security Name Industry Close Price Index Mcap Weightage (%)"]
     for i in range(50):
-        rows.append(f"Company {i:02d}                    Industry Name                 2.00")
+        rows.append(f"SYM{i:02d} Company {i:02d} Industry Name 100.00 10000 2.00")
     parsed, d = pilot.parse_weight_table("\n".join(rows))
     assert d["strict_ok"] is True
     assert len(parsed) == 50
     assert math.isclose(d["weight_sum_pct"], 100.0)
+    assert parsed[0]["symbol"] == "SYM00"
+    assert parsed[0]["close_price"] == 100.0
+    assert parsed[0]["index_mcap_crore"] == 10000.0
+    assert parsed[0]["weight_pct"] == 2.0
 
 
-def test_company_normalisation_is_conservative():
-    assert pilot.normalise_company_name("ABC Ltd.") == "ABC"
-    assert pilot.normalise_company_name("A & B Limited") == "A AND B"
+def test_weight_parser_handles_wrapped_weight_on_previous_line():
+    rows = ["Symbol Security Name Industry Close Price Index Mcap Weightage (%)"]
+    rows += [" Long Security Name 2.00", "WRAP Industry Name 100.00 10000"]
+    for i in range(49):
+        rows.append(f"SYM{i:02d} Company {i:02d} Industry Name 100.00 10000 2.00")
+    parsed, d = pilot.parse_weight_table("\n".join(rows))
+    assert d["strict_ok"] is True
+    assert len(parsed) == 50
+    wrap = next(x for x in parsed if x["symbol"] == "WRAP")
+    assert wrap["weight_pct"] == 2.0
+    assert wrap["weight_source"] == "preceding_wrapped_line"
+    assert d["wrapped_weight_rows"] == 1
 
 
 def test_policy_has_no_live_authority_and_predeclares_tolerance():
