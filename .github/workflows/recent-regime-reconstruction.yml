@@ -30,25 +30,33 @@ jobs:
         run: pytest -q tests/test_recent_regime_reconstruction_pilot.py
       - name: Harvest official recent-regime sources
         run: python scripts/recent_regime_reconstruction_pilot.py
-      - name: Enforce holdout blindness and zero live authority
+      - name: Enforce complete weights, holdout blindness and zero live authority
         run: |
           python - <<'PY'
           import json
           p=json.load(open('recent_reconstruction_policy_v1.json'))
           x=json.load(open('data/recent_regime_source_ledger.json'))
+          s=x['summary']
           assert p['live_authority'] == 'none'
           assert x['research_only'] is True
           assert x['live_model_changed'] is False
           assert x['live_allocation_changed'] is False
-          assert x['summary']['months_total'] == 36
-          assert x['summary']['development_months'] == 6
-          assert x['summary']['holdout_months'] == 30
-          assert x['summary']['holdout_target_values_present'] is False
+          assert s['months_total'] == 36
+          assert s['development_months'] == 6
+          assert s['holdout_months'] == 30
+          assert s['development_targets_ok'] == 6
+          assert s['weight_snapshots_strict_ok'] == 36
+          assert s['parsed_symbol_rows'] == 1800
+          assert s['symbol_rows_possible'] == 1800
+          assert s['holdout_target_values_present'] is False
           for m in x['months']:
+              assert m['weights']['status'] == 'ok'
+              assert m['weights']['diagnostics']['strict_ok'] is True
+              assert len(m['weights']['constituents']) == 50
               if m['tranche'] == 'holdout':
                   assert m['official_target']['status'] == 'sealed_not_fetched'
                   assert not any(k in m['official_target'] for k in ('pe','pb','dividend_yield_pct','pdf_sha256'))
-          print(json.dumps(x['summary'], indent=2))
+          print(json.dumps(s, indent=2))
           PY
       - uses: actions/upload-artifact@v4
         with:
