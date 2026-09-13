@@ -1,0 +1,34 @@
+name: Current-definition V8 IWF bound
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/current_definition_v8_iwf_bound.py'
+      - '.github/workflows/current-definition-v8-iwf-bound.yml'
+
+concurrency:
+  group: current-definition-v8-iwf-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt pdfplumber==0.11.10
+      - name: Audit shareholding-based implied IWF upper bounds
+        run: python scripts/current_definition_v8_iwf_bound.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: current-definition-v8-iwf-bound
+          path: data/current_definition_v8_iwf_bound.json
+          if-no-files-found: error

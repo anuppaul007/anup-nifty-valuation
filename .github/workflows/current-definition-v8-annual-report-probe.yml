@@ -1,0 +1,34 @@
+name: Current-definition V8 annual-report probe
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/current_definition_v8_annual_report_probe.py'
+      - '.github/workflows/current-definition-v8-annual-report-probe.yml'
+
+concurrency:
+  group: current-definition-v8-annual-report-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt pdfplumber==0.11.10
+      - name: Locate consolidated net-worth lines in PIT annual reports
+        run: python scripts/current_definition_v8_annual_report_probe.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: current-definition-v8-annual-report-probe
+          path: data/current_definition_v8_annual_report_probe.json
+          if-no-files-found: error
