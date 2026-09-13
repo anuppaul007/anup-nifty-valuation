@@ -1,0 +1,40 @@
+name: Implementation realism audit
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/implementation_realism_audit.py'
+      - 'tests/test_implementation_realism_audit.py'
+      - 'implementation_realism_policy.json'
+      - 'data/fund_strategy_rank.json'
+      - '.github/workflows/implementation-realism-audit.yml'
+      - '.github/workflows/research-refresh.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Unit-test implementation accounting
+        run: python -m unittest tests.test_implementation_realism_audit -v
+      - name: Generate research-only implementation audit
+        run: python scripts/implementation_realism_audit.py
+      - name: Assert audit cannot claim live authority
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('data/implementation_realism_audit.json'))
+          assert p['research_only'] is True
+          assert p['live_model_changed'] is False
+          assert p['live_allocation_changed'] is False
+          assert p['unmodelled']['investor_tax_lots']
+          assert len(p['cost_scenarios']) == 4
+          print('implementation audit guardrails passed')
+          PY
