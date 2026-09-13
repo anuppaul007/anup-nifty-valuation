@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Refresh dated source data. Missing sources are explicit and never neutral."""
-from datetime import datetime,timezone
+from datetime import date,timedelta,datetime,timezone
 from io import StringIO
 from pathlib import Path
 import json,re
@@ -83,10 +83,37 @@ def attach_domestic(mac,old):
     return m.coverage_adjust_macro(mac)
 
 
+def nifty_trend():
+    """Frozen SMA10 live risk-control input using completed monthly NIFTY price closes only."""
+    policy='trend-sma10-minus20-v1'
+    try:
+        from jugaad_data.nse import index_raw
+        end=date.today();start=end-timedelta(days=600)
+        rows=index_raw('NIFTY 50',start,end)
+        pts=[]
+        for x in rows or []:
+            dt=b.pdate(b.pick(x,['Date','DATE','HistoricalDate','Index Date']))
+            close=b.fnum(b.pick(x,['Close','CLOSE','Closing Index Value','Close Price','Index Value']))
+            if dt and dt<=end and close is not None and close>0:pts.append((pd.Timestamp(dt),float(close)))
+        if len(pts)<200:raise RuntimeError(f'insufficient NIFTY price observations: {len(pts)}')
+        s=pd.DataFrame(pts,columns=['date','close']).drop_duplicates('date').set_index('date').close.sort_index()
+        current=pd.Period(end,freq='M')
+        completed=s[s.index.to_period('M')<current]
+        monthly=completed.groupby(completed.index.to_period('M')).last().sort_index()
+        if len(monthly)<10:raise RuntimeError(f'only {len(monthly)} completed monthly closes')
+        last10=monthly.tail(10);month=last10.index[-1];close=float(last10.iloc[-1]);sma=float(last10.mean())
+        month_dates=completed[completed.index.to_period('M')==month]
+        if month_dates.empty:raise RuntimeError('completed-month observation date unavailable')
+        asof=str(month_dates.index[-1].date());risk_off=bool(close<sma)
+        return {'status':'live','policy_id':policy,'source':'Nifty Indices / NSE NIFTY 50 price index','source_url':'https://www.niftyindices.com/reports/historical-data','asof':asof,'completed_month':str(month),'completed_month_close':close,'sma10':sma,'distance_to_sma10_pct':100*(close/sma-1),'lookback_months':10,'risk_off':risk_off,'risk_off_adjustment_pp':-20 if risk_off else 0,'rule':'previous completed-month close strictly below mean of latest 10 consecutive completed monthly closes'}
+    except Exception as e:
+        return {'status':'unavailable','policy_id':policy,'asof':None,'completed_month':None,'completed_month_close':None,'sma10':None,'lookback_months':10,'risk_off':None,'risk_off_adjustment_pp':None,'error':f'{type(e).__name__}: {e}'}
+
+
 def main():
     try:old=json.loads(OUT.read_text())
     except (OSError,ValueError):old={}
-    n=b.fetch_nifty();g10,gmeta=india_yield(old);latest=n['latest'];latest.update(gsec10=g10,gsec_meta=gmeta)
+    n=b.fetch_nifty();g10,gmeta=india_yield(old);trend=nifty_trend();latest=n['latest'];latest.update(gsec10=g10,gsec_meta=gmeta)
     if any(not m.finite(latest.get(k)) or latest[k]<=0 for k in ['level','pe','pb','div_yield']):raise RuntimeError('Mandatory NIFTY input validation failed; retaining saved data')
     if not m.fresh(latest.get('date'),7):raise RuntimeError('Mandatory NIFTY observation date is stale')
     breaks=dq.ratio_breaks(n['history'])
@@ -105,8 +132,8 @@ def main():
     coverage=mac['active_block_weight'];vf=(mac.get('factors') or {}).get('vix') or {};confidence=None
     if vf.get('status')=='live' and m.finite(vf.get('value')):
         stress=float(np.clip(1-max(0,vf['value']-18)/40,.35,1));confidence=stress*(.65+.35*coverage)
-    out={'schema_version':4,'model_version':'3.10-pb-regime-1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<.999,'nifty':latest,'earnings':n['earnings'],'macro':mac,'confidence':confidence,'valuation_diagnostics':valuation_diag,'history':n['history'],'calibration':cal,'sources':[
-        {'name':'Nifty Indices / NSE','role':'NIFTY index and ratio history; EPS is an index-implied proxy','url':'https://www.niftyindices.com/reports/historical-data'},
+    out={'schema_version':4,'model_version':'3.11-crash-aware-1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<.999,'nifty':latest,'earnings':n['earnings'],'macro':mac,'trend':trend,'confidence':confidence,'valuation_diagnostics':valuation_diag,'history':n['history'],'calibration':cal,'sources':[
+        {'name':'Nifty Indices / NSE','role':'NIFTY index and ratio history; EPS is an index-implied proxy; completed monthly price closes drive the live SMA10 crash guard','url':'https://www.niftyindices.com/reports/historical-data'},
         {'name':gmeta['source'],'role':'Current India ~10Y yield; its own observation date determines eligibility','url':gmeta.get('source_url')},
         {'name':'U.S. Treasury / Federal Reserve / CBOE','role':'Dated real/nominal yields, broad USD, Fed balance sheet and VIX'},
         {'name':'BIS Statistics API','role':'India broad REER and monthly USD/INR history from official SDMX feeds','url':'https://data.bis.org/'},
@@ -118,5 +145,5 @@ def main():
         {'name':'NBS China','role':'Official manufacturing PMI and new orders','url':(mac.get('china_pmi') or {}).get('source_url')}
     ]}
     tmp=OUT.with_suffix('.tmp');tmp.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8');tmp.replace(OUT)
-    print(json.dumps({'nifty_asof':latest['date'],'gsec_status':gmeta['status'],'macro_score':mac['score'],'coverage':coverage,'domestic_status':(mac.get('domestic') or {}).get('status'),'valuation_cheapness':valuation_diag.get('composite_cheapness'),'valuation_months':valuation_diag.get('months'),'version':'3.6'}))
+    print(json.dumps({'nifty_asof':latest['date'],'gsec_status':gmeta['status'],'macro_score':mac['score'],'coverage':coverage,'trend_status':trend.get('status'),'trend_risk_off':trend.get('risk_off'),'domestic_status':(mac.get('domestic') or {}).get('status'),'valuation_cheapness':valuation_diag.get('composite_cheapness'),'valuation_months':valuation_diag.get('months'),'version':'3.11-crash-aware-1'}))
 if __name__=='__main__':main()
