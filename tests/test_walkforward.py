@@ -7,8 +7,7 @@ class WalkForwardTests(unittest.TestCase):
  def fixture(self):
   d=json.loads((Path(__file__).resolve().parents[1]/'tests/fixtures/live_packet.json').read_text())
   d['generated_at']='2026-09-12T03:05:49Z'
-  d['model_version']='3.12-evidence-first-1'
-  d['trend']={'status':'live','policy_id':'trend-sma10-minus20-v1','asof':'2026-08-31','completed_month':'2026-08','completed_month_close':24000.0,'sma10':23500.0,'lookback_months':10,'risk_off':False,'risk_off_adjustment_pp':0}
+  d['model_version']='3.13-reliability-1'
   return d
  def test_incomplete_macro_still_records_live_decision_but_not_shadow_candidates(self):
   d=self.fixture();d['macro']['active_block_weight']=.99;s=w.model_snapshot(d,now="2026-09-12T12:00:00Z");self.assertIsNotNone(s);self.assertFalse(s['macro_context_eligible']);self.assertTrue(all(v is None for v in s['candidate_equity_targets'].values()))
@@ -38,6 +37,7 @@ class WalkForwardTests(unittest.TestCase):
   self.assertAlmostEqual(s['candidate_extreme_targets']['4.0'],expected)
  def test_risk_off_trend_is_recorded_without_rewriting_candidate_family(self):
   d=self.fixture();d['trend']['completed_month_close']=22000;d['trend']['sma10']=23500;d['trend']['risk_off']=True;d['trend']['risk_off_adjustment_pp']=-20
+  for i,r in enumerate(d['trend']['monthly_closes']):r['close']=22000 if i==9 else (235000-22000)/9
   s=w.model_snapshot(d,now='2026-09-12T12:00:00Z');self.assertTrue(s['trend_risk_off']);self.assertEqual(s['trend_adjustment_pp'],-20);self.assertLess(s['live_equity_target'],100)
 
 if __name__=='__main__':unittest.main()

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Prospective, no-lookahead validation ledger for Anup Nifty Valuation.
 
-V3.12 records one evolving snapshot per calendar month from the live model,
+V3.13 records one evolving snapshot per calendar month from the live model,
 freezes that snapshot when the month changes, and later attaches 6m/12m NIFTY
 price returns using only subsequently observed monthly snapshots.
 
-Macro has zero live allocation authority in V3.12. When the full macro context
+Macro has zero live allocation authority in V3.13. When the full macro context
 is independently eligible, the previously used ±6pp macro rule is still
 recorded prospectively as a shadow challenger. Candidate settings are never
 auto-selected.
@@ -18,7 +18,7 @@ import pandas as pd
 
 ROOT=Path(__file__).resolve().parents[1]
 LATEST=ROOT/'data'/'latest.json'
-LIVE_VERSION='3.12-evidence-first-1'
+LIVE_VERSION='3.13-reliability-1'
 
 C={'k':1.35,'zc':2.5,'earnMax':6.0,'macroMax':0.0,'macroShadowMax':6.0,'trendRiskOffPP':20.0}
 CANDIDATE_MACRO_CAPS=[0,3,6,9,12,15]
@@ -63,7 +63,7 @@ def model_snapshot(d,now=None):
     grid_candidates={f'k={k:.2f}|zc={zc:.1f}':candidate(k,zc) for zc in CANDIDATE_EXTREMES for k in CANDIDATE_CURVE_SLOPES}
     vd=d.get('valuation_diagnostics') or {};dom=m.get('domestic') or {}
     return {
-      'model_version':d.get('model_version'),'validation_method':'live-engine-source-gates-v3.12-evidence-first','research_only':True,'month':str(n['date'])[:7],'asof':n['date'],'generated_at':d.get('generated_at'),
+      'model_version':d.get('model_version'),'validation_method':'live-engine-source-gates-v3.13-evidence-first','research_only':True,'month':str(n['date'])[:7],'asof':n['date'],'generated_at':d.get('generated_at'),
       'nifty_level':float(n['level']),'pe':pe,'pb':pb,'dividend_yield':dy,'gsec10':gsec,
       'valuation_z':z,'core_equity':core,'overlay_authority':checked['damp'],'earnings_adjustment_pp':checked['ea'],'macro_adjustment_pp':0.0,'macro_shadow_adjustment_pp':checked.get('macroShadowAdjustment'),'macro_context_eligible':macro_context,'trend_adjustment_pp':checked['ta'],
       'trend_risk_off':bool(checked['trendRiskOff']),'trend_completed_month':t.get('completed_month'),'trend_close':t.get('completed_month_close'),'trend_sma10':t.get('sma10'),
@@ -93,14 +93,14 @@ def summary(records):
     eligible=len(records)>=MIN_SIGNAL_MONTHS and realized12>=MIN_REALIZED_12M
     return {'status':'eligible_for_review' if eligible else 'collecting_prospective_data','signal_months':len(records),'macro_shadow_eligible_months':macro_shadow_months,'realized_6m_outcomes':realized6,'realized_12m_outcomes':realized12,
       'required_signal_months':MIN_SIGNAL_MONTHS,'required_realized_12m_outcomes':MIN_REALIZED_12M,'eligible_for_parameter_change':eligible,
-      'parameter_lock':'V3.12 valuation references, earnings ±6 pp, live macro 0 pp with ±6 pp shadow challenger, SMA10 −20 pp, curve k=1.35 and extreme threshold zc=2.5 remain locked until a separate review',
+      'parameter_lock':'V3.13 valuation references, earnings ±6 pp, live macro 0 pp with ±6 pp shadow challenger, SMA10 −20 pp, curve k=1.35 and extreme threshold zc=2.5 remain locked until a separate review',
       'note':'Overlapping 12-month outcomes are not independent samples; this gate permits review, not proof or automatic deployment. Macro shadow settings and all other candidates are recorded prospectively and never auto-selected from future outcomes.'}
 
 def main():
     d=json.loads(LATEST.read_text())
     if d.get('model_version')!=LIVE_VERSION:
-        print('Current ledger preserved; wait for a V3.12 packet');return
-    out_path=ROOT/'data'/'walkforward_v3_12.json'
+        print('Current ledger preserved; wait for a V3.13 packet');return
+    out_path=ROOT/'data'/'walkforward_v3_13.json'
     try:w=json.loads(out_path.read_text())
     except (OSError,ValueError):w={'schema_version':1,'records':[]}
     records=[r for r in w.get('records',[]) if isinstance(r,dict) and r.get('month')]

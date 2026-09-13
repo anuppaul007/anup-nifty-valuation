@@ -1,6 +1,9 @@
 import math
 import sys
 import unittest
+import tempfile,json
+from unittest.mock import patch
+from datetime import datetime,timezone
 from pathlib import Path
 
 import numpy as np
@@ -12,6 +15,17 @@ import robust_evaluation as re  # noqa: E402
 
 
 class RobustEvaluationTests(unittest.TestCase):
+    def test_prospective_gate_excludes_current_month_and_other_versions(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);folder=root/'data/evidence';(folder/'decisions').mkdir(parents=True);(folder/'snapshots').mkdir()
+            (root/'data/latest.json').write_text(json.dumps({'model_version':'new'}))
+            for i,(month,version) in enumerate([('2026-07','new'),('2026-08','old'),('2026-09','new')]):
+                sid=f'{i:064x}'
+                (folder/'decisions'/f'{month}.json').write_text(json.dumps({'month':month,'snapshot_id':sid}))
+                (folder/'snapshots'/f'{sid}.json').write_text(json.dumps({'calculation':{'model_version':version,'allocationReady':True}}))
+            with patch.object(re,'ROOT',root):
+                self.assertEqual(re.prospective_count(datetime(2026,9,13,tzinfo=timezone.utc)),1)
+
     def test_cagr_identity(self):
         self.assertAlmostEqual(re.cagr(np.zeros(12)), 0.0, places=12)
 

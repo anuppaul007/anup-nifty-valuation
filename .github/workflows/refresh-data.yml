@@ -9,6 +9,8 @@ on:
       - "data/evidence_status.json"
       - "data/health.json"
       - "data/latest.json"
+      - "data/reliability_audit.json"
+      - "data/walkforward_v3_13.json"
       - "data/multiasset.json"
       - "data/multiasset_backtest.json"
       - "data/walkforward.json"
@@ -48,6 +50,9 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - run: pip install -r requirements.txt
       - name: Test data parsing and allocation safeguards
         run: |
@@ -55,42 +60,13 @@ jobs:
           node --test tests/*.test.cjs
       - name: Refresh live valuation inputs
         run: python scripts/update_data_v3.py
-      - name: Build snapshot-consistent multi-asset research
-        run: python scripts/multiasset.py || true
-      - name: Update prospective no-lookahead ledger
+      - name: Validate reproducible live reliability
+        run: python scripts/reliability_audit.py
+      - name: Record prospective observation
         run: python scripts/walkforward.py
-      - name: Run valuation-core retrospective sensitivity
-        run: python scripts/retrospective_core.py
-      - name: Run independent robustness comparisons
-        run: python scripts/robustness_audit.py
-      - name: Run strict statistical evidence gate
-        run: python scripts/robust_evaluation.py
-      - name: Run investable timing benchmark audit
-        run: python scripts/benchmark_audit.py
-      - name: Audit macro decision authority
-        run: python scripts/macro_authority_audit.py
-      - name: Generate Jan-2000 monthly valuation-core allocation table
-        run: python scripts/backtest_monthly_2000.py
-      - name: Research real-fund implementation and long-lived fund ranking
-        run: python scripts/fund_strategy_rank.py
       - name: Commit only when data changed
         run: |
-          paths=(
-            data/latest.json
-            data/multiasset.json
-            data/walkforward.json
-            data/walkforward_v3_10.json
-            data/walkforward_v3_11.json
-            data/walkforward_v3_12.json
-            data/retrospective.json
-            data/robustness.json
-            data/robust_evaluation.json
-            data/benchmark_audit.json
-            data/macro_authority_audit.json
-            data/backtest_monthly_2000.csv
-            data/backtest_monthly_2000.json
-            data/fund_strategy_rank.json
-          )
+          paths=(data/latest.json data/reliability_audit.json data/walkforward_v3_13.json)
           existing=()
           for p in "${paths[@]}"; do
             [[ -e "$p" ]] && existing+=("$p")
@@ -106,7 +82,7 @@ jobs:
           git config user.name "anup-nifty-bot"
           git config user.email "anup-nifty-bot@users.noreply.github.com"
           git add "${existing[@]}"
-          git commit -m "data: refresh V3.12 valuation and shadow evidence"
+          git commit -m "data: refresh V3.13 valuation and shadow evidence"
           for attempt in 1 2 3; do
             echo "Publish attempt ${attempt}/3"
             git fetch origin main

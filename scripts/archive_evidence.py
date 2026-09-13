@@ -32,6 +32,9 @@ def archive(root=ROOT, now=None):
     model = (root/'model.js').read_text()
     # Include upstream scoring and timing rules, not just the allocation constants.
     files = [root/'model.js', root/'validation_policy.json', root/'requirements.txt']
+    # Freeze all policy and valuation definitions, not just one policy file.
+    for name in ['valuation.js','robustness.js','robust_evaluation_policy.json','trend_policy_v1.json','release_timing_policy.json','research_trial_registry.json']:
+        if (root/name).exists():files.append(root/name)
     calibration=root/'data/pb_calibration_v3_10.json'
     if calibration.exists():files.append(calibration)
     files += sorted((root/'scripts').glob('*.py'))

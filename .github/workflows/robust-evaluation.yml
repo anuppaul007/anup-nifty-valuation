@@ -27,6 +27,10 @@ on:
       - 'data/latest.json'
       - 'data/trend_challenger_summary.json'
       - 'model.js'
+      - 'valuation.js'
+      - 'scripts/reliability_audit.py'
+      - 'tests/reliability.test.cjs'
+      - 'requirements.txt'
       - 'robustness.js'
       - 'app.js'
       - 'evidence-ui.js'
@@ -51,6 +55,9 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'pip'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - run: pip install -r requirements.txt
       - name: Full data and model safeguards
         run: |

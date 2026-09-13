@@ -1,4 +1,4 @@
-"""Independent valuation-regime diagnostic for Anup Nifty Valuation V3.6.
+"""Separate valuation-regime diagnostic for Anup Nifty Valuation V3.6.
 
 NSE Indices changed index P/E from standalone to consolidated trailing earnings
 and changed dividend-yield treatment effective 31 March 2021.  Pre-change P/E
@@ -59,7 +59,7 @@ def build(history,latest):
       'months':int(len(df)),'first_month':str(df.month.iloc[0]),'last_completed_month':str(df.month.iloc[-1]),
       'methodology_start':METHODOLOGY_START,
       'methodology_note':'Common current-definition month-end observations from September 2023 only; P/B changed on 29 September 2023. Earlier P/B is excluded.',
-      'allocation_effect':'none','purpose':'independent sanity check on fixed-reference valuation core',
+      'allocation_effect':'none','purpose':'separate diagnostic cross-check on fixed-reference valuation core',
       'current':{'pe':pe,'pb':pb,'dividend_yield':dy},'cheapness_percentiles':pct,'composite_cheapness':composite,'label':label,
       'pe_stats':ps,'pb_stats':bs,'dividend_yield_stats':ds,
       'lens_disagreement':{'spread_pp':spread,'threshold_pp':60,'flagged':spread>=60,'interpretation':'Review signal: divergent ranks can reflect fundamentals or a data break; this does not prove a break.'},

@@ -1,0 +1,64 @@
+name: Refresh optional research
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ['Refresh valuation data']
+    types: [completed]
+permissions:
+  contents: write
+concurrency:
+  group: anup-optional-research
+  cancel-in-progress: true
+jobs:
+  research:
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: pip install -r requirements.txt
+      - continue-on-error: true
+        name: Build snapshot-consistent multi-asset research
+        run: python scripts/multiasset.py || true
+      - continue-on-error: true
+        name: Run valuation-core retrospective sensitivity
+        run: python scripts/retrospective_core.py
+      - continue-on-error: true
+        name: Run independent robustness comparisons
+        run: python scripts/robustness_audit.py
+      - continue-on-error: true
+        name: Run strict statistical evidence gate
+        run: python scripts/robust_evaluation.py
+      - continue-on-error: true
+        name: Run investable timing benchmark audit
+        run: python scripts/benchmark_audit.py
+      - continue-on-error: true
+        name: Audit macro decision authority
+        run: python scripts/macro_authority_audit.py
+      - continue-on-error: true
+        name: Generate Jan-2000 monthly valuation-core allocation table
+        run: python scripts/backtest_monthly_2000.py
+      - continue-on-error: true
+        name: Research real-fund implementation and long-lived fund ranking
+        run: python scripts/fund_strategy_rank.py
+      - name: Publish successful research outputs independently of live data
+        run: |
+          paths=(data/multiasset.json data/retrospective.json data/robustness.json data/robust_evaluation.json data/benchmark_audit.json data/macro_authority_audit.json data/backtest_monthly_2000.csv data/backtest_monthly_2000.json data/fund_strategy_rank.json)
+          git add "${paths[@]}"
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'anup-nifty-bot'
+          git config user.email 'anup-nifty-bot@users.noreply.github.com'
+          git commit -m 'data: refresh optional research separately from live publication'
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main

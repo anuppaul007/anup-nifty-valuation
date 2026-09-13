@@ -1,6 +1,6 @@
 {
   "schema_version": 4,
-  "model_version": "3.6",
+  "model_version": "3.13-reliability-1",
   "generated_at": "2026-09-12T03:05:49+00:00",
   "macro_stale": false,
   "macro_partial": false,
@@ -816,5 +816,68 @@
       "role": "Official manufacturing PMI and new orders",
       "url": "https://www.stats.gov.cn/english/PressRelease/202609/t20260901_1965170.html"
     }
-  ]
+  ],
+  "trend": {
+    "status": "live",
+    "policy_id": "trend-sma10-minus20-v1",
+    "asof": "2026-08-31",
+    "completed_month": "2026-08",
+    "completed_month_close": 24000,
+    "sma10": 23500,
+    "lookback_months": 10,
+    "risk_off": false,
+    "risk_off_adjustment_pp": 0,
+    "monthly_closes": [
+      {
+        "month": "2025-11",
+        "asof": "2025-11-30",
+        "close": 23444.444444444445
+      },
+      {
+        "month": "2025-12",
+        "asof": "2025-12-31",
+        "close": 23444.444444444445
+      },
+      {
+        "month": "2026-01",
+        "asof": "2026-01-31",
+        "close": 23444.444444444445
+      },
+      {
+        "month": "2026-02",
+        "asof": "2026-02-28",
+        "close": 23444.444444444445
+      },
+      {
+        "month": "2026-03",
+        "asof": "2026-03-31",
+        "close": 23444.444444444445
+      },
+      {
+        "month": "2026-04",
+        "asof": "2026-04-30",
+        "close": 23444.444444444445
+      },
+      {
+        "month": "2026-05",
+        "asof": "2026-05-31",
+        "close": 23444.444444444445
+      },
+      {
+        "month": "2026-06",
+        "asof": "2026-06-30",
+        "close": 23444.444444444445
+      },
+      {
+        "month": "2026-07",
+        "asof": "2026-07-31",
+        "close": 23444.444444444445
+      },
+      {
+        "month": "2026-08",
+        "asof": "2026-08-31",
+        "close": 24000
+      }
+    ]
+  }
 }
