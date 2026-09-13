@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-09-13T07:26:42+00:00",
-  "source_commit": "e36ba1ff481a75b1f8b104752bb08c3133e239c4",
-  "packet_generated_at": "2026-09-13T07:11:55+00:00",
+  "checked_at": "2026-09-13T07:30:43+00:00",
+  "source_commit": "015abd5cbcd71efe288bcd31b9c516a90cfaa545",
+  "packet_generated_at": "2026-09-13T07:27:55+00:00",
   "status": "healthy",
   "checks": [
     {
       "name": "packet_freshness",
       "ok": true,
-      "detail": "Packet age 0.25 hours; maximum 72 hours"
+      "detail": "Packet age 0.05 hours; maximum 72 hours"
     },
     {
       "name": "published_bytes",
       "ok": true,
-      "detail": "Pinned commit API, raw source and checkout bytes match: c514cb3beaa2afa11bf0e9dde1dd8238d25fbb4cd64796f448a2889bee79195f"
+      "detail": "Pinned commit API, raw source and checkout bytes match: 3f5cb2ac31d26b2025c0d6de76affe01c900ee5cafc60d5bbad623541d489c19"
     },
     {
       "name": "refresh_workflow",
