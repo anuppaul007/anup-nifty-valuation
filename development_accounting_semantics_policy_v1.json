@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "policy_id": "development-accounting-semantics-v1",
+  "research_only": true,
+  "live_authority": "none",
+  "live_model_changed": false,
+  "live_allocation_changed": false,
+  "holdout_target_fetch_count": 0,
+  "ratios_computed": false,
+  "scope": {
+    "development_months": ["2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02"],
+    "holdout_months": "2024-03 through 2026-08 remain sealed",
+    "purpose": "Freeze accounting-column semantics and competing constituent accounting candidates before any development P/E, P/B or dividend-yield fit is inspected."
+  },
+  "official_methodology_constraints": {
+    "pe": "Use trailing-four-quarter earnings including profits and losses; prefer consolidated financials and use standalone only if consolidated is unavailable. Aggregate non-positive index earnings suppress P/E.",
+    "pb": "Use net worth reported in the annual financial report; prefer consolidated financials and use standalone only if consolidated is unavailable.",
+    "source_urls": [
+      "https://www.niftyindices.com/resources/index-concepts/price-earnings-ratio",
+      "https://www.niftyindices.com/resources/index-concepts/price-to-book-value"
+    ]
+  },
+  "xbrl_column_semantics": {
+    "legacy_current_period_context": "OneD",
+    "legacy_ytd_current_period_context": "FourD",
+    "rule": "For legacy NSE Regulation-33 XBRL, OneD is treated as the current reporting-period column and FourD as the year-to-date current-period column only when the filing exposes the expected legacy column structure. Dates alone are not authoritative because legacy contexts can share misleading start/end dates.",
+    "rendered_table_evidence": "NSE rendered financial-result tables separately label a current-period column ('3 months/ 6 months ended') and a 'Year to date figures for current period ended' column.",
+    "unknown_context_action": "reject",
+    "ambiguous_context_action": "reject"
+  },
+  "ttm_rule": {
+    "method": "Sum exactly four signed current-period quarter facts selected from OneD, one for each of four consecutive quarter ends.",
+    "forbidden": [
+      "summing FourD/YTD values",
+      "mixing OneD and FourD within a TTM chain",
+      "backfilling a missing current-period quarter from a later YTD value unless a separately preregistered arithmetic-recovery version is created",
+      "dropping a loss-making quarter or constituent",
+      "using a filing disseminated after the monthly signal cutoff"
+    ],
+    "required_quarter_sequence": "Four distinct consecutive calendar quarter ends ending no later than the latest public quarter available at the signal cutoff."
+  },
+  "profit_candidates": {
+    "INDAS": [
+      {
+        "candidate_id": "indas_profit_for_period",
+        "local_name": "ProfitLossForPeriod",
+        "context_ref": "OneD",
+        "rationale": "Broad period profit concept with current-period coverage across the retrieved development IndAS inventory."
+      },
+      {
+        "candidate_id": "indas_parent_attributable_profit",
+        "local_name": "ProfitOrLossAttributableToOwnersOfParent",
+        "context_ref": "OneD",
+        "rationale": "Parent-equity-holder profit concept; retained as a separate candidate because it is not present in every retrieved IndAS filing. Missing facts make this candidate unavailable for that constituent-period rather than triggering an outcome-driven fallback."
+      }
+    ],
+    "BANKING": [
+      {
+        "candidate_id": "bank_profit_for_period",
+        "local_name": "ProfitLossForThePeriod",
+        "context_ref": "OneD"
+      },
+      {
+        "candidate_id": "bank_post_tax_parent_adjusted_profit",
+        "local_name": "ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates",
+        "context_ref": "OneD"
+      }
+    ],
+    "candidate_selection_rule": "No candidate may be promoted by looking at holdout targets. Development targets may be used only after all candidate definitions, completeness rules and comparison tolerances are frozen. If no candidate meets the preregistered development reproduction hurdle, the mapping remains unresolved."
+  },
+  "annual_net_worth_candidates": {
+    "INDAS": [
+      {
+        "candidate_id": "indas_parent_equity",
+        "local_name": "EquityAttributableToOwnersOfParent",
+        "source": "latest eligible annual filing",
+        "context_type": "instant_at_annual_period_end"
+      }
+    ],
+    "BANKING": [
+      {
+        "candidate_id": "bank_capital_plus_reserves",
+        "components": ["Capital", "ReservesAndSurplus"],
+        "source": "latest eligible annual filing",
+        "context_type": "annual balance-sheet instant",
+        "status": "candidate_not_yet_authorized"
+      }
+    ],
+    "rule": "Bank net worth is a separate semantic mapping problem and must not inherit the ordinary IndAS equity tag. Any minority-interest or other-equity treatment must be preregistered before development target comparison."
+  },
+  "market_capitalisation_candidates": {
+    "candidate_a": "Outstanding shares = PaidUpValueOfEquityShareCapital / FaceValueOfEquityShareCapital; full-company market cap = outstanding shares * close price.",
+    "candidate_b": "Where candidate_a facts are unavailable, EquityShareCapital / FaceValueOfEquityShareCapital may be evaluated as a separate preregistered development candidate; it is not an automatic fallback.",
+    "corporate_action_rule": "Share-count continuity must be reconciled for splits, bonuses, rights, mergers/demergers and other capital changes before a company-month is eligible.",
+    "index_weight_rule": "Published index weights already contain free-float/capping effects; they may weight company earnings/book yields only when the company market-cap basis matches the accounting numerator basis."
+  },
+  "template_boundaries": {
+    "INDAS": "supported for semantic discovery",
+    "BANKING": "supported for semantic discovery with separate bank mappings",
+    "LIFE_INSURANCE": "separate extraction path required; do not force INDAS or BANKING mappings",
+    "GENERAL_INSURANCE": "separate extraction path required",
+    "NBFC": "must be separately classified if encountered; do not assume INDAS equivalence without evidence",
+    "issuer_pdf_exception": "NESTLEIND remains a separately governed source/retrieval exception and is not silently converted into XBRL coverage"
+  },
+  "normalisation_rules": {
+    "signed_values": "Preserve negative accounting values and losses.",
+    "scale": "If an XBRL scale attribute is present, numeric value is multiplied by 10^scale after sign parsing.",
+    "sign": "A negative sign attribute or parenthesized presentation is applied exactly once.",
+    "decimals": "Decimals metadata expresses precision and must not be treated as an additional scale multiplier.",
+    "duplicate_fact_rule": "More than one eligible fact for the same candidate, context and reporting period is ambiguous unless values are exactly equal after normalisation; unequal duplicates are rejected."
+  },
+  "gates_before_development_ratio_reconstruction": [
+    "XBRL inventory/retrieval stage passes its own gate or an explicitly versioned frozen-manifest replacement is approved without using valuation outcomes.",
+    "Every numerical candidate has deterministic concept, context, unit, sign, scale and duplicate handling.",
+    "Consolidated-versus-standalone selection follows official Nifty methodology and is point-in-time.",
+    "Bank, insurer and ordinary-company mappings remain separate where templates differ.",
+    "No holdout P/E/P/B/dividend-yield target has been fetched."
+  ],
+  "promotion_effect": "none"
+}
