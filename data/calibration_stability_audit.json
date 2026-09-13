@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-13T12:42:11+00:00",
+  "generated_at": "2026-09-13T13:23:48+00:00",
   "research_only": true,
   "model_version": "3.13-reliability-1",
   "question": "How fragile is today\u2019s policy allocation to deterministic re-estimation of lens centers/scales within the short current-definition era?",
@@ -12,7 +12,7 @@
     "historical_yield_caveat": "Two calendar-month lag; RBI archived SGL tenor yields before OECD coverage, then OECD monthly long-term yields. Series definitions differ. Publication times and historical vintages are not verified."
   },
   "current_packet": {
-    "generated_at": "2026-09-13T12:42:11+00:00",
+    "generated_at": "2026-09-13T13:23:48+00:00",
     "nifty_date": "2026-09-11",
     "level": 23398.1,
     "pe": 19.78,
@@ -113,7 +113,7 @@
         "earnings_yield_minus_gsec": -0.6895095250138727,
         "dividend_yield": 0.9690945894705398
       },
-      "composite_z": -1.4250486838166911,
+      "composite_z": -1.425048683816691,
       "core_equity_pct": 89.8963529962325,
       "earnings_adjustment_pp": -1.7572628006703377,
       "trend_adjustment_pp": -20.0,
@@ -169,7 +169,7 @@
         "earnings_yield_minus_gsec": -0.5939518044543923,
         "dividend_yield": 1.0803333126383585
       },
-      "composite_z": -1.386165383450673,
+      "composite_z": -1.3861653834506733,
       "core_equity_pct": 89.25897481718243,
       "earnings_adjustment_pp": -1.7572628006703377,
       "trend_adjustment_pp": -20.0,
