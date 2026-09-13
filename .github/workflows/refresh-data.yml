@@ -12,6 +12,8 @@ on:
       - "data/multiasset.json"
       - "data/multiasset_backtest.json"
       - "data/walkforward.json"
+      - "data/walkforward_v3_10.json"
+      - "data/walkforward_v3_11.json"
       - "data/retrospective.json"
       - "data/robustness.json"
       - "data/backtest_monthly_2000.csv"
@@ -66,6 +68,7 @@ jobs:
             data/multiasset.json
             data/walkforward.json
             data/walkforward_v3_10.json
+            data/walkforward_v3_11.json
             data/retrospective.json
             data/robustness.json
             data/backtest_monthly_2000.csv

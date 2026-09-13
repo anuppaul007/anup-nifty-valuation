@@ -10,11 +10,12 @@ class MultiAssetTests(unittest.TestCase):
  def latest(self):
   today=str(date.today())
   d=json.loads((Path(__file__).resolve().parent/'fixtures/live_packet.json').read_text())
-  d['generated_at']=today+'T00:00:00+00:00';d['nifty']['date']=today;d['nifty']['gsec_meta']['asof']=today
+  d['model_version']='3.11-crash-aware-1';d['generated_at']=today+'T00:00:00+00:00';d['nifty']['date']=today;d['nifty']['gsec_meta']['asof']=today
   d['earnings']['asof']=today
   for f in d['macro']['factors'].values():f['asof']=today
   d['macro']['china_pmi']['asof']=today
   for f in d['macro']['domestic']['factors'].values():f['asof']=today
+  d['trend']={'status':'live','policy_id':'trend-sma10-minus20-v1','asof':today,'completed_month':'fixture','completed_month_close':24000.0,'sma10':23500.0,'lookback_months':10,'risk_off':False,'risk_off_adjustment_pp':0}
   return d
  def market(self):
   dates=pd.date_range(end=pd.Timestamp(date.today()),periods=800,freq='D')
@@ -51,5 +52,8 @@ class MultiAssetTests(unittest.TestCase):
  def test_missing_primary_snapshot_timestamp_is_rejected(self):
   d=self.latest();d.pop('generated_at')
   with self.assertRaises(RuntimeError):ma.build(d,self.market())
+ def test_missing_trend_blocks_multiasset_core_too(self):
+  d=self.latest();d.pop('trend')
+  with self.assertRaises(RuntimeError):ma.latest_core_signal(d)
 
 if __name__=='__main__':unittest.main()

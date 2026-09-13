@@ -7,7 +7,8 @@ class WalkForwardTests(unittest.TestCase):
  def fixture(self):
   d=json.loads((Path(__file__).resolve().parents[1]/'tests/fixtures/live_packet.json').read_text())
   d['generated_at']='2026-09-12T03:05:49Z'
-  d['model_version']='3.10-pb-regime-1'
+  d['model_version']='3.11-crash-aware-1'
+  d['trend']={'status':'live','policy_id':'trend-sma10-minus20-v1','asof':'2026-08-31','completed_month':'2026-08','completed_month_close':24000.0,'sma10':23500.0,'lookback_months':10,'risk_off':False,'risk_off_adjustment_pp':0}
   return d
  def test_incomplete_macro_never_enters_prospective_ledger(self):
   d=self.fixture();d['macro']['active_block_weight']=.99;self.assertIsNone(w.model_snapshot(d,now="2026-09-12T12:00:00Z"))
@@ -31,12 +32,14 @@ class WalkForwardTests(unittest.TestCase):
  def test_parameter_change_gate_is_deliberately_slow(self):
   short=[{'month':f'2020-{i:02d}','forward_nifty_price_return_6m':1,'forward_nifty_price_return_12m':1} for i in range(1,13)]
   s=w.summary(short);self.assertFalse(s['eligible_for_parameter_change']);self.assertIn('zc=2.5',s['parameter_lock'])
-
  def test_stale_packet_cannot_enter_ledger(self):
   d=self.fixture();d['generated_at']='2026-01-01';self.assertIsNone(w.model_snapshot(d,now='2026-09-12T12:00:00Z'))
- def test_candidate_extreme_uses_its_own_damping(self):
+ def test_candidate_extreme_uses_its_own_authority_rule(self):
   d=self.fixture();s=w.model_snapshot(d,now='2026-09-12T12:00:00Z');z=s['valuation_z'];zc=4.0
-  expected=w.curve(z,1.35,zc)+(d['earnings']['score']*6+d['macro']['score']*6)*max(0,1-abs(z)/zc)
+  expected=w.curve(z,1.35,zc)+(d['earnings']['score']*6+d['macro']['score']*6)*w.overlay_damp(z,zc)
   self.assertAlmostEqual(s['candidate_extreme_targets']['4.0'],expected)
+ def test_risk_off_trend_is_recorded_without_rewriting_candidate_family(self):
+  d=self.fixture();d['trend']['completed_month_close']=22000;d['trend']['sma10']=23500;d['trend']['risk_off']=True;d['trend']['risk_off_adjustment_pp']=-20
+  s=w.model_snapshot(d,now='2026-09-12T12:00:00Z');self.assertTrue(s['trend_risk_off']);self.assertEqual(s['trend_adjustment_pp'],-20);self.assertLess(s['live_equity_target'],100)
 
 if __name__=='__main__':unittest.main()
