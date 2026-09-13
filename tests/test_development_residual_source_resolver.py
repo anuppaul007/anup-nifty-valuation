@@ -14,6 +14,14 @@ POLICY = json.loads((ROOT / "development_residual_source_policy_v1.json").read_t
 
 def test_aliases_are_frozen_to_official_identity_changes():
     assert resolver.v1.ALIASES == {"LTIM": "LTM", "TATAMOTORS": "TMPV"}
+    ltim = POLICY["identity_aliases"]["LTIM"]
+    tata = POLICY["identity_aliases"]["TATAMOTORS"]
+    assert ltim["continuity_isin"] == "INE214T01019"
+    assert ltim["official_symbol_reference"] == "NSE/CML/72948 dated 2026-02-23"
+    assert "2026-02-27" in ltim["reason"]
+    assert tata["continuity_isin"] == "INE155A01022"
+    assert tata["official_symbol_reference"] == "NSE/FAOP/70882 dated 2025-10-17"
+    assert "same continuing listed security" in POLICY["identity_alias_rule"]
 
 
 def test_financial_result_filter_is_narrow():
