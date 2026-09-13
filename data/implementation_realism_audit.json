@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-13T12:28:52+00:00",
+  "research_only": true,
+  "live_model_changed": false,
+  "live_allocation_changed": false,
+  "source_generated_on": "2026-09-13",
+  "source_scheme_codes": {
+    "equity": 101349,
+    "debt": 101758
+  },
+  "sample": {
+    "first_completed_month": "2006-04",
+    "last_completed_month": "2026-08",
+    "months": 245,
+    "current_partial_month_excluded": true,
+    "actual_mutual_fund_navs_only": true,
+    "fund_nav_cost_note": "Fund NAV returns already embed each fund's own expense ratio, portfolio-management effects and realised tracking behaviour. Pre-inception proxy months are excluded from the strict implementation audit."
+  },
+  "allocation_path": {
+    "mean_equity_pct": 54.44081632653061,
+    "min_equity_pct": 0.0,
+    "max_equity_pct": 100.0,
+    "months_with_target_move_ge_5pp": 142,
+    "months_with_target_move_ge_10pp": 83,
+    "median_actual_trade_pct_of_portfolio": 7.326500898307897,
+    "p90_actual_trade_pct_of_portfolio": 23.740265538092338,
+    "max_actual_trade_pct_of_portfolio": 71.17871272905998
+  },
+  "cost_scenarios": [
+    {
+      "one_way_turnover_cost_bps": 0.0,
+      "dynamic": {
+        "months": 245,
+        "cagr_pct": 12.566146806044864,
+        "max_drawdown_pct": -37.99990551051305,
+        "ending_wealth_from_100": 1120.9233637847315,
+        "total_one_way_turnover_x": 24.682855978456136,
+        "annualised_one_way_turnover_x": 1.208956211189688
+      },
+      "exposure_matched_static": {
+        "months": 245,
+        "cagr_pct": 10.093871631364948,
+        "max_drawdown_pct": -31.21879370199636,
+        "ending_wealth_from_100": 712.3020654365255,
+        "total_one_way_turnover_x": 2.6036959321555617,
+        "annualised_one_way_turnover_x": 0.12752796402394587
+      },
+      "dynamic_minus_static_cagr_pp": 2.4722751746799165,
+      "dynamic_minus_static_max_drawdown_pp": -6.781111808516691,
+      "dynamic_implementation_drag_vs_zero_friction_cagr_pp": 0.0,
+      "dynamic_terminal_wealth_change_vs_zero_friction_pct": 0.0
+    },
+    {
+      "one_way_turnover_cost_bps": 5.0,
+      "dynamic": {
+        "months": 245,
+        "cagr_pct": 12.498120015334191,
+        "max_drawdown_pct": -38.04325112654392,
+        "ending_wealth_from_100": 1107.1738635859565,
+        "total_one_way_turnover_x": 24.682855978456136,
+        "annualised_one_way_turnover_x": 1.208956211189688
+      },
+      "exposure_matched_static": {
+        "months": 245,
+        "cagr_pct": 10.08685179364106,
+        "max_drawdown_pct": -31.229074936479485,
+        "ending_wealth_from_100": 711.3753547895095,
+        "total_one_way_turnover_x": 2.6036959321555617,
+        "annualised_one_way_turnover_x": 0.12752796402394587
+      },
+      "dynamic_minus_static_cagr_pp": 2.411268221693131,
+      "dynamic_minus_static_max_drawdown_pp": -6.814176190064437,
+      "dynamic_implementation_drag_vs_zero_friction_cagr_pp": -0.06802679071067352,
+      "dynamic_terminal_wealth_change_vs_zero_friction_pct": -1.2266226793909096
+    },
+    {
+      "one_way_turnover_cost_bps": 10.0,
+      "dynamic": {
+        "months": 245,
+        "cagr_pct": 12.430127176147089,
+        "max_drawdown_pct": -38.08657356699607,
+        "ending_wealth_from_100": 1093.591596184318,
+        "total_one_way_turnover_x": 24.682855978456136,
+        "annualised_one_way_turnover_x": 1.208956211189688
+      },
+      "exposure_matched_static": {
+        "months": 245,
+        "cagr_pct": 10.07983232775893,
+        "max_drawdown_pct": -31.23935482916247,
+        "ending_wealth_from_100": 710.4498398177578,
+        "total_one_way_turnover_x": 2.6036959321555617,
+        "annualised_one_way_turnover_x": 0.12752796402394587
+      },
+      "dynamic_minus_static_cagr_pp": 2.350294848388158,
+      "dynamic_minus_static_max_drawdown_pp": -6.847218737833604,
+      "dynamic_implementation_drag_vs_zero_friction_cagr_pp": -0.13601962989777583,
+      "dynamic_terminal_wealth_change_vs_zero_friction_pct": -2.4383261589025484
+    },
+    {
+      "one_way_turnover_cost_bps": 25.0,
+      "dynamic": {
+        "months": 245,
+        "cagr_pct": 12.226352226696147,
+        "max_drawdown_pct": -38.21640192378357,
+        "ending_wealth_from_100": 1053.8281423467768,
+        "total_one_way_turnover_x": 24.682855978456136,
+        "annualised_one_way_turnover_x": 1.208956211189688
+      },
+      "exposure_matched_static": {
+        "months": 245,
+        "cagr_pct": 10.058776160996663,
+        "max_drawdown_pct": -31.270186457923277,
+        "ending_wealth_from_100": 707.6804536643044,
+        "total_one_way_turnover_x": 2.6036959321555617,
+        "annualised_one_way_turnover_x": 0.12752796402394587
+      },
+      "dynamic_minus_static_cagr_pp": 2.1675760656994836,
+      "dynamic_minus_static_max_drawdown_pp": -6.946215465860295,
+      "dynamic_implementation_drag_vs_zero_friction_cagr_pp": -0.3397945793487178,
+      "dynamic_terminal_wealth_change_vs_zero_friction_pct": -5.985709960707009
+    }
+  ],
+  "unmodelled": {
+    "investor_tax_lots": "No after-tax claim is permitted. Indian tax treatment depends on vehicle, holding period, realised lot path and investor circumstances, and historical rules changed during the sample.",
+    "exit_loads": "Not modelled until a dated, scheme-specific load schedule is reconstructed.",
+    "ETF_bid_ask_spreads": "Not applicable to the mutual-fund NAV implementation used here; any ETF implementation requires a separate observed-spread study.",
+    "cash_drag_and_execution_timing": "Not modelled beyond monthly NAV-to-NAV returns and the explicit turnover-friction envelope."
+  },
+  "interpretation_guardrail": "Actual mutual-fund NAVs make this more investable than a pure index-return backtest, but the allocation history is still a retrospective reconstruction and is not certified point-in-time V3.13 evidence. Taxes and dated exit loads remain unmodelled, so no after-tax superiority claim is permitted.",
+  "promotion_rule": "This audit can reduce confidence or expose costs. It cannot promote or alter V3.13, its calibration, trend brake, earnings overlay or macro authority."
+}
