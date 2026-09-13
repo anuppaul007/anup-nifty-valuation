@@ -11,3 +11,12 @@ const api={selectRows,yieldAgeDays,ratioEra};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 else root.AnupEvidence=api;
 })(typeof window!=='undefined'?window:this);
+
+// Browser-only disclosure module. It has no access to or authority over the
+// model calculation; it only renders the synchronized research audit.
+if(typeof document!=='undefined'){
+ const s=document.createElement('script');
+ s.src='uncertainty-ui.js?v=20260913-1';
+ s.defer=true;
+ document.head.appendChild(s);
+}

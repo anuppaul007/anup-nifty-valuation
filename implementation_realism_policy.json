@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "research_only": true,
+  "live_authority": "none",
+  "purpose": "Quantify how the reconstructed monthly valuation allocation behaves when implemented with actual mutual-fund NAV returns and explicit investor-level turnover-friction sensitivities.",
+  "frozen_source": {
+    "file": "data/fund_strategy_rank.json",
+    "strict_actual_funds_only": true,
+    "equity_scheme_code": 101349,
+    "debt_scheme_code": 101758,
+    "note": "Fund NAV returns already embed each fund's own expense ratio, portfolio-management effects and realised tracking behaviour. Pre-inception proxy months are excluded from the strict implementation audit."
+  },
+  "comparators": {
+    "primary": "monthly rebalanced static allocation at the dynamic strategy's realised mean equity weight",
+    "reason": "Keeps average equity exposure comparable while applying identical actual fund returns and identical turnover-friction accounting."
+  },
+  "one_way_turnover_cost_bps": [0, 5, 10, 25],
+  "turnover_rule": "Trade size is the absolute difference between the new target equity weight and the previous month's drifted post-return equity weight. Initial funding is not charged as rebalancing turnover.",
+  "required_outputs": [
+    "actual-fund sample dates and months",
+    "mean equity exposure",
+    "annualised turnover",
+    "trade-size distribution",
+    "dynamic and exposure-matched static CAGR",
+    "dynamic and exposure-matched static max drawdown",
+    "CAGR edge by cost scenario",
+    "implementation drag versus zero-friction actual-fund NAV implementation"
+  ],
+  "explicitly_unmodelled": {
+    "investor_tax_lots": "No after-tax claim is permitted. Indian tax treatment depends on vehicle, holding period, realised lot path and investor circumstances, and historical rules changed during the sample.",
+    "exit_loads": "Not modelled until a dated, scheme-specific load schedule is reconstructed.",
+    "ETF_bid_ask_spreads": "Not applicable to the mutual-fund NAV implementation used here; any ETF implementation requires a separate observed-spread study.",
+    "cash_drag_and_execution_timing": "Not modelled beyond monthly NAV-to-NAV returns and the explicit turnover-friction envelope."
+  },
+  "promotion_rule": "This audit can reduce confidence or expose costs. It cannot promote or alter V3.13, its calibration, trend brake, earnings overlay or macro authority."
+}
