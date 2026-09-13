@@ -1,0 +1,38 @@
+name: Calibration stability audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'model.js'
+      - 'data/latest.json'
+      - 'data/reliability_audit.json'
+      - 'data/monthly_signal_screen.json'
+      - 'scripts/calibration_stability_audit.py'
+      - '.github/workflows/calibration-stability-audit.yml'
+
+concurrency:
+  group: calibration-stability-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Quantify calibration fragility without return fitting
+        run: python scripts/calibration_stability_audit.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: calibration-stability-audit
+          path: data/calibration_stability_audit.json
+          if-no-files-found: error
