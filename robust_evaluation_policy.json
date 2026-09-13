@@ -1,10 +1,11 @@
 {
-  "policy_version": "2026-09-13-v2",
+  "policy_version": "2026-09-13-v3",
   "status": "research governance; no automatic live allocation changes",
-  "objective": "Determine whether the allocation framework adds genuine risk-adjusted decision value rather than equity beta, path luck, look-ahead, duplicated factors, or parameter selection noise.",
+  "objective": "Determine whether the allocation framework adds genuine risk-adjusted decision value rather than equity beta, path luck, look-ahead, duplicated factors, generic persistent-signal luck, or parameter selection noise.",
   "principles": [
     "Fail closed when point-in-time availability cannot be established.",
     "Compare every dynamic rule with an exposure-matched static null using identical returns, costs and rebalance conventions.",
+    "All timing-skill statistics must be computed on exposure-matched timing residuals rather than total portfolio returns.",
     "Treat retrospective results as evidence, never as an optimizer.",
     "Separate valuation, earnings, macro and trend evidence so one layer cannot hide another layer's failure.",
     "No single composite score may override a failed critical gate."
@@ -12,9 +13,10 @@
   "critical_gates": {
     "data_vintage": "Historical full-stack claims require observation available_at timestamps at or before each decision time. Current-vintage substitutes are exploratory only.",
     "fair_null": "Dynamic strategy must be compared with a static portfolio at the dynamic strategy's realised mean equity weight.",
-    "placebo": "Timing claim requires at least 95th percentile versus a pre-declared placebo/randomisation family before it may be described as strong evidence.",
-    "block_bootstrap": "Paired timing-effect confidence intervals must be shown for 3, 6 and 12 month moving-block resampling; intervals crossing zero are reported as inconclusive.",
-    "multiple_testing": "Deflated Sharpe probability and CSCV probability of backtest overfitting must be reported for the exact candidate family being compared.",
+    "circular_shift_placebo": "Timing claim requires at least 95th percentile versus all non-zero circular shifts of the observed target-weight path.",
+    "ar1_surrogate_placebo": "Timing claim also requires at least 95th percentile versus pre-declared AR(1) surrogate valuation composites calibrated to the observed signal's mean, variance and lag-1 persistence and passed through the same engine.",
+    "block_bootstrap": "Paired timing-residual confidence intervals must be shown for 3, 6 and 12 month moving-block resampling; intervals crossing zero are reported as inconclusive.",
+    "multiple_testing": "Deflated Sharpe probability and CSCV probability of backtest overfitting must be reported on the exposure-matched timing-residual matrix for the exact comparable candidate family.",
     "prospective_record": "No challenger is eligible for promotion before at least 60 completed prospective monthly decisions, regardless of retrospective performance.",
     "implementation": "Costs, taxes and instrument constraints must match the claim. Tax-excluded studies cannot be described as taxable-investor net returns.",
     "reproducibility": "Inputs, engine files, policy and output must be hashable and version identified."
@@ -29,11 +31,12 @@
   },
   "mandatory_diagnostics": [
     "Exposure-matched static benchmark",
-    "Brinson-style timing contribution",
+    "Timing-only return decomposition",
     "Circular-shift placebo distribution",
-    "Moving-block paired bootstrap",
-    "Deflated Sharpe Ratio probability",
-    "CSCV probability of backtest overfitting",
+    "AR(1) surrogate-signal placebo distribution",
+    "Moving-block paired bootstrap on timing residual",
+    "Deflated Sharpe Ratio probability on timing residual",
+    "CSCV probability of backtest overfitting on timing residual",
     "Effective sample size and serial dependence",
     "Minimum track-record heuristic for a 0.20 Sharpe difference",
     "Calibration-family sensitivity",
@@ -42,9 +45,14 @@
     "Crash-regime challenger evidence",
     "Model/input/policy hashes"
   ],
+  "trial_count_policy": {
+    "exact_family": "DSR/PBO use only variants with the same objective, return series and common eligible window; the current valuation-curve matrix has 24 members.",
+    "broader_registry": "All materially different research families remain logged as a governance counter. Different asset universes or non-comparable windows are not falsely pooled into one DSR number.",
+    "version_lineage": "Bug fixes and publication/version labels are not automatically counted as independent statistical trials unless they represented a materially different strategy hypothesis tested against outcomes."
+  },
   "historical_claim_limits": [
     "The 2021-present comparable valuation sample is too short to prove timing skill.",
-    "The current full macro plus earnings model does not have a certified point-in-time history through 2008 and March 2020.",
+    "The current full V3.11 valuation plus earnings plus macro plus trend stack does not have a certified point-in-time history through 2008 and March 2020.",
     "Fixed reference constants applied before their freeze date are look-ahead sensitivity, not implementable historical evidence.",
     "Monthly drawdowns understate intramonth losses.",
     "Tax-excluded results are not after-tax investor outcomes."

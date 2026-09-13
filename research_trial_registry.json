@@ -1,11 +1,12 @@
 {
-  "registry_version": "2026-09-13-v1",
+  "registry_version": "2026-09-13-v2",
   "purpose": "Record materially different research variants so multiple-testing adjustments use an honest trial count rather than the final published winner only.",
   "families": {
     "valuation_curve_grid": {
       "count": 24,
       "definition": "6 curve slopes x 4 extreme thresholds in scripts/retrospective_core.py",
-      "used_for_dsr_and_pbo": true
+      "used_for_dsr_and_pbo": true,
+      "return_series": "each variant's exposure-matched timing residual, not total strategy return"
     },
     "valuation_calibration_family": {
       "count": 4,
@@ -17,6 +18,12 @@
       "count": 1,
       "definition": "pre-registered SMA10 minus 20 percentage point policy",
       "used_for_dsr_and_pbo": false
+    },
+    "mahalanobis_valuation_challenger": {
+      "count": 1,
+      "definition": "covariance-aware valuation-composite challenger proposed for research; not implemented or eligible for live use until frozen, backtested on a common window, and subjected to the same evidence gate",
+      "used_for_dsr_and_pbo": false,
+      "status": "registered challenger only"
     },
     "multiasset_parameter_perturbations": {
       "count": 500,
@@ -40,7 +47,12 @@
       "used_for_dsr_and_pbo": false
     }
   },
-  "minimum_logged_variants_across_all_research_families": 545,
-  "warning": "Counts across different samples/objectives are not blindly pooled into one Deflated Sharpe calculation. The robust evaluator uses the exact 24-member valuation-curve family for its DSR/PBO matrix and displays this broader registry as a governance counter.",
+  "null_families": {
+    "circular_shift": "all non-zero rotations of the exact observed target-weight path",
+    "ar1_surrogate_signal": "Gaussian AR(1) valuation-composite surrogates calibrated to the observed composite's mean, variance and lag-1 persistence and run through the same live curve, returns and costs"
+  },
+  "minimum_logged_variants_across_all_research_families": 546,
+  "lineage_policy": "Publication versions and bug fixes are not automatically counted as independent statistical trials. A version enters the trial count only when it represents a materially different strategy hypothesis evaluated against outcomes.",
+  "warning": "Counts across different samples/objectives are not blindly pooled into one Deflated Sharpe calculation. The robust evaluator uses the exact 24-member common-sample valuation-curve family for DSR/PBO and displays the broader registry as a governance counter. Any implemented Mahalanobis challenger that becomes comparable must increase the relevant candidate-family burden before promotion review.",
   "automatic_parameter_change": false
 }

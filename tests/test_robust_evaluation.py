@@ -33,6 +33,25 @@ class RobustEvaluationTests(unittest.TestCase):
         self.assertIsNotNone(q)
         self.assertGreaterEqual(q["probability"], 0)
         self.assertLessEqual(q["probability"], 1)
+        self.assertEqual(q["moment_source"], "selected exposure-matched timing-residual series")
+
+    def test_ar1_fit_recovers_persistence(self):
+        rng = np.random.default_rng(123)
+        x = np.empty(2000)
+        x[0] = 0.0
+        for i in range(1, len(x)):
+            x[i] = 0.8 * x[i - 1] + rng.normal(0, 0.4)
+        q = re.fit_ar1(x)
+        self.assertAlmostEqual(q["phi"], 0.8, delta=0.05)
+        self.assertGreater(q["sd"], 0)
+        self.assertGreater(q["innovation_sd"], 0)
+
+    def test_ar1_simulation_preserves_scale_and_persistence(self):
+        params = {"mean": 0.3, "sd": 1.2, "phi": 0.75, "innovation_sd": 1.2 * math.sqrt(1 - 0.75**2)}
+        x = re.simulate_ar1(params, 10000, np.random.default_rng(7), burn=500)
+        self.assertAlmostEqual(float(np.mean(x)), 0.3, delta=0.08)
+        self.assertAlmostEqual(float(np.std(x, ddof=1)), 1.2, delta=0.08)
+        self.assertAlmostEqual(re.acf(x, 1), 0.75, delta=0.04)
 
     def test_fair_pe_fan(self):
         d = {
