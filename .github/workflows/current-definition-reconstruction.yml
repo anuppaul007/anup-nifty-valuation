@@ -5,8 +5,12 @@ on:
   pull_request:
     paths:
       - 'scripts/current_definition_reconstruction.py'
+      - 'scripts/current_definition_aggregation.py'
       - 'tests/test_current_definition_reconstruction.py'
+      - 'tests/test_current_definition_aggregation.py'
+      - 'current_definition_aggregation_policy.json'
       - 'CURRENT_DEFINITION_RECONSTRUCTION.md'
+      - 'CURRENT_DEFINITION_ALGEBRA_CORRECTION.md'
       - '.github/workflows/current-definition-reconstruction.yml'
 
 permissions:
@@ -24,9 +28,22 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt pytest
       - name: Unit tests
-        run: pytest -q tests/test_current_definition_reconstruction.py
+        run: |
+          pytest -q tests/test_current_definition_reconstruction.py
+          pytest -q tests/test_current_definition_aggregation.py
       - name: Run source coverage and reconstruction audit
         run: python scripts/current_definition_reconstruction.py
+      - name: Assert future reconstruction uses signed denominator policy
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('current_definition_aggregation_policy.json'))
+          assert p['research_only'] is True
+          assert p['live_authority'] == 'none'
+          assert 'profits and losses' in p['pe_rule']
+          assert any('loss-making' in x for x in p['prohibited_shortcuts'])
+          print('signed-denominator reconstruction policy passed')
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: current-definition-reconstruction
@@ -41,6 +58,7 @@ jobs:
             'weight_history_verified_start': x['historical_weight_evidence']['verified_start'],
             'probe_summary': x['probe_summary'],
             'earliest_fully_reconstructed_month': x['reconstruction_gate']['earliest_fully_reconstructed_month'],
+            'signed_denominator_correction': 'enforced by current_definition_aggregation.py for future constituent reconstruction',
             'live_model_changed': x['live_model_changed'],
           }, indent=2))
           PY
