@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "policy_id": "recent-current-definition-2023-09_2026-08-v1",
+  "research_only": true,
+  "live_authority": "none",
+  "live_model_changed": false,
+  "live_allocation_changed": false,
+  "objective": "Test whether a constituent-level, point-in-time reconstruction of NIFTY 50 P/E, P/B and dividend yield can reproduce the official current-definition month-end series without imputation or look-ahead.",
+  "sample": {
+    "start_month": "2023-09",
+    "end_month": "2026-08",
+    "completed_months": 36,
+    "development_months": ["2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02"],
+    "holdout_start": "2024-03",
+    "holdout_end": "2026-08",
+    "holdout_months": 30
+  },
+  "blindness_rule": "Official P/E, P/B and dividend-yield target values may be fetched and inspected for the six development months only. Holdout target values must not be fetched, stored or inspected until the constituent reconstruction implementation, symbol/name mappings, accounting-field mappings and corporate-action rules are frozen in a reviewable commit.",
+  "inputs_allowed_during_holdout_build": [
+    "official historical NIFTY 50 constituent weights",
+    "official constituent membership implied by those weight files",
+    "NSE company financial filings available by each signal date",
+    "NSE corporate actions available by each signal date",
+    "historical company prices/share-capital data needed for a consistent full-market-cap basis"
+  ],
+  "official_target_source": "NSE Indices Index Dashboard or official historical valuation series for the same completed month-end.",
+  "source_hierarchy": [
+    "NSE Indices / NSE official publication or filing",
+    "issuer exchange filing mirrored by NSE",
+    "secondary source only as a diagnostic cross-check, never as a missing-value fill"
+  ],
+  "reconstruction_gate": {
+    "members_required_per_month": 50,
+    "minimum_published_weight_sum_fraction": 0.985,
+    "point_in_time_only": true,
+    "neutral_fill": false,
+    "interpolation": false,
+    "cross_sectional_imputation": false,
+    "methodology_jump_scaling": false,
+    "loss_making_constituents_must_be_included": true
+  },
+  "predeclared_holdout_tolerance": {
+    "per_month_pe_relative_error_max_pct": 2.0,
+    "per_month_pb_relative_error_max_pct": 2.0,
+    "per_month_dividend_yield_abs_error_max_pp": 0.05,
+    "aggregate_months_all_three_within_tolerance_min": 27,
+    "aggregate_months_total": 30,
+    "median_pe_relative_error_max_pct": 1.0,
+    "median_pb_relative_error_max_pct": 1.0,
+    "median_dividend_yield_abs_error_max_pp": 0.025,
+    "absolute_max_pe_relative_error_pct": 4.0,
+    "absolute_max_pb_relative_error_pct": 4.0,
+    "absolute_max_dividend_yield_error_pp": 0.10
+  },
+  "failure_rule": "A tolerance miss is a finding, not permission to retune silently. Any accounting mapping or source-rule change after holdout unsealing creates a new version and a new untouched holdout is required before claiming reproduction success.",
+  "promotion_rule": "Passing this pilot can strengthen data-lineage confidence only. It cannot promote V3.13, change an allocation parameter, validate timing alpha or prove the equity/debt mapping is optimal."
+}

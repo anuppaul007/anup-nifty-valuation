@@ -1,0 +1,59 @@
+name: Recent-regime reconstruction source harvest
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'recent_reconstruction_policy_v1.json'
+      - 'scripts/recent_regime_reconstruction_pilot.py'
+      - 'tests/test_recent_regime_reconstruction_pilot.py'
+      - 'RECENT_REGIME_RECONSTRUCTION.md'
+      - '.github/workflows/recent-regime-reconstruction.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  source-harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install PDF text utility
+        run: sudo apt-get update -qq && sudo apt-get install -y poppler-utils
+      - run: pip install -r requirements.txt pytest
+      - name: Unit tests
+        run: pytest -q tests/test_recent_regime_reconstruction_pilot.py
+      - name: Harvest official recent-regime sources
+        run: python scripts/recent_regime_reconstruction_pilot.py
+      - name: Enforce holdout blindness and zero live authority
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('recent_reconstruction_policy_v1.json'))
+          x=json.load(open('data/recent_regime_source_ledger.json'))
+          assert p['live_authority'] == 'none'
+          assert x['research_only'] is True
+          assert x['live_model_changed'] is False
+          assert x['live_allocation_changed'] is False
+          assert x['summary']['months_total'] == 36
+          assert x['summary']['development_months'] == 6
+          assert x['summary']['holdout_months'] == 30
+          assert x['summary']['holdout_target_values_present'] is False
+          for m in x['months']:
+              if m['tranche'] == 'holdout':
+                  assert m['official_target']['status'] == 'sealed_not_fetched'
+                  assert not any(k in m['official_target'] for k in ('pe','pb','dividend_yield_pct','pdf_sha256'))
+          print(json.dumps(x['summary'], indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: recent-regime-source-ledger
+          path: |
+            data/recent_regime_source_ledger.json
+            data/recent_regime_source_debug.txt
+          if-no-files-found: error
