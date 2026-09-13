@@ -10,7 +10,7 @@ class MultiAssetTests(unittest.TestCase):
  def latest(self):
   today=str(date.today())
   d=json.loads((Path(__file__).resolve().parent/'fixtures/live_packet.json').read_text())
-  d['model_version']='3.11-crash-aware-1';d['generated_at']=today+'T00:00:00+00:00';d['nifty']['date']=today;d['nifty']['gsec_meta']['asof']=today
+  d['model_version']='3.12-evidence-first-1';d['generated_at']=today+'T00:00:00+00:00';d['nifty']['date']=today;d['nifty']['gsec_meta']['asof']=today
   d['earnings']['asof']=today
   for f in d['macro']['factors'].values():f['asof']=today
   d['macro']['china_pmi']['asof']=today
@@ -36,7 +36,7 @@ class MultiAssetTests(unittest.TestCase):
  def test_metals_preserve_original_equity_debt_ratio(self):
   out=ma.build(self.latest(),self.market());before=out['core_signal_before_metals'];after=out['core_allocation']
   self.assertAlmostEqual(after['equity_pct']/after['debt_pct'],before['equity_pct']/before['debt_pct'])
- def test_missing_macro_factor_is_never_neutral_filled(self):
+ def test_missing_macro_factor_is_never_neutral_filled_in_metals_layer(self):
   d=self.latest();d['macro']['factors']['us_real_10y']['status']='unavailable'
   with self.assertRaises(RuntimeError):ma.build(d,self.market())
  def test_btc_drawdown_value_is_positive_when_far_below_high(self):
@@ -46,9 +46,11 @@ class MultiAssetTests(unittest.TestCase):
  def test_core_signal_matches_existing_formula_shape(self):
   x=ma.latest_core_signal(self.latest())
   self.assertTrue(0<=x['equity_pct']<=100);self.assertAlmostEqual(x['equity_pct']+x['debt_pct'],100)
- def test_stale_core_factor_blocks_metals_too(self):
+ def test_stale_macro_does_not_block_v312_core_but_still_blocks_macro_dependent_metals(self):
   d=self.latest();d['macro']['factors']['vix']['asof']='2000-01-01'
-  with self.assertRaises(RuntimeError):ma.latest_core_signal(d)
+  x=ma.latest_core_signal(d)
+  self.assertTrue(0<=x['equity_pct']<=100)
+  with self.assertRaises(RuntimeError):ma.build(d,self.market())
  def test_missing_primary_snapshot_timestamp_is_rejected(self):
   d=self.latest();d.pop('generated_at')
   with self.assertRaises(RuntimeError):ma.build(d,self.market())
