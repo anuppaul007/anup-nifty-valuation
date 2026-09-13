@@ -3,6 +3,9 @@
 
 Research only: never changes model.js or promotes parameters. Missing point-in-
 time evidence is reported as not testable rather than imputed.
+
+V2 aligns every timing-skill statistic to the exposure-matched timing residual
+rather than total portfolio return and adds an AR(1) surrogate-signal null.
 """
 from __future__ import annotations
 
@@ -19,6 +22,8 @@ OUT=ROOT/'data'/'robust_evaluation.json'
 SEED=20260913
 BLOCKS=(3,6,12)
 DRAWS=5000
+AR1_DRAWS=5000
+AR1_BURN=240
 CSCV_SLICES=8
 C10={'peM':22.44,'peS':2.08,'pbM':3.54,'pbS':0.3239941700435707,
      'roeM':16.15402934929392,'roeS':0.9884905234449538,'dyM':1.25,
@@ -99,11 +104,10 @@ def effective_sample_size(x,max_lag=12):
 def moving_block_bootstrap(diff,block,draws=DRAWS,seed=SEED):
     a=np.asarray(diff,float);n=len(a)
     if block<1 or n<block:return None
-    rng=np.random.default_rng(seed+int(block));out=np.empty(draws);base=np.arange(n);need=math.ceil(n/block)
+    rng=np.random.default_rng(seed+int(block));out=np.empty(draws);need=math.ceil(n/block)
     for i in range(draws):
         parts=[]
-        for s in rng.integers(0,n,size=need):
-            parts.append((s+np.arange(block))%n)
+        for s in rng.integers(0,n,size=need):parts.append((s+np.arange(block))%n)
         idx=np.concatenate(parts)[:n];out[i]=1200*float(np.mean(a[idx]))
     return {'block_months':int(block),'draws':int(draws),'annualized_mean_timing_pp':1200*float(np.mean(a)),
             'ci95_pp':[float(np.percentile(out,2.5)),float(np.percentile(out,97.5))],
@@ -125,21 +129,35 @@ def fair_null_placebo(panel):
       'dynamic_net':r.stats(dyn.to_numpy(),w.to_numpy(),True),
       'beta_matched_static_net':r.stats(sta.to_numpy(),static_w.to_numpy(),True),
       'dynamic_minus_static_cagr_pp':float(edge),'net_timing_mean_annualized_pp':1200*float(timing.mean()),
-      'net_timing_t_stat_naive':t_stat(timing),'timing_effective_sample':effective_sample_size(timing),
+      'net_timing_monthly_sharpe':monthly_sharpe(timing),'net_timing_t_stat_naive':t_stat(timing),
+      'timing_effective_sample':effective_sample_size(timing),
       'signal_weight_lag1_autocorrelation':acf(w,1),'dynamic_realised_turnover_x':float(frame['turnover'].sum()),
       'static_realised_turnover_x':float(sta_turn.sum()),
-      'placebo':{'method':'all non-zero circular shifts of exact target weights','unique_paths':len(placebos),
-                 'actual_percentile':float(percentile(edge,px)),'p05_excess_cagr_pp':float(np.percentile(px,5)),
-                 'median_excess_cagr_pp':float(np.percentile(px,50)),'p95_excess_cagr_pp':float(np.percentile(px,95)),
-                 'max_excess_cagr_pp':float(np.max(px))},
+      'placebo':{'method':'all non-zero circular shifts of exact target weights; mean exposure and target-path turnover are preserved by construction',
+                 'unique_paths':len(placebos),'actual_percentile':float(percentile(edge,px)),
+                 'p05_excess_cagr_pp':float(np.percentile(px,5)),'median_excess_cagr_pp':float(np.percentile(px,50)),
+                 'p95_excess_cagr_pp':float(np.percentile(px,95)),'max_excess_cagr_pp':float(np.max(px))},
       'paired_moving_block_bootstrap':[moving_block_bootstrap(timing,b) for b in BLOCKS]}
 
 
+def timing_residual_for_variant(panel,k,zc):
+    frame,_,dyn,_=r.strategy_returns(panel,k,zc)
+    eq=frame['eq'].astype(float);db=frame['db'].astype(float);w=frame['w'].astype(float)
+    static_w=pd.Series(float(w.mean()),index=frame.index,dtype=float)
+    sta,_=net_with_weights(static_w,eq,db)
+    return pd.Series(dyn-sta,index=frame.index,dtype=float)
+
+
 def variant_matrix(panel):
+    """Common 24-variant matrix of exposure-matched timing residuals.
+
+    This deliberately excludes equity/debt beta from DSR and CSCV/PBO. Each
+    variant is compared with its own static portfolio at the same realised mean
+    equity exposure, using identical return and cost conventions.
+    """
     d={}
     for zc in r.EXTREMES:
-        for k in r.CURVES:
-            f,_,net,_=r.strategy_returns(panel,k,zc);d[r.grid_key(k,zc)]=pd.Series(net,index=f.index,dtype=float)
+        for k in r.CURVES:d[r.grid_key(k,zc)]=timing_residual_for_variant(panel,k,zc)
     m=pd.DataFrame(d).dropna()
     if len(m)<24 or m.shape[1]!=24:raise RuntimeError(f'variant matrix incomplete: {m.shape}')
     return m
@@ -153,13 +171,14 @@ def deflated_sharpe_probability(rets,benchmark_sr):
     if den2<=0:return None
     z=(sr-benchmark_sr)*math.sqrt(len(a)-1)/math.sqrt(den2)
     return {'monthly_sharpe':float(sr),'benchmark_expected_max_monthly_sharpe':float(benchmark_sr),
-            'probability':float(NormalDist().cdf(z)),'z':float(z),'skew':skew,'raw_kurtosis':kurt}
+            'probability':float(NormalDist().cdf(z)),'z':float(z),'skew':skew,'raw_kurtosis':kurt,
+            'moment_source':'selected exposure-matched timing-residual series'}
 
 
-def multiple_testing(panel):
+def multiple_testing(panel,trial_registry=None):
     m=variant_matrix(panel);sharpes={k:monthly_sharpe(m[k]) for k in m.columns}
-    vals=np.asarray(list(sharpes.values()),float);ntr=len(vals);sd=float(np.std(vals,ddof=1));nd=NormalDist();gamma=.5772156649015329
-    expected=sd*((1-gamma)*nd.inv_cdf(1-1/ntr)+gamma*nd.inv_cdf(1-1/(ntr*math.e))) if sd>0 else 0
+    vals=np.asarray(list(sharpes.values()),float);ntr=len(vals);mean_sr=float(np.mean(vals));sd=float(np.std(vals,ddof=1));nd=NormalDist();gamma=.5772156649015329
+    expected=mean_sr+sd*((1-gamma)*nd.inv_cdf(1-1/ntr)+gamma*nd.inv_cdf(1-1/(ntr*math.e))) if sd>0 else mean_sr
     live=r.grid_key(r.LIVE_K,r.LIVE_ZC);best=max(sharpes,key=sharpes.get)
     arr=m.to_numpy(float);T,N=arr.shape;slices=np.array_split(np.arange(T),CSCV_SLICES);logits=[];selected={}
     for ins_tuple in combinations(range(CSCV_SLICES),CSCV_SLICES//2):
@@ -168,13 +187,56 @@ def multiple_testing(panel):
         win=int(np.nanargmax(trsr));name=m.columns[win];selected[name]=selected.get(name,0)+1;target=tesr[win]
         rank=1+np.sum(tesr<target)+.5*max(0,np.sum(np.isclose(tesr,target,rtol=0,atol=1e-14))-1)
         omega=min(max(float(rank)/(N+1),1e-12),1-1e-12);logits.append(math.log(omega/(1-omega)))
-    return {'candidate_family':'24-member valuation curve grid','trial_count':int(ntr),'variant_months':int(T),
-      'monthly_sharpe_std_across_trials':sd,'expected_max_monthly_sharpe_under_selection':float(expected),
+    broader=(trial_registry or {}).get('minimum_logged_variants_across_all_research_families')
+    return {'candidate_family':'24-member valuation curve grid','return_series':'exposure-matched timing residual (dynamic net return minus same-mean-equity static net return)',
+      'trial_count':int(ntr),'broader_logged_research_variants':broader,'variant_months':int(T),
+      'monthly_sharpe_mean_across_trials':mean_sr,'monthly_sharpe_std_across_trials':sd,
+      'expected_max_monthly_sharpe_under_selection':float(expected),
       'live_variant':{'key':live,**(deflated_sharpe_probability(m[live],expected) or {})},
       'best_observed_variant':{'key':best,**(deflated_sharpe_probability(m[best],expected) or {})},
       'cscv':{'slices':CSCV_SLICES,'splits':len(logits),'pbo':float(np.mean(np.asarray(logits)<=0)),
               'median_oos_rank_logit':float(np.median(logits)),'in_sample_winner_counts':selected},
-      'warning':'DSR/PBO apply only to this exact common candidate family; other research families are logged separately.'}
+      'warning':'DSR/PBO use only the exact 24-member common-sample valuation-curve family. Broader logged trials have different samples/objectives and are disclosed, not falsely pooled. DSR and PBO now test timing residuals, not total equity-beta returns.'}
+
+
+def fit_ar1(x):
+    a=np.asarray(x,float)
+    if len(a)<6 or not np.all(np.isfinite(a)):raise ValueError('finite AR(1) sample of at least 6 observations required')
+    mu=float(np.mean(a));x0=a[:-1]-mu;x1=a[1:]-mu;den=float(np.dot(x0,x0))
+    phi=float(np.dot(x0,x1)/den) if den>1e-15 else 0.;phi=float(np.clip(phi,-.99,.99))
+    sd=float(np.std(a,ddof=1));innov_sd=float(sd*math.sqrt(max(1e-8,1-phi*phi)))
+    return {'mean':mu,'sd':sd,'phi':phi,'innovation_sd':innov_sd}
+
+
+def simulate_ar1(params,n,rng,burn=AR1_BURN):
+    mu=float(params['mean']);phi=float(params['phi']);innov=float(params['innovation_sd']);sd=float(params['sd'])
+    total=int(n)+int(burn);out=np.empty(total,dtype=float);out[0]=mu+rng.normal(0,sd if sd>0 else 1e-9)
+    for i in range(1,total):out[i]=mu+phi*(out[i-1]-mu)+rng.normal(0,innov)
+    return out[-int(n):]
+
+
+def ar1_surrogate_placebo(panel,draws=AR1_DRAWS,seed=SEED):
+    frame,_,dyn,z=r.strategy_returns(panel,r.LIVE_K,r.LIVE_ZC)
+    zlive=pd.Series(z.loc[frame.index],index=frame.index,dtype=float);params=fit_ar1(zlive.to_numpy())
+    eq=frame['eq'].astype(float);db=frame['db'].astype(float);w=frame['w'].astype(float)
+    static,_=net_with_weights(pd.Series(float(w.mean()),index=frame.index),eq,db)
+    actual_edge=100*float(cagr(dyn)-cagr(static));actual_residual_sr=monthly_sharpe(dyn-static)
+    rng=np.random.default_rng(int(seed)+991);edges=np.empty(int(draws));resid_srs=np.empty(int(draws));mean_w=np.empty(int(draws));rho=np.empty(int(draws))
+    for i in range(int(draws)):
+        zs=simulate_ar1(params,len(frame),rng);ws=np.array([r.curve(float(v),r.LIVE_K,r.LIVE_ZC)/100 for v in zs],float)
+        net,_=net_with_weights(ws,eq,db);sta,_=net_with_weights(np.full(len(ws),float(np.mean(ws))),eq,db);resid=net-sta
+        edges[i]=100*float(cagr(net)-cagr(sta));sr=monthly_sharpe(resid);resid_srs[i]=sr if sr is not None else np.nan
+        mean_w[i]=float(np.mean(ws));rho_i=acf(zs,1);rho[i]=rho_i if rho_i is not None else np.nan
+    finite_sr=resid_srs[np.isfinite(resid_srs)]
+    return {'method':'Gaussian AR(1) surrogate valuation composite -> live curve -> same returns/costs -> own exposure-matched static residual',
+      'draws':int(draws),'seed':int(seed),'observed_signal':{'mean':params['mean'],'sd':params['sd'],'lag1_phi_ols':params['phi']},
+      'surrogate_diagnostics':{'median_mean_equity_pct':100*float(np.median(mean_w)),'median_lag1_acf':float(np.nanmedian(rho))},
+      'actual_excess_cagr_pp':float(actual_edge),'actual_timing_residual_monthly_sharpe':float(actual_residual_sr),
+      'actual_excess_cagr_percentile':float(percentile(actual_edge,edges)),
+      'actual_timing_sharpe_percentile':float(percentile(actual_residual_sr,finite_sr)) if len(finite_sr) else None,
+      'p05_excess_cagr_pp':float(np.percentile(edges,5)),'median_excess_cagr_pp':float(np.percentile(edges,50)),
+      'p95_excess_cagr_pp':float(np.percentile(edges,95)),
+      'interpretation':'Tests whether the specific valuation signal beats generic persistent mean-reverting signals with similar first-order structure; it is a model null, not a market forecast.'}
 
 
 def lens_redundancy(panel):
@@ -245,35 +307,42 @@ def prospective_count():
 
 
 def build():
-    retro=load_json(ROOT/'data'/'retrospective.json');panel=panel_from_retrospective(retro);fair=fair_null_placebo(panel);multi=multiple_testing(panel)
+    retro=load_json(ROOT/'data'/'retrospective.json');panel=panel_from_retrospective(retro);fair=fair_null_placebo(panel)
+    registry=load_json(ROOT/'research_trial_registry.json',{});multi=multiple_testing(panel,registry);ar1=ar1_surrogate_placebo(panel)
     policy=load_json(ROOT/'robust_evaluation_policy.json',{});thr=policy.get('promotion_evidence_thresholds',{});pros=prospective_count()
-    boots=fair['paired_moving_block_bootstrap'];gates={
+    boots=fair['paired_moving_block_bootstrap'];pmin=thr.get('placebo_percentile_min',95);gates={
       'exposure_matched_timing_edge_positive':fair['dynamic_minus_static_cagr_pp']>0,
-      'placebo_95th_percentile':fair['placebo']['actual_percentile']>=thr.get('placebo_percentile_min',95),
+      'circular_shift_placebo_95th_percentile':fair['placebo']['actual_percentile']>=pmin,
+      'ar1_surrogate_placebo_95th_percentile':ar1['actual_excess_cagr_percentile']>=pmin,
       'paired_block_bootstrap_all_lower_bounds_above_zero':all(q and q['ci95_pp'][0]>0 for q in boots),
-      'deflated_sharpe_probability':multi['live_variant'].get('probability',0)>=thr.get('deflated_sharpe_probability_min',.95),
-      'cscv_pbo':multi['cscv']['pbo']<=thr.get('pbo_max',.10),
+      'deflated_sharpe_timing_residual_probability':multi['live_variant'].get('probability',0)>=thr.get('deflated_sharpe_probability_min',.95),
+      'cscv_timing_residual_pbo':multi['cscv']['pbo']<=thr.get('pbo_max',.10),
       'prospective_months':pros>=thr.get('prospective_completed_months_min',60),
       'certified_point_in_time_full_stack_history':False,
       'taxable_after_tax_implementation_test':False}
     files=[ROOT/'model.js',ROOT/'data'/'retrospective.json',ROOT/'data'/'latest.json',ROOT/'validation_policy.json',ROOT/'robust_evaluation_policy.json',ROOT/'research_trial_registry.json',ROOT/'release_timing_policy.json']
-    return {'schema_version':1,'status':'complete','scope':'Valuation-core robust evaluation plus separately governed current sensitivities/challengers; not a certified historical full-stack V3.10 backtest.',
+    return {'schema_version':2,'status':'complete','scope':'Valuation-core timing-skill evaluation plus separately governed current sensitivities/challengers; not a certified historical full-stack V3.11 backtest.',
       'decision':'ELIGIBLE_FOR_SEPARATE_PROMOTION_REVIEW' if all(gates.values()) else 'NOT_ELIGIBLE_FOR_PROMOTION',
-      'decision_reason':'Every critical gate must pass; no composite score averages away failures.',
-      'fair_null_and_timing':fair,'multiple_testing_and_overfit':multi,'sample_size':track_record_heuristic(fair['signal_weight_lag1_autocorrelation']),
+      'decision_reason':'Every critical gate must pass; no composite score averages away failures. Timing-skill tests remove the strategy beta by using exposure-matched residuals.',
+      'fair_null_and_timing':fair,'ar1_surrogate_null':ar1,'multiple_testing_and_overfit':multi,
+      'sample_size':track_record_heuristic(fair['signal_weight_lag1_autocorrelation']),
       'lens_redundancy':lens_redundancy(panel),'fair_pe_reference_sensitivity':fair_pe_fan(load_json(ROOT/'data'/'latest.json')),
       'calibration_sensitivity':calibration_sensitivity(load_json(ROOT/'data'/'robustness.json')),'crash_challenger':crash_challenger(load_json(ROOT/'data'/'trend_challenger_summary.json')),
       'prospective_evidence':{'completed_decision_files':pros,'minimum_required_before_any_promotion_review':thr.get('prospective_completed_months_min',60)},
       'implementation_status':{'transaction_costs':'10 bp one-way in core timing audit; cost sensitivities elsewhere','taxes':'NOT TESTED; no taxable-investor net claim','full_stack_release_vintages':'NOT TESTABLE until available_at history satisfies release_timing_policy.json'},
-      'trial_registry':load_json(ROOT/'research_trial_registry.json',{}),'gate_matrix':gates,
+      'trial_registry':registry,'gate_matrix':gates,
       'reproducibility':{'hash_algorithm':'sha256','files':{str(p.relative_to(ROOT)):sha256_file(p) for p in files}},
       'governance':'No output changes live parameters automatically. Failed/unavailable gates remain visible and cannot be neutral-filled.'}
 
 
 def main():
     try:out=build()
-    except Exception as e:out={'schema_version':1,'status':'unavailable','decision':'NOT_ELIGIBLE_FOR_PROMOTION','error':f'{type(e).__name__}: {e}','governance':'Evaluation failure cannot promote or alter live model.'}
+    except Exception as e:out={'schema_version':2,'status':'unavailable','decision':'NOT_ELIGIBLE_FOR_PROMOTION','error':f'{type(e).__name__}: {e}','governance':'Evaluation failure cannot promote or alter live model.'}
     OUT.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8')
-    print(json.dumps({'status':out.get('status'),'decision':out.get('decision'),'months':out.get('fair_null_and_timing',{}).get('months'),'placebo_percentile':out.get('fair_null_and_timing',{}).get('placebo',{}).get('actual_percentile'),'dsr_probability':out.get('multiple_testing_and_overfit',{}).get('live_variant',{}).get('probability'),'pbo':out.get('multiple_testing_and_overfit',{}).get('cscv',{}).get('pbo'),'error':out.get('error')},separators=(',',':')))
+    print(json.dumps({'status':out.get('status'),'decision':out.get('decision'),'months':out.get('fair_null_and_timing',{}).get('months'),
+      'circular_placebo_percentile':out.get('fair_null_and_timing',{}).get('placebo',{}).get('actual_percentile'),
+      'ar1_placebo_percentile':out.get('ar1_surrogate_null',{}).get('actual_excess_cagr_percentile'),
+      'dsr_timing_probability':out.get('multiple_testing_and_overfit',{}).get('live_variant',{}).get('probability'),
+      'pbo_timing':out.get('multiple_testing_and_overfit',{}).get('cscv',{}).get('pbo'),'error':out.get('error')},separators=(',',':')))
 
 if __name__=='__main__':main()
