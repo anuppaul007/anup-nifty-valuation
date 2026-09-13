@@ -2952,11 +2952,11 @@
     ],
     "errors": [
       {
-        "query": "Franklin India Bluechip Fund",
+        "query": "Franklin India Prima Fund",
         "error": "no regular-growth match"
       },
       {
-        "query": "Franklin India Prima Fund",
+        "query": "Franklin India Bluechip Fund",
         "error": "no regular-growth match"
       },
       {
@@ -2980,17 +2980,12 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "Nippon India Vision Fund",
-        "selected": "Nippon India Vision Large & Mid Cap Fund - Regular Plan - GROWTH Option",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
         "query": "SBI Long Term Equity Fund",
         "error": "no regular-growth match"
       },
       {
-        "query": "Nippon India Growth Fund",
-        "selected": "Nippon India Liquid Fund - Regular Plan - Growth Option",
+        "query": "Nippon India Vision Fund",
+        "selected": "Nippon India Vision Large & Mid Cap Fund - Regular Plan - GROWTH Option",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -2999,8 +2994,18 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
+        "query": "Nippon India Growth Fund",
+        "selected": "Nippon India Liquid Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
         "query": "Aditya Birla Sun Life Tax Relief 96",
         "error": "no regular-growth match"
+      },
+      {
+        "query": "Tata Mid Cap Growth Fund",
+        "selected": "Tata Mid Cap Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
       },
       {
         "query": "Kotak Bluechip Fund",
@@ -3011,12 +3016,17 @@
         "error": "no regular-growth match"
       },
       {
+        "query": "Tata ELSS Tax Saver Fund",
+        "selected": "Tata ELSS - Tax Saver Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
         "query": "UTI Mastershare Unit Scheme",
         "error": "no regular-growth match"
       },
       {
-        "query": "Tata ELSS Tax Saver Fund",
-        "selected": "Tata ELSS - Tax Saver Fund - Regular Plan - Growth Option",
+        "query": "Tata Large & Mid Cap Fund",
+        "selected": "Tata Large & Mid Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -3032,32 +3042,22 @@
         "error": "no regular-growth match"
       },
       {
-        "query": "HSBC Value Fund",
-        "error": "no regular-growth match"
-      },
-      {
-        "query": "Tata Mid Cap Growth Fund",
-        "selected": "Tata Mid Cap Fund - Regular Plan - Growth Option",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
         "query": "Canara Robeco ELSS Tax Saver",
         "selected": "Canara Robeco ELSS - Tax Saver Fund - Regular Plan - GROWTH OPTION",
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "Tata Large & Mid Cap Fund",
-        "selected": "Tata Large & Mid Cap Fund - Regular Plan - Growth Option",
+        "query": "DSP Flexi Cap Fund",
+        "selected": "DSP Flexi Cap Fund - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "HSBC Value Fund",
+        "error": "no regular-growth match"
       },
       {
         "query": "LIC MF Large & Mid Cap Fund",
         "selected": "LIC MF Large & Mid Cap Fund - Regular Plan - Growth",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
-        "query": "DSP Flexi Cap Fund",
-        "selected": "DSP Flexi Cap Fund - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
       }
     ],

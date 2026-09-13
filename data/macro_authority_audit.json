@@ -3,7 +3,7 @@
   "status": "complete",
   "model_version": "3.13-reliability-1",
   "current_snapshot": {
-    "generated_at": "2026-09-13T10:45:26+00:00",
+    "generated_at": "2026-09-13T11:16:32+00:00",
     "macro_score": -0.03995923505344261,
     "macro_context_eligible": true,
     "live_macro_adjustment_pp": 0.0,
