@@ -1,8 +1,8 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "policy_id": "development-residual-source-resolver-v1.2",
   "revision_from": "development-residual-source-resolver-v1.1",
-  "revision_reason": "Before any numerical accounting extraction or holdout inspection, first-party Nestle India investor disclosures were located for the exact missing development reporting periods. V1.2 freezes those issuer-hosted source identities and corrects the annual-source rule for the 15-month transition year. No valuation target was used to select these sources.",
+  "revision_reason": "Before any numerical accounting extraction or holdout inspection, first-party Nestle India investor disclosures were located for the exact missing development reporting periods. V1.2 freezes those issuer-hosted source identities and corrects the annual-source rule for the 15-month transition year. Subsequent GitHub Actions runs demonstrated that www.nestle.in returns HTTP 403 to the CI runner for all six frozen packets; this operational defect is now explicit rather than being mislabeled as 300/300 machine-reproducible coverage. No valuation target was used to select these sources.",
   "research_only": true,
   "live_authority": "none",
   "parent_stage": "development-accounting-source-map-v1",
@@ -31,49 +31,14 @@
     "scope": "NESTLEIND development source identity only; this exception does not generalize to other constituents.",
     "eligibility_rule": "A frozen issuer-hosted result packet is eligible only when its publication date is strictly before the monthly signal date. Date-only issuer publications are conservatively timestamped at 23:59:59 on the stated publication date; same-date use is prohibited without an independently verified dissemination time.",
     "annual_book_rule": "For all six development signals Sep-2023 through Feb-2024, the latest frozen audited annual book source is the 31-Dec-2022 audited result. The 31-Dec-2023 twelve-month result is explicitly unaudited because the transition financial year ran 15 months through 31-Mar-2024 and therefore cannot replace the audited 2022 annual book source.",
+    "ci_retrieval_status": "source identities located and frozen, but GitHub Actions receives HTTP 403 from the issuer CDN for all six packets; these six company-months remain outside machine-reproducible completeness until a reproducible official/exchange mirror or hash-frozen source copy is established",
     "sources": [
-      {
-        "source_id": "nestle-q3-2022",
-        "period_end": "2022-09-30",
-        "publication_date": "2022-10-19",
-        "audited_annual": false,
-        "url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2022-10/Outcome%20of%20Board%20Meeting_19.10.2022.pdf"
-      },
-      {
-        "source_id": "nestle-fy2022-q4",
-        "period_end": "2022-12-31",
-        "publication_date": "2023-02-16",
-        "audited_annual": true,
-        "url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2023-02/Outcome-Board-Meeting-result.pdf"
-      },
-      {
-        "source_id": "nestle-q1-2023",
-        "period_end": "2023-03-31",
-        "publication_date": "2023-04-25",
-        "audited_annual": false,
-        "url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2023-04/BSEOutcomeofBM25042023Signed.pdf"
-      },
-      {
-        "source_id": "nestle-q2-2023",
-        "period_end": "2023-06-30",
-        "publication_date": "2023-07-27",
-        "audited_annual": false,
-        "url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2023-07/BSE_Intimation_27072023_signed-v1.pdf"
-      },
-      {
-        "source_id": "nestle-q3-2023",
-        "period_end": "2023-09-30",
-        "publication_date": "2023-10-19",
-        "audited_annual": false,
-        "url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2023-10/BSENSE19102023signed-v2.pdf"
-      },
-      {
-        "source_id": "nestle-q4-2023",
-        "period_end": "2023-12-31",
-        "publication_date": "2024-02-07",
-        "audited_annual": false,
-        "url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2024-02/Stock%20Exchange%20Intimation%20BSE%26amp%3B%20NSE%2007.02.2024.pdf"
-      }
+      {"source_id":"nestle-q3-2022","period_end":"2022-09-30","publication_date":"2022-10-19","audited_annual":false,"url":"https://www.nestle.in/sites/g/files/pydnoa451/files/2022-10/Outcome%20of%20Board%20Meeting_19.10.2022.pdf"},
+      {"source_id":"nestle-fy2022-q4","period_end":"2022-12-31","publication_date":"2023-02-16","audited_annual":true,"url":"https://www.nestle.in/sites/g/files/pydnoa451/files/2023-02/Outcome-Board-Meeting-result.pdf"},
+      {"source_id":"nestle-q1-2023","period_end":"2023-03-31","publication_date":"2023-04-25","audited_annual":false,"url":"https://www.nestle.in/sites/g/files/pydnoa451/files/2023-04/BSEOutcomeofBM25042023Signed.pdf"},
+      {"source_id":"nestle-q2-2023","period_end":"2023-06-30","publication_date":"2023-07-27","audited_annual":false,"url":"https://www.nestle.in/sites/g/files/pydnoa451/files/2023-07/BSE_Intimation_27072023_signed-v1.pdf"},
+      {"source_id":"nestle-q3-2023","period_end":"2023-09-30","publication_date":"2023-10-19","audited_annual":false,"url":"https://www.nestle.in/sites/g/files/pydnoa451/files/2023-10/BSENSE19102023signed-v2.pdf"},
+      {"source_id":"nestle-q4-2023","period_end":"2023-12-31","publication_date":"2024-02-07","audited_annual":false,"url":"https://www.nestle.in/sites/g/files/pydnoa451/files/2024-02/Stock%20Exchange%20Intimation%20BSE%26amp%3B%20NSE%2007.02.2024.pdf"}
     ]
   },
   "structured_history_rule": "For residual symbols, always query both the default financial-results route and the explicit frozen historical date window and union/deduplicate the records. A non-empty default response is not proof of complete history.",
@@ -88,7 +53,8 @@
     "annual_rule": "A 31-Mar filing is annual only when the official attachment contains an audited indicator after removing the token UNAUDITED. For NESTLEIND development months, annual eligibility is governed exclusively by the frozen issuer annual_book_rule above.",
     "financial_result_metadata_rule": "Eligible announcement metadata must explicitly refer to financial result(s), or to financial statements for an ended reporting period. Generic investor material, trading-window notices and earnings-call material are not sufficient."
   },
-  "success_goal": "Resolve all 30 baseline company-month source gaps using official NSE identity continuity, official NSE filing evidence, or the narrowly frozen first-party NESTLEIND issuer fallback. Anything unresolved remains an explicit gap; no imputation or secondary finance-site substitution is allowed.",
+  "machine_reproducible_result": "294/300 development company-month source chains; the six unresolved rows are NESTLEIND Sep-2023 through Feb-2024 because the frozen issuer packets return HTTP 403 to the CI runner",
+  "success_goal": "Maximise exact point-in-time source coverage without imputation. Machine-reproducible rows must remain explicit, and source identities that are known but not reproducibly retrievable must remain defects rather than being counted as complete.",
   "holdout_guardrail": "No Nifty dashboard or official holdout P/E/P/B/dividend-yield target URL may be requested or stored by this stage.",
   "promotion_effect": "none"
 }
