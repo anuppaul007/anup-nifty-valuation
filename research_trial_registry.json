@@ -1,0 +1,46 @@
+{
+  "registry_version": "2026-09-13-v1",
+  "purpose": "Record materially different research variants so multiple-testing adjustments use an honest trial count rather than the final published winner only.",
+  "families": {
+    "valuation_curve_grid": {
+      "count": 24,
+      "definition": "6 curve slopes x 4 extreme thresholds in scripts/retrospective_core.py",
+      "used_for_dsr_and_pbo": true
+    },
+    "valuation_calibration_family": {
+      "count": 4,
+      "definition": "fixed reference, fixed reference with yield lag, rolling 36m equal lenses, expanding equal lenses",
+      "used_for_dsr_and_pbo": false,
+      "reason": "different eligible windows; reported separately rather than pooled into a false common matrix"
+    },
+    "trend_challenger": {
+      "count": 1,
+      "definition": "pre-registered SMA10 minus 20 percentage point policy",
+      "used_for_dsr_and_pbo": false
+    },
+    "multiasset_parameter_perturbations": {
+      "count": 500,
+      "definition": "deterministic seeded perturbations in scripts/multiasset_robustness.py",
+      "used_for_dsr_and_pbo": false,
+      "reason": "different asset universe and research objective"
+    },
+    "multiasset_funding_modes": {
+      "count": 3,
+      "definition": "proportional, equity-first, debt-first",
+      "used_for_dsr_and_pbo": false
+    },
+    "gold_silver_ratio_calibrations": {
+      "count_minimum": 6,
+      "definition": "3y, 5y, 7y, 10y, expanding, robust median/MAD families",
+      "used_for_dsr_and_pbo": false
+    },
+    "metal_factor_ablations": {
+      "count_minimum": 7,
+      "definition": "one-factor-at-a-time removals across four Gold and three Silver factors",
+      "used_for_dsr_and_pbo": false
+    }
+  },
+  "minimum_logged_variants_across_all_research_families": 545,
+  "warning": "Counts across different samples/objectives are not blindly pooled into one Deflated Sharpe calculation. The robust evaluator uses the exact 24-member valuation-curve family for its DSR/PBO matrix and displays this broader registry as a governance counter.",
+  "automatic_parameter_change": false
+}
