@@ -29,5 +29,17 @@ class BenchmarkAuditTests(unittest.TestCase):
         self.assertIn('dynamic_minus_comparator_cagr_pp',q)
         self.assertIn('dynamic_additional_drawdown_pp',q)
 
+    def test_beta_signature_centers_on_dynamic_mean(self):
+        comps={
+          'expanding_mean_investable':{'comparator_mean_equity_pct':40,'dynamic_minus_comparator_cagr_pp':2.0},
+          'ex_post_realised_mean_static':{'comparator_mean_equity_pct':50,'dynamic_minus_comparator_cagr_pp':1.0},
+          'fixed_60_40_policy':{'comparator_mean_equity_pct':60,'dynamic_minus_comparator_cagr_pp':0.0},
+        }
+        q=ba.comparator_beta_signature(comps,50)
+        self.assertTrue(q['monotone_decreasing_excess_cagr_with_comparator_equity'])
+        self.assertAlmostEqual(q['slope_pp_excess_cagr_per_1pp_comparator_equity'],-0.1,places=12)
+        self.assertAlmostEqual(q['fitted_excess_cagr_at_dynamic_mean_equity_pp'],1.0,places=12)
+        self.assertAlmostEqual(q['fitted_zero_cross_equity_pct'],60.0,places=12)
+
 
 if __name__=='__main__':unittest.main()
