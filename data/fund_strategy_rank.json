@@ -2965,8 +2965,8 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "HDFC Flexi Cap Fund",
-        "selected": "HDFC Flexi Cap Fund - Regular Plan - Growth Option",
+        "query": "Franklin India Flexi Cap Fund",
+        "selected": "Franklin India Flexi Cap Fund - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -2975,12 +2975,8 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "SBI Long Term Equity Fund",
-        "error": "no regular-growth match"
-      },
-      {
-        "query": "Franklin India Flexi Cap Fund",
-        "selected": "Franklin India Flexi Cap Fund - Regular Plan - Growth",
+        "query": "HDFC Flexi Cap Fund",
+        "selected": "HDFC Flexi Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -2989,13 +2985,17 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "SBI Contra Fund",
-        "selected": "SBI CONTRA FUND - Regular Plan - Growth",
-        "error": "no NAV close enough to Jan-2000"
+        "query": "SBI Long Term Equity Fund",
+        "error": "no regular-growth match"
       },
       {
         "query": "Nippon India Growth Fund",
         "selected": "Nippon India Liquid Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "SBI Contra Fund",
+        "selected": "SBI CONTRA FUND - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -3032,13 +3032,13 @@
         "error": "no regular-growth match"
       },
       {
+        "query": "HSBC Value Fund",
+        "error": "no regular-growth match"
+      },
+      {
         "query": "Tata Mid Cap Growth Fund",
         "selected": "Tata Mid Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
-      },
-      {
-        "query": "HSBC Value Fund",
-        "error": "no regular-growth match"
       },
       {
         "query": "Canara Robeco ELSS Tax Saver",

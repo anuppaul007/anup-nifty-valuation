@@ -133,7 +133,7 @@
       }
     ],
     "monotone_decreasing_excess_cagr_with_comparator_equity": true,
-    "slope_pp_excess_cagr_per_1pp_comparator_equity": -0.12128510869363092,
+    "slope_pp_excess_cagr_per_1pp_comparator_equity": -0.12128510869363096,
     "fitted_excess_cagr_at_dynamic_mean_equity_pp": 0.3837226930423661,
     "fitted_zero_cross_equity_pct": 56.70027466168608,
     "r_squared": 0.9754549889358171,
