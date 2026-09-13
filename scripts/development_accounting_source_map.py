@@ -7,12 +7,12 @@ metadata and XBRL template coverage needed before numerical reconstruction.
 """
 from __future__ import annotations
 
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from io import BytesIO
 from pathlib import Path
 import json
 import re
+import time
 import zipfile
 
 import pandas as pd
@@ -27,14 +27,25 @@ UA = pilot.UA
 DATE_START = "01-04-2021"
 DATE_END = "29-02-2024"
 
+FINANCIAL_PAGE = "https://www.nseindia.com/companies-listing/corporate-filings-financial-results"
+ACTIONS_PAGE = "https://www.nseindia.com/companies-listing/corporate-filings-actions"
+
+
+def _bootstrap(session: requests.Session, page: str | None = None) -> None:
+    """Refresh NSE anti-bot cookies without treating bootstrap failure as data."""
+    try:
+        session.cookies.clear()
+        session.get("https://www.nseindia.com/", timeout=15, headers=UA)
+        if page:
+            session.get(page, timeout=15, headers={**UA, "Referer": "https://www.nseindia.com/"})
+    except Exception:
+        pass
+
 
 def _session() -> requests.Session:
     s = requests.Session()
     s.headers.update(UA)
-    try:
-        s.get("https://www.nseindia.com/", timeout=12)
-    except Exception:
-        pass
+    _bootstrap(s)
     return s
 
 
@@ -43,18 +54,38 @@ def _records(data) -> list[dict]:
     return x if isinstance(x, list) else []
 
 
-def _get_json(session: requests.Session, url: str, params: dict) -> list[dict]:
-    r = session.get(url, params=params, timeout=25, headers={**UA, "Accept": "application/json,text/plain,*/*"})
-    r.raise_for_status()
-    return _records(r.json())
+def _get_json(session: requests.Session, url: str, params: dict, *, referer: str) -> list[dict]:
+    """GET an NSE API endpoint with conservative retry/re-bootstrap.
+
+    Parallel NSE API calls frequently trigger 403s. Source collection is kept
+    sequential, and 401/403/429/5xx responses trigger a fresh cookie bootstrap
+    plus bounded backoff. A failure remains a recorded source-routing defect.
+    """
+    last_error: Exception | None = None
+    for attempt in range(3):
+        try:
+            r = session.get(
+                url,
+                params=params,
+                timeout=30,
+                headers={**UA, "Accept": "application/json,text/plain,*/*", "Referer": referer},
+            )
+            r.raise_for_status()
+            time.sleep(0.12)
+            return _records(r.json())
+        except Exception as e:
+            last_error = e
+            _bootstrap(session, referer)
+            time.sleep(0.6 * (attempt + 1))
+    assert last_error is not None
+    raise last_error
 
 
 def parse_signal_date(text: str) -> str:
     m = re.search(r"Constituents\s+of\s+NIFTY\s+50\s+([A-Za-z]+\s+\d{1,2},\s+\d{4})", text, flags=re.I | re.S)
     if not m:
         raise ValueError("constituent snapshot date not found")
-    d = pd.to_datetime(m.group(1), errors="raise")
-    return str(d.date())
+    return str(pd.to_datetime(m.group(1), errors="raise").date())
 
 
 def public_timestamp(record: dict) -> tuple[pd.Timestamp | None, str | None]:
@@ -91,10 +122,11 @@ def template_from_xbrl(url: str | None) -> str | None:
 
 
 def _dedupe(records: list[dict]) -> list[dict]:
+    """Deduplicate complete records, including corporate-action schemas."""
     seen = set()
     out = []
     for r in records:
-        key = (r.get("seqNumber"), r.get("symbol"), r.get("toDate"), r.get("filingDate"), r.get("consolidated"), r.get("xbrl"))
+        key = json.dumps(r, sort_keys=True, default=str, ensure_ascii=False)
         if key in seen:
             continue
         seen.add(key)
@@ -102,39 +134,49 @@ def _dedupe(records: list[dict]) -> list[dict]:
     return out
 
 
+def _attempt(session, url, params, label, referer) -> tuple[list[dict], dict]:
+    try:
+        got = _get_json(session, url, params, referer=referer)
+        return got, {"route": label, "status": "ok", "records": len(got)}
+    except Exception as e:
+        return [], {"route": label, "status": "unavailable", "error": f"{type(e).__name__}: {e}"}
+
+
 def fetch_financial(session: requests.Session, symbol: str, period: str) -> dict:
     url = "https://www.nseindia.com/api/corporates-financial-results"
     base = {"index": "equities", "symbol": symbol, "period": period}
     attempts = []
-    records: list[dict] = []
-    for params, label in (
-        (base, "symbol_default"),
-        ({**base, "from_date": DATE_START, "to_date": DATE_END}, "symbol_explicit_date_window"),
-    ):
-        try:
-            got = _get_json(session, url, params)
-            attempts.append({"route": label, "status": "ok", "records": len(got)})
-            records.extend(got)
-        except Exception as e:
-            attempts.append({"route": label, "status": "unavailable", "error": f"{type(e).__name__}: {e}"})
-    records = _dedupe(records)
-    return {"symbol": symbol, "period": period, "records": records, "attempts": attempts}
+    records, attempt = _attempt(session, url, base, "symbol_default", FINANCIAL_PAGE)
+    attempts.append(attempt)
+    if not records:
+        fallback, attempt = _attempt(
+            session,
+            url,
+            {**base, "from_date": DATE_START, "to_date": DATE_END},
+            "symbol_explicit_date_window",
+            FINANCIAL_PAGE,
+        )
+        attempts.append(attempt)
+        records.extend(fallback)
+    return {"symbol": symbol, "period": period, "records": _dedupe(records), "attempts": attempts}
 
 
 def fetch_actions(session: requests.Session, symbol: str) -> dict:
     url = "https://www.nseindia.com/api/corporates-corporateActions"
+    base = {"index": "equities", "symbol": symbol}
     attempts = []
-    rows: list[dict] = []
-    for params, label in (
-        ({"index": "equities", "symbol": symbol}, "symbol_default"),
-        ({"index": "equities", "symbol": symbol, "from_date": DATE_START, "to_date": DATE_END}, "symbol_explicit_date_window"),
-    ):
-        try:
-            got = _get_json(session, url, params)
-            attempts.append({"route": label, "status": "ok", "records": len(got)})
-            rows.extend(got)
-        except Exception as e:
-            attempts.append({"route": label, "status": "unavailable", "error": f"{type(e).__name__}: {e}"})
+    rows, attempt = _attempt(session, url, base, "symbol_default", ACTIONS_PAGE)
+    attempts.append(attempt)
+    if not rows:
+        fallback, attempt = _attempt(
+            session,
+            url,
+            {**base, "from_date": DATE_START, "to_date": DATE_END},
+            "symbol_explicit_date_window",
+            ACTIONS_PAGE,
+        )
+        attempts.append(attempt)
+        rows.extend(fallback)
     return {"symbol": symbol, "records": _dedupe(rows), "attempts": attempts}
 
 
@@ -246,18 +288,19 @@ def build() -> dict:
     q: dict[str, dict] = {}
     a: dict[str, dict] = {}
     ca: dict[str, dict] = {}
-    def task(sym: str):
-        ss = _session()
-        return sym, fetch_financial(ss, sym, "Quarterly"), fetch_financial(ss, sym, "Annual"), fetch_actions(ss, sym)
-    with ThreadPoolExecutor(max_workers=8) as ex:
-        futs = [ex.submit(task, s) for s in symbols]
-        for f in as_completed(futs):
-            sym, qr, ar, cr = f.result()
-            q[sym], a[sym], ca[sym] = qr, ar, cr
+    # Keep the NSE API traversal sequential. Concurrency creates false 403 gaps.
+    for idx, sym in enumerate(symbols, start=1):
+        if idx > 1 and (idx - 1) % 12 == 0:
+            _bootstrap(session)
+        q[sym] = fetch_financial(session, sym, "Quarterly")
+        a[sym] = fetch_financial(session, sym, "Annual")
+        ca[sym] = fetch_actions(session, sym)
+        time.sleep(0.12)
 
     signal_maps = []
     template_counts: dict[str, int] = {}
     gaps = []
+    complete_keys = set()
     for snap in snapshots:
         month = snap["month"]
         signal = snap["signal_date"]
@@ -277,6 +320,8 @@ def build() -> dict:
                 reason.append("no_eligible_annual_filing")
             if reason:
                 gaps.append({"month": month, "symbol": sym, "reasons": reason})
+            else:
+                complete_keys.add((month, sym))
             companies.append({
                 "symbol": sym,
                 "weight_pct": constituent["weight_pct"],
@@ -302,7 +347,7 @@ def build() -> dict:
         })
 
     result = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
         "research_only": True,
         "live_authority": "none",
@@ -317,12 +362,16 @@ def build() -> dict:
             "development_months": len(snapshots),
             "development_constituent_rows": sum(len(x["companies"]) for x in signal_maps),
             "unique_development_symbols": len(symbols),
-            "company_months_with_complete_ttm_and_annual_sources": sum(not any(g["month"] == s["month"] and g["symbol"] == c["symbol"] for g in gaps) for s in signal_maps for c in s["companies"]),
+            "company_months_with_complete_ttm_and_annual_sources": len(complete_keys),
             "company_months_total": sum(len(x["companies"]) for x in signal_maps),
             "source_gaps": len(gaps),
             "template_counts_in_selected_sources": template_counts,
             "symbols_with_zero_quarterly_records": [x["symbol"] for x in per_symbol if x["quarterly_records"] == 0],
             "symbols_with_zero_annual_records": [x["symbol"] for x in per_symbol if x["annual_records"] == 0],
+            "symbols_with_any_unavailable_route": [
+                x["symbol"] for x in per_symbol
+                if any(a.get("status") != "ok" for a in x["quarterly_attempts"] + x["annual_attempts"] + x["corporate_action_attempts"])
+            ],
             "holdout_target_fetch_count": 0,
         },
         "gaps": gaps,
