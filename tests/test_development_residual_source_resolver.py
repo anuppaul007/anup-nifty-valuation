@@ -1,9 +1,11 @@
 from pathlib import Path
 import importlib.util
 import json
+import sys
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
 SPEC = importlib.util.spec_from_file_location("resolver", ROOT / "scripts" / "development_residual_source_resolver.py")
 resolver = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(resolver)
