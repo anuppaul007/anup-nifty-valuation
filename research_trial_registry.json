@@ -1,12 +1,14 @@
 {
-  "registry_version": "2026-09-13-v2",
-  "purpose": "Record materially different research variants so multiple-testing adjustments use an honest trial count rather than the final published winner only.",
+  "registry_version": "2026-09-13-v3",
+  "purpose": "Record materially different evaluated strategy hypotheses so multiple-testing adjustments use an honest comparable-family trial count rather than only the final published winner.",
+  "family_membership_rule": "Statistical family membership is determined by the hypothesis actually evaluated, return definition and comparable sample, not by whether a variant was called research, production, challenger or a numbered release. If a production version changed an allocation rule or calibration and was evaluated on the same outcome sample as an existing family, it must increase that family's trial burden.",
   "families": {
     "valuation_curve_grid": {
       "count": 24,
       "definition": "6 curve slopes x 4 extreme thresholds in scripts/retrospective_core.py",
       "used_for_dsr_and_pbo": true,
-      "return_series": "each variant's exposure-matched timing residual, not total strategy return"
+      "return_series": "each variant's exposure-matched timing residual, not total strategy return",
+      "why_count_is_currently_24": "These are the reproducible variants currently available on one exact 63-month valuation-core outcome matrix. The count is not protected by their research label; any reconstructed production-lineage hypothesis on this exact matrix must be added before a future DSR/PBO claim."
     },
     "valuation_calibration_family": {
       "count": 4,
@@ -17,7 +19,8 @@
     "trend_challenger": {
       "count": 1,
       "definition": "pre-registered SMA10 minus 20 percentage point policy",
-      "used_for_dsr_and_pbo": false
+      "used_for_dsr_and_pbo": false,
+      "status": "Live only by explicit policy override as crash insurance; historical promotion hurdle failed. Insurance premium/protection must be published separately."
     },
     "mahalanobis_valuation_challenger": {
       "count": 1,
@@ -47,12 +50,24 @@
       "used_for_dsr_and_pbo": false
     }
   },
+  "production_lineage_audit": {
+    "question": "Do numbered V3.x production releases belong inside the exact 24-member valuation-curve DSR/PBO family merely because they touched the same historical data?",
+    "answer": "Not automatically, but intent or production status provides no exemption. A release belongs if its changed investment hypothesis was actually evaluated on the same 63-month outcome matrix under a comparable return definition.",
+    "known_lineage_findings": [
+      "V3.5/V3.6 changes documented in repository history primarily changed macro feed completeness, macro block structure and live macro authority. The strict 63-month DSR/PBO matrix excludes historical macro/earnings overlays because there is no certified same-window point-in-time full-stack history, so these releases cannot currently be represented as comparable columns in that matrix.",
+      "V3.10 changed the P/B methodology-regime calibration. Its clean current-methodology calibration uses a different eligible history, so it is disclosed as a calibration family rather than silently inserted into the 63-month legacy fixed-reference matrix.",
+      "V3.11 changed cheap-side overlay authority and added the SMA10 policy brake. Historical full-stack macro/earnings release vintages are unavailable and the SMA10 rule has its own longer exact-history insurance study, so V3.11 is not a reproducible additional column in the exact valuation-core timing matrix.",
+      "Earlier numbered releases or intermediate commits are not presumed harmless. If repository reconstruction shows that any one changed the valuation curve/calibration and was evaluated against the same 63-month returns, that hypothesis must be added to the comparable family before the next DSR/PBO promotion claim."
+    ],
+    "current_conclusion": "The exact DSR/PBO trial count remains 24 because no additional reproducible production-lineage strategy has yet been demonstrated on that exact common matrix. This is a data/comparability conclusion, not an intent-based exclusion.",
+    "open_action": "Preserve a version-to-hypothesis ledger going forward so every allocation-affecting production experiment records its candidate family, eligible window and whether it consumes a comparable-family trial."
+  },
   "null_families": {
     "circular_shift": "all non-zero rotations of the exact observed target-weight path",
     "ar1_surrogate_signal": "Gaussian AR(1) valuation-composite surrogates calibrated to the observed composite's mean, variance and lag-1 persistence and run through the same live curve, returns and costs"
   },
   "minimum_logged_variants_across_all_research_families": 546,
-  "lineage_policy": "Publication versions and bug fixes are not automatically counted as independent statistical trials. A version enters the trial count only when it represents a materially different strategy hypothesis evaluated against outcomes.",
-  "warning": "Counts across different samples/objectives are not blindly pooled into one Deflated Sharpe calculation. The robust evaluator uses the exact 24-member common-sample valuation-curve family for DSR/PBO and displays the broader registry as a governance counter. Any implemented Mahalanobis challenger that becomes comparable must increase the relevant candidate-family burden before promotion review.",
+  "lineage_policy": "Publication labels, bug-fix labels and research/production intent are not statistical categories. Count materially different investment hypotheses when they are evaluated against a comparable outcome sample; keep incompatible windows/objectives in separately disclosed families rather than either pooling them falsely or omitting them.",
+  "warning": "Counts across different samples/objectives are not blindly pooled into one Deflated Sharpe calculation. The robust evaluator currently uses the exact 24-member common-sample valuation-curve family for DSR/PBO and displays the broader registry separately. Any newly reconstructed comparable lineage member or implemented Mahalanobis challenger must increase the relevant candidate-family burden before promotion review.",
   "automatic_parameter_change": false
 }
