@@ -1,10 +1,12 @@
-/* V3.11: crash-aware live allocation.
- * Valuation references, curve slope and extreme threshold remain unchanged from V3.10.
- * Cheap-side macro/earnings authority is retained, and the frozen SMA10-minus20 rule
- * is promoted as a one-way risk-off brake. See LIVE_V3_11_DECISION.md. */
+/* V3.12: evidence-first live allocation.
+ * Valuation references, curve slope, earnings authority and frozen SMA10-minus20
+ * brake remain unchanged. The macro stack is retained as verified context and a
+ * prospective ±6pp shadow challenger, but has zero live allocation authority
+ * until its decision value can be priced with prospective or certified
+ * release-vintage evidence. */
 (function(root){
 'use strict';
-const C=Object.freeze({peM:22.44,peS:2.08,pbM:3.54,pbS:0.3239941700435707,roeM:16.15402934929392,roeS:0.9884905234449538,dyM:1.25,dyS:.18,gapM:-2.60,gapS:.70,wPE:30,wPB:25,wGAP:30,wDY:10,beta:.60,k:1.35,zc:2.5,macroMax:6,earnMax:6,trendRiskOffPP:20,minMacroCoverage:.999,macroRequiredWeight:1.0});
+const C=Object.freeze({peM:22.44,peS:2.08,pbM:3.54,pbS:0.3239941700435707,roeM:16.15402934929392,roeS:0.9884905234449538,dyM:1.25,dyS:.18,gapM:-2.60,gapS:.70,wPE:30,wPB:25,wGAP:30,wDY:10,beta:.60,k:1.35,zc:2.5,macroMax:0,macroShadowMax:6,earnMax:6,trendRiskOffPP:20,minMacroCoverage:.999,macroRequiredWeight:1.0});
 const finite=x=>typeof x==='number'&&Number.isFinite(x);
 const clip=(x,a,b)=>Math.max(a,Math.min(b,x));
 function ageDays(s,now=new Date()){
@@ -77,20 +79,19 @@ function calculate(d,now=new Date()){
  const earningsComplete=earningsEligible&&earnCoverage>=.999;
  const trendEligible=d.schema_version===4&&packetFresh&&trendIssues.length===0;
  const ea=earningsComplete?clip(en.score,-1,1)*C.earnMax*damp:0;
- const ma=macroEligible?clip(m.score,-1,1)*C.macroMax*damp:0;
+ const ma=0;
+ const macroShadowAdjustment=macroEligible?clip(m.score,-1,1)*C.macroShadowMax*damp:null;
  const trendRiskOff=trendEligible&&t.risk_off===true;
  const ta=trendRiskOff?-C.trendRiskOffPP:0;
- const allocationReady=gOK&&macroEligible&&earningsComplete&&trendEligible;
+ const allocationReady=gOK&&earningsComplete&&trendEligible;
  let holdReason=null;
  if(!gOK)holdReason='current dated India ~10Y yield unavailable';
- else if(!macroPacketValid)holdReason='macro packet or individual observations are stale, incomplete or inconsistent'+(macroIssues.length?': '+macroIssues.join(', '):'');
- else if(!macroEligible)holdReason=`verified macro coverage ${(100*coverage).toFixed(1)}% is below the 100% requirement`;
  else if(!earningsComplete)holdReason='earnings-cycle history is incomplete or stale';
  else if(!trendEligible)holdReason='trend crash-guard input is stale, incomplete or inconsistent'+(trendIssues.length?': '+trendIssues.join(', '):'');
- return{model_version:VERSION,valid:true,allocationReady,L,z,core,damp,ea,ma,ta,trendEligible,trendRiskOff,trendIssues,final:allocationReady?clip(core+ea+ma+ta,0,100):null,coverage,earnCoverage,macroEligible,macroPacketValid,earningsEligible,earningsComplete,macroIssues,gsecEligible:gOK,fundamentalCoverage:used/total,holdReason};
+ return{model_version:VERSION,valid:true,allocationReady,L,z,core,damp,ea,ma,macroShadowAdjustment,macroLiveAuthority:false,macroContextEligible:macroEligible,ta,trendEligible,trendRiskOff,trendIssues,final:allocationReady?clip(core+ea+ta,0,100):null,coverage,earnCoverage,macroEligible,macroPacketValid,earningsEligible,earningsComplete,macroIssues,gsecEligible:gOK,fundamentalCoverage:used/total,holdReason};
 }
 function band(z){if(z<=-2.5)return'extremely low';if(z<-.674)return'low';if(z<-.126)return'below reference';if(z<.126)return'near reference';if(z<.674)return'above reference';if(z<2.5)return'high';return'extremely high';}
-const VERSION='3.11-crash-aware-1';
+const VERSION='3.12-evidence-first-1';
 const api={VERSION,C,FACTORS,verifyMacro,verifyTrend,finite,clip,ageDays,fresh,curve,overlayDamp,calculate,band};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.AnupModel=api;
 })(typeof window!=='undefined'?window:this);
