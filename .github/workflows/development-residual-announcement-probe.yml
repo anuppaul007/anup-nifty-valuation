@@ -1,0 +1,46 @@
+name: Development residual announcement probe
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/development_residual_announcement_probe.py'
+      - '.github/workflows/development-residual-announcement-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Probe unresolved official NSE announcement metadata
+        run: python scripts/development_residual_announcement_probe.py
+      - name: Enforce diagnostic-only scope
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('data/development_residual_announcement_probe.json'))
+          assert x['research_only'] is True
+          assert x['live_authority'] == 'none'
+          assert x['holdout_target_fetch_count'] == 0
+          assert set(x['symbols']) == {'HDFCLIFE','SBILIFE','NESTLEIND'}
+          print({s: {
+            'announcement_records': x['symbols'][s]['announcement_records'],
+            'interesting_records': x['symbols'][s]['interesting_records'],
+            'financial_result_like_records': x['symbols'][s]['financial_result_like_records'],
+            'absolute_nsearchives_attachments': x['symbols'][s]['absolute_nsearchives_attachments'],
+          } for s in x['symbols']})
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: development-residual-announcement-probe
+          path: data/development_residual_announcement_probe.json
+          if-no-files-found: error
