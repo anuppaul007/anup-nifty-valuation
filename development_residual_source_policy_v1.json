@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "policy_id": "development-residual-source-resolver-v1",
+  "research_only": true,
+  "live_authority": "none",
+  "parent_stage": "development-accounting-source-map-v1",
+  "scope": "Only the five residual development symbols from the 270/300 baseline source map. No holdout valuation targets may be fetched.",
+  "residual_symbols": ["HDFCLIFE", "SBILIFE", "LTIM", "TATAMOTORS", "NESTLEIND"],
+  "identity_aliases": {
+    "LTIM": {
+      "current_symbol": "LTM",
+      "reason": "LTIMindtree Limited renamed LTM Limited; NSE symbol changed to LTM effective 2026-04-17.",
+      "official_reference": "NSE/CML/73700 dated 2026-04-10"
+    },
+    "TATAMOTORS": {
+      "current_symbol": "TMPV",
+      "reason": "Old TATAMOTORS security renamed Tata Motors Passenger Vehicles Limited with symbol TMPV effective 2025-10-24 after demerger mechanics.",
+      "official_reference": "NSE/FAOP/70882 dated 2025-10-17"
+    }
+  },
+  "life_insurance_symbols": ["HDFCLIFE", "SBILIFE"],
+  "nestle_calendar_year_rule": "For development dates before Nestle India's FY transition, an audited consolidated 31-Dec result disseminated before the signal cutoff may supply the latest annual book source when the generic Annual endpoint omits that historical record.",
+  "announcement_fallback": {
+    "allowed_host": "nsearchives.nseindia.com",
+    "start_date": "2022-01-01",
+    "end_date": "2024-02-29",
+    "chunk_days": 90,
+    "financial_result_text_required": true,
+    "pdf_period_end_rule": "Use the latest quarter-end date visible in the financial-result attachment that is no later than dissemination date and no more than 120 days old.",
+    "annual_rule": "A 31-Mar filing (or 31-Dec for NESTLEIND under the frozen calendar-year rule) is annual only when the attachment contains an audited indicator after removing the token UNAUDITED."
+  },
+  "success_goal": "Resolve all 30 baseline company-month source gaps using official NSE identity continuity or official NSE filing evidence. Anything unresolved remains an explicit gap; no imputation or secondary finance-site substitution is allowed.",
+  "holdout_guardrail": "No Nifty dashboard or official holdout P/E/P/B/dividend-yield target URL may be requested or stored by this stage.",
+  "promotion_effect": "none"
+}
