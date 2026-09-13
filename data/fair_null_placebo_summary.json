@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "generated_from_workflow_run_id": 34743200357,
+  "research_scope": "valuation core only; no live parameter change",
+  "period": {
+    "first_return_month": "2021-04",
+    "last_return_month": "2026-06",
+    "months": 63
+  },
+  "fair_null": {
+    "static_equity_pct": 53.536467520187294,
+    "dynamic_net_cagr_pct": 8.922713446031395,
+    "beta_matched_static_net_cagr_pct": 8.762585209768382,
+    "dynamic_minus_static_cagr_pp": 0.16012823626301298,
+    "dynamic_max_drawdown_pct": -9.603649549576366,
+    "beta_matched_static_max_drawdown_pct": -8.593167893589237,
+    "dynamic_realised_turnover_x": 5.890908426675395,
+    "static_realised_turnover_x": 0.43593626717150225
+  },
+  "brinson_style_timing": {
+    "allocation_effect_mean_annualized_pp": 0.3183579835735069,
+    "differential_cost_effect_mean_annualized_pp": -0.10514877254304551,
+    "net_timing_mean_annualized_pp": 0.21320921103046128,
+    "net_timing_t_stat": 0.17214675729328466
+  },
+  "placebo": {
+    "method": "all non-zero circular shifts of the actual weight path; plus a seeded 1000-draw resample of those shifts",
+    "unique_nonzero_shifts": 62,
+    "actual_percentile_vs_all_unique_shifts": 61.29032258064516,
+    "actual_percentile_vs_1000_draws": 64.5,
+    "placebo_excess_cagr_pp_p05": -2.33976572637527,
+    "placebo_excess_cagr_pp_median": -0.04065763740448425,
+    "placebo_excess_cagr_pp_p95": 1.6064435800358186,
+    "placebo_excess_cagr_pp_max": 2.1813245478378818,
+    "circular_lag1_dynamic": 0.7066735564328631
+  },
+  "macro_guard_candidate_unit_test": "passed",
+  "interpretation": "The 63-month valuation-core sample does not show strong evidence of timing skill over an exposure-matched static portfolio. The observed timing edge is small, the t-stat is near zero, and the actual path ranks only around the 61st percentile of exact circular-shift placebos. This does not test the full live macro/earnings stack and does not alter the live allocator.",
+  "governance": "Research evidence only. No automatic promotion or live model change."
+}
