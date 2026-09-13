@@ -10,6 +10,8 @@ For representative NIFTY heavyweights it:
   * records short page-local snippets and candidate numeric lines.
 
 No candidate is chosen by closeness to published NIFTY P/B. OCR is not used.
+A parse failure causes a fresh re-download before the company is marked failed,
+so a transient truncated CDN response is not silently treated as source absence.
 """
 from __future__ import annotations
 from datetime import datetime, timezone
@@ -98,10 +100,12 @@ def latest_pit(rows):
     _,b,r,u=q[0];return {'broadcast':str(b),'url':u,'raw':r}
 
 
-def download_pdf(s,url):
-    # Annual-report API sometimes points directly to PDF and sometimes a zip.
-    r=s.get(url,headers={**UA,'Referer':'https://www.nseindia.com/'},timeout=80);r.raise_for_status()
+def download_pdf(s,url,attempt=0):
+    headers={**UA,'Referer':'https://www.nseindia.com/'}
+    if attempt:headers['Cache-Control']='no-cache'
+    r=s.get(url,headers=headers,timeout=80);r.raise_for_status()
     data=r.content
+    if len(data)<1024:raise ValueError('annual_report_response_too_small')
     if data[:4]==b'%PDF':return data,'pdf'
     if data[:2]==b'PK':
         import zipfile
@@ -128,12 +132,25 @@ def probe_pdf(pdf):
             lines=[re.sub(r'\s+',' ',x).strip() for x in text.splitlines() if x.strip()]
             cand=[x for x in lines if NUMERIC_LINE.match(x)]
             balance=any(k in low for k in ('consolidated balance sheet','consolidated statement of financial position'))
-            # Preserve a compact context window around the first balance-sheet/equity match.
             anchor=next((j for j,x in enumerate(lines) if any(k in x.lower() for k in KEYWORDS)),0)
             snippet=lines[max(0,anchor-3):min(len(lines),anchor+9)]
             hits.append({'page':i+1,'has_consolidated_balance_sheet_heading':balance,'candidate_lines':cand[:12],'context_snippet':snippet})
             if len(hits)>=18:break
     return {'pages':pages,'hits':hits}
+
+
+def download_and_probe(s,url,attempts=3):
+    last=None
+    for attempt in range(attempts):
+        try:
+            pdf,fmt=download_pdf(s,url,attempt)
+            return pdf,fmt,probe_pdf(pdf),attempt+1
+        except Exception as e:
+            last=e
+            try:s.get('https://www.nseindia.com/',timeout=15)
+            except Exception:pass
+            time.sleep(.8+attempt)
+    raise last or RuntimeError('annual_report_probe_failed')
 
 
 def main():
@@ -142,12 +159,16 @@ def main():
         try:
             rows=report_rows(s,sym);chosen=latest_pit(rows)
             if not chosen:raise ValueError('no_pit_annual_report')
-            pdf,fmt=download_pdf(s,chosen['url']);probe=probe_pdf(pdf)
-            out[sym]={'report_api_rows':len(rows),'chosen':chosen,'download_format':fmt,'pdf_bytes':len(pdf),**probe}
+            pdf,fmt,probe,attempts=download_and_probe(s,chosen['url'])
+            out[sym]={'report_api_rows':len(rows),'chosen':chosen,'download_format':fmt,'download_attempts':attempts,'pdf_bytes':len(pdf),**probe}
         except Exception as e:errors.append({'symbol':sym,'error':f'{type(e).__name__}: {e}'})
         time.sleep(.4)
-    result={'schema_version':1,'generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'anchor_date':'2026-08-31','symbols':SYMBOLS,'coverage':{'ok':len(out),'required':len(SYMBOLS),'failed':len(errors)},'failed':errors,'cases':out,'selection_guardrail':'Latest PIT annual report by official year/broadcast metadata; PDF lines are surfaced semantically and are not selected by closeness to published NIFTY P/B.','ocr_used':False,'live_model_changed':False,'live_allocation_changed':False,'tolerances_changed':False}
+    result={'schema_version':2,'generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,
+            'anchor_date':'2026-08-31','symbols':SYMBOLS,'coverage':{'ok':len(out),'required':len(SYMBOLS),'failed':len(errors)},'failed':errors,'cases':out,
+            'selection_guardrail':'Latest PIT annual report by official year/broadcast metadata; PDF lines are surfaced semantically and are not selected by closeness to published NIFTY P/B.',
+            'download_guardrail':'A PDF parse failure triggers up to three fresh downloads before source failure is recorded.',
+            'pdfplumber_expected_version':'0.11.10','ocr_used':False,'live_model_changed':False,'live_allocation_changed':False,'tolerances_changed':False}
     OUT.parent.mkdir(parents=True,exist_ok=True);OUT.write_text(json.dumps(result,indent=2,ensure_ascii=False,allow_nan=False),encoding='utf-8')
-    print(json.dumps({'coverage':result['coverage'],'headline':{s:{'broadcast':v['chosen']['broadcast'],'pages':v['pages'],'hit_pages':[h['page'] for h in v['hits'][:8]],'candidate_lines':[x for h in v['hits'] for x in h['candidate_lines'][:2]][:8]} for s,v in out.items()},'failed':errors},indent=2,ensure_ascii=False))
+    print(json.dumps({'coverage':result['coverage'],'headline':{s:{'broadcast':v['chosen']['broadcast'],'pages':v['pages'],'download_attempts':v['download_attempts'],'hit_pages':[h['page'] for h in v['hits'][:8]],'candidate_lines':[x for h in v['hits'] for x in h['candidate_lines'][:2]][:8]} for s,v in out.items()},'failed':errors},indent=2,ensure_ascii=False))
 
 if __name__=='__main__':main()
