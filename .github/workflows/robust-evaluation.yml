@@ -7,11 +7,14 @@ on:
       - 'scripts/robust_evaluation.py'
       - 'scripts/benchmark_audit.py'
       - 'scripts/sma10_insurance_audit.py'
+      - 'scripts/sma10_episode_audit.py'
+      - 'scripts/macro_authority_audit.py'
       - 'scripts/trend_challenger_backtest.py'
       - 'scripts/trend_challenger_backtest_v2.py'
       - 'scripts/update_data_v3.py'
       - 'tests/test_robust_evaluation.py'
       - 'tests/test_benchmark_audit.py'
+      - 'tests/test_sma10_episode_audit.py'
       - 'tests/test_live_v311.py'
       - 'tests/model.test.cjs'
       - 'robust_evaluation_policy.json'
@@ -33,6 +36,7 @@ on:
       - 'MULTIASSET.md'
       - '.github/workflows/refresh-data.yml'
       - '.github/workflows/robust-evaluation.yml'
+      - '.github/workflows/insurance-audit.yml'
 
 permissions:
   contents: read
@@ -40,7 +44,7 @@ permissions:
 jobs:
   evidence-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -58,6 +62,10 @@ jobs:
         run: python scripts/benchmark_audit.py
       - name: Price SMA10 crash insurance
         run: python scripts/sma10_insurance_audit.py
+      - name: Attribute SMA10 drawdown episodes
+        run: python scripts/sma10_episode_audit.py
+      - name: Audit macro decision authority
+        run: python scripts/macro_authority_audit.py
       - name: Validate fail-closed output schema
         run: |
           python - <<'PY'
@@ -80,11 +88,13 @@ jobs:
           assert 'ar1_surrogate_placebo_95th_percentile' in d['gate_matrix']
           assert d['governance']
           b=json.loads(Path('data/benchmark_audit.json').read_text())
-          assert b['status']=='complete' and b['months']==63
+          assert b['schema_version']==2 and b['status']=='complete' and b['months']==63
           assert b['comparators']['ex_post_realised_mean_static']['available_ex_ante'] is False
           assert b['comparators']['fixed_60_40_policy']['available_ex_ante'] is True
           assert b['comparators']['expanding_mean_investable']['available_ex_ante'] is True
           assert b['observed_tradeoff_sentence'].startswith('Over the tested window, moving equity exposure added ')
+          assert b['decision_relevant_60_40_sentence'].startswith('Against a pre-declared 60/40 policy')
+          assert b['comparator_beta_signature']['status']=='descriptive_three_point_geometry_only'
           assert b['observed_effect_scale']['status']=='heuristic_only'
           ins=json.loads(Path('data/sma10_insurance_audit.json').read_text())
           assert ins['status']=='complete'
@@ -93,7 +103,14 @@ jobs:
           assert 'max_daily_drawdown_avoided_pp' in ins['same_63_calendar_return_months']
           assert 'cagr_premium_paid_pp_per_year' in ins['longest_exact_shared_history']
           assert 'max_daily_drawdown_avoided_pp' in ins['longest_exact_shared_history']
-          print(json.dumps({'decision':d['decision'],'gates':d['gate_matrix'],'dsr':mt['live_variant'].get('probability'),'pbo':mt['cscv'].get('pbo'),'ar1':d['ar1_surrogate_null'].get('actual_excess_cagr_percentile'),'benchmark':b,'insurance':ins},separators=(',',':')))
+          epi=json.loads(Path('data/sma10_episode_audit.json').read_text())
+          assert epi['status']=='complete' and len(epi['top_five_drawdown_episodes'])==5
+          assert epi['covid_feb_sep_2020']['first_risk_off_transition'] is not None
+          mac=json.loads(Path('data/macro_authority_audit.json').read_text())
+          assert mac['status']=='complete'
+          assert mac['historical_economic_pricing']['status']=='unavailable'
+          assert mac['operational_risk']['wrong_but_plausible_monthly_probability'] is None
+          print(json.dumps({'decision':d['decision'],'gates':d['gate_matrix'],'dsr':mt['live_variant'].get('probability'),'pbo':mt['cscv'].get('pbo'),'ar1':d['ar1_surrogate_null'].get('actual_excess_cagr_percentile'),'benchmark':b,'insurance':ins,'episodes':epi,'macro':mac},separators=(',',':')))
           PY
       - name: Macro crash-guard candidate test
         run: node tests/macro_guard_candidate.test.cjs
@@ -104,3 +121,5 @@ jobs:
             data/robust_evaluation.json
             data/benchmark_audit.json
             data/sma10_insurance_audit.json
+            data/sma10_episode_audit.json
+            data/macro_authority_audit.json
