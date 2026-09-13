@@ -1,6 +1,8 @@
 {
-  "schema_version": 1,
-  "policy_id": "development-residual-source-resolver-v1",
+  "schema_version": 2,
+  "policy_id": "development-residual-source-resolver-v1.1",
+  "revision_from": "development-residual-source-resolver-v1",
+  "revision_reason": "The diagnostic-only announcement probe showed two source-routing defects before any numerical reconstruction or holdout inspection: official NSE announcement metadata already states the result period end for life insurers, while the generic financial-results default route can return a non-empty but incomplete history for NESTLEIND. V1.1 fixes those source-collection defects without using valuation outcomes.",
   "research_only": true,
   "live_authority": "none",
   "parent_stage": "development-accounting-source-map-v1",
@@ -19,15 +21,18 @@
     }
   },
   "life_insurance_symbols": ["HDFCLIFE", "SBILIFE"],
-  "nestle_calendar_year_rule": "For development dates before Nestle India's FY transition, an audited consolidated 31-Dec result disseminated before the signal cutoff may supply the latest annual book source when the generic Annual endpoint omits that historical record.",
+  "nestle_calendar_year_rule": "For development dates before Nestle India's FY transition, an audited consolidated or standalone 31-Dec result disseminated before the signal cutoff may supply the latest annual book source when the generic Annual endpoint omits that historical calendar-year record. Consolidated remains preferred where available.",
+  "structured_history_rule": "For residual symbols, always query both the default financial-results route and the explicit frozen historical date window and union/deduplicate the records. A non-empty default response is not proof of complete history.",
   "announcement_fallback": {
     "allowed_host": "nsearchives.nseindia.com",
     "start_date": "2022-01-01",
     "end_date": "2024-02-29",
     "chunk_days": 90,
     "financial_result_text_required": true,
-    "pdf_period_end_rule": "Use the latest quarter-end date visible in the financial-result attachment that is no later than dissemination date and no more than 120 days old.",
-    "annual_rule": "A 31-Mar filing (or 31-Dec for NESTLEIND under the frozen calendar-year rule) is annual only when the attachment contains an audited indicator after removing the token UNAUDITED."
+    "metadata_period_end_rule": "First use an exact period-end statement in official NSE announcement metadata such as 'period ended June 30, 2023', 'quarter ... ended September 30, 2022', or a quarter-end month/year phrase such as 'period ended June 2022'. Month/year inference is allowed only for Mar/Jun/Sep/Dec and maps to the corresponding calendar quarter end.",
+    "pdf_period_end_fallback_rule": "If official announcement metadata does not state the period end, use the latest quarter-end date visible in the official financial-result attachment that is no later than dissemination date and no more than 120 days old.",
+    "annual_rule": "A 31-Mar filing (or 31-Dec for NESTLEIND under the frozen calendar-year rule) is annual only when the official attachment contains an audited indicator after removing the token UNAUDITED.",
+    "financial_result_metadata_rule": "Eligible announcement metadata must explicitly refer to financial result(s), or to financial statements for an ended reporting period. Generic investor material, trading-window notices and earnings-call material are not sufficient."
   },
   "success_goal": "Resolve all 30 baseline company-month source gaps using official NSE identity continuity or official NSE filing evidence. Anything unresolved remains an explicit gap; no imputation or secondary finance-site substitution is allowed.",
   "holdout_guardrail": "No Nifty dashboard or official holdout P/E/P/B/dividend-yield target URL may be requested or stored by this stage.",
