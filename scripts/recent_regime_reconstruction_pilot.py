@@ -62,13 +62,6 @@ def weights_zip_url(month: str) -> str:
     return f"https://www.niftyindices.com/Indices_-_Market_Capitalisation_and_Weightage/indices_data{mixed}.zip"
 
 
-def normalise_company_name(name: str) -> str:
-    x = str(name).upper().replace("&", " AND ")
-    x = re.sub(r"\bLIMITED\b|\bLTD\b|\bLTD\.\b", " ", x)
-    x = re.sub(r"[^A-Z0-9]+", " ", x)
-    return re.sub(r"\s+", " ", x).strip()
-
-
 def target_fetch_allowed(month: str, policy: dict) -> bool:
     return month in set(policy["sample"]["development_months"])
 
@@ -131,98 +124,173 @@ def _weight_pdf_member(names: list[str], month: str) -> str:
     return sorted(scored)[0][2]
 
 
-def parse_weight_table(text: str) -> tuple[list[dict], dict]:
-    """Best-effort parser for the official monthly NIFTY 50 weight PDF.
+def _numbers(line: str) -> list[float]:
+    return [float(x.replace(",", "")) for x in re.findall(r"(?<![A-Za-z0-9])\d[\d,]*(?:\.\d+)?", line)]
 
-    It deliberately fails closed unless exactly 50 plausible constituent rows
-    are isolated and the displayed weights sum close to 100%.
+
+def _preceding_weight(lines: list[str], idx: int) -> float | None:
+    """Find a wrapped row's weight on the nearest preceding nonblank line."""
+    for j in range(idx - 1, max(-1, idx - 4), -1):
+        raw = lines[j].strip()
+        if not raw:
+            continue
+        # Do not steal a weight from the preceding security row.
+        if re.match(r"^[A-Z0-9&-]{2,20}\s+", raw):
+            return None
+        nums = _numbers(raw)
+        if nums:
+            x = nums[-1]
+            if 0 < x < 30:
+                return x
+        return None
+    return None
+
+
+def parse_weight_table(text: str) -> tuple[list[dict], dict]:
+    """Parse official NIFTY 50 symbol/close/index-MCap/weight rows.
+
+    The official PDF exposes the historical security symbol directly. Some long
+    security names wrap onto a line above the symbol, and in those rows the
+    displayed weight may sit on that preceding line. We therefore anchor on the
+    Symbol column and recover a preceding weight only when the symbol line has
+    close price and index market cap but no weight.
     """
     lines = text.splitlines()
-    header_idx = None
+    rows: list[dict] = []
+    seen = set()
+    header_found = any("symbol" in x.lower() and "weight" in x.lower() for x in lines[:40])
     for i, raw in enumerate(lines):
-        low = raw.lower()
-        if "weight" in low and ("company" in low or "constituent" in low or "security" in low):
-            header_idx = i
-            break
-    scan = lines[header_idx + 1:] if header_idx is not None else lines
-    candidates: list[dict] = []
-    for raw in scan:
-        stripped = raw.strip()
-        low = stripped.lower()
-        if not stripped:
-            continue
-        if any(k in low for k in ("sector representation", "industry representation", "disclaimer", "nse indices limited", "contact us")):
-            if candidates:
-                break
-            continue
-        m = re.search(r"\s([0-9]+(?:\.[0-9]+)?)\s*$", raw)
+        m = re.match(r"^\s*([A-Z0-9&-]{2,20})\s+", raw)
         if not m:
             continue
-        weight = float(m.group(1))
-        if not (0 < weight < 30):
+        symbol = m.group(1)
+        if symbol in {"SYMBOL", "NIFTY", "INDEX", "NSE"} or symbol in seen:
             continue
-        left = raw[:m.start()].rstrip()
-        parts = [re.sub(r"\s+", " ", x).strip() for x in re.split(r"\s{2,}", left) if x.strip()]
-        if not parts:
+        nums = _numbers(raw[m.end():])
+        if len(nums) < 2:
             continue
-        company = parts[0]
-        if len(company) < 2 or company.lower() in {"company", "company name", "constituent"}:
+        if len(nums) >= 3 and 0 < nums[-1] < 30:
+            close_price, index_mcap, weight = nums[-3], nums[-2], nums[-1]
+            weight_source = "symbol_line"
+        else:
+            close_price, index_mcap = nums[-2], nums[-1]
+            weight = _preceding_weight(lines, i)
+            weight_source = "preceding_wrapped_line"
+        if weight is None:
             continue
-        candidates.append({"company": company, "weight_pct": weight, "raw": re.sub(r"\s+", " ", raw).strip()})
-        if len(candidates) >= 50:
-            # Some PDFs have additional sector tables after the constituent table.
+        if close_price <= 0 or index_mcap <= 0 or not (0 < weight < 30):
+            continue
+        row = {
+            "symbol": symbol,
+            "close_price": close_price,
+            "index_mcap_crore": index_mcap,
+            "weight_pct": weight,
+            "weight_source": weight_source,
+            "raw_symbol_line": re.sub(r"\s+", " ", raw).strip(),
+        }
+        rows.append(row)
+        seen.add(symbol)
+        if len(rows) == 50:
             break
-    total = sum(x["weight_pct"] for x in candidates)
-    ok = len(candidates) == 50 and 98.5 <= total <= 101.5
+    total = sum(x["weight_pct"] for x in rows)
+    ok = len(rows) == 50 and 98.5 <= total <= 101.5 and len({x["symbol"] for x in rows}) == 50
     diagnostics = {
-        "header_found": header_idx is not None,
-        "candidate_rows": len(candidates),
+        "header_found": header_found,
+        "candidate_rows": len(rows),
+        "unique_symbols": len({x["symbol"] for x in rows}),
         "weight_sum_pct": total,
         "strict_ok": ok,
+        "wrapped_weight_rows": sum(x["weight_source"] == "preceding_wrapped_line" for x in rows),
     }
-    return (candidates if ok else []), diagnostics
+    return (rows if ok else []), diagnostics
 
 
-def parse_security_master(raw: bytes) -> dict[str, list[dict]]:
+def parse_security_master_symbols(raw: bytes) -> set[str]:
     text = raw.decode("utf-8", errors="replace").lstrip("\ufeff")
     reader = csv.DictReader(StringIO(text))
-    out: dict[str, list[dict]] = {}
+    out = set()
     for row in reader:
         symbol = (row.get("SYMBOL") or row.get("Symbol") or "").strip()
-        company = (row.get("NAME OF COMPANY") or row.get("NAME_OF_COMPANY") or row.get("NAME") or "").strip()
-        if not symbol or not company:
-            continue
-        out.setdefault(normalise_company_name(company), []).append({"symbol": symbol, "company": company})
+        if symbol:
+            out.add(symbol)
     return out
 
 
-def map_weights_to_symbols(rows: list[dict], security_master: dict[str, list[dict]]) -> tuple[list[dict], list[str]]:
-    mapped = []
-    unresolved = []
-    for row in rows:
-        matches = security_master.get(normalise_company_name(row["company"]), [])
-        if len(matches) == 1:
-            mapped.append({**row, "symbol": matches[0]["symbol"], "symbol_match": "exact_normalised_company_name"})
-        else:
-            mapped.append({**row, "symbol": None, "symbol_match": "unresolved"})
-            unresolved.append(row["company"])
-    return mapped, unresolved
+def _records_from_json(data) -> list[dict]:
+    records = data if isinstance(data, list) else (data.get("data") if isinstance(data, dict) else [])
+    return records if isinstance(records, list) else []
 
 
-def probe_financial_api_schema(session: requests.Session, symbol: str) -> dict:
+def probe_financial_api(session: requests.Session, symbol: str, include_schema: bool = False) -> dict:
     url = "https://www.nseindia.com/api/corporates-financial-results"
     try:
         r = session.get(url, params={"index": "equities", "symbol": symbol, "period": "Quarterly"}, timeout=20,
                         headers={**UA, "Accept": "application/json,text/plain,*/*", "Referer": "https://www.nseindia.com/companies-listing/corporate-filings-financial-results"})
         r.raise_for_status()
-        data = r.json()
-        records = data if isinstance(data, list) else (data.get("data") if isinstance(data, dict) else [])
-        records = records if isinstance(records, list) else []
-        sample = records[0] if records else {}
-        keys = sorted(str(k) for k in sample.keys()) if isinstance(sample, dict) else []
-        link_keys = sorted(k for k in keys if any(t in k.lower() for t in ("xbrl", "link", "url", "file")))
-        date_keys = sorted(k for k in keys if any(t in k.lower() for t in ("date", "time")))
-        return {"symbol": symbol, "status": "ok", "records": len(records), "keys": keys, "link_keys": link_keys, "date_keys": date_keys}
+        records = _records_from_json(r.json())
+        filing_dates = []
+        consolidated_rows = 0
+        standalone_rows = 0
+        xbrl_rows = 0
+        for rec in records:
+            if not isinstance(rec, dict):
+                continue
+            d = pd.to_datetime(rec.get("filingDate"), errors="coerce", dayfirst=True)
+            if not pd.isna(d):
+                filing_dates.append(d)
+            c = str(rec.get("consolidated", "")).lower()
+            consolidated_rows += int("consolidated" in c)
+            standalone_rows += int("standalone" in c)
+            xbrl_rows += int(bool(rec.get("xbrl")))
+        out = {
+            "symbol": symbol,
+            "status": "ok",
+            "records": len(records),
+            "earliest_filing_date": str(min(filing_dates).date()) if filing_dates else None,
+            "latest_filing_date": str(max(filing_dates).date()) if filing_dates else None,
+            "consolidated_rows": consolidated_rows,
+            "standalone_rows": standalone_rows,
+            "xbrl_rows": xbrl_rows,
+        }
+        if include_schema:
+            sample = records[0] if records else {}
+            keys = sorted(str(k) for k in sample.keys()) if isinstance(sample, dict) else []
+            out["keys"] = keys
+            out["link_keys"] = sorted(k for k in keys if any(t in k.lower() for t in ("xbrl", "link", "url", "file")))
+            out["date_keys"] = sorted(k for k in keys if any(t in k.lower() for t in ("date", "time")))
+        return out
+    except Exception as e:
+        return {"symbol": symbol, "status": "unavailable", "error": f"{type(e).__name__}: {e}"}
+
+
+def probe_corporate_actions_api(session: requests.Session, symbol: str) -> dict:
+    url = "https://www.nseindia.com/api/corporates-corporateActions"
+    try:
+        r = session.get(url, params={"index": "equities", "symbol": symbol}, timeout=20,
+                        headers={**UA, "Accept": "application/json,text/plain,*/*", "Referer": "https://www.nseindia.com/companies-listing/corporate-filings-actions"})
+        r.raise_for_status()
+        records = _records_from_json(r.json())
+        dividend_rows = 0
+        dated = []
+        for rec in records:
+            if not isinstance(rec, dict):
+                continue
+            text = " ".join(str(v) for v in rec.values()).lower()
+            dividend_rows += int("dividend" in text)
+            for key, value in rec.items():
+                if not isinstance(value, str) or not any(t in str(key).lower() for t in ("date", "time")):
+                    continue
+                d = pd.to_datetime(value, errors="coerce", dayfirst=True)
+                if not pd.isna(d):
+                    dated.append(d)
+        return {
+            "symbol": symbol,
+            "status": "ok",
+            "records": len(records),
+            "dividend_rows": dividend_rows,
+            "earliest_dated_record": str(min(dated).date()) if dated else None,
+            "latest_dated_record": str(max(dated).date()) if dated else None,
+        }
     except Exception as e:
         return {"symbol": symbol, "status": "unavailable", "error": f"{type(e).__name__}: {e}"}
 
@@ -235,21 +303,26 @@ def build() -> dict:
 
     session = _session()
     security_master_url = "https://archives.nseindia.com/content/equities/EQUITY_L.csv"
-    security_master = {}
-    security_master_status = {"status": "unavailable"}
+    security_master_symbols: set[str] = set()
+    security_master_status = {"status": "unavailable", "url": security_master_url}
     try:
         raw_master = _get_bytes(session, security_master_url)
-        security_master = parse_security_master(raw_master)
-        security_master_status = {"status": "ok", "rows_normalised": len(security_master), "sha256": sha256_bytes(raw_master), "url": security_master_url}
+        security_master_symbols = parse_security_master_symbols(raw_master)
+        security_master_status = {
+            "status": "ok",
+            "symbols": len(security_master_symbols),
+            "sha256": sha256_bytes(raw_master),
+            "url": security_master_url,
+        }
     except Exception as e:
-        security_master_status = {"status": "unavailable", "error": f"{type(e).__name__}: {e}", "url": security_master_url}
+        security_master_status["error"] = f"{type(e).__name__}: {e}"
 
     month_rows = []
     debug_chunks = []
     dev_targets_ok = 0
     weights_ok = 0
-    mapped_total = 0
-    mapped_possible = 0
+    parsed_symbol_rows = 0
+    current_master_symbol_matches = 0
 
     for month in months:
         row = {
@@ -267,7 +340,7 @@ def build() -> dict:
                 pdf_raw = z.read(member)
             text = pdf_to_text(pdf_raw)
             parsed, diagnostics = parse_weight_table(text)
-            mapped, unresolved = map_weights_to_symbols(parsed, security_master) if parsed and security_master else (parsed, [x["company"] for x in parsed])
+            current_matches = sum(1 for x in parsed if x["symbol"] in security_master_symbols)
             row["weights"] = {
                 "url": weights_zip_url(month),
                 "status": "ok" if parsed else "unparsed",
@@ -275,14 +348,13 @@ def build() -> dict:
                 "pdf_member": member,
                 "pdf_sha256": sha256_bytes(pdf_raw),
                 "diagnostics": diagnostics,
-                "constituents": mapped,
-                "symbol_exact_matches": sum(1 for x in mapped if x.get("symbol")),
-                "unresolved_company_names": unresolved,
+                "constituents": parsed,
+                "current_security_master_symbol_matches": current_matches,
             }
             if parsed:
                 weights_ok += 1
-                mapped_total += sum(1 for x in mapped if x.get("symbol"))
-                mapped_possible += len(mapped)
+                parsed_symbol_rows += len(parsed)
+                current_master_symbol_matches += current_matches
             if month == policy["sample"]["development_months"][0]:
                 debug_chunks.append(f"===== {month} WEIGHT PDF TEXT =====\n{text[:16000]}")
         except Exception as e:
@@ -299,15 +371,17 @@ def build() -> dict:
                 row["official_target"] = {"status": "unavailable", "url": dashboard_url(month), "error": f"{type(e).__name__}: {e}"}
         month_rows.append(row)
 
-    probe_symbols = ["RELIANCE", "HDFCBANK", "ICICIBANK", "TCS", "INFY", "ITC", "LT", "SBIN"]
-    schema_probes = [probe_financial_api_schema(session, s) for s in probe_symbols]
+    unique_symbols = sorted({c["symbol"] for m in month_rows for c in m["weights"].get("constituents", [])})
+    schema_symbols = {"RELIANCE", "HDFCBANK", "ICICIBANK", "TCS", "INFY", "ITC", "LT", "SBIN"}
+    financial_coverage = [probe_financial_api(session, s, include_schema=s in schema_symbols) for s in unique_symbols]
+    corporate_action_coverage = [probe_corporate_actions_api(session, s) for s in unique_symbols]
 
     holdout_values_present = any(
         x["tranche"] == "holdout" and any(k in x["official_target"] for k in ("pe", "pb", "dividend_yield_pct"))
         for x in month_rows
     )
     result = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
         "policy_id": policy["policy_id"],
         "research_only": True,
@@ -321,14 +395,20 @@ def build() -> dict:
             "holdout_months": sum(x["tranche"] == "holdout" for x in month_rows),
             "development_targets_ok": dev_targets_ok,
             "weight_snapshots_strict_ok": weights_ok,
-            "symbol_exact_matches": mapped_total,
-            "symbol_rows_possible": mapped_possible,
+            "parsed_symbol_rows": parsed_symbol_rows,
+            "symbol_rows_possible": 50 * len(month_rows),
+            "unique_historical_symbols": len(unique_symbols),
+            "current_security_master_symbol_matches": current_master_symbol_matches,
+            "financial_api_symbols_ok": sum(x.get("status") == "ok" for x in financial_coverage),
+            "corporate_action_symbols_ok": sum(x.get("status") == "ok" for x in corporate_action_coverage),
             "holdout_target_values_present": holdout_values_present,
         },
         "security_master": security_master_status,
-        "financial_api_schema_probes": schema_probes,
+        "unique_historical_symbols": unique_symbols,
+        "financial_api_coverage": financial_coverage,
+        "corporate_action_api_coverage": corporate_action_coverage,
         "holdout_guardrail": "Holdout official target values were not requested by this script and must remain absent until the reconstruction implementation is frozen.",
-        "interpretation_guardrail": "Source accessibility and parser coverage are not reconstruction accuracy. This artifact cannot strengthen the timing-efficacy verdict or change V3.13.",
+        "interpretation_guardrail": "Source accessibility and parser coverage are not reconstruction accuracy. The official weight PDF's index market-cap field is an adjusted index contribution, not by itself a substitute for the full-company market-cap basis required to combine unadjusted company earnings/book/dividends. This artifact cannot strengthen the timing-efficacy verdict or change V3.13.",
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n", encoding="utf-8")
