@@ -1,33 +1,51 @@
-# Independent robustness audit — 12 September 2026
+# Independent robustness audit — updated 13 September 2026
 
-**The evidence does not support “no issues,” maximum returns, or treating 81% equity as a validated recommendation.** V3.7 corrects implementation defects and makes model uncertainty visible. It preserves the existing V3.6 economic weights and allocation parameters rather than selecting a new portfolio after looking at historical outcomes.
+**The evidence still does not establish that the live rule is an optimal portfolio or that it reliably beats a simpler exposure-matched static allocation.** V3.11 changes the live risk-control policy, not the historical evidence standard.
 
-## What the backtest actually establishes
+## Current live model: V3.11 crash-aware
 
-The existing study uses April 2021–July 2026 data and 63 next-month returns. It tests the valuation core, **without the earnings or macro overlays**. Current fixed reference constants were not demonstrably frozen in April 2021. Monthly OECD yields are current-vintage data, with no historical publication timestamps. Consequently, next-month signal shifting alone does not establish a point-in-time, out-of-sample macro strategy test.
+The live engine is now `3.11-crash-aware-1`.
 
-The prospective ledger currently contains one signal month and zero realized 6- or 12-month outcomes. Its future overlapping 12-month observations will not be independent samples. Its numerical review gate is a governance rule, not statistical proof, and does not automatically change the live allocation.
+For the published 11 September 2026 NIFTY observation, the current components are approximately:
 
-## Defects corrected
+- Valuation core: **80.80% equity**.
+- Earnings-cycle adjustment: **-1.76 percentage points**.
+- Macro adjustment: **-0.24 percentage points**.
+- SMA10 crash guard: **-20.00 percentage points** because the completed August NIFTY close, 24,080.4, is below its 10-month average of 24,503.83.
+- Live equity/debt signal: **58.81% / 41.19%** before the separate Gold/Silver research layer.
 
-| Issue | Correction |
-|---|---|
-| Drawdown started after the first return, ignoring a loss from the initial investment | Include starting wealth of 1 before accumulating returns |
-| Turnover compared consecutive target percentages, ignoring market drift | Calculate the previous portfolio's post-return equity weight, then charge rebalancing costs before the following return |
-| Fixed balanced benchmarks appeared free of rebalancing costs | New independent comparisons apply the same drift-aware cost assumption to fixed and dynamic portfolios |
-| Missing calendar months could become one purported monthly return | Reject non-contiguous panels rather than misannualize returns |
-| Wider-endpoint prospective candidates still used the original endpoint's overlay damping | Recompute damping separately for each candidate endpoint |
-| Prospective snapshots checked scores and coverage but not the live engine's date gates | Invoke the same allocation engine used by the website before admitting a snapshot |
-| A freshly generated packet could carry stale factors labelled live, or an inconsistent aggregate score | Revalidate every required observation date and component score, and reconstruct the aggregate, in the browser and ledger |
-| A late refresh could rewrite an already closed month's ledger entry | Replace snapshots only within the current calendar month |
-| Multi-series SDMX responses could silently collapse to one observation per date | Reject duplicate periods as an ambiguous source response |
-| A precise headline allocation suggested more evidence than exists | Label it a research signal and show assumption ranges, severe macro scenarios and five-year earnings/valuation scenarios |
+Two V3.11 risk controls are live:
 
-The full refresh continues to isolate source failures. Monthly data retain their observation dates; daily refresh does not pretend CPI, IIP or REER are daily observations. No missing factor is assigned a neutral score to satisfy the complete-input gate.
+1. When valuation is below reference, the bounded macro and earnings overlays retain full authority instead of being damped toward zero as valuation becomes cheaper.
+2. The frozen `trend-sma10-minus20-v1` rule is a one-way brake: risk-off subtracts 20 percentage points from equity; it never adds equity. Missing or stale trend data withhold the allocation.
 
-## Corrected historical results
+This fixes the specific structural pathology in the earlier surface where an extreme-cheap valuation endpoint could coexist with effectively zero macro authority. It does **not** prove that the new policy adds alpha or prevents gap risk.
 
-Computed from the repository's saved source panel, with 10 bps per 100% one-way turnover. Initial acquisition costs and taxes are excluded. Drawdown is measured at month ends; intramonth losses can be larger. Debt is the NIFTY 10 Year Benchmark G-Sec index, which has material duration risk.
+## The most important sentence on the site
+
+**The historical valuation-timing rule has not yet been shown to beat a static portfolio with the same average equity exposure after costs with sufficient statistical confidence.**
+
+That statement is more informative than a long list of caveats. It should be read before the live percentage.
+
+## What the strict evaluator already tests
+
+The repository's `scripts/robust_evaluation.py` now performs several tests that are not obvious from the older public audit text:
+
+- **Exposure-matched static benchmark.** The dynamic valuation-core portfolio is compared with a static equity weight equal to the dynamic rule's own realised mean equity exposure.
+- **Timing decomposition.** The net monthly return difference between dynamic and exposure-matched static portfolios is isolated rather than attributing all return to timing skill.
+- **Placebo timing test.** Every non-zero circular shift of the exact target-weight path is tested, preserving the same target-weight distribution while breaking its calendar alignment with returns.
+- **Paired moving-block bootstrap.** Timing differences are bootstrapped using 3-, 6- and 12-month blocks and reported with 95% intervals.
+- **Deflated Sharpe diagnostic.** The live curve is evaluated against the expected maximum Sharpe from the exact 24-member valuation-curve family.
+- **CSCV / PBO.** Eight-slice combinatorially symmetric cross-validation estimates the probability of backtest overfitting for that same 24-member family.
+- **Autocorrelation-aware effective sample size.** Persistence in monthly timing differences is made explicit rather than treating every overlapping observation as independent.
+- **Lens redundancy.** The correlation matrix and eigenvalue participation ratio estimate how many effectively independent valuation dimensions the four displayed lenses actually contain.
+- **Trial registry.** Research families are counted separately rather than pretending only the final published variant was ever tried.
+
+These are useful diagnostics, but they apply to the available valuation-core history. They are **not** a certified release-vintage backtest of the complete V3.11 model with macro, earnings and the live trend guard.
+
+## Corrected historical valuation-core results
+
+The saved common panel uses 10 bps per 100% one-way turnover. Initial acquisition costs and taxes are excluded. Drawdown is measured at month ends, so intramonth losses can be larger. Debt is the NIFTY 10 Year Benchmark G-Sec total-return index and therefore carries meaningful duration risk.
 
 | Same full 63-month return window | CAGR | Monthly-sampled max drawdown | Calmar |
 |---|---:|---:|---:|
@@ -36,13 +54,11 @@ Computed from the repository's saved source panel, with 10 bps per 100% one-way 
 | Monthly rebalanced 70/30 | 9.79% | -10.77% | 0.909 |
 | 100% NIFTY total-return index | 11.58% | -14.68% | 0.789 |
 
-The corrections are small in this particular sample, but the original claim of superior allocation is still unsupported. The initial-drawdown defect does not imply that this particular sample's maximum drawdown changed materially.
+Those numbers do not establish superiority. The full comparable sample is short and excludes both the 2008 crisis and the March 2020 crash.
 
-## New calibration and publication-lag sensitivity
+## Calibration and publication-lag sensitivity
 
-New research alternatives use medians and median absolute deviations from earlier months only. They give equal weights to P/E, P/B, dividend yield and earnings-yield spread, without the original implied-profitability correction. This is a combined calibration-and-weighting sensitivity, not a clean test of calibration alone. It remains a correlated lens set and is not a replacement fair-value model.
-
-Monthly bond yields are lagged two calendar months in these alternatives as a publication-lag sensitivity. This is **not** proof that those current-vintage values were available historically. The rolling window is 36 months; the expanding alternative uses all preceding observations. Both need a warm-up and are compared on the same 27 returns, May 2024–July 2026.
+The repository also compares the fixed-reference rule with rolling and expanding alternatives that use only prior observations, and separately tests a two-month bond-yield lag. These alternatives were still designed retrospectively and do not create an untouched out-of-sample sample.
 
 | Same 27-month return window | CAGR | Monthly-sampled max drawdown |
 |---|---:|---:|
@@ -52,36 +68,56 @@ Monthly bond yields are lagged two calendar months in these alternatives as a pu
 | Expanding references, equal lenses | 7.29% | -10.36% |
 | 60/40 | 5.97% | -9.45% |
 
-The relative result changes with the sample window. Twenty-seven returns cannot establish superiority. No historical winner is promoted to production. The full comparable sample also excludes the 2008 and March 2020 crashes.
+Twenty-seven returns cannot establish superiority, and current-vintage monthly data are not equivalent to archived release vintages.
 
-Reproduce with `python scripts/robustness_audit.py`; machine-readable results are in `data/robustness.json`. Daily refresh recomputes these diagnostics from the refreshed retrospective panel. If that panel fails, the audit explicitly records unavailability without preventing otherwise valid live inputs from being saved.
+## Trend crash-guard evidence
 
-## Why 81% persists
+The frozen SMA10 minus-20 percentage-point challenger was tested on the exact shared NIFTY/debt history available from 2011 onward. In the reference run it improved overall maximum daily drawdown by about **1.37 percentage points** and the COVID-window drawdown by about **4.67 percentage points**, while reducing CAGR by about **0.46 percentage points**.
 
-For the inspected 11 September NIFTY observation and 12 September publication:
+It did **not** meet its pre-registered 5 percentage-point overall drawdown-improvement hurdle. Historical evidence therefore did not auto-promote the challenger. V3.11 uses it because the project owner explicitly chose the transparent risk brake as a policy control after reviewing that trade-off. That distinction is preserved in the repository.
 
-- Valuation core: 82.71% equity.
-- Earnings contribution: -1.02 percentage points.
-- Macro contribution: -0.14 percentage points.
-- Research signal: 81.55% equity.
-- Changing only the tested curve assumptions gives **66.86–83.33% equity**. This is an assumption range, not a confidence interval or recommended allocation band.
-- Setting every macro block to its maximum headwind, with valuation and earnings unchanged, still produces **78.21% equity**.
-- Setting both macro and earnings to maximum headwinds still produces **75.76% equity**.
+## Model-design limits that remain
 
-At this valuation the macro budget is only ±3.47 percentage points after damping. At extreme valuation endpoints it becomes zero. Thus the rule does not behave like a macro risk-control strategy, even though macro arithmetic is present and correct. It can recommend 100% equity in an adverse macro environment. The dashboard now states this prominently rather than implying that complete data validate the endpoints.
+The valuation lenses are correlated. P/E, P/B/profitability, earnings yield versus bonds and dividend yield are not four independent experiments. The strict evaluator measures this redundancy, but the live composite still uses transparent fixed weights rather than a covariance-aware Mahalanobis composite.
 
-The aggregate is close to neutral partly because high US real yields and Brent are offset by expanding Fed assets and low REER relative to history. Those offsets are economic hypotheses, not proven causal protection. A weak rupee can improve competitiveness while raising imported inflation; high domestic nominal yields can signal either attractive carry or greater risk. Real repo rates reuse CPI, and multiple global/FX indicators are correlated. Adding more such indicators or larger weights is not automatically greater robustness.
+The fair-value references are also not proven stationary. V3.10 corrected the P/B methodology regime and V3.11 retains that calibration, but a regime-corrected 36-month sample is still a short anchor.
 
-## Coverage boundary and remaining work
+V3.11's asymmetric overlay authority and trend brake reduce one important crash-pathology, but they do not make macro coefficients causal, complete, or statistically validated.
 
-The scored set includes US real yields, Fed assets, broad USD, VIX, Brent, India–US nominal yield spread, India REER, USD/INR momentum, India CPI, IIP and repo, and China manufacturing PMI/new orders. **100% coverage means these defined inputs are eligible, not that all macro conditions are covered.**
+## Implementation realism remains the largest practical gap
 
-Fiscal policy, credit stress, bank liquidity, capital flows, trade balances, geopolitical events and sector-specific earnings risks do not have separate validated coefficients. Some are partly reflected in the included prices; none should be claimed as fully modeled. Unobserved shocks cannot be solved by filling a dashboard cell.
+The core historical audit includes a 10 bps one-way turnover assumption, but it still excludes investor-specific Indian taxation. The multi-asset history uses synthetic INR Gold/Silver/BTC market-price series rather than exact Indian ETF total returns and therefore omits fund TER, tracking error, exit loads, bid/ask effects and tax-lot consequences.
 
-The legacy EM valuation diagnostic remains outside the scored macro model; its five historical observations are insufficient for its 12-observation calibration rule. This is not counted as a completed active factor. Its exclusion must not be mistaken for a successfully validated relative-value signal.
+No after-tax superiority claim is made. A taxable implementation study should be run separately for at least two containers: a long-term core sleeve and a tactical/rebalancing sleeve, with taxes and real investable instruments applied to actual sale lots rather than as a single annual haircut.
 
-A defensible next production allocation design requires specifying the desired trade-off between return and drawdown, collecting timestamped releases and investable benchmarks, testing a separately designed challenger across regimes, and then evaluating genuinely forward performance. This audit does not substitute an arbitrary lower percentage for that evidence. Emergency reserves and near-term liabilities remain outside the modeled sleeve.
+## Data boundary
+
+The scored live set includes US real yields, Fed assets, broad USD, VIX, Brent, India-US nominal yield spread, India REER, USD/INR momentum, India CPI, IIP and repo, and China manufacturing PMI/new orders. **100% data coverage means those defined inputs are currently eligible; it does not mean all relevant economic risk has been measured.**
+
+The project still lacks a complete release-vintage archive for the historical macro stack. Fiscal shocks, credit stress, bank liquidity, capital flows, trade balances, geopolitics and sector-specific earnings risks do not have separately validated coefficients.
+
+## Public version matrix
+
+| Surface | Current authority | Historical evidence status |
+|---|---|---|
+| Live equity/debt allocation | **V3.11 crash-aware** | Prospective; not historically validated as a full stack |
+| P/B fair-value calibration | **V3.10 regime correction**, retained in V3.11 | 36 completed current-methodology months |
+| Valuation-core historical timing audit | Legacy fixed-reference reconstruction | Research only; no release-vintage claim |
+| SMA10 trend rule | Live in V3.11 as a policy brake | Historical challenger failed its pre-registered promotion hurdle |
+| Gold/Silver/BTC layer | Multi-asset research-v1 | Separate research layer; not validated as an investable after-tax portfolio |
+
+## Remaining work that can materially improve the evidence score
+
+The next recoverable gains are not another live allocation tweak. They are:
+
+1. Publish the strict evaluator's exposure-matched benchmark, placebo, block-bootstrap, Deflated Sharpe and CSCV/PBO output alongside the website rather than leaving it in CI artifacts.
+2. Add a second placebo family that randomises timing while matching mean exposure **and realised turnover**, with its design frozen before reading results.
+3. Build an Indian after-tax, instrument-level implementation study with explicit TER, tracking error, exit load and tax-lot assumptions.
+4. Replace the flat two-month historical lag sensitivity with per-series release calendars wherever public release dates can be reconstructed reliably.
+5. Continue the prospective first-seen ledger. Time cannot be compressed by a better backtest.
+
+The refresh pipeline now publishes `data/robust_evaluation.json` so these statistical diagnostics can be inspected directly instead of inferred from prose.
 
 ## Verification
 
-36 Python tests and 10 JavaScript tests pass locally, including starting-capital drawdown, drift costs, calendar gaps, stale factors, inconsistent scores, candidate damping and immunity of earlier rolling signals to future data changes. The JavaScript suite also sweeps 190 valuation/macro combinations for bounded allocations and macro-direction monotonicity. These are implementation checks, not proof of investment performance.
+The live model remains fail-closed on stale or inconsistent inputs. The CI suite covers data parsers, allocation bounds, trend-gate consistency, drift-aware turnover, calendar gaps, evidence freezing and robustness routines. Passing implementation tests is necessary, but it is not evidence of investment performance.

@@ -1,6 +1,6 @@
 # Anup Multi-Asset Research Layer
 
-This layer is deliberately separate from the existing NIFTY V3.6 model. It does not change the NIFTY valuation engine or its equity/debt research signal.
+This layer is deliberately separate from the live **NIFTY V3.11 crash-aware equity/debt model**. It does not redefine NIFTY fair value or the V3.11 equity/debt signal; it starts from that live signal and then applies the separate Gold/Silver research layer described below.
 
 ## Portfolio structure
 
@@ -11,7 +11,7 @@ The **retirement core** always sums to 100% across four sleeves:
 - Gold
 - Silver
 
-The starting equity/debt ratio is the existing V3.6 research signal. Research-v1 then carves Gold and Silver proportionally from Equity and Debt. That preserves the original Equity/Debt ratio, but the funding rule is now explicitly tested against equity-first and debt-first alternatives in the robustness audit rather than assumed to be optimal.
+The starting equity/debt ratio is the current V3.11 research signal. Research-v1 then carves Gold and Silver proportionally from Equity and Debt. That preserves the original Equity/Debt ratio, but the funding rule is explicitly tested against equity-first and debt-first alternatives in the robustness audit rather than assumed to be optimal.
 
 **Bitcoin is not included in that 100%.** It is shown only as a separate tactical signal, consistent with treating crypto outside the retirement core.
 
@@ -63,7 +63,7 @@ The project now runs a long-history multi-asset backtest from January 2000 onwar
 
 The backtest is deliberately labelled research rather than proof because:
 
-- the base NIFTY history is the project's common-history valuation reconstruction rather than a release-vintage reconstruction of the complete modern V3.6 stack;
+- the base NIFTY history is the project's common-history valuation reconstruction rather than a release-vintage reconstruction of the complete modern V3.11 stack;
 - historical macro series are latest-revised rather than vintage releases;
 - synthetic INR market-price returns omit ETF expense ratios, tracking error, taxes and exit loads;
 - published factor weights were not selected by an optimizer.
@@ -83,4 +83,6 @@ All comparison metrics include a **10 bps one-way turnover sensitivity** and rep
 
 ## Governance
 
-The robustness audit is intentionally unable to change the live model. `live_model_change_authorized` remains false in the audit output. Any future change to funding rules, factor weights, lookbacks or target mappings requires explicit review of the evidence and remains subordinate to the project's prospective walk-forward governance.
+The multi-asset robustness audit is intentionally unable to change the live model. A research result does not auto-promote funding rules, factor weights, lookbacks or target mappings. The V3.11 equity/debt model can only change through a separate explicit live-model decision, with the change documented and the previous evidence preserved.
+
+The current implementation gap remains material: Indian ETF TER, tracking error, exit loads and investor-specific taxation are not yet included in the synthetic historical multi-asset returns. No after-tax superiority claim is made.
