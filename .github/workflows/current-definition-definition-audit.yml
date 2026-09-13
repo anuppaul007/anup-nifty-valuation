@@ -1,0 +1,34 @@
+name: Current-definition accounting audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/current_definition_definition_audit.py'
+      - '.github/workflows/current-definition-definition-audit.yml'
+
+concurrency:
+  group: current-definition-accounting-audit-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt pdfplumber
+      - name: Run 50-constituent definition audit
+        run: python scripts/current_definition_definition_audit.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: current-definition-definition-audit
+          path: data/current_definition_definition_audit.json
+          if-no-files-found: error
