@@ -5,10 +5,13 @@ const M=typeof module!=='undefined'&&module.exports?require('./model.js'):root.A
 const VERSION='covariance-shrinkage-consensus-v1';
 const LABELS=Object.freeze(['pe_z','pb_log_profitability_z','earnings_yield_minus_gsec_z','dividend_yield_z']);
 const WEIGHTS=Object.freeze([0.2201625077,0.2073700218,0.2668621038,0.3056053667]);
+function rejected(reason){
+  return{version:VERSION,valid:false,allocationReady:false,reason,final:null,live_final:null,difference_vs_live_pp:null,live_authority:false};
+}
 function compute(d,now=new Date()){
   const base=M.calculate(d,now);
-  if(!base.valid)return{version:VERSION,valid:false,allocationReady:false,reason:base.reason,live_authority:false};
-  if(!Array.isArray(base.L)||base.L.length!==4||base.L.some(x=>!M.finite(x.z)))return{version:VERSION,valid:false,allocationReady:false,reason:'All four V3.13 valuation lenses are required for the challenger.',live_authority:false};
+  if(!base.valid)return rejected(base.reason);
+  if(!Array.isArray(base.L)||base.L.length!==4||base.L.some(x=>!M.finite(x.z)))return rejected('All four V3.13 valuation lenses are required for the challenger.');
   const z=base.L.reduce((a,x,i)=>a+x.z*WEIGHTS[i],0);
   const core=M.curve(z);
   const ea=base.earningsComplete?M.clip(d.earnings.score,-1,1)*M.C.earnMax*M.overlayDamp(z):0;
