@@ -20,37 +20,67 @@ V3.11 deliberately keeps full bounded macro/earnings authority when valuation is
 
 The live equity/debt percentage should be read primarily as a **valuation-based allocation anchor with bounded risk controls**, not as proof that month-to-month timing adds alpha.
 
-Two claims are separated:
+Three claims are separated:
 
 1. **Anchor claim:** the current valuation state maps transparently into an equity/debt exposure under frozen model assumptions.
-2. **Timing claim:** changing exposure through time beats a static portfolio at the same average equity exposure.
+2. **Timing claim:** changing exposure through time beats a simpler policy after accounting for equity exposure, costs and selection.
+3. **Insurance claim:** a deliberately asymmetric brake may sacrifice return to reduce crash-path risk, but its premium and protection must be published together.
 
-The first is what the live model publishes. The second is a statistical claim and currently remains **unproven**.
+The first is what the live model primarily publishes. The second remains unproven. The third is how the live SMA10 rule is governed.
 
 ## Strict timing-evidence gate
 
 `scripts/robust_evaluation.py` is the governing statistical audit for timing claims. As of the V2 evaluator introduced on 13 September 2026:
 
 - every DSR and CSCV/PBO calculation uses the **exposure-matched timing residual**, not total portfolio returns;
-- the live rule is compared with a static portfolio at its realised mean equity weight under identical equity/debt returns and cost conventions;
+- the ex-post attribution null is a static portfolio at the strategy's realised full-sample mean equity weight;
+- that full-sample mean is explicitly labelled **not investable at sample start**;
+- `scripts/benchmark_audit.py` additionally compares the strategy with a pre-declared fixed 60/40 policy and an expanding-mean comparator using only targets available through each decision date;
 - all non-zero circular shifts of the observed target-weight path form one placebo family;
 - a second null uses **AR(1) surrogate valuation composites** calibrated to the observed composite's mean, variance and lag-1 persistence, then passed through the same allocation curve, next-month returns and cost model;
 - 3/6/12-month paired moving-block bootstrap intervals are reported on the timing residual;
-- Deflated Sharpe and CSCV/PBO are computed only on the exact 24-member common-sample valuation-curve family;
+- Deflated Sharpe and CSCV/PBO are computed only on the exact comparable common-sample candidate family;
 - materially different research families remain logged in `research_trial_registry.json` and are not falsely pooled into one DSR statistic.
+
+The key descriptive result is now published directly:
+
+**Over the tested window, moving equity exposure added 0.16 pp/year of return and 1.0 pp of additional drawdown.**
+
+Against a fixed 60/40 investable policy over the same window, the dynamic rule earned about **0.25 pp/year less** and experienced about **0.15 pp more maximum drawdown**. The expanding-mean comparator produced a larger positive return gap for the dynamic rule, but averaged materially less equity and therefore is not a pure timing-alpha null.
 
 The evaluator fails closed. No statistic can automatically modify `model.js`.
 
+## Effect-size interpretation and the prospective ledger
+
+The exposure-matched timing residual's naive t-statistic is about **0.17**. Mechanical square-root-of-time scaling gives roughly **709 years** to reach |t|=2 under independent observations. Applying the observed effective-sample efficiency stretches that illustration to roughly **1,682 years**.
+
+Those figures are not forecasts and assume implausible long-run stationarity. They are included to make the interpretation explicit: **the current observed timing effect is too small for “wait for more data” to be the investment thesis.**
+
+The prospective ledger is therefore governed as a detector of a **materially larger stable effect** if one emerges, and as a tamper-resistant record of its absence otherwise. Sixty completed prospective months remain a necessary minimum before any promotion review, not a promise that statistical validation will arrive at month 60.
+
+## SMA10 policy insurance must publish its price
+
+The frozen SMA10 −20 percentage-point rule remains live by explicit owner-approved policy choice despite failing its pre-registered historical automatic-promotion hurdle. It is therefore treated as crash insurance rather than alpha.
+
+The project now publishes both sides of that trade-off:
+
+- **Same 63 calendar return months:** about **0.09 pp/year CAGR premium paid** for about **0.77 pp of maximum daily drawdown avoided**; expected shortfall improved about 0.98 pp, Ulcer Index about 0.19 pp, average equity fell about 4.69 pp, and the longest underwater spell increased by 3 trading days.
+- **Longest exact shared history, 2011–September 2026:** about **0.46 pp/year CAGR premium paid** for about **1.37 pp of maximum daily drawdown avoided**; expected shortfall improved about 1.34 pp, Ulcer Index about 0.41 pp, average equity fell about 5.65 pp, and the longest underwater spell increased by 38 trading days.
+
+The longer-history drawdown improvement remained below the pre-registered **5 pp** hurdle, so the policy override is never described as successful historical promotion or proven timing alpha.
+
 ## Trial-count policy
 
-The exact DSR/PBO trial count is the number of **comparable variants on the same objective, return series and eligible sample**. The broader registry is disclosed separately.
+The exact DSR/PBO trial count is the number of **comparable variants on the same objective, return definition and eligible outcome sample**. The broader registry is disclosed separately.
+
+The governing rule is now explicit: **research versus production intent is not a statistical category.** A materially different numbered production hypothesis evaluated on the same outcome matrix consumes a trial just as a deliberately named research variant does.
+
+The present exact family remains at 24 because the currently reproducible V3.x production-lineage changes do not form additional columns on that exact 63-month valuation-core matrix: V3.5/V3.6 changed macro structure without a certified same-window historical macro stack; V3.10 uses a different P/B regime-calibration history; and V3.11 adds overlays/trend that are governed on different historical evidence. If an earlier production hypothesis is reconstructed on the exact same matrix, it must be added before the next DSR/PBO promotion claim.
 
 This prevents two opposite errors:
 
 - understating the burden by pretending only the published winner existed; and
 - overstating it by pooling unrelated Gold/Silver/BTC perturbations or different-window calibration studies into the NIFTY timing DSR.
-
-Publication version numbers and bug-fix releases are not automatically statistical trials unless they represented a materially different strategy hypothesis evaluated against outcomes.
 
 ## Data integrity controls
 
@@ -87,9 +117,9 @@ Gold and Silver are diversification research sleeves carved from the core alloca
 
 ## Verification and publication
 
-The repository test suite covers source parsing, stale-data rejection, no-neutral-fill behavior, completed-month logic, drawdown accounting, drift-aware turnover, prospective-ledger integrity, V3.11 cheap-side overlay authority, the one-way -20 pp trend brake, and the strict statistical evaluator. The robust-evaluation workflow must pass before audit/evaluator changes are merged.
+The repository test suite covers source parsing, stale-data rejection, no-neutral-fill behavior, completed-month logic, drawdown accounting, drift-aware turnover, prospective-ledger integrity, V3.11 cheap-side overlay authority, the one-way -20 pp trend brake, the strict statistical evaluator and investable benchmark diagnostics. The audit PR passed **78 Python tests and 24 JavaScript tests**, plus successful builds of the benchmark and SMA10 insurance audits.
 
-The regular refresh pipeline also rebuilds `data/robust_evaluation.json`, so the published statistical evidence is not merely a one-off CI artifact.
+The regular refresh pipeline rebuilds `data/robust_evaluation.json` and `data/benchmark_audit.json`. A separate governed workflow publishes `data/sma10_insurance_audit.json`, so the public evidence surface does not rely on prose alone.
 
 ## Historical V3.4 note
 
