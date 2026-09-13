@@ -5,12 +5,15 @@ on:
   pull_request:
     paths:
       - 'scripts/robust_evaluation.py'
+      - 'scripts/benchmark_audit.py'
       - 'scripts/update_data_v3.py'
       - 'tests/test_robust_evaluation.py'
+      - 'tests/test_benchmark_audit.py'
       - 'tests/test_live_v311.py'
       - 'tests/model.test.cjs'
       - 'robust_evaluation_policy.json'
       - 'research_trial_registry.json'
+      - 'validation_policy.json'
       - 'release_timing_policy.json'
       - 'data/retrospective.json'
       - 'data/robustness.json'
@@ -19,6 +22,7 @@ on:
       - 'model.js'
       - 'robustness.js'
       - 'app.js'
+      - 'evidence-ui.js'
       - 'index.html'
       - 'AUDIT.md'
       - 'ROBUSTNESS_AUDIT.md'
@@ -45,6 +49,8 @@ jobs:
           node --test tests/*.test.cjs
       - name: Build robust evaluation
         run: python scripts/robust_evaluation.py
+      - name: Build investable benchmark audit
+        run: python scripts/benchmark_audit.py
       - name: Validate fail-closed output schema
         run: |
           python - <<'PY'
@@ -66,11 +72,20 @@ jobs:
           assert 'ar1_surrogate_null' in d and d['ar1_surrogate_null']['draws'] >= 1000
           assert 'ar1_surrogate_placebo_95th_percentile' in d['gate_matrix']
           assert d['governance']
-          print(json.dumps({'decision':d['decision'],'gates':d['gate_matrix'],'dsr':mt['live_variant'].get('probability'),'pbo':mt['cscv'].get('pbo'),'ar1':d['ar1_surrogate_null'].get('actual_excess_cagr_percentile')},separators=(',',':')))
+          b=json.loads(Path('data/benchmark_audit.json').read_text())
+          assert b['status']=='complete' and b['months']==63
+          assert b['comparators']['ex_post_realised_mean_static']['available_ex_ante'] is False
+          assert b['comparators']['fixed_60_40_policy']['available_ex_ante'] is True
+          assert b['comparators']['expanding_mean_investable']['available_ex_ante'] is True
+          assert b['observed_tradeoff_sentence'].startswith('Over the tested window, moving equity exposure added ')
+          assert b['observed_effect_scale']['status']=='heuristic_only'
+          print(json.dumps({'decision':d['decision'],'gates':d['gate_matrix'],'dsr':mt['live_variant'].get('probability'),'pbo':mt['cscv'].get('pbo'),'ar1':d['ar1_surrogate_null'].get('actual_excess_cagr_percentile'),'benchmark':b},separators=(',',':')))
           PY
       - name: Macro crash-guard candidate test
         run: node tests/macro_guard_candidate.test.cjs
       - uses: actions/upload-artifact@v4
         with:
           name: robust-evaluation
-          path: data/robust_evaluation.json
+          path: |
+            data/robust_evaluation.json
+            data/benchmark_audit.json
