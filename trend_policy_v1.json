@@ -1,0 +1,85 @@
+{
+  "id": "trend-sma10-minus20-v1",
+  "prepared_at": "2026-09-13T03:05:20.810723+00:00",
+  "freeze_proof": "The first Git commit containing this file. This is prospective registration, not proof that historical data were unseen.",
+  "baseline_model_version": "3.10-pb-regime-1",
+  "baseline_model_sha256": "8e6a0f3a1098fe3fa6087c5cfe58b3cee4818b52e93356fa234840775f3db57d",
+  "lookback_months": 10,
+  "risk_off_adjustment_pp": 20,
+  "signal": "Previous completed month NIFTY 50 price close strictly below arithmetic mean of the latest 10 consecutive completed monthly closes; equality is risk-on.",
+  "target": "max(0, baseline equity percent - 20) in risk-off, otherwise baseline. No valuation damping. No increase above baseline.",
+  "historical_scope": "Legacy V3.6 valuation-core screen only; full historical macro and earnings are unavailable. Not a V3.10 historical strategy test.",
+  "historical_execution": "Use inputs strictly before calendar 1st; execute at first shared NIFTY TRI/debt-index close on or after that date; hold to the next monthly execution close. Never trade at the already-observed signal close.",
+  "prospective_first_decision_month": "2026-10",
+  "prospective_entry": "First eligible as-observed packet in each month, frozen once. Earliest execution is a trading close strictly after the India calendar date of first observation. No backdated entry.",
+  "rebalance_band_pp": 0,
+  "implementation_challenger_band_pp": 5,
+  "band_definition": "Compare target with drifted actual equity weight at the rebalance time, not the previous target. Trade to target only when absolute difference is greater than the band.",
+  "turnover_costs": [
+    0.001,
+    0.005
+  ],
+  "initial_acquisition_cost": false,
+  "annual_expense_assumptions": {
+    "equity": 0.002,
+    "debt": 0.0015
+  },
+  "debt_basis": "NIFTY 10 YR BENCHMARK G-SEC total-return index. Long-duration sensitivity, not a liquid-fund substitute. No fabricated debt returns for unavailable dates.",
+  "cashflow_assumptions": {
+    "lump_sum": 1000000,
+    "sip_monthly": 10000,
+    "retirement_initial": 1000000,
+    "retirement_initial_annual_withdrawal_rate": 0.04,
+    "withdrawal_inflation": 0.06,
+    "flow_timing": "Contribution or pro-rata withdrawal at monthly execution close before rebalance; no claim of tax-optimal funding"
+  },
+  "tax_status": "Not modelled in v1; results are after assumed trading/fund costs but before tax. Historical tax/instrument modelling remains a separate gate.",
+  "primary_metric": "Maximum daily portfolio drawdown for the no-external-cashflow comparison",
+  "companion_metrics": [
+    "CAGR",
+    "95% monthly expected shortfall",
+    "daily Ulcer Index",
+    "longest daily time under water",
+    "one-way turnover",
+    "time-weighted average equity exposure",
+    "terminal wealth with SIP",
+    "withdrawal shortfall"
+  ],
+  "benchmarks": [
+    "Legacy valuation core",
+    "NIFTY 50 TRI buy and hold",
+    "60/40 monthly rebalanced",
+    "Static equity exposure matched to realized challenger average; ex-post attribution diagnostic, not implementable prospective benchmark"
+  ],
+  "stress_windows": {
+    "gfc": [
+      "2007-01-01",
+      "2009-12-31"
+    ],
+    "taper": [
+      "2013-01-01",
+      "2014-12-31"
+    ],
+    "covid": [
+      "2019-01-01",
+      "2021-12-31"
+    ],
+    "rates_2022": [
+      "2022-01-01",
+      "2022-12-31"
+    ]
+  },
+  "promotion_requirements": {
+    "automatic_promotion": false,
+    "earliest_process_review": "2027-09-12",
+    "review_date_is_not_validation_deadline": true,
+    "minimum_completed_prospective_months": 60,
+    "required_benchmark_drawdown_episode_pct": 20,
+    "drawdown_improvement_pp": 5,
+    "maximum_cagr_sacrifice_pp": 1,
+    "required": "Also assess exposure-matched benchmark, expected shortfall, after-tax implementation and serial-dependence/multiple-testing-corrected uncertainty. Thresholds permit review only, not automatic acceptance."
+  },
+  "statistics": "No DSR/PBO/White-test value will be invented from unknown trial counts or the rejected harness. Historical runs are exploratory; prospective decisions are preserved.",
+  "source": "https://www.aqr.com/Insights/Research/Journal-Article/A-Century-of-Evidence-on-Trend-Following-Investing",
+  "live_allocation_effect": "none"
+}
