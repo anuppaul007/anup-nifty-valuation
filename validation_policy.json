@@ -1,7 +1,7 @@
 {
-  "protocol_version": "2026-09-13-v2",
+  "protocol_version": "2026-09-13-v3",
   "status": "Prospective research protocol; no automatic live allocation changes",
-  "objective": "Evaluate whether valuation-guided allocation has economically material decision value, while separating long-horizon valuation anchoring, tactical timing claims and deliberately purchased crash insurance.",
+  "objective": "Evaluate whether valuation-guided allocation has economically material decision value, while separating long-horizon valuation anchoring, tactical timing claims, deliberately purchased crash insurance, and macro context whose live authority must be earned by evidence.",
   "first_process_review": "2027-09-12",
   "review_date_is_not_validation_deadline": true,
   "primary_metric": "Maximum daily drawdown of a net total-return equity/debt portfolio",
@@ -19,10 +19,11 @@
     "predeclared_policy_null": "60% NIFTY / 40% debt fixed as the policy weight before the comparison window; use the same return and cost conventions.",
     "market_benchmarks": [
       "NIFTY 50 total-return buy and hold",
-      "60% NIFTY / 40% short-duration debt, annual rebalance where implementable",
+      "60% NIFTY / 40% debt under the same rebalance and cost convention",
       "Valuation-only rule with the same costs and observations"
     ],
-    "claim_rule": "An ex-post exposure-matched comparator is useful for removing equity beta but is not sufficient by itself for an investable timing claim. Timing claims must also disclose performance against at least one information-available-at-the-time null."
+    "claim_rule": "An ex-post exposure-matched comparator is useful for removing equity beta but is not sufficient by itself for an investable timing claim. Timing claims must also disclose performance against at least one information-available-at-the-time null.",
+    "comparator_geometry_rule": "When excess return changes monotonically with comparator equity exposure, publish the comparator-weight geometry as one descriptive beta/exposure finding rather than inviting readers to select a preferred row. A regression based on only those dependent portfolio constructions is descriptive, not a new inferential timing test."
   },
   "insurance_policy_controls": {
     "definition": "A deliberately asymmetric risk brake may remain a policy choice even when it is not demonstrated alpha, but its premium cannot be hidden behind the label risk control.",
@@ -32,13 +33,27 @@
       "95% expected-shortfall change",
       "Ulcer-index change",
       "Longest time-under-water change",
-      "Average equity exposure change"
+      "Average equity exposure change",
+      "Payout in each of the five largest baseline drawdown episodes",
+      "Brake engage and disengage dates in major crash episodes",
+      "Twelve-month post-trough recovery participation"
     ],
     "windows": [
       "The calendar-return window shared with the primary valuation timing audit when available",
       "The longest exact common equity/debt/index history available under the frozen rule"
     ],
-    "interpretation": "Insurance is judged as an explicit return-versus-protection tradeoff. A policy override does not become evidence of timing alpha merely because the owner accepts the premium."
+    "interpretation": "Insurance is judged as an explicit return-versus-protection tradeoff and by whether it pays in the events it was bought for. A policy override does not become evidence of timing alpha merely because the owner accepts the premium.",
+    "trend_parameter_freeze": "The live trend policy remains trend-sma10-minus20-v1. Do not test -10 pp, -30 pp, continuous, dual-SMA or other alternatives as part of ordinary policy maintenance. If alternatives are deliberately tested, every comparable alternative enters the relevant selection family before any winner can be considered for promotion."
+  },
+  "macro_governance": {
+    "live_budget_pp": 0,
+    "shadow_budget_pp": 6,
+    "role": "Verified macro blocks are displayed economic context and a prospective shadow challenger. They do not change or withhold the V3.12 live equity/debt allocation.",
+    "shadow_eligibility": "A shadow macro adjustment is recorded only when the full defined macro score can be reconstructed from fresh, internally consistent observations at the required coverage. Missing, stale or inconsistent macro data are never neutral-filled.",
+    "historical_pricing_status": "Unavailable until a certified release-vintage full macro stack exists on a comparable outcome window. Current-vintage backfilling must not be substituted and called historical evidence.",
+    "operational_risk_rule": "Do not estimate a monthly probability of a wrong-but-plausible semantic source error from a handful of caught incidents without a defensible denominator. Publish such probability as not identifiable when that is the evidence state.",
+    "promotion_requirement": "Macro can regain live authority only after a predeclared prospective or certified release-vintage macro-on versus macro-off comparison using identical valuation, earnings, trend, cost and outcome conventions demonstrates decision value under the project's evidence gates.",
+    "alternative_budget_rule": "Any tested alternative macro budget that is comparable on the same outcome matrix joins the relevant trial family; a selected winner cannot be relabelled as an owner policy choice to escape the selection burden."
   },
   "cashflow_tests": [
     "Lump sum: immediate deployment versus 6- and 12-month equal instalments; undeployed money earns the same debt return",

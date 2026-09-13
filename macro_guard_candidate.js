@@ -1,16 +1,12 @@
-/* Research-only crash-guard candidate. Does not alter the live allocator.
+/* Research-only asymmetric macro-authority candidate.
  *
- * Rationale: the current live model multiplies macro authority by a symmetric
- * extreme-valuation damping factor. At very cheap valuation extremes that can
- * drive macro authority to zero, allowing severe macro stress to coexist with
- * a 100% equity signal.
+ * V3.12 gives macro zero live authority. This file is therefore retained only
+ * as a historical/research challenger that applies the frozen ±6 pp SHADOW
+ * macro budget. It does not alter the live allocator.
  *
- * This candidate deliberately does the opposite on the cheap side:
- *   - cheap side (z < 0): retain full macro authority;
- *   - expensive side (z >= 0): retain the current valuation damping.
- *
- * That direction is intentional. Damping macro to zero at the cheap endpoint
- * would preserve, not fix, the crash-resistance defect.
+ * Candidate logic:
+ *   - cheap side (z < 0): retain full shadow macro authority;
+ *   - expensive side (z >= 0): retain valuation damping.
  */
 (function(root){
 'use strict';
@@ -23,12 +19,17 @@ function macroDamp(z,currentDamp){
   return z < 0 ? 1 : Base.clip(currentDamp,0,1);
 }
 
+function shadowBudget(){
+  return Base.finite(Base.C.macroShadowMax)?Base.C.macroShadowMax:Base.C.macroMax;
+}
+
 function applyToBaseResult(baseResult,macroScore){
   if(!baseResult||!baseResult.valid) return {valid:false,reason:'Invalid base-model result'};
   const md=macroDamp(baseResult.z,baseResult.damp);
   if(!Base.finite(md)) return {valid:false,reason:'Invalid macro damping inputs'};
   const score=Base.finite(macroScore)?Base.clip(macroScore,-1,1):null;
-  const macroAdjustment=(baseResult.allocationReady&&score!==null)?score*Base.C.macroMax*md:0;
+  const budget=shadowBudget();
+  const macroAdjustment=(baseResult.allocationReady&&score!==null)?score*budget*md:0;
   const final=baseResult.allocationReady?Base.clip(baseResult.core+baseResult.ea+macroAdjustment,0,100):null;
   return {
     valid:true,
@@ -41,11 +42,12 @@ function applyToBaseResult(baseResult,macroScore){
     currentSymmetricDamp:baseResult.damp,
     candidateMacroDamp:md,
     macroScore:score,
+    candidateMacroBudget:budget,
     candidateMacroAdjustment:macroAdjustment,
     currentFinal:baseResult.final,
     candidateFinal:final,
     candidateDebt:Base.finite(final)?100-final:null,
-    governance:'Research challenger only; not eligible for automatic live promotion.'
+    governance:'Research/shadow challenger only; V3.12 live macro authority is zero and this candidate is not eligible for automatic promotion.'
   };
 }
 
@@ -55,7 +57,7 @@ function calculate(packet,now=new Date()){
   return applyToBaseResult(base,score);
 }
 
-const api={macroDamp,applyToBaseResult,calculate};
+const api={macroDamp,shadowBudget,applyToBaseResult,calculate};
 if(typeof module!=='undefined'&&module.exports) module.exports=api;
 else root.AnupMacroGuardCandidate=api;
 })(typeof window!=='undefined'?window:this);

@@ -14,10 +14,14 @@ on:
       - "data/walkforward.json"
       - "data/walkforward_v3_10.json"
       - "data/walkforward_v3_11.json"
+      - "data/walkforward_v3_12.json"
       - "data/retrospective.json"
       - "data/robustness.json"
       - "data/robust_evaluation.json"
       - "data/benchmark_audit.json"
+      - "data/macro_authority_audit.json"
+      - "data/sma10_insurance_audit.json"
+      - "data/sma10_episode_audit.json"
       - "data/backtest_monthly_2000.csv"
       - "data/backtest_monthly_2000.json"
       - "data/fund_strategy_rank.json"
@@ -35,7 +39,7 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,6 +67,8 @@ jobs:
         run: python scripts/robust_evaluation.py
       - name: Run investable timing benchmark audit
         run: python scripts/benchmark_audit.py
+      - name: Audit macro decision authority
+        run: python scripts/macro_authority_audit.py
       - name: Generate Jan-2000 monthly valuation-core allocation table
         run: python scripts/backtest_monthly_2000.py
       - name: Research real-fund implementation and long-lived fund ranking
@@ -75,22 +81,32 @@ jobs:
             data/walkforward.json
             data/walkforward_v3_10.json
             data/walkforward_v3_11.json
+            data/walkforward_v3_12.json
             data/retrospective.json
             data/robustness.json
             data/robust_evaluation.json
             data/benchmark_audit.json
+            data/macro_authority_audit.json
             data/backtest_monthly_2000.csv
             data/backtest_monthly_2000.json
             data/fund_strategy_rank.json
           )
-          if git diff --quiet -- "${paths[@]}"; then
+          existing=()
+          for p in "${paths[@]}"; do
+            [[ -e "$p" ]] && existing+=("$p")
+          done
+          if (( ${#existing[@]} == 0 )); then
+            echo "No generated paths exist"
+            exit 1
+          fi
+          if git diff --quiet -- "${existing[@]}" && git status --porcelain -- "${existing[@]}" | grep -qv .; then
             echo "No data change"
             exit 0
           fi
           git config user.name "anup-nifty-bot"
           git config user.email "anup-nifty-bot@users.noreply.github.com"
-          git add "${paths[@]}"
-          git commit -m "data: refresh valuation studies and fund research"
+          git add "${existing[@]}"
+          git commit -m "data: refresh V3.12 valuation and shadow evidence"
           for attempt in 1 2 3; do
             echo "Publish attempt ${attempt}/3"
             git fetch origin main

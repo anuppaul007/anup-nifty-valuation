@@ -132,10 +132,10 @@ def main():
     coverage=mac['active_block_weight'];vf=(mac.get('factors') or {}).get('vix') or {};confidence=None
     if vf.get('status')=='live' and m.finite(vf.get('value')):
         stress=float(np.clip(1-max(0,vf['value']-18)/40,.35,1));confidence=stress*(.65+.35*coverage)
-    out={'schema_version':4,'model_version':'3.11-crash-aware-1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<.999,'nifty':latest,'earnings':n['earnings'],'macro':mac,'trend':trend,'confidence':confidence,'valuation_diagnostics':valuation_diag,'history':n['history'],'calibration':cal,'sources':[
+    out={'schema_version':4,'model_version':'3.12-evidence-first-1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<.999,'nifty':latest,'earnings':n['earnings'],'macro':mac,'trend':trend,'confidence':confidence,'valuation_diagnostics':valuation_diag,'history':n['history'],'calibration':cal,'sources':[
         {'name':'Nifty Indices / NSE','role':'NIFTY index and ratio history; EPS is an index-implied proxy; completed monthly price closes drive the live SMA10 crash guard','url':'https://www.niftyindices.com/reports/historical-data'},
         {'name':gmeta['source'],'role':'Current India ~10Y yield; its own observation date determines eligibility','url':gmeta.get('source_url')},
-        {'name':'U.S. Treasury / Federal Reserve / CBOE','role':'Dated real/nominal yields, broad USD, Fed balance sheet and VIX'},
+        {'name':'U.S. Treasury / Federal Reserve / CBOE','role':'Dated real/nominal yields, broad USD, Fed balance sheet and VIX; V3.12 displays these as context and evaluates a shadow macro challenger rather than using them in the live allocation'},
         {'name':'BIS Statistics API','role':'India broad REER and monthly USD/INR history from official SDMX feeds','url':'https://data.bis.org/'},
         {'name':'OECD Data Explorer','role':'Monthly India long-term government bond history used to standardise India-US carry','url':'https://data-explorer.oecd.org/'},
         {'name':'MoSPI / NSO via Press Information Bureau','role':'Official All-India CPI inflation and Index of Industrial Production releases; newest URL is discovered and prior verified URL is carried forward','url':dm.PIB_ALL},
@@ -145,5 +145,5 @@ def main():
         {'name':'NBS China','role':'Official manufacturing PMI and new orders','url':(mac.get('china_pmi') or {}).get('source_url')}
     ]}
     tmp=OUT.with_suffix('.tmp');tmp.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8');tmp.replace(OUT)
-    print(json.dumps({'nifty_asof':latest['date'],'gsec_status':gmeta['status'],'macro_score':mac['score'],'coverage':coverage,'trend_status':trend.get('status'),'trend_risk_off':trend.get('risk_off'),'domestic_status':(mac.get('domestic') or {}).get('status'),'valuation_cheapness':valuation_diag.get('composite_cheapness'),'valuation_months':valuation_diag.get('months'),'version':'3.11-crash-aware-1'}))
+    print(json.dumps({'nifty_asof':latest['date'],'gsec_status':gmeta['status'],'macro_score':mac['score'],'coverage':coverage,'trend_status':trend.get('status'),'trend_risk_off':trend.get('risk_off'),'domestic_status':(mac.get('domestic') or {}).get('status'),'valuation_cheapness':valuation_diag.get('composite_cheapness'),'valuation_months':valuation_diag.get('months'),'version':'3.12-evidence-first-1'}))
 if __name__=='__main__':main()

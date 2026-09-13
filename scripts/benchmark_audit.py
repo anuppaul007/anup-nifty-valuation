@@ -69,6 +69,38 @@ def observed_effect_horizon(timing_residual):
     }
 
 
+def comparator_beta_signature(comparisons,dynamic_mean_equity_pct):
+    """Three-point descriptive regression; not an inferential timing test.
+
+    Centering the x-axis on the dynamic strategy's own mean equity makes the
+    intercept directly readable as the fitted excess CAGR at equal beta.
+    """
+    keys=['expanding_mean_investable','ex_post_realised_mean_static','fixed_60_40_policy']
+    pts=sorted([
+      (float(comparisons[k]['comparator_mean_equity_pct']),float(comparisons[k]['dynamic_minus_comparator_cagr_pp']),k)
+      for k in keys
+    ])
+    x=np.asarray([p[0]-dynamic_mean_equity_pct for p in pts],float)
+    y=np.asarray([p[1] for p in pts],float)
+    slope,intercept=np.polyfit(x,y,1)
+    pred=intercept+slope*x
+    ss_res=float(np.sum((y-pred)**2));ss_tot=float(np.sum((y-y.mean())**2))
+    r2=1-ss_res/ss_tot if ss_tot>0 else None
+    zero_cross=(dynamic_mean_equity_pct-intercept/slope) if abs(slope)>1e-12 else None
+    monotone=all(pts[i+1][1]<=pts[i][1]+1e-12 for i in range(len(pts)-1))
+    return {
+      'status':'descriptive_three_point_geometry_only',
+      'dynamic_mean_equity_pct':float(dynamic_mean_equity_pct),
+      'points':[{'comparator':k,'equity_pct':w,'dynamic_excess_cagr_pp':e} for w,e,k in pts],
+      'monotone_decreasing_excess_cagr_with_comparator_equity':bool(monotone),
+      'slope_pp_excess_cagr_per_1pp_comparator_equity':float(slope),
+      'fitted_excess_cagr_at_dynamic_mean_equity_pp':float(intercept),
+      'fitted_zero_cross_equity_pct':float(zero_cross) if zero_cross is not None else None,
+      'r_squared':float(r2) if r2 is not None else None,
+      'interpretation':'Across these three comparator weights, excess CAGR falls as comparator equity rises and is near zero around the dynamic strategy\'s own mean exposure. That is the geometry expected when most return differences are equity beta and residual timing content is small. With only three dependent portfolio constructions this is descriptive, not an independent statistical test.'
+    }
+
+
 def main():
     retro=json.loads((ROOT/'data'/'retrospective.json').read_text(encoding='utf-8'))
     panel=re.panel_from_retrospective(retro)
@@ -95,20 +127,27 @@ def main():
 
     base=comparisons['ex_post_realised_mean_static']
     sentence=f"Over the tested window, moving equity exposure added {base['dynamic_minus_comparator_cagr_pp']:.2f} pp/year of return and {base['dynamic_additional_drawdown_pp']:.1f} pp of additional drawdown."
+    fx=comparisons['fixed_60_40_policy']
+    investable_sentence=f"Against a pre-declared 60/40 policy over the same window, the dynamic model changed CAGR by {fx['dynamic_minus_comparator_cagr_pp']:+.2f} pp/year and maximum drawdown by {fx['dynamic_additional_drawdown_pp']:+.2f} pp."
     static_net,_=re.net_with_weights(ex_post,eq,db)
     horizon=observed_effect_horizon(pd.Series(dyn-static_net,index=frame.index,dtype=float))
+    signature=comparator_beta_signature(comparisons,100*float(w.mean()))
 
     out={
-      'schema_version':1,'status':'complete','months':int(len(frame)),
+      'schema_version':2,'status':'complete','months':int(len(frame)),
       'scope':'Legacy fixed-reference valuation-core timing window; not a certified full-stack V3.11 backtest.',
       'observed_tradeoff_sentence':sentence,
+      'decision_relevant_60_40_sentence':investable_sentence,
       'comparators':comparisons,
+      'comparator_beta_signature':signature,
       'observed_effect_scale':horizon,
       'governance':'The ex-post mean comparator remains valid for beta-removal diagnostics but is explicitly not investable. Promotion claims should also survive investable nulls; no result here changes live parameters automatically.'
     }
     OUT.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8')
     print(json.dumps({
       'sentence':sentence,
+      'investable_sentence':investable_sentence,
+      'beta_signature':signature,
       'fixed60_edge_pp':comparisons['fixed_60_40_policy']['dynamic_minus_comparator_cagr_pp'],
       'expanding_edge_pp':comparisons['expanding_mean_investable']['dynamic_minus_comparator_cagr_pp'],
       'expanding_additional_drawdown_pp':comparisons['expanding_mean_investable']['dynamic_additional_drawdown_pp'],
