@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/sma10_insurance_audit.py'
+      - 'scripts/sma10_episode_audit.py'
       - 'scripts/trend_challenger_backtest.py'
       - 'scripts/trend_challenger_backtest_v2.py'
       - 'trend_policy_v1.json'
@@ -25,7 +26,7 @@ permissions:
 jobs:
   insurance-audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,6 +38,8 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Price frozen SMA10 brake
         run: python scripts/sma10_insurance_audit.py
+      - name: Attribute five largest drawdown episodes
+        run: python scripts/sma10_episode_audit.py
       - name: Validate disclosure schema
         run: |
           python - <<'PY'
@@ -49,19 +52,23 @@ jobs:
               assert isinstance(d[window]['cagr_premium_paid_pp_per_year'],(int,float))
               assert isinstance(d[window]['max_daily_drawdown_avoided_pp'],(int,float))
           assert d['live_model_changed'] is False
-          print(json.dumps({'same63':d['same_63_calendar_return_months'],'longest':d['longest_exact_shared_history']},separators=(',',':')))
+          e=json.loads(Path('data/sma10_episode_audit.json').read_text())
+          assert e['status']=='complete' and len(e['top_five_drawdown_episodes'])==5
+          assert e['live_rule_changed'] is False
+          assert e['covid_feb_sep_2020']['first_risk_off_transition'] is not None
+          print(json.dumps({'same63':d['same_63_calendar_return_months'],'longest':d['longest_exact_shared_history'],'episodes':e['top_five_drawdown_episodes'],'covid':e['covid_feb_sep_2020'],'episode_summary':e['summary']},separators=(',',':')))
           PY
-      - name: Commit audit snapshot if changed
+      - name: Commit audit snapshots if changed
         run: |
-          path=data/sma10_insurance_audit.json
-          if git diff --quiet -- "$path" && git ls-files --error-unmatch "$path" >/dev/null 2>&1; then
+          paths='data/sma10_insurance_audit.json data/sma10_episode_audit.json'
+          if git diff --quiet -- $paths && git ls-files --error-unmatch data/sma10_insurance_audit.json >/dev/null 2>&1 && git ls-files --error-unmatch data/sma10_episode_audit.json >/dev/null 2>&1; then
             echo 'No insurance-audit change'
             exit 0
           fi
           git config user.name 'anup-nifty-bot'
           git config user.email 'anup-nifty-bot@users.noreply.github.com'
-          git add "$path"
-          git commit -m 'data: refresh SMA10 insurance pricing'
+          git add $paths
+          git commit -m 'data: refresh SMA10 insurance attribution'
           for attempt in 1 2 3; do
             git fetch origin main
             if ! git rebase origin/main; then
