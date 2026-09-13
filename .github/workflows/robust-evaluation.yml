@@ -6,6 +6,9 @@ on:
     paths:
       - 'scripts/robust_evaluation.py'
       - 'scripts/benchmark_audit.py'
+      - 'scripts/sma10_insurance_audit.py'
+      - 'scripts/trend_challenger_backtest.py'
+      - 'scripts/trend_challenger_backtest_v2.py'
       - 'scripts/update_data_v3.py'
       - 'tests/test_robust_evaluation.py'
       - 'tests/test_benchmark_audit.py'
@@ -14,6 +17,7 @@ on:
       - 'robust_evaluation_policy.json'
       - 'research_trial_registry.json'
       - 'validation_policy.json'
+      - 'trend_policy_v1.json'
       - 'release_timing_policy.json'
       - 'data/retrospective.json'
       - 'data/robustness.json'
@@ -36,6 +40,7 @@ permissions:
 jobs:
   evidence-gate:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -51,6 +56,8 @@ jobs:
         run: python scripts/robust_evaluation.py
       - name: Build investable benchmark audit
         run: python scripts/benchmark_audit.py
+      - name: Price SMA10 crash insurance
+        run: python scripts/sma10_insurance_audit.py
       - name: Validate fail-closed output schema
         run: |
           python - <<'PY'
@@ -79,7 +86,14 @@ jobs:
           assert b['comparators']['expanding_mean_investable']['available_ex_ante'] is True
           assert b['observed_tradeoff_sentence'].startswith('Over the tested window, moving equity exposure added ')
           assert b['observed_effect_scale']['status']=='heuristic_only'
-          print(json.dumps({'decision':d['decision'],'gates':d['gate_matrix'],'dsr':mt['live_variant'].get('probability'),'pbo':mt['cscv'].get('pbo'),'ar1':d['ar1_surrogate_null'].get('actual_excess_cagr_percentile'),'benchmark':b},separators=(',',':')))
+          ins=json.loads(Path('data/sma10_insurance_audit.json').read_text())
+          assert ins['status']=='complete'
+          assert ins['same_63_calendar_return_months']['calendar_return_months']==63
+          assert 'cagr_premium_paid_pp_per_year' in ins['same_63_calendar_return_months']
+          assert 'max_daily_drawdown_avoided_pp' in ins['same_63_calendar_return_months']
+          assert 'cagr_premium_paid_pp_per_year' in ins['longest_exact_shared_history']
+          assert 'max_daily_drawdown_avoided_pp' in ins['longest_exact_shared_history']
+          print(json.dumps({'decision':d['decision'],'gates':d['gate_matrix'],'dsr':mt['live_variant'].get('probability'),'pbo':mt['cscv'].get('pbo'),'ar1':d['ar1_surrogate_null'].get('actual_excess_cagr_percentile'),'benchmark':b,'insurance':ins},separators=(',',':')))
           PY
       - name: Macro crash-guard candidate test
         run: node tests/macro_guard_candidate.test.cjs
@@ -89,3 +103,4 @@ jobs:
           path: |
             data/robust_evaluation.json
             data/benchmark_audit.json
+            data/sma10_insurance_audit.json
