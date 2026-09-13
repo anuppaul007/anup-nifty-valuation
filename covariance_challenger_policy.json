@@ -1,0 +1,51 @@
+{
+  "policy_version": "covariance-shrinkage-consensus-v1",
+  "preregistered_at": "2026-09-13T11:00:00Z",
+  "status": "research_shadow_only",
+  "base_model_version": "3.13-reliability-1",
+  "purpose": "Test whether reducing mechanical duplication among correlated valuation lenses improves robustness without using outcome returns to choose the construction.",
+  "source_geometry": {
+    "sample": "36 fully current-definition monthly observations, 2023-10-01 through 2026-09-01",
+    "source_commit": "c1b012719a425192bb98a2dad00c6340884dabe0",
+    "correlation_matrix": [
+      [1.0, 0.9341541251913682, 0.6319295994741465, 0.5635981230924574],
+      [0.9341541251913682, 1.0, 0.730899676188675, 0.5217908108286827],
+      [0.6319295994741465, 0.730899676188675, 1.0, 0.49246243355752645],
+      [0.5635981230924574, 0.5217908108286827, 0.49246243355752645, 1.0]
+    ],
+    "labels": ["pe_z", "pb_log_profitability_z", "earnings_yield_minus_gsec_z", "dividend_yield_z"],
+    "return_data_used_to_choose_construction": false
+  },
+  "construction": {
+    "shrinkage_lambda": 0.5,
+    "shrinkage_formula": "R_shrunk = (1-lambda)*R + lambda*I",
+    "consensus_formula": "w = R_shrunk^-1 * 1 / (1' * R_shrunk^-1 * 1)",
+    "frozen_weights": {
+      "pe_z": 0.2201625077,
+      "pb_log_profitability_z": 0.2073700218,
+      "earnings_yield_minus_gsec_z": 0.2668621038,
+      "dividend_yield_z": 0.3056053667
+    },
+    "negative_weights_allowed": false,
+    "note": "The preregistered solution is positive for all four lenses. If future recalculation would require negative weights, this version remains frozen rather than being re-optimized.",
+    "valuation_curve": "inherit V3.13 k=1.35 and zc=2.5 unchanged",
+    "earnings_overlay": "inherit V3.13 score, eligibility and +/-6 pp budget; damping is evaluated on challenger z",
+    "trend_policy": "inherit frozen trend-sma10-minus20-v1 unchanged",
+    "macro_live_authority_pp": 0
+  },
+  "governance": {
+    "live_authority": false,
+    "automatic_promotion": false,
+    "lambda_may_not_be_changed_after_outcomes_are_seen": true,
+    "alternative_lambdas_or_weighting_rules_count_as_additional_trials": true,
+    "same_36_month_input_sample_is_not_untouched_out_of_sample_evidence": true,
+    "retrospective_return_tests_are_diagnostic_only": true,
+    "promotion_requires": "the existing project validation policy, trial-count adjustment, costs, exposure-matched comparators and prospective evidence; no hurdle is relaxed for this challenger"
+  },
+  "falsification_conditions": [
+    "If the implementation cannot exactly reproduce the frozen weights from the frozen correlation matrix and lambda, the challenger is invalid.",
+    "If any production input eligibility gate fails, the shadow allocation must be withheld rather than neutral-filled.",
+    "If the challenger only looks better because it changes average equity exposure, exposure-matched attribution must report that explicitly.",
+    "If an alternative covariance, shrinkage or clipping choice is tested, it must be logged as a separate hypothesis before its outcome is considered."
+  ]
+}
