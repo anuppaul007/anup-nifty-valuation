@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
-  "model_version": "3.6",
-  "generated_at": "2026-09-12T15:38:46+00:00",
+  "model_version": "3.10-pb-regime-1",
+  "generated_at": "2026-09-13T01:39:03+00:00",
   "macro_stale": false,
   "macro_partial": false,
   "nifty": {
@@ -17,7 +17,9 @@
       "source": "RBI dated government bond near 10 years",
       "security": "6.94% GS 2036",
       "status": "live",
-      "max_age_days": 7
+      "max_age_days": 7,
+      "security_changed": false,
+      "last_transition": null
     }
   },
   "earnings": {
@@ -117,12 +119,13 @@
       },
       "us_10y": {
         "value": 4.96,
-        "z": 0,
-        "score": 0.0,
+        "z": null,
+        "score": null,
         "asof": "2026-09-11",
         "observations": 924,
         "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
-        "status": "live"
+        "status": "live",
+        "display_only": true
       }
     },
     "china_pmi": {
@@ -138,8 +141,26 @@
     "relative_em": {
       "available": true,
       "score": null,
-      "history_count": 6,
+      "history_count": 5,
       "status": "pending_history",
+      "quarantine": [
+        {
+          "record": {
+            "month": "2026-02",
+            "asof": "2026-02-27",
+            "method": "largecap-fundamentals-v1",
+            "em_pe": 17.3,
+            "em_pb": 0.5,
+            "nifty_pe": 22.03,
+            "nifty_pb": 3.42,
+            "relative_log_premium": 0.9141342882400948
+          },
+          "reason": "EM plausibility review: PB outside [0.8,5] or PB/PE outside [0.05,0.30]",
+          "status": "excluded_pending_source_review",
+          "first_seen_at": "2026-09-13"
+        }
+      ],
+      "validation_policy": "PB 0.8\u20135 and PB/PE 0.05\u20130.30 are review bounds, not impossibility bounds",
       "em_ex_india_pe": 13.6,
       "em_ex_india_pb": 2.4,
       "em_ex_india_div_yield": 2.8,
@@ -235,7 +256,7 @@
         },
         "india_repo_rate": {
           "value": 5.25,
-          "asof": "2026-09-12",
+          "asof": "2026-09-13",
           "source_url": "https://www.rbi.org.in/",
           "status": "live",
           "label": "RBI policy repo rate",
@@ -255,11 +276,11 @@
   "confidence": 1.0,
   "valuation_diagnostics": {
     "status": "live",
-    "months": 64,
-    "first_month": "2021-05",
+    "months": 36,
+    "first_month": "2023-09",
     "last_completed_month": "2026-08",
-    "methodology_start": "2021-04",
-    "methodology_note": "Common post-31-Mar-2021 NSE Indices regime only; pre-change P/E and dividend-yield values are not mixed into current-methodology ranks.",
+    "methodology_start": "2023-09",
+    "methodology_note": "Common current-definition month-end observations from September 2023 only; P/B changed on 29 September 2023. Earlier P/B is excluded.",
     "allocation_effect": "none",
     "purpose": "independent sanity check on fixed-reference valuation core",
     "current": {
@@ -268,47 +289,62 @@
       "dividend_yield": 1.21
     },
     "cheapness_percentiles": {
-      "pe_cheapness": 95.3125,
+      "pe_cheapness": 94.44444444444444,
       "pb_cheapness": 100.0,
-      "dividend_yield_cheapness": 25.0
+      "dividend_yield_cheapness": 16.666666666666664
     },
-    "composite_cheapness": 73.4375,
+    "composite_cheapness": 70.37037037037037,
     "label": "below typical valuation within current-methodology era",
     "pe_stats": {
-      "median": 22.005000000000003,
-      "q25": 21.134999999999998,
-      "q75": 22.89,
-      "mad": 0.8949999999999978,
-      "robust_sigma": 1.3269269999999966,
-      "min": 19.5,
-      "max": 29.22,
-      "observations": 64
+      "median": 22.015,
+      "q25": 21.36,
+      "q75": 22.7125,
+      "mad": 0.6850000000000005,
+      "robust_sigma": 1.0155810000000007,
+      "min": 19.62,
+      "max": 24.26,
+      "observations": 36
     },
     "pb_stats": {
-      "median": 3.955,
-      "q25": 3.5175,
-      "q75": 4.2425,
-      "mad": 0.385,
-      "robust_sigma": 0.570801,
+      "median": 3.54,
+      "q25": 3.3675,
+      "q75": 3.83,
+      "mad": 0.21500000000000008,
+      "robust_sigma": 0.3187590000000001,
       "min": 2.92,
-      "max": 4.83,
-      "observations": 64
+      "max": 4.26,
+      "observations": 36
     },
     "dividend_yield_stats": {
       "median": 1.28,
-      "q25": 1.2175,
-      "q75": 1.3625,
-      "mad": 0.07500000000000007,
-      "robust_sigma": 0.1111950000000001,
-      "min": 1.05,
+      "q25": 1.2375,
+      "q75": 1.35,
+      "mad": 0.05500000000000005,
+      "robust_sigma": 0.08154300000000007,
+      "min": 1.16,
       "max": 1.45,
-      "observations": 64
+      "observations": 36
+    },
+    "lens_disagreement": {
+      "spread_pp": 83.33333333333334,
+      "threshold_pp": 60,
+      "flagged": true,
+      "interpretation": "Review signal: divergent ranks can reflect fundamentals or a data break; this does not prove a break."
     },
     "vs_median_pct": {
-      "pe": -10.111338332197228,
-      "pb": -28.44500632111252,
+      "pe": -10.152168975698384,
+      "pb": -20.056497175141242,
       "dividend_yield": -5.46875
-    }
+    },
+    "ratio_breaks": [
+      {
+        "month": "2023-09",
+        "pb_change_pct": -21.363636363636374,
+        "pe_change_pct": 1.0923987255348377,
+        "status": "documented_methodology_break",
+        "source_url": "https://www.niftyindices.com/Press_Release/ind_prs17082023.pdf"
+      }
+    ]
   },
   "history": [
     [
@@ -715,16 +751,6 @@
         "relative_log_premium": 0.4039171930023675
       },
       {
-        "month": "2026-02",
-        "asof": "2026-02-27",
-        "method": "largecap-fundamentals-v1",
-        "em_pe": 17.3,
-        "em_pb": 0.5,
-        "nifty_pe": 22.03,
-        "nifty_pb": 3.42,
-        "relative_log_premium": 0.9141342882400948
-      },
-      {
         "month": "2026-03",
         "asof": "2026-03-31",
         "method": "largecap-fundamentals-v1",
@@ -772,10 +798,29 @@
         "em_pb": 2.4,
         "nifty_pe": 20.36,
         "nifty_pb": 2.92,
-        "relative_log_premium": 0.32054739093470563
+        "relative_log_premium": 0.32054739093470563,
+        "source_url": "https://stoxx.com/index/swexilv/?factsheet=true"
       }
     ],
-    "carry_spread_history": []
+    "em_ex_india_quarantine": [
+      {
+        "record": {
+          "month": "2026-02",
+          "asof": "2026-02-27",
+          "method": "largecap-fundamentals-v1",
+          "em_pe": 17.3,
+          "em_pb": 0.5,
+          "nifty_pe": 22.03,
+          "nifty_pb": 3.42,
+          "relative_log_premium": 0.9141342882400948
+        },
+        "reason": "EM plausibility review: PB outside [0.8,5] or PB/PE outside [0.05,0.30]",
+        "status": "excluded_pending_source_review",
+        "first_seen_at": "2026-09-13"
+      }
+    ],
+    "carry_spread_history": [],
+    "india_yield_transitions": []
   },
   "sources": [
     {

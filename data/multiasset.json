@@ -1,21 +1,22 @@
 {
   "schema_version": 1,
   "model_version": "multiasset-research-v1",
-  "generated_at": "2026-09-12T16:47:27+00:00",
+  "generated_at": "2026-09-13T01:39:04+00:00",
   "status": "live",
-  "source_latest_generated_at": "2026-09-12T15:38:46+00:00",
+  "source_latest_generated_at": "2026-09-13T01:39:03+00:00",
   "core_source": "V3.6 NIFTY equity/debt research signal; gold and silver are a diversification layer carved proportionally from both sleeves",
   "core_signal_before_metals": {
-    "equity_pct": 81.54994045700387,
-    "debt_pct": 18.45005954299613,
-    "valuation_z": -1.052253981639432,
-    "core_pct": 82.70661126795997,
-    "earnings_adjustment_pp": -1.0176280891534486,
-    "macro_adjustment_pp": -0.13904272180264873
+    "equity_pct": 79.58153111783214,
+    "debt_pct": 20.418468882167858,
+    "valuation_z": -0.9709691794978969,
+    "core_pct": 80.80314409186042,
+    "earnings_adjustment_pp": -1.074763592778716,
+    "macro_adjustment_pp": -0.14684938124955044,
+    "model_version": "3.10-pb-regime-1"
   },
   "core_allocation": {
-    "equity_pct": 68.7124523026969,
-    "debt_pct": 15.54567457959633,
+    "equity_pct": 67.05390746413468,
+    "debt_pct": 17.204219418158555,
     "gold_pct": 12.403034296204897,
     "silver_pct": 3.338838821501865
   },
@@ -106,7 +107,7 @@
     }
   },
   "btc": {
-    "score": 0.14675176924123393,
+    "score": 0.1455463326529556,
     "tactical_signal_pct": 5.0,
     "range_pct": [
       0,
@@ -115,40 +116,40 @@
     "included_in_core_100pct": false,
     "drivers": {
       "price_vs_200d": {
-        "value": 10.343284406055965,
-        "score": 0.4755083867311858,
+        "value": 10.174607834289272,
+        "score": 0.4689553916872298,
         "weight": 0.3,
-        "asof": "2026-09-12"
+        "asof": "2026-09-13"
       },
       "btc_12m_momentum": {
-        "value": -33.38484174889419,
-        "score": -0.5053119458047223,
+        "value": -33.40057870865567,
+        "score": -0.5055072312831286,
         "weight": 0.2,
-        "asof": "2026-09-12"
+        "asof": "2026-09-13"
       },
       "global_liquidity": {
         "value": -0.1511669019371614,
         "score": -0.1511669019371614,
         "weight": 0.25,
-        "asof": "2026-09-12T15:38:46+00:00"
+        "asof": "2026-09-13T01:39:03+00:00"
       },
       "drawdown_value": {
-        "value": -38.00426394153826,
-        "score": 0.5718134714684521,
+        "value": -38.09955885163653,
+        "score": 0.575011547550811,
         "weight": 0.25,
-        "asof": "2026-09-12"
+        "asof": "2026-09-13"
       }
     },
     "market": {
-      "price": 77341.25,
-      "asof": "2026-09-12",
+      "price": 77222.3671875,
+      "asof": "2026-09-13",
       "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD",
-      "ma200": 70091.488046875,
-      "vs_ma200_pct": 10.343284406055965,
-      "momentum_12m_pct": -33.38484174889419,
+      "ma200": 70090.8936328125,
+      "vs_ma200_pct": 10.174607834289272,
+      "momentum_12m_pct": -33.40057870865567,
       "three_year_high": 124752.53125,
-      "drawdown_from_3y_high_pct": -38.00426394153826,
-      "observations": 1097
+      "drawdown_from_3y_high_pct": -38.09955885163653,
+      "observations": 1096
     }
   },
   "btc_policy": "Separate tactical signal only. It is excluded from the retirement-core 100% allocation and is not funded by mechanically reducing the core portfolio.",

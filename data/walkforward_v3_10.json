@@ -1,0 +1,117 @@
+{
+  "schema_version": 2,
+  "model_version": "3.10-pb-regime-1",
+  "updated_at": "2026-09-13T01:39:04+00:00",
+  "candidate_macro_caps_pp": [
+    0,
+    3,
+    6,
+    9,
+    12,
+    15
+  ],
+  "candidate_curve_slopes": [
+    0.6,
+    0.8,
+    1.0,
+    1.15,
+    1.35,
+    1.5
+  ],
+  "candidate_extreme_thresholds": [
+    2.5,
+    3.0,
+    3.5,
+    4.0
+  ],
+  "validation": {
+    "status": "collecting_prospective_data",
+    "signal_months": 1,
+    "realized_6m_outcomes": 0,
+    "realized_12m_outcomes": 0,
+    "required_signal_months": 84,
+    "required_realized_12m_outcomes": 60,
+    "eligible_for_parameter_change": false,
+    "parameter_lock": "macroMax=6 pp, curve k=1.35 and extreme threshold zc=2.5 remain locked until prospective evidence gate is satisfied",
+    "note": "Overlapping 12-month outcomes are not independent samples; this gate permits review, not proof or automatic deployment. No macro strategy return backtest is available. Forward returns are NIFTY price-index returns only. Candidate settings are recorded prospectively and never auto-selected from future outcomes."
+  },
+  "records": [
+    {
+      "model_version": "3.10-pb-regime-1",
+      "validation_method": "live-engine-source-gates-and-candidate-damping",
+      "research_only": true,
+      "month": "2026-09",
+      "asof": "2026-09-11",
+      "generated_at": "2026-09-13T01:39:03+00:00",
+      "nifty_level": 23398.1,
+      "pe": 19.78,
+      "pb": 2.83,
+      "dividend_yield": 1.21,
+      "gsec10": 6.9711,
+      "valuation_z": -0.9709691794978969,
+      "core_equity": 80.80314409186042,
+      "valuation_damping": 0.6116123282008412,
+      "empirical_valuation_cheapness": 70.37037037037037,
+      "earnings_score": -0.2928771334450563,
+      "macro_score": -0.04001701036164857,
+      "domestic_score": 0.057009151848864285,
+      "macro_blocks": {
+        "global_liquidity": -0.1511669019371614,
+        "india_external_carry": -0.041010165293256684,
+        "china_industrial": 0.006666567902989752,
+        "india_domestic": 0.057009151848864285
+      },
+      "candidate_equity_targets": {
+        "0": 79.7283804990817,
+        "3": 79.65495580845692,
+        "6": 79.58153111783214,
+        "9": 79.50810642720737,
+        "12": 79.43468173658259,
+        "15": 79.36125704595781
+      },
+      "candidate_curve_targets": {
+        "0.6": 71.08200480292304,
+        "0.8": 73.0675322924478,
+        "1.0": 75.33938891907226,
+        "1.15": 77.14404988291697,
+        "1.35": 79.58153111783214,
+        "1.5": 81.37534041124222
+      },
+      "candidate_extreme_targets": {
+        "2.5": 79.58153111783216,
+        "3.0": 78.43401058909198,
+        "3.5": 77.83648023262712,
+        "4.0": 77.51333619583767
+      },
+      "candidate_grid_targets": {
+        "k=0.60|zc=2.5": 71.08200480292305,
+        "k=0.80|zc=2.5": 73.06753229244781,
+        "k=1.00|zc=2.5": 75.33938891907228,
+        "k=1.15|zc=2.5": 77.14404988291699,
+        "k=1.35|zc=2.5": 79.58153111783216,
+        "k=1.50|zc=2.5": 81.37534041124223,
+        "k=0.60|zc=3.0": 68.42595053276665,
+        "k=0.80|zc=3.0": 70.83870562484627,
+        "k=1.00|zc=3.0": 73.54144088516335,
+        "k=1.15|zc=3.0": 75.6464732717393,
+        "k=1.35|zc=3.0": 78.43401058909198,
+        "k=1.50|zc=3.0": 80.44678265719956,
+        "k=0.60|zc=3.5": 66.67647280201037,
+        "k=0.80|zc=3.5": 69.45066880078862,
+        "k=1.00|zc=3.5": 72.49114859869222,
+        "k=1.15|zc=3.5": 74.8144046168666,
+        "k=1.35|zc=3.5": 77.83648023262712,
+        "k=1.50|zc=3.5": 79.98381907066346,
+        "k=0.60|zc=4.0": 65.48027222202109,
+        "k=0.80|zc=4.0": 68.5581128343686,
+        "k=1.00|zc=4.0": 71.85949123463587,
+        "k=1.15|zc=4.0": 74.33802013330373,
+        "k=1.35|zc=4.0": 77.51333619583767,
+        "k=1.50|zc=4.0": 79.74100532173063
+      },
+      "forward_nifty_price_return_6m": null,
+      "forward_nifty_price_return_12m": null,
+      "outcome_status": "awaiting_future_data"
+    }
+  ]
+}
