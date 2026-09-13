@@ -24,12 +24,19 @@ The exact tolerances are preregistered in `recent_reconstruction_policy_v1.json`
 `scripts/recent_regime_reconstruction_pilot.py`:
 
 1. downloads the official NSE Indices monthly market-capitalisation/weightage archive for every month in the frozen sample;
-2. isolates the NIFTY 50 weight PDF and requires exactly 50 constituent rows with a near-100% displayed weight sum;
-3. exposes official dashboard valuation targets for the six development months only;
-4. deliberately does not request holdout dashboard targets;
-5. attempts conservative exact company-name-to-NSE-symbol mapping using the NSE equity security master;
-6. records schema-only probes for the NSE financial-results API so the next step can map point-in-time filing fields without silently guessing them;
-7. writes an artifact containing source hashes, coverage and unresolved names rather than inventing missing data.
+2. isolates the NIFTY 50 constituent PDF and requires exactly 50 security rows with a near-100% displayed weight sum;
+3. parses the **official historical symbol, close price, Index Mcap and weight** directly from that PDF, including wrapped security-name rows;
+4. exposes official dashboard valuation targets for the six development months only;
+5. deliberately does not request holdout dashboard targets;
+6. cross-checks historical symbols against the current NSE equity security master without using that master to invent historical membership;
+7. probes NSE financial-results and corporate-action APIs for every unique historical symbol in the 36-month sample and records coverage rather than silently substituting another source;
+8. writes an artifact containing source hashes and coverage gaps rather than inventing missing data.
+
+### Important market-cap distinction
+
+The PDF's `Index Mcap` is the constituent's **index-adjusted market-cap contribution**. It is extremely useful for verifying weights and historical membership, but it is not automatically interchangeable with the full-company market-capitalisation denominator needed to combine unadjusted company earnings, book value and dividends.
+
+The accounting reconstruction must either recover a consistent full-company market-cap basis (for example from price × point-in-time shares outstanding) and let the historical index weight absorb the IWF/capping factor, or independently reconstruct the corresponding adjustment factor. `Index Mcap` must not be substituted into the signed-denominator formula while using unadjusted company fundamentals.
 
 ## Stage B — constituent accounting engine
 
@@ -46,8 +53,8 @@ The signed-denominator algebra in `scripts/current_definition_aggregation.py` is
 
 ## Stage C — freeze, then unseal
 
-Only after the company mappings, accounting tags, share-capital rules and reconstruction code are frozen in a reviewable commit may the 30 holdout official target values be fetched. Any post-unseal mapping/rule change creates a new research version; the old holdout cannot be reused as untouched confirmation evidence.
+Only after the symbol set, accounting tags, share-capital rules and reconstruction code are frozen in a reviewable commit may the 30 holdout official target values be fetched. Any post-unseal mapping/rule change creates a new research version; the old holdout cannot be reused as untouched confirmation evidence.
 
 ## Failure is informative
 
-A missing source, parser failure, unresolved historical company name or tolerance miss is recorded as a defect/gap. It is not repaired with interpolation, cross-sectional imputation or a methodology scaling factor.
+A missing source, parser failure, unavailable filing, unresolved corporate action or tolerance miss is recorded as a defect/gap. It is not repaired with interpolation, cross-sectional imputation or a methodology scaling factor.
