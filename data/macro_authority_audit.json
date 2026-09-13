@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "model_version": "3.12-evidence-first-1",
+  "current_snapshot": {
+    "generated_at": "2026-09-13T09:38:58+00:00",
+    "macro_score": -0.03995923505344261,
+    "macro_context_eligible": true,
+    "live_macro_adjustment_pp": 0.0,
+    "shadow_macro_adjustment_pp": -0.23975541032065564,
+    "live_macro_budget_pp": 0.0,
+    "shadow_macro_budget_pp": 6.0
+  },
+  "pipeline_surface": {
+    "top_level_blocks": 4,
+    "scored_factor_nodes": 12,
+    "raw_scored_indicators": 13,
+    "display_only_factor_count": 1,
+    "active_factor_keys": [
+      "us_real_10y",
+      "usd_3m_pct",
+      "fed_assets_6m_pct",
+      "vix",
+      "brent_3m_pct",
+      "india_reer_bis",
+      "usd_inr_3m_pct",
+      "india_us_10y_spread"
+    ],
+    "domestic_factor_keys": [
+      "india_cpi_yoy",
+      "india_iip_yoy",
+      "india_repo_rate"
+    ],
+    "display_only_factor_keys": [
+      "us_10y"
+    ],
+    "china_raw_indicators": [
+      "pmi",
+      "new_orders"
+    ]
+  },
+  "prospective_evidence": {
+    "archived_monthly_decisions": 1,
+    "decisions": [
+      {
+        "month": "2026-09",
+        "first_seen_at": "2026-09-12T08:36:13+00:00",
+        "equity_pct": 81.54994045700387,
+        "model_version": "4f5f2b2c13a214dbbba74b7c495c3158c9f5038068950151f2176cfdbfaf1bbe"
+      }
+    ],
+    "realized_monthly_outcomes_available_for_macro_ablation": 0,
+    "status": "insufficient_to_price_return_or_drawdown_effect"
+  },
+  "historical_economic_pricing": {
+    "status": "unavailable",
+    "cagr_added_or_cost_pp_per_year": null,
+    "max_drawdown_avoided_or_added_pp": null,
+    "reason": "The project has no certified release-vintage historical reconstruction of the full macro stack on the live allocation sample. Current-vintage backfilling would answer a different question and is not substituted."
+  },
+  "operational_risk": {
+    "known_semantic_incidents": [],
+    "wrong_but_plausible_monthly_probability": null,
+    "probability_status": "not_identifiable_from_available_evidence",
+    "reason": "Caught parser/source incidents have no defensible denominator for latent silent semantic errors. Missing/stale/inconsistent inputs are fail-closed, but a syntactically valid wrong table or changed source meaning is a different failure class."
+  },
+  "governance_recommendation": {
+    "decision": "live_budget_zero_context_only_until_priced",
+    "recommended_live_macro_budget_pp": 0,
+    "retain_shadow_budget_pp": 6,
+    "rationale": "Active macro authority has no auditable historical return/drawdown price and a non-trivial semantic source surface. Preserve the verified blocks as displayed context and a prospective \u00b16pp shadow challenger, but do not let macro change or withhold the live allocation until decision value is demonstrated.",
+    "promotion_requirement": "At minimum, a predeclared prospective or certified release-vintage macro-on versus macro-off comparison with identical valuation/earnings/trend inputs, costs and outcome dates. Any tested alternative macro budget joins its comparable selection family."
+  },
+  "limitations": [
+    "This audit does not estimate an unobservable silent-error probability from anecdotal incidents.",
+    "It does not backfill macro history from revised/current-vintage economic series.",
+    "It does not test 3/6/9/12/15pp alternatives or select a winning macro budget.",
+    "The current snapshot contribution is an allocation delta, not evidence of investment value."
+  ]
+}

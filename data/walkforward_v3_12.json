@@ -1,0 +1,130 @@
+{
+  "schema_version": 4,
+  "model_version": "3.12-evidence-first-1",
+  "updated_at": "2026-09-13T09:39:00+00:00",
+  "candidate_macro_caps_pp": [
+    0,
+    3,
+    6,
+    9,
+    12,
+    15
+  ],
+  "candidate_curve_slopes": [
+    0.6,
+    0.8,
+    1.0,
+    1.15,
+    1.35,
+    1.5
+  ],
+  "candidate_extreme_thresholds": [
+    2.5,
+    3.0,
+    3.5,
+    4.0
+  ],
+  "live_macro_budget_pp": 0,
+  "macro_shadow_budget_pp": 6,
+  "validation": {
+    "status": "collecting_prospective_data",
+    "signal_months": 1,
+    "macro_shadow_eligible_months": 1,
+    "realized_6m_outcomes": 0,
+    "realized_12m_outcomes": 0,
+    "required_signal_months": 84,
+    "required_realized_12m_outcomes": 60,
+    "eligible_for_parameter_change": false,
+    "parameter_lock": "V3.12 valuation references, earnings \u00b16 pp, live macro 0 pp with \u00b16 pp shadow challenger, SMA10 \u221220 pp, curve k=1.35 and extreme threshold zc=2.5 remain locked until a separate review",
+    "note": "Overlapping 12-month outcomes are not independent samples; this gate permits review, not proof or automatic deployment. Macro shadow settings and all other candidates are recorded prospectively and never auto-selected from future outcomes."
+  },
+  "records": [
+    {
+      "model_version": "3.12-evidence-first-1",
+      "validation_method": "live-engine-source-gates-v3.12-evidence-first",
+      "research_only": true,
+      "month": "2026-09",
+      "asof": "2026-09-11",
+      "generated_at": "2026-09-13T09:38:58+00:00",
+      "nifty_level": 23398.1,
+      "pe": 19.78,
+      "pb": 2.83,
+      "dividend_yield": 1.21,
+      "gsec10": 6.9711,
+      "valuation_z": -0.9709691794978969,
+      "core_equity": 80.80314409186042,
+      "overlay_authority": 1,
+      "earnings_adjustment_pp": -1.7572628006703377,
+      "macro_adjustment_pp": 0.0,
+      "macro_shadow_adjustment_pp": -0.23975541032065564,
+      "macro_context_eligible": true,
+      "trend_adjustment_pp": -20,
+      "trend_risk_off": true,
+      "trend_completed_month": "2026-08",
+      "trend_close": 24080.4,
+      "trend_sma10": 24503.829999999998,
+      "empirical_valuation_cheapness": 70.37037037037037,
+      "earnings_score": -0.2928771334450563,
+      "macro_score": -0.03995923505344261,
+      "domestic_score": 0.057009151848864285,
+      "macro_blocks": {
+        "global_liquidity": -0.1511669019371614,
+        "india_external_carry": -0.04077906406043283,
+        "china_industrial": 0.006666567902989752,
+        "india_domestic": 0.057009151848864285
+      },
+      "live_equity_target": 59.045881291190085,
+      "candidate_equity_targets": {
+        "0": 59.045881291190085,
+        "3": 58.92600358602975,
+        "6": 58.80612588086943,
+        "9": 58.686248175709096,
+        "12": 58.566370470548776,
+        "15": 58.44649276538844
+      },
+      "candidate_curve_targets": {
+        "0.6": 50.54635497628098,
+        "0.8": 52.53188246580574,
+        "1.0": 54.803739092430206,
+        "1.15": 56.60840005627492,
+        "1.35": 59.045881291190085,
+        "1.5": 60.83969058460016
+      },
+      "candidate_extreme_targets": {
+        "2.5": 59.045881291190085,
+        "3.0": 58.02765274391858,
+        "3.5": 57.52247380278848,
+        "4.0": 57.268593327500085
+      },
+      "candidate_grid_targets": {
+        "k=0.60|zc=2.5": 50.54635497628098,
+        "k=0.80|zc=2.5": 52.53188246580574,
+        "k=1.00|zc=2.5": 54.803739092430206,
+        "k=1.15|zc=2.5": 56.60840005627492,
+        "k=1.35|zc=2.5": 59.045881291190085,
+        "k=1.50|zc=2.5": 60.83969058460016,
+        "k=0.60|zc=3.0": 48.019592687593246,
+        "k=0.80|zc=3.0": 50.43234777967287,
+        "k=1.00|zc=3.0": 53.13508303998995,
+        "k=1.15|zc=3.0": 55.24011542656589,
+        "k=1.35|zc=3.0": 58.02765274391858,
+        "k=1.50|zc=3.0": 60.04042481202616,
+        "k=0.60|zc=3.5": 46.362466372171724,
+        "k=0.80|zc=3.5": 49.13666237094998,
+        "k=1.00|zc=3.5": 52.17714216885358,
+        "k=1.15|zc=3.5": 54.500398187027955,
+        "k=1.35|zc=3.5": 57.52247380278848,
+        "k=1.50|zc=3.5": 59.669812640824816,
+        "k=0.60|zc=4.0": 45.2355293536835,
+        "k=0.80|zc=4.0": 48.31336996603102,
+        "k=1.00|zc=4.0": 51.614748366298286,
+        "k=1.15|zc=4.0": 54.09327726496615,
+        "k=1.35|zc=4.0": 57.268593327500085,
+        "k=1.50|zc=4.0": 59.496262453393044
+      },
+      "forward_nifty_price_return_6m": null,
+      "forward_nifty_price_return_12m": null,
+      "outcome_status": "awaiting_future_data"
+    }
+  ]
+}

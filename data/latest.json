@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
-  "model_version": "3.11-crash-aware-1",
-  "generated_at": "2026-09-13T08:05:49+00:00",
+  "model_version": "3.12-evidence-first-1",
+  "generated_at": "2026-09-13T09:38:58+00:00",
   "macro_stale": false,
   "macro_partial": false,
   "nifty": {
@@ -850,7 +850,7 @@
     },
     {
       "name": "U.S. Treasury / Federal Reserve / CBOE",
-      "role": "Dated real/nominal yields, broad USD, Fed balance sheet and VIX"
+      "role": "Dated real/nominal yields, broad USD, Fed balance sheet and VIX; V3.12 displays these as context and evaluates a shadow macro challenger rather than using them in the live allocation"
     },
     {
       "name": "BIS Statistics API",

@@ -1,9 +1,10 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "status": "complete",
   "months": 63,
   "scope": "Legacy fixed-reference valuation-core timing window; not a certified full-stack V3.11 backtest.",
   "observed_tradeoff_sentence": "Over the tested window, moving equity exposure added 0.16 pp/year of return and 1.0 pp of additional drawdown.",
+  "decision_relevant_60_40_sentence": "Against a pre-declared 60/40 policy over the same window, the dynamic model changed CAGR by -0.25 pp/year and maximum drawdown by +0.15 pp.",
   "comparators": {
     "ex_post_realised_mean_static": {
       "name": "Ex-post realised-mean static",
@@ -22,7 +23,20 @@
         "raw_n": 63,
         "effective_n": 26.546478588757804,
         "positive_acf_sum": 0.6865980602542127,
-        "acf_1_to_12": {"1": 0.00989297074567434, "2": 0.06803076845482707, "3": 0.24535772529943076, "4": 0.040213700521817976, "5": 0.18114899987403532, "6": -0.15553741009954294, "7": -0.026243372239308844, "8": 0.07826469637874794, "9": -0.037845701986481975, "10": 0.06368919897967922, "11": -0.11913040805961911, "12": -0.08287566193986641},
+        "acf_1_to_12": {
+          "1": 0.00989297074567434,
+          "2": 0.06803076845482707,
+          "3": 0.24535772529943076,
+          "4": 0.040213700521817976,
+          "5": 0.18114899987403532,
+          "6": -0.15553741009954294,
+          "7": -0.026243372239308844,
+          "8": 0.07826469637874794,
+          "9": -0.037845701986481975,
+          "10": 0.06368919897967922,
+          "11": -0.11913040805961911,
+          "12": -0.08287566193986641
+        },
         "method": "Bartlett-style positive-autocorrelation design effect; diagnostic only"
       },
       "comparator_realised_turnover_x": 0.43593626717150225
@@ -44,7 +58,20 @@
         "raw_n": 63,
         "effective_n": 19.98721911190231,
         "positive_acf_sum": 1.0760071385439447,
-        "acf_1_to_12": {"1": 0.12035803552336305, "2": 0.11620283430165218, "3": 0.284159634364383, "4": 0.10178224979162662, "5": 0.24254517778072204, "6": -0.29607054031890634, "7": 0.013129980259105365, "8": 0.10812182460460108, "9": -0.09258286851662775, "10": 0.08970740191849137, "11": -0.13432380846409292, "12": -0.07241285933692719},
+        "acf_1_to_12": {
+          "1": 0.12035803552336305,
+          "2": 0.11620283430165218,
+          "3": 0.284159634364383,
+          "4": 0.10178224979162662,
+          "5": 0.24254517778072204,
+          "6": -0.29607054031890634,
+          "7": 0.013129980259105365,
+          "8": 0.10812182460460108,
+          "9": -0.09258286851662775,
+          "10": 0.08970740191849137,
+          "11": -0.13432380846409292,
+          "12": -0.07241285933692719
+        },
         "method": "Bartlett-style positive-autocorrelation design effect; diagnostic only"
       },
       "comparator_realised_turnover_x": 0.4204192552539894
@@ -66,11 +93,51 @@
         "raw_n": 63,
         "effective_n": 39.48210051030381,
         "positive_acf_sum": 0.2978298923528477,
-        "acf_1_to_12": {"1": -0.30210040038415437, "2": -0.17892164811055555, "3": 0.06613168159593812, "4": -0.030308317231885203, "5": -0.07959344245132641, "6": -0.036124199513961314, "7": 0.20224828407797135, "8": -0.13960391250332835, "9": -0.0172590064291969, "10": -0.006448281576535909, "11": 0.029449926678938202, "12": -0.07917665505540286},
+        "acf_1_to_12": {
+          "1": -0.30210040038415437,
+          "2": -0.17892164811055555,
+          "3": 0.06613168159593812,
+          "4": -0.030308317231885203,
+          "5": -0.07959344245132641,
+          "6": -0.036124199513961314,
+          "7": 0.20224828407797135,
+          "8": -0.13960391250332835,
+          "9": -0.0172590064291969,
+          "10": -0.006448281576535909,
+          "11": 0.029449926678938202,
+          "12": -0.07917665505540286
+        },
         "method": "Bartlett-style positive-autocorrelation design effect; diagnostic only"
       },
       "comparator_realised_turnover_x": 0.7637937200974482
     }
+  },
+  "comparator_beta_signature": {
+    "status": "descriptive_three_point_geometry_only",
+    "dynamic_mean_equity_pct": 53.536467520187294,
+    "points": [
+      {
+        "comparator": "expanding_mean_investable",
+        "equity_pct": 39.87035206421214,
+        "dynamic_excess_cagr_pp": 2.113014088916266
+      },
+      {
+        "comparator": "ex_post_realised_mean_static",
+        "equity_pct": 53.536467520187315,
+        "dynamic_excess_cagr_pp": 0.16012823626301298
+      },
+      {
+        "comparator": "fixed_60_40_policy",
+        "equity_pct": 60.00000000000002,
+        "dynamic_excess_cagr_pp": -0.24840818691342825
+      }
+    ],
+    "monotone_decreasing_excess_cagr_with_comparator_equity": true,
+    "slope_pp_excess_cagr_per_1pp_comparator_equity": -0.12128510869363092,
+    "fitted_excess_cagr_at_dynamic_mean_equity_pp": 0.3837226930423661,
+    "fitted_zero_cross_equity_pct": 56.70027466168608,
+    "r_squared": 0.9754549889358171,
+    "interpretation": "Across these three comparator weights, excess CAGR falls as comparator equity rises and is near zero around the dynamic strategy's own mean exposure. That is the geometry expected when most return differences are equity beta and residual timing content is small. With only three dependent portfolio constructions this is descriptive, not an independent statistical test."
   },
   "observed_effect_scale": {
     "status": "heuristic_only",
