@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Research-only source probe for the frozen SMA10 trend challenger.
 
-Discovers whether the exact frozen sleeve indices can be retrieved with daily
-history. It never substitutes another debt instrument if the required NIFTY
-10 YR BENCHMARK G-SEC total-return index is unavailable.
+NSE Indices states that fixed-income indices are Total Return except the
+separately named Nifty 10 yr Benchmark G-Sec (Clean Price). Therefore the
+frozen debt sleeve is retrieved as the historical close of the exact
+`NIFTY 10 YR BENCHMARK G-SEC` index. No substitute debt index is permitted.
 """
 from __future__ import annotations
 from datetime import date
@@ -28,32 +29,15 @@ def _parse(rows):
     return {'rows':int(len(s)),'first':str(s.index.min().date()),'last':str(s.index.max().date()),'first_value':float(s.iloc[0]),'last_value':float(s.iloc[-1])}
 
 
-def tri(name):
+def equity_tri():
     from jugaad_data.nse import index_tri_raw
-    candidates=[(name,name)]
-    # Historical API sometimes separates broad category and index name. Keep
-    # exact index identity; category aliases do not change the requested index.
-    if name=='NIFTY 50':candidates += [('NIFTY 50','NIFTY 50')]
-    if name=='NIFTY 10 YR BENCHMARK G-SEC':
-        candidates += [
-            ('NIFTY 10 YR BENCHMARK G-SEC','NIFTY 10 YR BENCHMARK G-SEC'),
-            ('NIFTY FIXED INCOME','NIFTY 10 YR BENCHMARK G-SEC'),
-            ('NIFTY FIXED INCOME INDICES','NIFTY 10 YR BENCHMARK G-SEC'),
-        ]
-    errors=[]
-    for family,index in candidates:
-        try:
-            rows=index_tri_raw(family,index,START,date.today())
-            parsed=_parse(rows)
-            if parsed:return {'status':'ok','family':family,'index':index,**parsed}
-            errors.append(f'{family}: empty')
-        except Exception as e:errors.append(f'{family}: {type(e).__name__}: {e}')
-    return {'status':'unavailable','index':name,'errors':errors}
+    try:return {'status':'ok',**(_parse(index_tri_raw('NIFTY 50','NIFTY 50',START,date.today())) or {})}
+    except Exception as e:return {'status':'unavailable','error':f'{type(e).__name__}: {e}'}
 
 
-def price():
+def index_close(name):
     from jugaad_data.nse import index_raw
-    try:return {'status':'ok',**(_parse(index_raw('NIFTY 50',START,date.today())) or {})}
+    try:return {'status':'ok',**(_parse(index_raw(name,START,date.today())) or {})}
     except Exception as e:return {'status':'unavailable','error':f'{type(e).__name__}: {e}'}
 
 
@@ -61,9 +45,10 @@ def main():
     out={
       'research_only':True,
       'frozen_policy':'trend-sma10-minus20-v1',
-      'nifty50_price':price(),
-      'nifty50_tri':tri('NIFTY 50'),
-      'debt_tri':tri('NIFTY 10 YR BENCHMARK G-SEC'),
+      'nifty50_price':index_close('NIFTY 50'),
+      'nifty50_tri':equity_tri(),
+      'debt_tri':index_close('NIFTY 10 YR BENCHMARK G-SEC'),
+      'debt_identity_note':'NSE Indices fixed-income index close is total return; Clean Price is a separately named excluded index.',
       'substitution_allowed':False,
       'live_allocation_effect':'none',
     }
