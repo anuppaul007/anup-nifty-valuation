@@ -1,0 +1,54 @@
+name: Development accounting source map
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/development_accounting_source_map.py'
+      - 'tests/test_development_accounting_source_map.py'
+      - 'DEVELOPMENT_ACCOUNTING_SOURCE_MAP.md'
+      - '.github/workflows/development-accounting-source-map.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  source-map:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install PDF text utility
+        run: sudo apt-get update -qq && sudo apt-get install -y poppler-utils
+      - run: pip install -r requirements.txt pytest
+      - name: Unit tests
+        run: pytest -q tests/test_development_accounting_source_map.py
+      - name: Build development PIT accounting source map
+        run: python scripts/development_accounting_source_map.py
+      - name: Enforce zero live authority and sealed holdout
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('data/development_accounting_source_map.json'))
+          s=x['summary']
+          assert x['research_only'] is True
+          assert x['live_authority'] == 'none'
+          assert x['live_model_changed'] is False
+          assert x['live_allocation_changed'] is False
+          assert s['development_months'] == 6
+          assert s['development_constituent_rows'] == 300
+          assert s['unique_development_symbols'] == 50
+          assert s['company_months_total'] == 300
+          assert s['holdout_target_fetch_count'] == 0
+          assert len(x['development_snapshots']) == 6
+          print(json.dumps(s, indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: development-accounting-source-map
+          path: data/development_accounting_source_map.json
+          if-no-files-found: error
