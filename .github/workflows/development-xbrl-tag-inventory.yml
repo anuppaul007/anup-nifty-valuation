@@ -31,7 +31,7 @@ jobs:
         run: pytest -q tests/test_development_xbrl_tag_inventory.py
       - name: Build development XBRL tag inventory
         run: python scripts/development_xbrl_tag_inventory.py
-      - name: Enforce discovery-only scope
+      - name: Enforce discovery-only scope and broad archive coverage
         run: |
           python - <<'PY'
           import json
@@ -44,10 +44,19 @@ jobs:
           assert x['ratios_computed'] is False
           assert x['stage_b_summary']['development_months'] == 6
           assert x['stage_b_summary']['company_months_total'] == 300
-          assert x['selected_sources'] > 0
-          assert x['xbrl_files_ok'] > 0
+          assert x['selected_sources'] >= 250
+          assert x['xbrl_files_ok'] / x['selected_sources'] >= 0.98
+          assert x['template_family_counts'].get('BANKING', 0) > 0
+          assert x['template_family_counts'].get('INDAS', 0) > 0
+          allowed_indus_periods={'2022-12-31','2023-03-31','2023-06-30'}
+          for f in x['failures']:
+              uses=f.get('uses',[])
+              assert uses, f
+              assert all(u.get('symbol') == 'INDUSINDBK' for u in uses), f
+              assert all(u.get('period_end') in allowed_indus_periods for u in uses), f
           print(json.dumps({
             'selected_sources': x['selected_sources'],
+            'template_family_counts': x['template_family_counts'],
             'xbrl_files_ok': x['xbrl_files_ok'],
             'xbrl_files_failed': x['xbrl_files_failed'],
             'invalid_selected_links': len(x['invalid_selected_xbrl_links']),
