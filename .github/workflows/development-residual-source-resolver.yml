@@ -1,0 +1,61 @@
+name: Development residual source resolver
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'development_residual_source_policy_v1.json'
+      - 'scripts/development_residual_source_resolver.py'
+      - 'tests/test_development_residual_source_resolver.py'
+      - 'DEVELOPMENT_RESIDUAL_SOURCE_RESOLUTION.md'
+      - '.github/workflows/development-residual-source-resolver.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  residual-source-resolution:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install PDF text utility
+        run: sudo apt-get update -qq && sudo apt-get install -y poppler-utils
+      - run: pip install -r requirements.txt pytest
+      - name: Unit tests
+        run: pytest -q tests/test_development_residual_source_resolver.py
+      - name: Resolve residual official sources
+        run: python scripts/development_residual_source_resolver.py
+      - name: Enforce zero live authority and sealed holdout
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('development_residual_source_policy_v1.json'))
+          x=json.load(open('data/development_residual_source_resolution.json'))
+          assert p['research_only'] is True
+          assert p['live_authority'] == 'none'
+          assert x['research_only'] is True
+          assert x['live_authority'] == 'none'
+          assert x['live_model_changed'] is False
+          assert x['live_allocation_changed'] is False
+          assert x['baseline_complete_company_months'] == 270
+          assert x['baseline_total_company_months'] == 300
+          assert x['residual_company_months'] == 30
+          assert x['combined_complete_company_months'] >= 270
+          assert x['holdout_target_fetch_count'] == 0
+          print(json.dumps({
+            'resolved_residual_company_months': x['resolved_residual_company_months'],
+            'combined_complete_company_months': x['combined_complete_company_months'],
+            'unresolved': x['unresolved'],
+            'method_counts': x['method_counts'],
+          }, indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: development-residual-source-resolution
+          path: data/development_residual_source_resolution.json
+          if-no-files-found: error
