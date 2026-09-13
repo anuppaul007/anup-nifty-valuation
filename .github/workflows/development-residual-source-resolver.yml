@@ -32,12 +32,27 @@ jobs:
         run: pytest -q tests/test_development_residual_source_resolver.py
       - name: Resolve residual official/first-party sources
         run: python scripts/development_residual_source_resolver_v12.py
+      - name: Upload resolver ledger even when a later gate fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: development-residual-source-resolution
+          path: data/development_residual_source_resolution.json
+          if-no-files-found: error
       - name: Enforce complete development source identity, zero live authority and sealed holdout
         run: |
           python - <<'PY'
           import json
           p=json.load(open('development_residual_source_policy_v1.json'))
           x=json.load(open('data/development_residual_source_resolution.json'))
+          print(json.dumps({
+            'policy_id': x['policy_id'],
+            'resolved_residual_company_months': x['resolved_residual_company_months'],
+            'combined_complete_company_months': x['combined_complete_company_months'],
+            'unresolved': x['unresolved'],
+            'method_counts': x['method_counts'],
+            'nestle_source_attempts': x['source_attempts'].get('NESTLEIND'),
+          }, indent=2))
           assert p['policy_id'] == 'development-residual-source-resolver-v1.2'
           assert p['research_only'] is True
           assert p['live_authority'] == 'none'
@@ -52,16 +67,4 @@ jobs:
           assert x['combined_complete_company_months'] == 300
           assert x['unresolved'] == []
           assert x['holdout_target_fetch_count'] == 0
-          print(json.dumps({
-            'policy_id': x['policy_id'],
-            'resolved_residual_company_months': x['resolved_residual_company_months'],
-            'combined_complete_company_months': x['combined_complete_company_months'],
-            'unresolved': x['unresolved'],
-            'method_counts': x['method_counts'],
-          }, indent=2))
           PY
-      - uses: actions/upload-artifact@v4
-        with:
-          name: development-residual-source-resolution
-          path: data/development_residual_source_resolution.json
-          if-no-files-found: error
