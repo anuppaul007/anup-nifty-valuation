@@ -7,6 +7,7 @@ on:
       - 'trend_policy_v1.json'
       - 'scripts/trend_source_probe.py'
       - 'scripts/trend_challenger_backtest.py'
+      - 'scripts/trend_challenger_backtest_v2.py'
       - 'tests/test_trend_challenger.py'
       - '.github/workflows/trend-challenger-research.yml'
       - 'TREND_CHALLENGER_RESEARCH.md'
@@ -30,17 +31,15 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt pytest
       - name: Unit tests
-        if: ${{ hashFiles('tests/test_trend_challenger.py') != '' }}
         run: pytest -q tests/test_trend_challenger.py
       - name: Probe frozen sleeve sources
         run: python scripts/trend_source_probe.py
-      - name: Run historical challenger when implemented
-        if: ${{ hashFiles('scripts/trend_challenger_backtest.py') != '' }}
-        run: python scripts/trend_challenger_backtest.py
+      - name: Run historical challenger
+        run: python scripts/trend_challenger_backtest_v2.py
       - uses: actions/upload-artifact@v4
         with:
           name: trend-challenger-research
           path: |
             data/trend_source_probe.json
             data/trend_challenger_backtest.json
-          if-no-files-found: warn
+          if-no-files-found: error
