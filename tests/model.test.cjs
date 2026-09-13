@@ -16,7 +16,7 @@ function fixture(){
 }
 test('known snapshot arithmetic works when complete macroeconomic gate passes',()=>{
  const r=M.calculate(fixture(),now);
- assert(Math.abs(r.core-83.1)<.06);assert.equal(r.coverage,1);
+ assert(Math.abs(r.core-81.14682556581988)<1e-10);assert.equal(r.coverage,1);
  assert.equal(r.macroEligible,true);assert.equal(r.allocationReady,true);
  assert(Math.abs(r.ma-(-.3061910122582852*6*r.damp))<1e-12);
  assert(Math.abs(r.L.reduce((s,x)=>s+x.weight,0)-100)<1e-12);
@@ -69,3 +69,8 @@ test('macro worsens allocation monotonically for every valuation and has zero au
  }
 });
 
+test('display-only nominal yield cannot dilute the macro score',()=>{
+ const d=fixture(),before=M.calculate(d,now);d.macro.factors.us_10y={display_only:true,value:4.95,z:null,score:null,status:'live',asof:'2026-09-10'};
+ assert.equal(M.calculate(d,now).final,before.final);
+ d.macro.factors.vix.display_only=true;assert.equal(M.calculate(d,now).allocationReady,false);
+});

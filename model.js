@@ -1,7 +1,8 @@
-/* Fixed-reference research model. Parameters are assumptions, not optimized weights. */
+/* V3.10: PB/profitability references frozen from 36 post-break completed months. See data/pb_calibration_v3_10.json.
+ * Fixed-reference research model. Parameters are assumptions, not optimized weights. */
 (function(root){
 'use strict';
-const C=Object.freeze({peM:22.44,peS:2.08,pbM:3.88,pbS:.45,roeM:17.36,roeS:1.92,dyM:1.25,dyS:.18,gapM:-2.60,gapS:.70,wPE:30,wPB:25,wGAP:30,wDY:10,beta:.60,k:1.35,zc:2.5,macroMax:6,earnMax:6,minMacroCoverage:.999,macroRequiredWeight:1.0});
+const C=Object.freeze({peM:22.44,peS:2.08,pbM:3.54,pbS:0.3239941700435707,roeM:16.15402934929392,roeS:0.9884905234449538,dyM:1.25,dyS:.18,gapM:-2.60,gapS:.70,wPE:30,wPB:25,wGAP:30,wDY:10,beta:.60,k:1.35,zc:2.5,macroMax:6,earnMax:6,minMacroCoverage:.999,macroRequiredWeight:1.0});
 const finite=x=>typeof x==='number'&&Number.isFinite(x);
 const clip=(x,a,b)=>Math.max(a,Math.min(b,x));
 function ageDays(s,now=new Date()){
@@ -15,7 +16,7 @@ function verifyMacro(m,now){
  const issues=[];let reconstructed=0;
  for(const [key,[days,weight]] of Object.entries(FACTORS)){
   const f=m.factors?.[key];
-  if(!f||f.status!=='live'||!finite(f.value)||!finite(f.score)||Math.abs(f.score)>1||!fresh(f.asof,days,now))issues.push(key);
+  if(!f||f.display_only===true||f.status!=='live'||!finite(f.value)||!finite(f.score)||Math.abs(f.score)>1||!fresh(f.asof,days,now))issues.push(key);
   else reconstructed+=weight*f.score;
  }
  const ch=m.china_pmi;
@@ -27,7 +28,7 @@ function verifyMacro(m,now){
   let subtotal=0;
   for(const [key,days,weight] of [['india_cpi_yoy',75,.4],['india_iip_yoy',90,.35],['india_repo_rate',7,.25]]){
    const f=dom.factors?.[key];
-   if(!f||f.status!=='live'||!finite(f.value)||!finite(f.score)||Math.abs(f.score)>1||!fresh(f.asof,days,now))issues.push(key);
+   if(!f||f.display_only===true||f.status!=='live'||!finite(f.value)||!finite(f.score)||Math.abs(f.score)>1||!fresh(f.asof,days,now))issues.push(key);
    else subtotal+=f.score*weight;
   }
   if(Math.abs(subtotal-dom.score)>1e-8)issues.push('domestic_score_mismatch');
@@ -67,9 +68,10 @@ function calculate(d,now=new Date()){
  else if(!macroPacketValid)holdReason='macro packet or individual observations are stale, incomplete or inconsistent'+(macroIssues.length?': '+macroIssues.join(', '):'');
  else if(!macroEligible)holdReason=`verified macro coverage ${(100*coverage).toFixed(1)}% is below the 100% requirement`;
  else if(!earningsComplete)holdReason='earnings-cycle history is incomplete or stale';
- return{valid:true,allocationReady,L,z,core,damp,ea,ma,final:allocationReady?clip(core+ea+ma,0,100):null,coverage,earnCoverage,macroEligible,macroPacketValid,earningsEligible,earningsComplete,macroIssues,gsecEligible:gOK,fundamentalCoverage:used/total,holdReason};
+ return{model_version:VERSION,valid:true,allocationReady,L,z,core,damp,ea,ma,final:allocationReady?clip(core+ea+ma,0,100):null,coverage,earnCoverage,macroEligible,macroPacketValid,earningsEligible,earningsComplete,macroIssues,gsecEligible:gOK,fundamentalCoverage:used/total,holdReason};
 }
 function band(z){if(z<=-2.5)return'extremely low';if(z<-.674)return'low';if(z<-.126)return'below reference';if(z<.126)return'near reference';if(z<.674)return'above reference';if(z<2.5)return'high';return'extremely high';}
-const api={C,FACTORS,verifyMacro,finite,clip,ageDays,fresh,curve,calculate,band};
+const VERSION='3.10-pb-regime-1';
+const api={VERSION,C,FACTORS,verifyMacro,finite,clip,ageDays,fresh,curve,calculate,band};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.AnupModel=api;
 })(typeof window!=='undefined'?window:this);

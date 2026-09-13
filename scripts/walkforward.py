@@ -48,16 +48,13 @@ def model_snapshot(d,now=None):
     checked=json.loads(result.stdout)
     if not checked.get('allocationReady'):return None
     required=['level','pe','pb','div_yield','gsec10']
-    if d.get('model_version')!='3.6' or any(not finite(n.get(k)) for k in required):return None
+    if d.get('model_version')!='3.10-pb-regime-1' or any(not finite(n.get(k)) for k in required):return None
     if not finite(m.get('score')) or float(m.get('active_block_weight') or 0)<.999:return None
     if not finite(e.get('score')) or float(e.get('coverage') or 0)<.999:return None
     dom=m.get('domestic') or {}
     if dom.get('status')!='live' or not finite(dom.get('score')):return None
     pe,pb,dy,gsec=map(float,(n['pe'],n['pb'],n['div_yield'],n['gsec10']))
-    roe=100*pb/pe;gap=100/pe-gsec
-    lenses=[((pe-C['peM'])/C['peS'],30),((pb-C['pbM'])/C['pbS']-C['beta']*(roe-C['roeM'])/C['roeS'],25),(-(gap-C['gapM'])/C['gapS'],30),(-(dy-C['dyM'])/C['dyS'],10)]
-    z=sum(v*w for v,w in lenses)/sum(w for _,w in lenses);core=curve(z);damp=clip(1-abs(z)/C['zc'],0,1)
-    ea=clip(e['score'],-1,1)*C['earnMax']*damp;ms=clip(m['score'],-1,1)
+    z,core,damp,ea=checked['z'],checked['core'],checked['damp'],checked['ea'];ms=clip(m['score'],-1,1)
     macro_candidates={str(cap):clip(core+ea+ms*cap*damp,0,100) for cap in CANDIDATE_MACRO_CAPS}
     curve_candidates={str(k):clip(curve(z,k,C['zc'])+ea+ms*C['macroMax']*damp,0,100) for k in CANDIDATE_CURVE_SLOPES}
     def candidate(k,zc):
@@ -67,7 +64,7 @@ def model_snapshot(d,now=None):
     grid_candidates={f'k={k:.2f}|zc={zc:.1f}':candidate(k,zc) for zc in CANDIDATE_EXTREMES for k in CANDIDATE_CURVE_SLOPES}
     vd=d.get('valuation_diagnostics') or {}
     return {
-      'validation_method':'v3.7-source-gates-and-candidate-damping','research_only':True,'month':str(n['date'])[:7],'asof':n['date'],'generated_at':d.get('generated_at'),
+      'model_version':d.get('model_version'),'validation_method':'live-engine-source-gates-and-candidate-damping','research_only':True,'month':str(n['date'])[:7],'asof':n['date'],'generated_at':d.get('generated_at'),
       'nifty_level':float(n['level']),'pe':pe,'pb':pb,'dividend_yield':dy,'gsec10':gsec,
       'valuation_z':z,'core_equity':core,'valuation_damping':damp,
       'empirical_valuation_cheapness':float(vd['composite_cheapness']) if finite(vd.get('composite_cheapness')) else None,
@@ -99,16 +96,19 @@ def summary(records):
 
 def main():
     d=json.loads(LATEST.read_text())
-    try:w=json.loads(OUT.read_text())
+    if d.get('model_version')!='3.10-pb-regime-1':
+        print('Legacy ledger preserved; wait for a V3.10 packet');return
+    out_path=ROOT/'data'/'walkforward_v3_10.json'
+    try:w=json.loads(out_path.read_text())
     except (OSError,ValueError):w={'schema_version':1,'records':[]}
     records=[r for r in w.get('records',[]) if isinstance(r,dict) and r.get('month')]
     snap=model_snapshot(d);current_month=str(pd.Period(datetime.now(timezone.utc).date(),freq='M'))
     if snap and snap['month']==current_month:
         records=[r for r in records if r['month']!=snap['month']];records.append(snap)
     records=sorted(records,key=lambda r:r['month'])[-180:];records=update_outcomes(records,current_month)
-    out={'schema_version':2,'model_version':'3.6','updated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),
+    out={'schema_version':2,'model_version':d.get('model_version'),'updated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),
          'candidate_macro_caps_pp':CANDIDATE_MACRO_CAPS,'candidate_curve_slopes':CANDIDATE_CURVE_SLOPES,'candidate_extreme_thresholds':CANDIDATE_EXTREMES,
          'validation':summary(records),'records':records}
-    tmp=OUT.with_suffix('.tmp');tmp.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8');tmp.replace(OUT)
+    tmp=out_path.with_suffix('.tmp');tmp.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8');tmp.replace(out_path)
     print(json.dumps(out['validation']))
 if __name__=='__main__':main()

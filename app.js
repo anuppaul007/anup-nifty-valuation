@@ -13,7 +13,7 @@ function clearMultiAsset(message='Multi-asset research data are unavailable.'){
  if(q('#maNote')){q('#maNote').textContent='The NIFTY equity/debt model remains available independently; no missing multi-asset input is neutral-filled.';q('#maNote').className='flag bad';}
 }
 function renderMultiAsset(ma,sourceGeneratedAt){
- const sameSnapshot=typeof sourceGeneratedAt==='string'&&ma?.source_latest_generated_at===sourceGeneratedAt;
+ const sameSnapshot=typeof sourceGeneratedAt==='string'&&ma?.source_latest_generated_at===sourceGeneratedAt&&ma?.core_signal_before_metals?.model_version===AnupModel.VERSION;
  if(!ma||ma.status!=='live'||!fresh(ma.generated_at,3)||!ma.core_allocation||!sameSnapshot){
   const mismatch=ma&&ma.status==='live'&&!sameSnapshot;
   clearMultiAsset(ma?.error||(mismatch?'Multi-asset packet does not match the current NIFTY snapshot; allocation is withheld until the synchronized refresh completes.':'Multi-asset research data are unavailable or stale.'));
@@ -58,7 +58,10 @@ function render(d){
  const eq=r.allocationReady?Math.round(r.final):null,db=r.allocationReady?100-eq:null;
  q('#eq').textContent=r.allocationReady?eq+'%':'—';q('#debt').textContent=r.allocationReady?db+'%':'—';q('#pct').textContent=signed(r.z,2);q('#erp').textContent=Math.round(r.fundamentalCoverage*100)+'%';
  q('#eqbar').style.width=(eq||0)+'%';q('#barEq').textContent=r.allocationReady?'Equity '+eq+'%':'Complete-data gate active';q('#barDebt').textContent=r.allocationReady?'Debt '+db+'%':'';
- const rankText=vd.status==='live'&&finite(vd.composite_cheapness)?` Independent current-methodology sanity check: ${vd.composite_cheapness.toFixed(1)}/100 cheapness across ${vd.months} completed months (${vd.label}). It is diagnostic only and does not alter the allocation.`:'';
+ const dq=vd.lens_disagreement||{};
+ const qualityNotes=[dq.flagged?`Valuation lenses disagree by ${fmt(dq.spread_pp,1)} percentile points; review signal, not proof of a break.`:null,n.gsec_meta?.last_transition?`India yield proxy changed on ${n.gsec_meta.last_transition.asof}; check comparability.`:null,m.relative_em?.quarantine?.length?`${m.relative_em.quarantine.length} EM records quarantined and excluded from calibration.`:null].filter(Boolean);
+ if(q('#qualityNotes'))q('#qualityNotes').textContent=qualityNotes.join(' ');
+ const rankText=['live','limited_history'].includes(vd.status)&&finite(vd.composite_cheapness)?` Independent current-methodology sanity check: ${vd.composite_cheapness.toFixed(1)}/100 cheapness across ${vd.months} completed months (${vd.label}). It is diagnostic only and does not alter the allocation.`:'';
  q('#verdict').textContent=r.allocationReady?`Valuation is ${band(r.z)} against the model’s fixed references. With the defined input set eligible, the unvalidated research model gives ${r.final.toFixed(1)}% equity / ${(100-r.final).toFixed(1)}% debt.${rankText} The fixed-reference allocation curve remains an assumption until sufficient walk-forward evidence exists.`:`No equity/debt target is published because ${r.holdReason||'the complete-data gate is not satisfied'}. Fundamental valuation is still shown, but incomplete macro evidence is never converted into a precise allocation.${rankText}`;
  q('#lens').innerHTML=r.L.map(x=>`<tr><td>${esc(x.label)}</td><td>${fmt(x.now)}</td><td>${fmt(x.reference)}</td><td>${signed(x.z,2)}</td><td>${x.weight.toFixed(1)}%</td></tr>`).join('');
  q('#core').textContent=fmt(r.core,1)+'%';q('#eadj').textContent=r.earningsComplete?signed(r.ea,2)+' pp':'Withheld';q('#madj').textContent=r.macroEligible?signed(r.ma,2)+' pp':'Withheld';q('#damp').textContent=fmt(100*r.damp,0)+'%';q('#final').textContent=r.allocationReady?fmt(r.final,1)+'%':'Withheld';
@@ -79,7 +82,7 @@ function render(d){
  q('#pending').className='flag '+(r.allocationReady?'good':'bad');
  q('#pending').textContent=r.allocationReady?'Defined-input coverage is complete. This does not mean all economic risks are measured, or that the allocation has been validated.':`Allocation withheld. ${issues.length?`Required inputs not yet eligible: ${issues.join(', ')}. `:''}No missing, stale, cached or pending-history value is displayed as a scored input.`;
  const gm=n.gsec_meta||{};const marketRows=[['NIFTY 50',n.level.toLocaleString('en-IN')],['P/E',fmt(n.pe)],['P/B',fmt(n.pb)],['Dividend yield',fmt(n.div_yield)+'%'],['NIFTY date',n.date],['India ~10Y',fmt(n.gsec10)+'%'],['India yield date',gm.asof||'Not verified'],['India yield instrument',gm.security||gm.source||'Not verified']];
- if(vd.status==='live'&&finite(vd.composite_cheapness)){marketRows.push(['Valuation-era cheapness',fmt(vd.composite_cheapness,1)+'/100']);marketRows.push(['Comparable completed months',String(vd.months)]);}
+ if(['live','limited_history'].includes(vd.status)&&finite(vd.composite_cheapness)){marketRows.push(['Valuation-era cheapness',fmt(vd.composite_cheapness,1)+'/100']);marketRows.push(['Comparable completed months',String(vd.months)]);}
  q('#market').innerHTML=marketRows.map(x=>`<div>${esc(x[0])}</div><div>${esc(x[1])}</div>`).join('');
  q('#earn').innerHTML=[['Index-implied EPS',fmt(en.eps,1)],['Cycle observation date',en.asof||'Not verified'],['EPS growth, 12 months',signed(en.eps_growth_12m)+'%'],['Growth acceleration, 6 months',signed(en.acceleration_6m)+' pp'],['Earnings score',r.earningsComplete?signed(en.score,2):'Withheld']].map(x=>`<div>${esc(x[0])}</div><div>${esc(x[1])}</div>`).join('');
  const score=r.macroEligible?m.score:null,st=stance(score);q('#mscore').textContent=r.macroEligible?signed(score,2):'Withheld';q('#mstance').textContent=r.macroEligible?st[0]:'complete data required';q('#mcov').textContent=fmt(100*r.coverage,0)+'%';q('#vix').textContent=factors.vix?.status==='live'?fmt(m.vix,1):'—';q('#carry').textContent=factors.india_us_10y_spread?.status==='live'?fmt(m.india_us_10y_spread)+' pp':'—';

@@ -5,7 +5,7 @@ test('strict thresholds use unrounded values',()=>{
  assert.deepEqual(selectRows(rows,'equity'),[rows[1]]);assert.deepEqual(selectRows(rows,'debt'),[rows[3]]);
 });
 test('era filter and invalid inputs',()=>{
- const rows=[{core_equity:90,core_debt:10,nifty_asof:'2020-03-31'},{core_equity:85,core_debt:15,nifty_asof:'2021-03-31'},{core_equity:null,core_debt:90,nifty_asof:'2026-08-31'}];
+ const rows=[{core_equity:90,core_debt:10,nifty_asof:'2020-03-31'},{core_equity:85,core_debt:15,nifty_asof:'2023-09-29'},{core_equity:null,core_debt:90,nifty_asof:'2026-08-31'}];
  assert.deepEqual(selectRows(rows,'equity','current'),[rows[1]]);
 });
 test('published reconstruction matches the verified workbook',()=>{
@@ -31,4 +31,9 @@ test('page loads history, filters debt and exports selected rows',async()=>{
 });
 test('yield age is observation age, not an asserted release lag',()=>{
  assert.equal(require('../evidence.js').yieldAgeDays({signal_date:'2000-01-01',gsec_asof:'1999-11-30'}),32);
+});
+
+test('2021 PE transition does not make legacy PB comparable',()=>{
+ const rows=['2021-03-31','2023-09-28','2023-09-29'].map(nifty_asof=>({nifty_asof,core_equity:85,core_debt:15}));
+ assert.deepEqual(selectRows(rows,'all','current'),[rows[2]]);
 });

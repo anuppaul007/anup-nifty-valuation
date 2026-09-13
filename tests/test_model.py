@@ -34,7 +34,7 @@ class ModelTests(unittest.TestCase):
  def test_valuation_diagnostic_does_not_mix_pre_methodology_history(self):
   hist=[['2021-03',100,20,.1]]+[[f'2021-{i:02d}',20+i/10,3+i/100,1+i/100] for i in range(4,13)]+[[f'2022-{i:02d}',21+i/10,3.1+i/100,1.1+i/100] for i in range(1,13)]+[[f'2023-{i:02d}',22+i/10,3.2+i/100,1.2+i/100] for i in range(1,13)]+[['2024-01',23,3.5,1.3]]
   x=vd.build(hist,{'date':'2024-02-10','pe':19,'pb':2.9,'div_yield':1.4})
-  self.assertEqual(x['months'],34);self.assertEqual(x['first_month'],'2021-04');self.assertEqual(x['allocation_effect'],'none');self.assertGreater(x['composite_cheapness'],50)
+  self.assertEqual(x['months'],5);self.assertEqual(x['first_month'],'2023-09');self.assertEqual(x['allocation_effect'],'none');self.assertGreater(x['composite_cheapness'],50)
  def test_stoxx_binds_fundamentals_not_risk_table(self):
   x=m.parse_stoxx(STOXX);self.assertEqual((x['pe'],x['pb'],x['div_yield']),(16.3,2.4,2.8));self.assertEqual(x['asof'],'2026-07-31')
  def test_missing_history_is_not_neutral(self):

@@ -6,7 +6,7 @@ function paint(){
  const rows=AnupEvidence.selectRows(history,el('historyFilter').value,el('historyEra').value);
  el('historyCount').textContent=`${rows.length} matching months · ${history.length} monthly observations in the published snapshot`;
  const body=el('historyRows');body.replaceChildren();
- for(const r of rows){const tr=document.createElement('tr');for(const value of [r.signal_date,r.nifty_asof,r.core_equity.toFixed(2)+'%',r.core_debt.toFixed(2)+'%',r.gsec_asof,AnupEvidence.yieldAgeDays(r)+' days',r.nifty_asof<'2021-03-31'?'Earlier methodology':'Current methodology']){const td=document.createElement('td');td.textContent=value;tr.appendChild(td);}body.appendChild(tr);}
+ for(const r of rows){const tr=document.createElement('tr');for(const value of [r.signal_date,r.nifty_asof,r.core_equity.toFixed(2)+'%',r.core_debt.toFixed(2)+'%',r.gsec_asof,AnupEvidence.yieldAgeDays(r)+' days',AnupEvidence.ratioEra(r.nifty_asof)]){const td=document.createElement('td');td.textContent=value;tr.appendChild(td);}body.appendChild(tr);}
 }
 async function currentFile(name){
  if(typeof fetchPublished==='function'){const c=new AbortController(),t=setTimeout(()=>c.abort(),12000);try{return await fetchPublished(name,c.signal);}finally{clearTimeout(t);}}
@@ -26,7 +26,7 @@ async function load(){
 el('historyFilter').addEventListener('change',paint);el('historyEra').addEventListener('change',paint);
 el('downloadHistory').addEventListener('click',()=>{
  const rows=AnupEvidence.selectRows(history,el('historyFilter').value,el('historyEra').value);
- const csv=[['Decision date','Prior NIFTY observation','Core equity percent','Core debt percent','Yield observation','Yield age days','Scope'],...rows.map(r=>[r.signal_date,r.nifty_asof,r.core_equity,r.core_debt,r.gsec_asof,AnupEvidence.yieldAgeDays(r),'Retrospective valuation core only'])].map(r=>r.join(',')).join('\r\n');
+ const csv=[['Decision date','Prior NIFTY observation','Core equity percent','Core debt percent','Yield observation','Yield age days','Ratio era','Scope'],...rows.map(r=>[r.signal_date,r.nifty_asof,r.core_equity,r.core_debt,r.gsec_asof,AnupEvidence.yieldAgeDays(r),AnupEvidence.ratioEra(r.nifty_asof),'Legacy V3.6 retrospective core only'])].map(r=>r.join(',')).join('\r\n');
  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='Anup_Nifty_monthly_signal_screen.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });load();
 })();

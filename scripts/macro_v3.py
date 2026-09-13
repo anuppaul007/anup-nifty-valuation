@@ -20,6 +20,7 @@ import pandas as pd
 from lxml import html
 import http_client as requests
 import update_data as b
+import data_quality as dq
 
 UA={'User-Agent':'Mozilla/5.0 (compatible; AnupNiftyValuation/3.5; personal research)'}
 STOXX_URL='https://stoxx.com/index/swexilv/'
@@ -218,13 +219,25 @@ def _relative_pair(month,em,nifty_by):
     pair=nifty_by.get(actual)
     if not pair:return None
     rel=.6*math.log(pair['pe']/em['pe'])+.4*math.log(pair['pb']/em['pb'])
-    return {'month':actual,'asof':em.get('asof'),'method':em['method'],'em_pe':em['pe'],'em_pb':em['pb'],'nifty_pe':pair['pe'],'nifty_pb':pair['pb'],'relative_log_premium':rel}
+    return {'month':actual,'asof':em.get('asof'),'method':em['method'],'em_pe':em['pe'],'em_pb':em['pb'],'nifty_pe':pair['pe'],'nifty_pb':pair['pb'],'relative_log_premium':rel,'source_url':em.get('source_url')}
 def relative_em(nifty,hist,old):
     prior=((old or {}).get('calibration') or {}).get('em_ex_india_history') or []
-    by={x['month']:x for x in prior if x.get('method')=='largecap-fundamentals-v1' and x.get('month')}
+    quarantine=list(((old or {}).get('calibration') or {}).get('em_ex_india_quarantine') or [])
+    def validate(row):
+        reason=dq.em_issue(row)
+        if reason:
+            if not any(q.get('record')==row for q in quarantine):
+                quarantine.append({'record':dict(row),'reason':reason,'status':'excluded_pending_source_review','first_seen_at':date.today().isoformat()})
+            return False
+        return True
+    by={x['month']:dict(x) for x in prior if x.get('method')=='largecap-fundamentals-v1' and x.get('month') and validate(x)}
+    # Recompute cached premiums rather than trusting an old derived value.
+    for row in by.values():
+        row['relative_log_premium']=.6*math.log(row['nifty_pe']/row['em_pe'])+.4*math.log(row['nifty_pb']/row['em_pb'])
     nifty_by={x[0]:{'pe':x[1],'pb':x[2]} for x in hist}
     cur=safe('STOXX current',stoxx)
-    out={'available':bool(cur),'score':None,'history_count':0,'status':'unavailable'}
+    if cur and not validate(cur):cur=None
+    out={'available':bool(cur),'score':None,'history_count':0,'status':'unavailable','quarantine':quarantine,'validation_policy':'PB 0.8–5 and PB/PE 0.05–0.30 are review bounds, not impossibility bounds'}
     if not cur:return out,sorted(by.values(),key=lambda x:x['month'])[-60:]
     mon=(cur.get('asof') or '')[:7]
     # Backfill enough archive months immediately. This is cached in latest.json so
@@ -235,7 +248,8 @@ def relative_em(nifty,hist,old):
     if missing:
         with ThreadPoolExecutor(max_workers=min(6,len(missing))) as pool:
             for requested,em in pool.map(fetch_month,missing):
-                if em:
+                if em and validate(em):
+                    if (em.get('asof') or '')[:7]!=requested:continue
                     pair=_relative_pair(requested,em,nifty_by)
                     if pair:by[pair['month']]=pair
     current_pair=_relative_pair(mon,cur,nifty_by)
@@ -356,6 +370,7 @@ def build(india_g10,nifty,nifty_hist,old,gsec_meta=None):
     # Diagnostics-only nominal Treasury yield: not double-counted in the macro block.
     if us is not None:factors['us_10y']=factor(float(us.value.iloc[-1]),0,us,7)
     else:factors['us_10y']=factor(None,None,None,7)
+    factors['us_10y'].update(display_only=True,z=None,score=None)
 
     ch=safe('China PMI',china_pmi)
     em=safe('Relative EM',lambda:relative_em(nifty,nifty_hist,old))
@@ -382,4 +397,4 @@ def build(india_g10,nifty,nifty_hist,old,gsec_meta=None):
       'stale_factors':[k for k,v in factors.items() if k!='us_10y' and v['status']!='live'],
       'sources_live':{k:v['source_url'] if v['status']=='live' else None for k,v in factors.items()}
     })
-    return coverage_adjust_macro(mac),{'em_ex_india_history':rh,'carry_spread_history':[]}
+    return coverage_adjust_macro(mac),{'em_ex_india_history':rh,'em_ex_india_quarantine':rel.get('quarantine',[]),'carry_spread_history':[]}

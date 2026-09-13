@@ -12,6 +12,7 @@ import update_data as b
 import macro_v3 as m
 import domestic_macro as dm
 import valuation_diagnostics as vd
+import data_quality as dq
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'data'/'latest.json'
@@ -88,15 +89,23 @@ def main():
     n=b.fetch_nifty();g10,gmeta=india_yield(old);latest=n['latest'];latest.update(gsec10=g10,gsec_meta=gmeta)
     if any(not m.finite(latest.get(k)) or latest[k]<=0 for k in ['level','pe','pb','div_yield']):raise RuntimeError('Mandatory NIFTY input validation failed; retaining saved data')
     if not m.fresh(latest.get('date'),7):raise RuntimeError('Mandatory NIFTY observation date is stale')
+    breaks=dq.ratio_breaks(n['history'])
+    if any(e['status']=='unresolved_ratio_break' for e in breaks):
+        raise RuntimeError('Unresolved NIFTY ratio discontinuity; retaining prior packet: '+json.dumps(breaks))
+    transitions,changed=dq.security_transition(old,gmeta)
+    gmeta['security_changed']=changed
+    gmeta['last_transition']=transitions[-1] if transitions else None
     try:
         mac,cal=m.build(g10,latest,n['history'],old,gmeta);mac=attach_domestic(mac,old)
     except Exception as e:
-        mac=unavailable_macro(old,str(e));cal={'em_ex_india_history':[],'carry_spread_history':[]}
+        mac=unavailable_macro(old,str(e));cal=dict(old.get('calibration') or {})
+    cal['india_yield_transitions']=transitions
     valuation_diag=vd.build(n['history'],latest)
+    valuation_diag['ratio_breaks']=breaks
     coverage=mac['active_block_weight'];vf=(mac.get('factors') or {}).get('vix') or {};confidence=None
     if vf.get('status')=='live' and m.finite(vf.get('value')):
         stress=float(np.clip(1-max(0,vf['value']-18)/40,.35,1));confidence=stress*(.65+.35*coverage)
-    out={'schema_version':4,'model_version':'3.6','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<.999,'nifty':latest,'earnings':n['earnings'],'macro':mac,'confidence':confidence,'valuation_diagnostics':valuation_diag,'history':n['history'],'calibration':cal,'sources':[
+    out={'schema_version':4,'model_version':'3.10-pb-regime-1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<.999,'nifty':latest,'earnings':n['earnings'],'macro':mac,'confidence':confidence,'valuation_diagnostics':valuation_diag,'history':n['history'],'calibration':cal,'sources':[
         {'name':'Nifty Indices / NSE','role':'NIFTY index and ratio history; EPS is an index-implied proxy','url':'https://www.niftyindices.com/reports/historical-data'},
         {'name':gmeta['source'],'role':'Current India ~10Y yield; its own observation date determines eligibility','url':gmeta.get('source_url')},
         {'name':'U.S. Treasury / Federal Reserve / CBOE','role':'Dated real/nominal yields, broad USD, Fed balance sheet and VIX'},

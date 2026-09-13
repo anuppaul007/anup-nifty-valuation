@@ -1,0 +1,17 @@
+{
+  "quarantined_at": "2026-09-13T01:34:36.779915+00:00",
+  "source_packet_generated_at": "2026-09-12T15:38:46+00:00",
+  "record": {
+    "month": "2026-02",
+    "asof": "2026-02-27",
+    "method": "largecap-fundamentals-v1",
+    "em_pe": 17.3,
+    "em_pb": 0.5,
+    "nifty_pe": 22.03,
+    "nifty_pb": 3.42,
+    "relative_log_premium": 0.9141342882400948
+  },
+  "reason": "PB 0.5 and PB/PE 0.0289 fail plausibility review bounds. Exclude pending source verification; no substitute value invented.",
+  "status": "excluded_pending_source_review",
+  "provider_url": "https://stoxx.com/index/swexilv/"
+}

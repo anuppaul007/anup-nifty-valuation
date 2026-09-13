@@ -1,4 +1,4 @@
-import sys,unittest
+import sys,unittest,json
 from pathlib import Path
 from datetime import date
 import numpy as np
@@ -9,22 +9,13 @@ import multiasset as ma
 class MultiAssetTests(unittest.TestCase):
  def latest(self):
   today=str(date.today())
-  generated=today+'T00:00:00+00:00'
-  return {
-   'generated_at':generated,
-   'nifty':{'pe':19.78,'pb':2.83,'div_yield':1.21,'gsec10':6.97},
-   'earnings':{'score':-.29,'coverage':1},
-   'macro':{
-    'score':-.04,'active_block_weight':1,
-    'blocks':{'global_liquidity':-.15},
-    'factors':{
-      'us_real_10y':{'status':'live','value':2.6,'asof':today},
-      'usd_3m_pct':{'status':'live','value':.06,'asof':today},
-      'vix':{'status':'live','value':16,'asof':today},
-    },
-    'china_pmi':{'status':'live','coverage':1,'score':.02,'pmi':50.2,'new_orders':50.4,'asof':today}
-   }
-  }
+  d=json.loads((Path(__file__).resolve().parent/'fixtures/live_packet.json').read_text())
+  d['generated_at']=today+'T00:00:00+00:00';d['nifty']['date']=today;d['nifty']['gsec_meta']['asof']=today
+  d['earnings']['asof']=today
+  for f in d['macro']['factors'].values():f['asof']=today
+  d['macro']['china_pmi']['asof']=today
+  for f in d['macro']['domestic']['factors'].values():f['asof']=today
+  return d
  def market(self):
   dates=pd.date_range(end=pd.Timestamp(date.today()),periods=800,freq='D')
   def series(a,b,source):
@@ -54,6 +45,9 @@ class MultiAssetTests(unittest.TestCase):
  def test_core_signal_matches_existing_formula_shape(self):
   x=ma.latest_core_signal(self.latest())
   self.assertTrue(0<=x['equity_pct']<=100);self.assertAlmostEqual(x['equity_pct']+x['debt_pct'],100)
+ def test_stale_core_factor_blocks_metals_too(self):
+  d=self.latest();d['macro']['factors']['vix']['asof']='2000-01-01'
+  with self.assertRaises(RuntimeError):ma.latest_core_signal(d)
  def test_missing_primary_snapshot_timestamp_is_rejected(self):
   d=self.latest();d.pop('generated_at')
   with self.assertRaises(RuntimeError):ma.build(d,self.market())

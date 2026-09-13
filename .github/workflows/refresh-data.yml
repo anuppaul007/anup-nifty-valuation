@@ -65,6 +65,7 @@ jobs:
             data/latest.json
             data/multiasset.json
             data/walkforward.json
+            data/walkforward_v3_10.json
             data/retrospective.json
             data/robustness.json
             data/backtest_monthly_2000.csv
@@ -94,4 +95,3 @@ jobs:
           done
           echo "Publish failed after three non-fast-forward retries"
           exit 1
-

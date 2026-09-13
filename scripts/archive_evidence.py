@@ -32,6 +32,8 @@ def archive(root=ROOT, now=None):
     model = (root/'model.js').read_text()
     # Include upstream scoring and timing rules, not just the allocation constants.
     files = [root/'model.js', root/'validation_policy.json', root/'requirements.txt']
+    calibration=root/'data/pb_calibration_v3_10.json'
+    if calibration.exists():files.append(calibration)
     files += sorted((root/'scripts').glob('*.py'))
     hashes = {str(p.relative_to(root)): digest(p.read_text()) for p in files}
     version = digest(canonical(hashes))

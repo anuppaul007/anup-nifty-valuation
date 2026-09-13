@@ -20,7 +20,7 @@ optimized.
 from __future__ import annotations
 from datetime import date, datetime, timezone
 from pathlib import Path
-import json, math
+import json, math, subprocess
 import numpy as np
 import pandas as pd
 import macro_v3 as macro
@@ -75,18 +75,13 @@ def price_features(df,name,max_age=7):
     },s
 
 def latest_core_signal(d):
-    n=d.get('nifty') or {};e=d.get('earnings') or {};m=d.get('macro') or {}
-    required=('pe','pb','div_yield','gsec10')
-    if any(not finite(n.get(k)) for k in required):raise RuntimeError('NIFTY core input missing')
-    if not finite(e.get('score')) or float(e.get('coverage') or 0)<.999:raise RuntimeError('earnings input incomplete')
-    if not finite(m.get('score')) or float(m.get('active_block_weight') or 0)<.999:raise RuntimeError('macro input incomplete')
-    pe,pb,dy,gsec=map(float,(n['pe'],n['pb'],n['div_yield'],n['gsec10']))
-    roe=100*pb/pe;gap=100/pe-gsec
-    lenses=[((pe-C['peM'])/C['peS'],30),((pb-C['pbM'])/C['pbS']-C['beta']*(roe-C['roeM'])/C['roeS'],25),(-(gap-C['gapM'])/C['gapS'],30),(-(dy-C['dyM'])/C['dyS'],10)]
-    z=sum(v*w for v,w in lenses)/sum(w for _,w in lenses);core=curve(z);damp=clip(1-abs(z)/C['zc'],0,1)
-    ea=clip(e['score'],-1,1)*C['earnMax']*damp;ma=clip(m['score'],-1,1)*C['macroMax']*damp
-    eq=clip(core+ea+ma,0,100)
-    return {'equity_pct':eq,'debt_pct':100-eq,'valuation_z':z,'core_pct':core,'earnings_adjustment_pp':ea,'macro_adjustment_pp':ma}
+    # One live authority; legacy C above remains for explicitly legacy research.
+    program="const M=require('./model.js'),fs=require('fs');const r=M.calculate(JSON.parse(fs.readFileSync(0,'utf8')));process.stdout.write(JSON.stringify({r,version:M.VERSION}));"
+    result=subprocess.run(['node','-e',program],cwd=ROOT,input=json.dumps(d,allow_nan=False),text=True,capture_output=True,check=True)
+    payload=json.loads(result.stdout);r=payload['r']
+    if not r.get('allocationReady'):raise RuntimeError('NIFTY live model withheld: '+str(r.get('holdReason') or r.get('reason')))
+    return {'equity_pct':r['final'],'debt_pct':100-r['final'],'valuation_z':r['z'],'core_pct':r['core'],
+            'earnings_adjustment_pp':r['ea'],'macro_adjustment_pp':r['ma'],'model_version':payload['version']}
 
 def require_macro_factor(d,key,max_age):
     m=d.get('macro') or {};f=(m.get('factors') or {}).get(key) or {}

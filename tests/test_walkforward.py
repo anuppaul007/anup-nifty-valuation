@@ -7,6 +7,7 @@ class WalkForwardTests(unittest.TestCase):
  def fixture(self):
   d=json.loads((Path(__file__).resolve().parents[1]/'tests/fixtures/live_packet.json').read_text())
   d['generated_at']='2026-09-12T03:05:49Z'
+  d['model_version']='3.10-pb-regime-1'
   return d
  def test_incomplete_macro_never_enters_prospective_ledger(self):
   d=self.fixture();d['macro']['active_block_weight']=.99;self.assertIsNone(w.model_snapshot(d,now="2026-09-12T12:00:00Z"))
