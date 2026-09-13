@@ -97,7 +97,7 @@ def main():
     n=latest['nifty'];cur=raw_vector(n['pe'],n['pb'],n['div_yield'],n['gsec10'])
     earn=float(latest['earnings']['score']);risk_off=bool(latest['trend']['risk_off'])
     pc,ps=production_centers_scales();prod_z=z_from(cur,pc,ps);prod=allocation(prod_z,earn,risk_off)
-    expected=float(reliability['current_formula']['new_policy_equity_pct'])
+    expected=float(reliability['current_formula_comparison']['new_policy_equity_pct'])
     if abs(prod['policy_equity_pct']-expected)>1e-8:raise RuntimeError(f'production_reproduction_mismatch_{prod["policy_equity_pct"]}_{expected}')
 
     variants=[]
