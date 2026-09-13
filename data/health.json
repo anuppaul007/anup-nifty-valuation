@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-09-13T07:07:18+00:00",
-  "source_commit": "cb5916360c2df94892bdb9f2ae1937bd6a70e92e",
-  "packet_generated_at": "2026-09-13T07:04:12+00:00",
-  "status": "attention_required",
+  "checked_at": "2026-09-13T07:14:59+00:00",
+  "source_commit": "fe986cde83c4ef6d9d67379aef4055104b094573",
+  "packet_generated_at": "2026-09-13T07:11:55+00:00",
+  "status": "healthy",
   "checks": [
     {
       "name": "packet_freshness",
@@ -13,17 +13,17 @@
     {
       "name": "published_bytes",
       "ok": true,
-      "detail": "Pinned commit API, raw source and checkout bytes match: df9d7343ededfd6fe2f6bf1c895f512f4f9a118eecffe51b480f80037792d916"
+      "detail": "Pinned commit API, raw source and checkout bytes match: c514cb3beaa2afa11bf0e9dde1dd8238d25fbb4cd64796f448a2889bee79195f"
     },
     {
       "name": "refresh_workflow",
       "ok": true,
-      "detail": "Latest completed refresh: success \u00b7 https://github.com/anuppaul007/anup-nifty-valuation/actions/runs/34744244992"
+      "detail": "Latest completed refresh: success \u00b7 https://github.com/anuppaul007/anup-nifty-valuation/actions/runs/34744561050"
     },
     {
       "name": "allocation_inputs",
-      "ok": false,
-      "detail": "macro packet or individual observations are stale, incomplete or inconsistent: fed_assets_6m_pct, macro_score_mismatch"
+      "ok": true,
+      "detail": "Defined input gates passed"
     }
   ],
   "scope": "Operational checks only; not investment validation. A delayed watchdog can also miss failures; the website checks this status age."
