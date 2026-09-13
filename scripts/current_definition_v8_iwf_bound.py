@@ -8,9 +8,9 @@ where total shares come independently from the 30-Jun-2026 official NSE
 Shareholding Pattern XBRL.
 
 The official public-shareholding percentage is a HARD UPPER BOUND on free-float
-IWF. If inferred IWF exceeds public shareholding even after displayed-price and
-market-cap rounding, either the June statutory share basis was not yet the
-operational index basis or another timing/corporate-action detail is unresolved.
+IWF, but the published percentage itself is rounded. A breach is therefore
+recorded only when the entire displayed-rounding interval for implied IWF lies
+above the upper end of the displayed public-shareholding rounding interval.
 Public shareholding is never substituted as IWF.
 """
 from __future__ import annotations
@@ -123,7 +123,15 @@ def fnum(x):
 
 
 def decimals(x):
-    s=str(x);return len(s.split('.',1)[1]) if '.' in s else 0
+    s=str(x).replace('%','').strip();return len(s.split('.',1)[1]) if '.' in s else 0
+
+
+def displayed_interval(x):
+    """Return [lo, hi] consistent with ordinary rounding of a displayed value."""
+    v=fnum(x)
+    if v is None:return None
+    half=.5*10**(-decimals(x))
+    return max(0.0,v-half),min(100.0,v+half),half
 
 
 def interval(row,shares):
@@ -144,16 +152,30 @@ def main():
             if not jr:raise ValueError('june_2026_shareholding_missing')
             url=jr.get('xbrl')
             if not url:raise ValueError('shareholding_xbrl_missing')
-            tag,shares,unit=total_shares(xroot(s,url));pub=fnum(jr.get('public_val'));prom=fnum(jr.get('pr_and_prgrp'))
-            if pub is None:raise ValueError('public_shareholding_missing')
-            point,lo,hi=interval(row,shares);pubf=pub/100
-            done.append({**row,'shareholding_total_shares':shares,'share_tag':tag,'share_unit':unit,'public_pct':pub,'promoter_pct':prom,'implied_iwf':point,'implied_iwf_min':lo,'implied_iwf_max':hi,'public_minus_iwf_pp':100*(pubf-point),'hard_upper_bound_breach':bool(lo>pubf),'xbrl':url})
+            tag,shares,unit=total_shares(xroot(s,url));pub_raw=jr.get('public_val');pub=fnum(pub_raw);prom=fnum(jr.get('pr_and_prgrp'))
+            pubint=displayed_interval(pub_raw)
+            if pub is None or pubint is None:raise ValueError('public_shareholding_missing')
+            publo,pubhi,pubhalf=pubint
+            point,lo,hi=interval(row,shares)
+            breach=bool(lo>pubhi/100.0)
+            done.append({**row,'shareholding_total_shares':shares,'share_tag':tag,'share_unit':unit,
+                         'public_pct':pub,'public_display_half_step_pp':pubhalf,'public_pct_min':publo,'public_pct_max':pubhi,
+                         'promoter_pct':prom,'implied_iwf':point,'implied_iwf_min':lo,'implied_iwf_max':hi,
+                         'public_minus_iwf_pp':pub-100*point,
+                         'public_upper_minus_iwf_lower_pp':pubhi-100*lo,
+                         'hard_upper_bound_breach':breach,'xbrl':url})
         except Exception as e:errors.append({'symbol':sym,'error':f'{type(e).__name__}: {e}'})
         time.sleep(.18)
     done=sorted(done,key=lambda x:x['symbol']);breach=[x for x in done if x['hard_upper_bound_breach']]
     tot=sum(x['index_mcap_cr'] for x in done) or 1
-    out={'schema_version':1,'generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'anchor_date':'2026-08-31','shareholding_quarter':'2026-06-30','weight_source':wmeta,'coverage':{'ok':len(done),'required':50,'failed':len(errors)},'failed':errors,'breaches':{'count':len(breach),'index_weight_pct':100*sum(x['index_mcap_cr'] for x in breach)/tot,'symbols':[x['symbol'] for x in breach]},'logic':'Public shareholding is only a hard upper bound. It is never substituted as free-float IWF. A breach is recorded only when the entire displayed-rounding interval for implied IWF exceeds official public shareholding.','constituents':done,'live_model_changed':False,'live_allocation_changed':False,'tolerances_changed':False}
+    out={'schema_version':2,'generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,
+         'anchor_date':'2026-08-31','shareholding_quarter':'2026-06-30','weight_source':wmeta,
+         'coverage':{'ok':len(done),'required':50,'failed':len(errors)},'failed':errors,
+         'breaches':{'count':len(breach),'index_weight_pct':100*sum(x['index_mcap_cr'] for x in breach)/tot,'symbols':[x['symbol'] for x in breach]},
+         'logic':'Public shareholding is only a hard upper bound and is never substituted as free-float IWF. Both the price/market-cap inputs and the displayed public-shareholding percentage are treated as rounded. A hard breach is recorded only if the minimum implied IWF exceeds the maximum public shareholding consistent with displayed precision.',
+         'constituents':done,'live_model_changed':False,'live_allocation_changed':False,'tolerances_changed':False}
     OUT.parent.mkdir(parents=True,exist_ok=True);OUT.write_text(json.dumps(out,indent=2,ensure_ascii=False,allow_nan=False),encoding='utf-8')
-    print(json.dumps({'coverage':out['coverage'],'breaches':out['breaches'],'worst_gaps':sorted([{'symbol':x['symbol'],'gap_pp':x['public_minus_iwf_pp'],'weight_pct':x['published_weight_pct']} for x in done],key=lambda z:z['gap_pp'])[:12]},indent=2))
+    print(json.dumps({'coverage':out['coverage'],'breaches':out['breaches'],
+                      'worst_upper_bound_margins':sorted([{'symbol':x['symbol'],'public_upper_minus_iwf_lower_pp':x['public_upper_minus_iwf_lower_pp'],'weight_pct':x['published_weight_pct']} for x in done],key=lambda z:z['public_upper_minus_iwf_lower_pp'])[:12]},indent=2))
 
 if __name__=='__main__':main()
