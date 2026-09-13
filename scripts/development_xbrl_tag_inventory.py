@@ -9,6 +9,7 @@ records candidate accounting facts for a later explicit tag-mapping policy.
 """
 from __future__ import annotations
 
+from collections import Counter
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -39,6 +40,12 @@ FAMILY_PATTERNS = {
         r"totalequity",
         r"shareholder.*fund",
     ],
+    "bank_equity_structure": [
+        r"^capital$",
+        r"capital.*liabilit",
+        r"reserve",
+        r"shareholder.*fund",
+    ],
     "share_capital": [
         r"paidup.*equity.*share.*capital",
         r"equity.*share.*capital",
@@ -66,6 +73,21 @@ def _sha256(raw: bytes) -> str:
 
 def _valid_xbrl_url(url: str | None) -> bool:
     return isinstance(url, str) and url.startswith("https://nsearchives.nseindia.com/") and url.lower().endswith(".xml")
+
+
+def _template_family(url: str | None) -> str:
+    upper = str(url or "").upper()
+    if "BANKING_" in upper:
+        return "BANKING"
+    if "INDAS_" in upper:
+        return "INDAS"
+    if "NBFC_" in upper:
+        return "NBFC"
+    if "INSURANCE_" in upper or "_LI_" in upper:
+        return "LIFE_INSURANCE"
+    if "_GI_" in upper:
+        return "GENERAL_INSURANCE"
+    return "OTHER"
 
 
 def _session() -> requests.Session:
@@ -172,7 +194,7 @@ def inspect_xbrl(raw: bytes) -> dict:
             "value": raw_text,
         }
         for family in matched:
-            if len(families[family]) < 80:
+            if len(families[family]) < 120:
                 families[family].append(rec)
 
     return {
@@ -181,7 +203,7 @@ def inspect_xbrl(raw: bytes) -> dict:
         "contexts": len(contexts),
         "fact_name_count": len(fact_name_counts),
         "numeric_fact_count": numeric_fact_count,
-        "top_fact_names": sorted(fact_name_counts.items(), key=lambda kv: (-kv[1], kv[0]))[:80],
+        "top_fact_names": sorted(fact_name_counts.items(), key=lambda kv: (-kv[1], kv[0]))[:120],
         "candidate_facts": families,
         "candidate_family_counts": {k: len(v) for k, v in families.items()},
     }
@@ -210,7 +232,8 @@ def selected_sources(stage_b: dict) -> tuple[list[dict], list[dict]]:
                 entry = by_url.setdefault(key, {
                     "url": key,
                     "uses": [],
-                    "template_hint": rec.get("template"),
+                    "stage_b_template_hint": rec.get("template"),
+                    "template_family": _template_family(key),
                 })
                 use = {"month": month, "symbol": symbol, "period_end": rec.get("period_end"), "source_period": rec.get("period")}
                 if use not in entry["uses"]:
@@ -240,8 +263,9 @@ def build() -> dict:
         if i % 20 == 0:
             time.sleep(0.15)
 
+    template_counts = Counter(x["template_family"] for x in sources)
     result = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
         "research_only": True,
         "live_authority": "none",
@@ -253,18 +277,20 @@ def build() -> dict:
         "stage_b_summary": stage_b["summary"],
         "stage_b_gap_symbols": sorted({g["symbol"] for g in stage_b["gaps"]}),
         "selected_sources": len(sources),
+        "template_family_counts": dict(sorted(template_counts.items())),
         "invalid_selected_xbrl_links": invalid,
         "xbrl_files_ok": len(inspected),
         "xbrl_files_failed": len(failures),
         "candidate_local_names": {k: sorted(v) for k, v in aggregate_localnames.items()},
         "files": inspected,
         "failures": failures,
-        "interpretation_guardrail": "Candidate fact names are discovery evidence only. No candidate is authorized as the official earnings, net-worth, share-capital, face-value or EPS mapping until a separate frozen mapping policy and tests are reviewed. No NIFTY ratio is computed here.",
+        "interpretation_guardrail": "Candidate fact names are discovery evidence only. Bank capital/reserve facts are inventoried separately because generic IndAS equity labels are not assumed to define bank P/B. No candidate is authorized as the official earnings, net-worth, share-capital, face-value or EPS mapping until a separate frozen mapping policy and tests are reviewed. No NIFTY ratio is computed here.",
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     print(json.dumps({
         "selected_sources": result["selected_sources"],
+        "template_family_counts": result["template_family_counts"],
         "xbrl_files_ok": result["xbrl_files_ok"],
         "xbrl_files_failed": result["xbrl_files_failed"],
         "invalid_selected_xbrl_links": len(invalid),
