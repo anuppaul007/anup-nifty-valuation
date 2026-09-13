@@ -11,15 +11,19 @@
   "identity_aliases": {
     "LTIM": {
       "current_symbol": "LTM",
-      "reason": "LTIMindtree Limited renamed LTM Limited; NSE symbol changed to LTM effective 2026-04-17.",
-      "official_reference": "NSE/CML/73700 dated 2026-04-10"
+      "continuity_isin": "INE214T01019",
+      "reason": "The same listed LTIMindtree security changed trading symbol from LTIM to LTM effective 2026-02-27; the later company-name change to LTM Limited was effective 2026-04-17.",
+      "official_symbol_reference": "NSE/CML/72948 dated 2026-02-23",
+      "official_name_reference": "NSE/CML/73700 dated 2026-04-10"
     },
     "TATAMOTORS": {
       "current_symbol": "TMPV",
-      "reason": "Old TATAMOTORS security renamed Tata Motors Passenger Vehicles Limited with symbol TMPV effective 2025-10-24 after demerger mechanics.",
-      "official_reference": "NSE/FAOP/70882 dated 2025-10-17"
+      "continuity_isin": "INE155A01022",
+      "reason": "Following the 2025 demerger, the continuing listed entity with ISIN INE155A01022 changed name/symbol from Tata Motors Limited/TATAMOTORS to Tata Motors Passenger Vehicles Limited/TMPV effective 2025-10-24.",
+      "official_symbol_reference": "NSE/FAOP/70882 dated 2025-10-17"
     }
   },
+  "identity_alias_rule": "An alias is source-routing only. It may retrieve historical records only for the same continuing listed security identified by the frozen continuity ISIN and official NSE symbol/name-change evidence; it does not permit substituting a successor, demerged or economically different company.",
   "life_insurance_symbols": ["HDFCLIFE", "SBILIFE"],
   "nestle_calendar_year_rule": "For development dates before Nestle India's FY transition, an audited consolidated or standalone 31-Dec result disseminated before the signal cutoff may supply the latest annual book source when the generic Annual endpoint omits that historical calendar-year record. Consolidated remains preferred where available.",
   "structured_history_rule": "For residual symbols, always query both the default financial-results route and the explicit frozen historical date window and union/deduplicate the records. A non-empty default response is not proof of complete history.",
