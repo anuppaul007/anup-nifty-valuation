@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-13T10:57:06+00:00",
+  "research_only": true,
+  "model_version": "3.13-reliability-1",
+  "sample": {
+    "methodology": "Current ratio definitions",
+    "months": 36,
+    "first_signal_date": "2023-10-01",
+    "last_signal_date": "2026-09-01",
+    "yield_caveat": "Two calendar-month lag; RBI archived SGL tenor yields before OECD coverage, then OECD monthly long-term yields. Series definitions differ. Publication times and historical vintages are not verified."
+  },
+  "labels": [
+    "pe_z",
+    "pb_log_profitability_z",
+    "earnings_yield_minus_gsec_z",
+    "dividend_yield_z"
+  ],
+  "correlation_matrix": [
+    [1.0, 0.934154, 0.63193, 0.563598],
+    [0.934154, 1.0, 0.7309, 0.521791],
+    [0.63193, 0.7309, 1.0, 0.492462],
+    [0.563598, 0.521791, 0.492462, 1.0]
+  ],
+  "eigenvalues": [2.961959285456288, 0.5797737036096948, 0.406471281092222, 0.05179572984179453],
+  "effective_rank_entropy": 2.2057315483263773,
+  "effective_rank_participation": 1.724650483762364,
+  "condition_number": 57.18539529230171,
+  "pairwise_correlations": [
+    {"a":"pe_z","b":"pb_log_profitability_z","correlation":0.9341541251913682},
+    {"a":"pb_log_profitability_z","b":"earnings_yield_minus_gsec_z","correlation":0.730899676188675},
+    {"a":"pe_z","b":"earnings_yield_minus_gsec_z","correlation":0.6319295994741465},
+    {"a":"pe_z","b":"dividend_yield_z","correlation":0.5635981230924574},
+    {"a":"pb_log_profitability_z","b":"dividend_yield_z","correlation":0.5217908108286827},
+    {"a":"earnings_yield_minus_gsec_z","b":"dividend_yield_z","correlation":0.49246243355752645}
+  ],
+  "variance_inflation_factors": {
+    "pe_z": 9.034253003918641,
+    "pb_log_profitability_z": 10.822691404104658,
+    "earnings_yield_minus_gsec_z": 2.403032947703238,
+    "dividend_yield_z": 1.5692571683073746
+  },
+  "live_normalized_weights": {
+    "pe_z": 0.3157894736842105,
+    "pb_log_profitability_z": 0.2631578947368421,
+    "earnings_yield_minus_gsec_z": 0.3157894736842105,
+    "dividend_yield_z": 0.10526315789473684
+  },
+  "independence_geometry": {
+    "effective_count_if_lenses_were_uncorrelated": 3.5742574257425743,
+    "correlation_adjusted_effective_count": 1.2793097082566465,
+    "weighted_variance_if_uncorrelated_unit_variance_lenses": 0.27977839335180055,
+    "weighted_variance_using_observed_correlation_unit_variance_lenses": 0.7816715479809262,
+    "variance_inflation_due_to_observed_correlation": 2.7938953348625186
+  },
+  "mechanical_dependence": {
+    "pe_z": ["P/E"],
+    "pb_log_profitability_z": ["P/B", "P/E through implied profitability = 100*P/B/P/E"],
+    "earnings_yield_minus_gsec_z": ["P/E through earnings yield = 100/P/E", "government bond yield"],
+    "dividend_yield_z": ["dividend yield"],
+    "pe_enters_lenses": 3,
+    "total_lenses": 4,
+    "pb_log_elasticity_numerator": {"log_pe":0.6,"log_pb":0.4}
+  },
+  "interpretation_guardrail": "This is a 36-month structural redundancy diagnostic, not an alpha test, confidence interval, forecast, or basis to optimize live weights. Any covariance-aware or de-duplicated candidate must be registered as a new challenger before outcome testing.",
+  "live_model_changed": false,
+  "live_allocation_changed": false
+}
