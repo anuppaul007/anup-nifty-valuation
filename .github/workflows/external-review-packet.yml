@@ -1,0 +1,51 @@
+name: External review packet
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'EXTERNAL_REVIEW_PACKET.md'
+      - 'review_scope_v1.json'
+      - 'scripts/build_review_manifest.py'
+      - 'tests/test_review_manifest.py'
+      - '.github/workflows/external-review-packet.yml'
+permissions:
+  contents: read
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: pip install -r requirements.txt
+      - name: Test manifest builder
+        run: python -m unittest tests.test_review_manifest -v
+      - name: Build immutable review manifest
+        run: python scripts/build_review_manifest.py --out /tmp/review_manifest.json
+      - name: Assert target identity and guardrails
+        run: |
+          python - <<'PY'
+          import json, subprocess
+          p=json.load(open('/tmp/review_manifest.json'))
+          head=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
+          assert p['commit_sha'] == head
+          assert p['tracked_tree_clean'] is True
+          assert p['allow_dirty_used'] is False
+          required=[x for x in p['files'] if x['required']]
+          assert required and all(x['present'] and len(x['sha256'])==64 for x in required)
+          assert 'not evidence of investment efficacy' in p['purpose'].lower()
+          print(f"manifest verified for {head} with {len(required)} required files")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: external-review-manifest-${{ github.sha }}
+          path: /tmp/review_manifest.json
+          retention-days: 30
