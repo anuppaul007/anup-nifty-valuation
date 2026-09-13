@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "status": "prepared_not_independently_reviewed",
+  "purpose": "Define the minimum adversarial scope for an external review of Anup Nifty Valuation without allowing the model author to redefine the test after seeing findings.",
+  "review_target": {
+    "rule": "Review one immutable commit SHA, never a moving branch.",
+    "required_record": [
+      "commit_sha",
+      "review_start_utc",
+      "reviewer_identity_or_public_pseudonym",
+      "conflicts_or_prior_involvement",
+      "environment_and_dependency_versions",
+      "independent_replication_repository_or_files"
+    ]
+  },
+  "independence_minimum": {
+    "reviewer_must_not_have_authored": [
+      "live model formulas",
+      "validation hurdles",
+      "candidate thresholds under test",
+      "the independent reimplementation used for replication"
+    ],
+    "reviewer_rights": [
+      "publish adverse findings",
+      "publish unresolved findings",
+      "request raw source evidence and hashes",
+      "decline to validate untestable claims"
+    ],
+    "note": "A second AI critique, a rerun of repository code, or author-supervised confirmation is useful challenge but is not independent model validation by itself."
+  },
+  "required_falsification_work": [
+    {
+      "id": "R1",
+      "task": "Reimplement the current target independently from frozen rules and raw published inputs without calling model.js or copying its calculation functions."
+    },
+    {
+      "id": "R2",
+      "task": "Audit data lineage and point-in-time availability, including observation date versus release date, revisions, stale fallbacks, source-shape changes, duplicated records and missing-data refusal behavior."
+    },
+    {
+      "id": "R3",
+      "task": "Challenge valuation reference choice and calibration fragility; reproduce reference sensitivity and leave-block recalibration, and test whether conclusions depend on the short current-definition regime."
+    },
+    {
+      "id": "R4",
+      "task": "Quantify lens redundancy and covariance; test whether the four displayed lenses materially overstate independent information content."
+    },
+    {
+      "id": "R5",
+      "task": "Rebuild the historical evaluator independently with total-return benchmarks, execution lag, drift-aware turnover, exposure-matched nulls, serial dependence and all comparable attempted variants."
+    },
+    {
+      "id": "R6",
+      "task": "Price the SMA10 brake as insurance: separate crash drawdown reduction, premium paid, engagement timing, gap risk and recovery participation."
+    },
+    {
+      "id": "R7",
+      "task": "Challenge implementation realism using actual investable vehicles. Separate costs embedded in NAV from investor-level turnover costs, exit loads and tax-lot effects; do not infer after-tax superiority when tax reconstruction is unavailable."
+    },
+    {
+      "id": "R8",
+      "task": "Attempt deployment and UI failure modes: stale page shell, stale JSON, mismatched timestamps, unsupported schema, partial refresh and cache divergence. Verify that the system withholds rather than fabricates a target when live-required evidence is invalid."
+    },
+    {
+      "id": "R9",
+      "task": "Search deliberately for analyses that make the model look worse, including alternative fair references, subperiods, plausible comparator definitions and source-timing assumptions. Record every additional comparable trial."
+    }
+  ],
+  "controlling_repository_evidence": [
+    "data/robust_evaluation_summary.json",
+    "data/calibration_stability_audit.json",
+    "data/benchmark_audit.json",
+    "data/sma10_insurance_audit.json",
+    "data/sma10_episode_audit.json",
+    "data/macro_authority_audit.json",
+    "data/implementation_realism_audit.json"
+  ],
+  "acceptance": {
+    "required_deliverables": [
+      "independent current-target reproduction",
+      "reproducible finding log with severity and counterexample",
+      "list of untestable claims and missing data",
+      "explicit treatment of every material adverse repository result",
+      "final use decision limited to the scope actually tested"
+    ],
+    "unresolved_rule": "Material unresolved findings remain public and prevent a blanket validated or institutional-grade claim.",
+    "no_composite_override": "A high engineering/governance score cannot average away failed evidence, data-lineage or independence gates."
+  },
+  "prohibited_shortcuts": [
+    "Treating successful CI as evidence of investment efficacy",
+    "Treating reproduction of the author's own implementation as independent replication",
+    "Changing thresholds after seeing review results without creating a new version and trial entry",
+    "Using one favorable backtest to override contrary placebo, bootstrap, PBO or prospective evidence",
+    "Calling the strategy after-tax validated while investor tax lots or historical tax rules remain unreconstructed"
+  ]
+}
