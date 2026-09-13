@@ -107,18 +107,18 @@
     "observed_signal": {
       "mean": -0.0785526226088449,
       "sd": 0.6577160493876019,
-      "lag1_phi_ols": 0.7368316664436414
+      "lag1_phi_ols": 0.7368316664436415
     },
     "surrogate_diagnostics": {
-      "median_mean_equity_pct": 52.38446509695126,
-      "median_lag1_acf": 0.696364628293586
+      "median_mean_equity_pct": 52.384465096951274,
+      "median_lag1_acf": 0.6963646282935863
     },
     "actual_excess_cagr_pp": 0.16012823626301298,
     "actual_timing_residual_monthly_sharpe": 0.02168845280020123,
     "actual_excess_cagr_percentile": 62.78,
     "actual_timing_sharpe_percentile": 62.86,
     "p05_excess_cagr_pp": -1.9593774723339308,
-    "median_excess_cagr_pp": -0.19221112610063873,
+    "median_excess_cagr_pp": -0.19221112610064983,
     "p95_excess_cagr_pp": 1.5370584029980177,
     "interpretation": "Tests whether the specific valuation signal beats generic persistent mean-reverting signals with similar first-order structure; it is a model null, not a market forecast."
   },
@@ -126,7 +126,7 @@
     "candidate_family": "24-member valuation curve grid",
     "return_series": "exposure-matched timing residual (dynamic net return minus same-mean-equity static net return)",
     "trial_count": 24,
-    "broader_logged_research_variants": 546,
+    "broader_logged_research_variants": 547,
     "variant_months": 63,
     "monthly_sharpe_mean_across_trials": 0.014197517934114388,
     "monthly_sharpe_std_across_trials": 0.00818321719744326,
@@ -207,12 +207,12 @@
       }
     },
     "eigenvalues": [
-      0.08533114591541299,
-      0.28841056435000817,
-      0.7083433340389766,
-      2.9179149556956037
+      0.08533114591541321,
+      0.2884105643500081,
+      0.7083433340389762,
+      2.917914955695603
     ],
-    "effective_independent_lenses": 1.7569983390817947,
+    "effective_independent_lenses": 1.7569983390817943,
     "max_absolute_pairwise_correlation": 0.891670200418282,
     "interpretation": "Displayed lenses are correlated; participation ratio estimates effective independent dimensions."
   },
@@ -273,7 +273,7 @@
     "historical_result_can_promote_live": false
   },
   "prospective_evidence": {
-    "completed_decision_files": 1,
+    "completed_decision_files": 0,
     "minimum_required_before_any_promotion_review": 60
   },
   "implementation_status": {
@@ -282,7 +282,7 @@
     "full_stack_release_vintages": "NOT TESTABLE until available_at history satisfies release_timing_policy.json"
   },
   "trial_registry": {
-    "registry_version": "2026-09-13-v3",
+    "registry_version": "2026-09-13-v4",
     "purpose": "Record materially different evaluated strategy hypotheses so multiple-testing adjustments use an honest comparable-family trial count rather than only the final published winner.",
     "family_membership_rule": "Statistical family membership is determined by the hypothesis actually evaluated, return definition and comparable sample, not by whether a variant was called research, production, challenger or a numbered release. If a production version changed an allocation rule or calibration and was evaluated on the same outcome sample as an existing family, it must increase that family's trial burden.",
     "families": {
@@ -331,6 +331,13 @@
         "count_minimum": 7,
         "definition": "one-factor-at-a-time removals across four Gold and three Silver factors",
         "used_for_dsr_and_pbo": false
+      },
+      "pb_log_structural_correction": {
+        "count": 1,
+        "definition": "V3.13 monotone log profitability adjustment on the same frozen 36-month current-definition sample; beta remains 0.60",
+        "used_for_dsr_and_pbo": false,
+        "status": "Prospective structural correction authorized by owner. No return comparison used to choose it; same-input allocation impact is disclosed.",
+        "family_rule": "If evaluated on a comparable historical return matrix, include this hypothesis in that matrix selection burden; bug-fix labeling confers no exemption."
       }
     },
     "production_lineage_audit": {
@@ -349,7 +356,7 @@
       "circular_shift": "all non-zero rotations of the exact observed target-weight path",
       "ar1_surrogate_signal": "Gaussian AR(1) valuation-composite surrogates calibrated to the observed composite's mean, variance and lag-1 persistence and run through the same live curve, returns and costs"
     },
-    "minimum_logged_variants_across_all_research_families": 546,
+    "minimum_logged_variants_across_all_research_families": 547,
     "lineage_policy": "Publication labels, bug-fix labels and research/production intent are not statistical categories. Count materially different investment hypotheses when they are evaluated against a comparable outcome sample; keep incompatible windows/objectives in separately disclosed families rather than either pooling them falsely or omitting them.",
     "warning": "Counts across different samples/objectives are not blindly pooled into one Deflated Sharpe calculation. The robust evaluator currently uses the exact 24-member common-sample valuation-curve family for DSR/PBO and displays the broader registry separately. Any newly reconstructed comparable lineage member or implemented Mahalanobis challenger must increase the relevant candidate-family burden before promotion review.",
     "automatic_parameter_change": false
@@ -368,12 +375,12 @@
   "reproducibility": {
     "hash_algorithm": "sha256",
     "files": {
-      "model.js": "c6b850bb7bceb3bb69975034091fd5847a6c0da5ed74942082c0495fd1492f58",
+      "model.js": "c0241229b55fa174406f3d3b58245fa82e130ee31dcf363cc522621162ad37b8",
       "data/retrospective.json": "ebb38b1e8c7ebe7a0ce644c646f73e66101d17910e2ab7891f23e68ded555fec",
-      "data/latest.json": "34b8b28d12b8cc203229a31cd6348bf0afa51c3c6655b27d744d52025efd9801",
+      "data/latest.json": "306f893a94e7eb0194c5d87d7ea6afde9876c86a718bbbc7ee432bbb59b81307",
       "validation_policy.json": "2c883eec9efeb4955e06c6eb0480b98c12613d0f2fa712cac1ef5d420c779c32",
       "robust_evaluation_policy.json": "de75f801957322d0a5e707d42eace524e5fc08548f0e17bc2728a1cf549f5023",
-      "research_trial_registry.json": "d8a75a3506747cae9e76ebec97809feb6f9ebf1ae63a9f2ed0d9cff44e17d9b6",
+      "research_trial_registry.json": "bff324fd6d0c3be24ac22e87768c4923f12b7069bcb9866858a67f43a033d85b",
       "release_timing_policy.json": "6f0a711fe79c79f0a9bad287b9f19cf633f841f9aa8327304e9adf49cb7affbc"
     }
   },

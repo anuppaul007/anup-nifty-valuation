@@ -1,5 +1,5 @@
 {
-  "registry_version": "2026-09-13-v3",
+  "registry_version": "2026-09-13-v4",
   "purpose": "Record materially different evaluated strategy hypotheses so multiple-testing adjustments use an honest comparable-family trial count rather than only the final published winner.",
   "family_membership_rule": "Statistical family membership is determined by the hypothesis actually evaluated, return definition and comparable sample, not by whether a variant was called research, production, challenger or a numbered release. If a production version changed an allocation rule or calibration and was evaluated on the same outcome sample as an existing family, it must increase that family's trial burden.",
   "families": {
@@ -48,6 +48,13 @@
       "count_minimum": 7,
       "definition": "one-factor-at-a-time removals across four Gold and three Silver factors",
       "used_for_dsr_and_pbo": false
+    },
+    "pb_log_structural_correction": {
+      "count": 1,
+      "definition": "V3.13 monotone log profitability adjustment on the same frozen 36-month current-definition sample; beta remains 0.60",
+      "used_for_dsr_and_pbo": false,
+      "status": "Prospective structural correction authorized by owner. No return comparison used to choose it; same-input allocation impact is disclosed.",
+      "family_rule": "If evaluated on a comparable historical return matrix, include this hypothesis in that matrix selection burden; bug-fix labeling confers no exemption."
     }
   },
   "production_lineage_audit": {
@@ -66,7 +73,7 @@
     "circular_shift": "all non-zero rotations of the exact observed target-weight path",
     "ar1_surrogate_signal": "Gaussian AR(1) valuation-composite surrogates calibrated to the observed composite's mean, variance and lag-1 persistence and run through the same live curve, returns and costs"
   },
-  "minimum_logged_variants_across_all_research_families": 546,
+  "minimum_logged_variants_across_all_research_families": 547,
   "lineage_policy": "Publication labels, bug-fix labels and research/production intent are not statistical categories. Count materially different investment hypotheses when they are evaluated against a comparable outcome sample; keep incompatible windows/objectives in separately disclosed families rather than either pooling them falsely or omitting them.",
   "warning": "Counts across different samples/objectives are not blindly pooled into one Deflated Sharpe calculation. The robust evaluator currently uses the exact 24-member common-sample valuation-curve family for DSR/PBO and displays the broader registry separately. Any newly reconstructed comparable lineage member or implemented Mahalanobis challenger must increase the relevant candidate-family burden before promotion review.",
   "automatic_parameter_change": false

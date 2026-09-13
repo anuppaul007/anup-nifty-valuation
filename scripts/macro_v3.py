@@ -373,7 +373,10 @@ def build(india_g10,nifty,nifty_hist,old,gsec_meta=None):
     factors['us_10y'].update(display_only=True,z=None,score=None)
 
     ch=safe('China PMI',china_pmi)
-    em=safe('Relative EM',lambda:relative_em(nifty,nifty_hist,old))
+    # Do not fetch eighteen optional archive factsheets on the live-refresh
+    # path when EM is not even a scored macro block. Preserve diagnostic history.
+    em=(safe('Relative EM',lambda:relative_em(nifty,nifty_hist,old)) if 'relative_em_valuation' in BLOCKS else
+        ({'status':'not_refreshed','score':None,'allocation_effect':'none'},((old or {}).get('calibration') or {}).get('em_ex_india_history',[])))
     rel,rh=em if em is not None else ({'score':None,'status':'unavailable'},[])
 
     specs={

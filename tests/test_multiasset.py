@@ -10,12 +10,15 @@ class MultiAssetTests(unittest.TestCase):
  def latest(self):
   today=str(date.today())
   d=json.loads((Path(__file__).resolve().parent/'fixtures/live_packet.json').read_text())
-  d['model_version']='3.12-evidence-first-1';d['generated_at']=today+'T00:00:00+00:00';d['nifty']['date']=today;d['nifty']['gsec_meta']['asof']=today
-  d['earnings']['asof']=today
+  d['model_version']='3.13-reliability-1';d['generated_at']=today+'T00:00:00+00:00';d['nifty']['date']=today;d['nifty']['gsec_meta']['asof']=today
+  d['earnings']['asof']=str(pd.Period(date.today(),freq='M').start_time.date()-__import__('datetime').timedelta(days=1))
   for f in d['macro']['factors'].values():f['asof']=today
   d['macro']['china_pmi']['asof']=today
   for f in d['macro']['domestic']['factors'].values():f['asof']=today
-  d['trend']={'status':'live','policy_id':'trend-sma10-minus20-v1','asof':today,'completed_month':'fixture','completed_month_close':24000.0,'sma10':23500.0,'lookback_months':10,'risk_off':False,'risk_off_adjustment_pp':0}
+  end=pd.Period(date.today(),freq='M')-1
+  for i,row in enumerate(d['trend']['monthly_closes']):
+   month=end-9+i;row['month']=str(month);row['asof']=str(month.end_time.date())
+  d['trend']['asof']=str(end.end_time.date());d['trend']['completed_month']=str(end)
   return d
  def market(self):
   dates=pd.date_range(end=pd.Timestamp(date.today()),periods=800,freq='D')

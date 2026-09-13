@@ -3,12 +3,12 @@ const {C,calculate,band,clip,finite,fresh}=AnupModel;
 const q=s=>document.querySelector(s);
 const fmt=(x,d=2)=>finite(x)?x.toFixed(d):'—';
 const signed=(x,d=1)=>finite(x)?(x>=0?'+':'')+x.toFixed(d):'—';
-const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const stance=x=>!finite(x)?['not scored','warn']:x>.15?['supportive','good']:x<-.15?['headwind','bad']:['near neutral','warn'];
-const versionPill=q('.pill');if(versionPill)versionPill.textContent='Web V3.12 · Evidence-first';
+const versionPill=q('.pill');if(versionPill)versionPill.textContent='Web V3.13 · Reliability';
 if(typeof document.querySelectorAll==='function'){
  for(const n of document.querySelectorAll('.kv div'))if(n.textContent.trim()==='Extreme-valuation damping')n.textContent='Overlay authority after valuation gate';
- for(const n of document.querySelectorAll('p.muted'))if(n.textContent.includes('retained rule gives macro zero influence at extreme valuation endpoints'))n.textContent='V3.12 gives the macro pipeline zero live allocation authority until its decision value can be priced. Verified macro blocks remain visible as context and a prospective ±6 pp shadow challenger. Earnings and the frozen SMA10 brake remain live policy controls.';
+ for(const n of document.querySelectorAll('p.muted'))if(n.textContent.includes('retained rule gives macro zero influence at extreme valuation endpoints'))n.textContent='V3.13 gives the macro pipeline zero live allocation authority until its decision value can be priced. Verified macro blocks remain visible as context and a prospective ±6 pp shadow challenger. Earnings and the frozen SMA10 brake remain live policy controls.';
 }
 function clearMultiAsset(message='Multi-asset research data are unavailable.'){
  for(const id of ['maEq','maDebt','maGold','maSilver','maBtc']){const n=q('#'+id);if(n)n.textContent='—';}
@@ -43,6 +43,7 @@ function clearAllocation(message){
  q('#eqbar').style.width='0%';q('#barEq').textContent='Allocation withheld';q('#barDebt').textContent='';
  for(const id of ['lens','macroBlocks','macroDiag','market','earn','sources'])q('#'+id).innerHTML='';
  for(const id of ['mscore','mstance','mcov','vix','carry','conf'])q('#'+id).textContent='—';
+ for(const id of ['valuationAnchors','referenceSensitivity','earningsSensitivity','portfolioStress'])if(q('#'+id))q('#'+id).textContent='';
  for(const id of ['robustRange','stressCases','returnCases'])q('#'+id).innerHTML='';
  q('#confbar').style.width='0%';q('#pending').textContent='No current data have been verified.';
  q('#verdict').textContent=message;q('#status').textContent=message;q('#status').className='status bad';
@@ -56,6 +57,11 @@ function render(d){
  if(d?.schema_version!==4){clearAllocation('Upgrade needed — this data schema is unsupported. Reload the page after the current publisher finishes; no old-schema allocation is inferred.');return;}
  const r=calculate(d),n=d.nifty||{},m=d.macro||{},en=d.earnings||{},tr=d.trend||{},vd=d.valuation_diagnostics||{};
  if(!r.valid){clearAllocation(r.reason);return;}
+ const v=typeof AnupValuation!=='undefined'?AnupValuation.assess(d):null;
+ if(q('#valuationAnchors'))q('#valuationAnchors').innerHTML=v?v.anchors.map(x=>`<tr><td>${esc(x.label)}</td><td>${Math.round(x.index_level).toLocaleString('en-IN')}</td><td>${signed(100*(x.index_level/n.level-1),1)}%</td></tr>`).join(''):'';
+ if(q('#referenceSensitivity'))q('#referenceSensitivity').innerHTML=v?v.reference_sensitivity.map(x=>`<tr><td>${fmt(x.fair_pe,2)}×</td><td>${fmt(x.equity_pct,1)}%</td><td>${fmt(100-x.equity_pct,1)}%</td></tr>`).join(''):'';
+ if(q('#earningsSensitivity'))q('#earningsSensitivity').innerHTML=v?v.earnings_sensitivity.map(x=>`<tr><td>${signed(x.earnings_change_pct,0)}%</td><td>${fmt(x.pe,2)}×</td><td>${fmt(x.equity_pct,1)}%</td></tr>`).join(''):'';
+ if(q('#portfolioStress'))q('#portfolioStress').textContent=v?'If NIFTY falls 35% and debt is unchanged, this target would lose approximately '+fmt(v.drawdown_scenarios[1].portfolio_return_pct,1)+'% before costs. A monthly trend brake cannot prevent sudden gaps.':'Valuation sensitivity is withheld until the live-required inputs pass verification.';
  const robustness=AnupRobustness.assess(d);
  q('#robustRange').textContent=robustness?`Assumption range: ${robustness.min.toFixed(0)}–${robustness.max.toFixed(0)}% equity across 24 live curve settings. This is a sensitivity range, not a confidence interval. Live macro authority: 0 pp. ${r.macroContextEligible?`Prospective macro shadow authority: up to ${robustness.macroShadowAuthority.toFixed(1)} pp.`:'Macro shadow unavailable because verified context is incomplete.'} SMA10 crash guard: ${r.trendRiskOff?'RISK-OFF, −20 pp':'risk-on, 0 pp'}.`:'Scenario calculations require eligible live inputs.';
  q('#stressCases').innerHTML=robustness?robustness.stress.map(([label,v])=>`<tr><td>${esc(label)}</td><td>${v.toFixed(1)}%</td><td>${(100-v).toFixed(1)}%</td></tr>`).join(''):'';
@@ -66,16 +72,16 @@ function render(d){
  const dq=vd.lens_disagreement||{};
  const qualityNotes=[dq.flagged?`Valuation lenses disagree by ${fmt(dq.spread_pp,1)} percentile points; review signal, not proof of a break.`:null,n.gsec_meta?.last_transition?`India yield proxy changed on ${n.gsec_meta.last_transition.asof}; check comparability.`:null,m.relative_em?.quarantine?.length?`${m.relative_em.quarantine.length} EM records quarantined and excluded from calibration.`:null].filter(Boolean);
  if(q('#qualityNotes'))q('#qualityNotes').textContent=qualityNotes.join(' ');
- const rankText=['live','limited_history'].includes(vd.status)&&finite(vd.composite_cheapness)?` Independent current-methodology sanity check: ${vd.composite_cheapness.toFixed(1)}/100 cheapness across ${vd.months} completed months (${vd.label}). It is diagnostic only and does not alter the allocation.`:'';
+ const rankText=['live','limited_history'].includes(vd.status)&&finite(vd.composite_cheapness)?` Current-methodology cross-check: ${vd.composite_cheapness.toFixed(1)}/100 cheapness across ${vd.months} completed months (${vd.label}). It is diagnostic only and does not alter the allocation.`:'';
  const trendText=r.trendEligible?` Trend crash guard is ${r.trendRiskOff?'RISK-OFF and subtracts 20 pp':'risk-on and makes no adjustment'}.`:'';
- const macroText=r.macroContextEligible?` Verified macro context is ${stance(m.score)[0]}; the former ±6 pp rule would contribute ${signed(r.macroShadowAdjustment,2)} pp in shadow, but contributes 0 pp live.`:' Macro context is incomplete; V3.12 does not allow that to block or alter the live allocation.';
- q('#verdict').textContent=r.allocationReady?`Valuation is ${band(r.z)} against the model’s fixed references. V3.12 gives ${r.final.toFixed(1)}% equity / ${(100-r.final).toFixed(1)}% debt.${trendText}${macroText}${rankText} This is a transparent allocation policy, not a guarantee against crashes or a claim of proven market-timing alpha.`:`No equity/debt target is published because ${r.holdReason||'the live-required data gate is not satisfied'}. Macro context is not a live allocation prerequisite in V3.12.${rankText}`;
+ const macroText=r.macroContextEligible?` Verified macro context is ${stance(m.score)[0]}; the former ±6 pp rule would contribute ${signed(r.macroShadowAdjustment,2)} pp in shadow, but contributes 0 pp live.`:' Macro context is incomplete; V3.13 does not allow that to block or alter the live allocation.';
+ q('#verdict').textContent=r.allocationReady?`Valuation is ${band(r.z)} against the model’s fixed references. V3.13 gives ${r.final.toFixed(1)}% equity / ${(100-r.final).toFixed(1)}% debt.${trendText}${macroText}${rankText} This is a transparent allocation policy, not a guarantee against crashes or a claim of proven market-timing alpha.`:`No equity/debt target is published because ${r.holdReason||'the live-required data gate is not satisfied'}. Macro context is not a live allocation prerequisite in V3.13.${rankText}`;
  q('#lens').innerHTML=r.L.map(x=>`<tr><td>${esc(x.label)}</td><td>${fmt(x.now)}</td><td>${fmt(x.reference)}</td><td>${signed(x.z,2)}</td><td>${x.weight.toFixed(1)}%</td></tr>`).join('');
  q('#core').textContent=fmt(r.core,1)+'%';q('#eadj').textContent=r.earningsComplete?signed(r.ea,2)+' pp':'Withheld';q('#madj').textContent='0.00 pp';q('#damp').textContent=fmt(100*r.damp,0)+'%';q('#final').textContent=r.allocationReady?fmt(r.final,1)+'%':'Withheld';
  q('#overlayNote').textContent=r.allocationReady?`Live authority: earnings ±6 pp and SMA10 0/−20 pp. Macro live authority is 0 pp. ${r.macroContextEligible?`The verified macro score is retained as a prospective ±${C.macroShadowMax} pp shadow challenger; current shadow contribution ${signed(r.macroShadowAdjustment,2)} pp.`:`Macro shadow is withheld because its context is incomplete; the live target is unaffected.`} No missing macro factor is neutral-filled.`:`Live target requires current valuation/bond inputs, complete earnings evidence and a valid SMA10 trend input. Macro is context/shadow only and does not withhold the live target.`;
  const names={global_liquidity:'Global financial conditions',india_external_carry:'India external / carry',india_domestic:'India domestic regime',china_industrial:'China / global industrial cycle'},details=m.block_weight_detail||{},base=C.macroRequiredWeight||1;
  const blockRows=Object.entries(names).filter(([k])=>finite(m.blocks?.[k])&&(details[k]?.internal_coverage||0)>=.999).map(([k,label])=>{const v=m.blocks[k],a=details[k]||{},st=stance(v);return `<tr><td>${label}</td><td class="${st[1]}">${signed(v,2)}</td><td>${fmt(100*(a.strategic_weight||0)/base,1)}%</td><td>100%</td><td>${fmt(100*(a.effective_weight||0)/base,1)}%</td><td>${st[0]} · shadow only</td></tr>`;});
- q('#macroBlocks').innerHTML=blockRows.length?blockRows.join(''):'<tr><td colspan="6" class="left">Verified macro context is temporarily unavailable. The live V3.12 target is unaffected.</td></tr>';
+ q('#macroBlocks').innerHTML=blockRows.length?blockRows.join(''):'<tr><td colspan="6" class="left">Verified macro context is temporarily unavailable. The live V3.13 target is unaffected.</td></tr>';
  const ch=m.china_pmi||{},dom=m.domestic||{},df=dom.factors||{},factors=m.factors||{},packetOk=d.schema_version===4&&fresh(d.generated_at,3);
  const defs=[['US 10Y real yield','us_real_10y','%'],['US nominal 10Y','us_10y','%'],['India − US 10Y spread','india_us_10y_spread',' pp'],['Broad USD, ~3 months','usd_3m_pct','%'],['Brent futures, 63 observations','brent_3m_pct','%'],['Fed assets, 26 observations','fed_assets_6m_pct','%'],['VIX','vix',''],['India broad REER','india_reer_bis',''],['USD/INR, ~3 months','usd_inr_3m_pct','%']];
  const rows=defs.flatMap(([label,key,unit])=>{const f=factors[key]||{};return f.status==='live'&&finite(m[key])?[[label,fmt(m[key])+unit,f.asof||'','verified context']]:[];});
@@ -87,7 +93,7 @@ function render(d){
  const requiredFactorNames={us_real_10y:'US real yield',usd_3m_pct:'broad USD',fed_assets_6m_pct:'Fed assets',vix:'VIX',brent_3m_pct:'Brent',india_us_10y_spread:'India-US carry',india_reer_bis:'India REER',usd_inr_3m_pct:'USD/INR'};
  const macroIssues=Object.entries(requiredFactorNames).filter(([k])=>factors[k]?.status!=='live').map(([,v])=>v);if(ch.status!=='live')macroIssues.push('China PMI');if(dom.status!=='live')macroIssues.push('India domestic regime');
  q('#pending').className='flag '+(r.allocationReady?'good':'bad');
- q('#pending').textContent=r.allocationReady?`Live-required inputs are complete. Macro is ${r.macroContextEligible?'fully verified and tracked in shadow only':`incomplete${macroIssues.length?` (${macroIssues.join(', ')})`:''}; this does not change or withhold V3.12's live target`}. This does not mean all economic risks are measured or that the allocation has proven timing alpha.`:`Allocation withheld: ${r.holdReason||'a live-required input is not eligible'}. Macro context is not the cause of withholding in V3.12.`;
+ q('#pending').textContent=r.allocationReady?`Live-required inputs are complete. Macro is ${r.macroContextEligible?'fully verified and tracked in shadow only':`incomplete${macroIssues.length?` (${macroIssues.join(', ')})`:''}; this does not change or withhold V3.13's live target`}. This does not mean all economic risks are measured or that the allocation has proven timing alpha.`:`Allocation withheld: ${r.holdReason||'a live-required input is not eligible'}. Macro context is not the cause of withholding in V3.13.`;
  const gm=n.gsec_meta||{};const marketRows=[['NIFTY 50',n.level.toLocaleString('en-IN')],['P/E',fmt(n.pe)],['P/B',fmt(n.pb)],['Dividend yield',fmt(n.div_yield)+'%'],['NIFTY date',n.date],['India ~10Y',fmt(n.gsec10)+'%'],['India yield date',gm.asof||'Not verified'],['India yield instrument',gm.security||gm.source||'Not verified']];
  if(r.trendEligible){marketRows.push(['SMA10 crash guard',r.trendRiskOff?'RISK-OFF · −20 pp':'Risk-on · 0 pp']);marketRows.push(['Completed-month NIFTY close',fmt(tr.completed_month_close,1)]);marketRows.push(['10-month average',fmt(tr.sma10,1)]);marketRows.push(['Trend observation date',tr.asof||'Not verified']);}
  if(['live','limited_history'].includes(vd.status)&&finite(vd.composite_cheapness)){marketRows.push(['Valuation-era cheapness',fmt(vd.composite_cheapness,1)+'/100']);marketRows.push(['Comparable completed months',String(vd.months)]);}
@@ -99,7 +105,7 @@ function render(d){
  const old=!packetOk;q('#status').textContent=`${old?'Old published file — target withheld':'Published data'} · ${AnupModel.VERSION} · NIFTY ${n.date} · refresh ${new Date(d.generated_at).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST`;q('#status').className='status '+(old?'bad':r.allocationReady?'good':'warn');
 }
 async function fetchPublished(name,signal){
- const urls=[`https://api.github.com/repos/anuppaul007/anup-nifty-valuation/contents/data/${name}`,`https://raw.githubusercontent.com/anuppaul007/anup-nifty-valuation/main/data/${name}`];let lastError;
+ const urls=[`data/${name}`,`https://api.github.com/repos/anuppaul007/anup-nifty-valuation/contents/data/${name}`,`https://raw.githubusercontent.com/anuppaul007/anup-nifty-valuation/main/data/${name}`];let lastError;
  for(const url of urls){
   try{
    const response=await fetch(url+'?t='+Date.now(),{cache:'no-store',signal,headers:{Accept:'application/vnd.github.raw+json'}});if(!response.ok)throw Error('HTTP '+response.status);
@@ -118,5 +124,5 @@ async function loadData(){
  }catch(error){if(request===requestNumber){lastPublishedPacket=null;q('#packetAge').textContent='Publication unavailable — current packet age cannot be verified.';q('#packetAge').className='flag bad';clearAllocation('Published data could not be loaded. Allocation is withheld; please try again later.');clearMultiAsset();}}
  finally{clearTimeout(timer);}
 }
-setInterval(()=>{if(lastPublishedPacket){const s=paintPacketAge(lastPublishedPacket);if(!s.ok){clearAllocation(s.text);clearMultiAsset('Source packet is stale or unsupported.');}}},60000);
+setInterval(()=>{if(lastPublishedPacket){render(lastPublishedPacket);const r=calculate(lastPublishedPacket);if(!r.allocationReady)clearMultiAsset('A live-required input has expired; refresh is required.');}},60000);
 loadData();

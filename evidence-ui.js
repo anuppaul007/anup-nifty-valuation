@@ -12,8 +12,8 @@ async function currentFile(name){
  if(typeof fetchPublished==='function'){const c=new AbortController(),t=setTimeout(()=>c.abort(),12000);try{return await fetchPublished(name,c.signal);}finally{clearTimeout(t);}}
  const response=await fetch('data/'+name,{cache:'no-store'});if(!response.ok)throw Error('Published file unavailable');return response.json();
 }
-function signed(v,d=2){const n=Number(v);if(!Number.isFinite(n))return '—';return `${n>0?'+':''}${n.toFixed(d)}`;}
-function pct(v,d=2){const n=Number(v);return Number.isFinite(n)?`${n.toFixed(d)}%`:'—';}
+function signed(v,d=2){if(typeof v!=='number'||!Number.isFinite(v))return '—';return `${v>0?'+':''}${v.toFixed(d)}`;}
+function pct(v,d=2){return typeof v==='number'&&Number.isFinite(v)?`${v.toFixed(d)}%`:'—';}
 function cell(row,text,tag='td'){const x=document.createElement(tag);x.textContent=text;row.appendChild(x);return x;}
 function table(headers,rows){
  const t=document.createElement('table'),head=document.createElement('thead'),hr=document.createElement('tr');headers.forEach(h=>cell(hr,h,'th'));head.appendChild(hr);t.appendChild(head);

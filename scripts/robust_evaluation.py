@@ -13,6 +13,7 @@ from itertools import combinations
 from pathlib import Path
 from statistics import NormalDist
 import hashlib, json, math
+from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
 import retrospective_core as r
@@ -302,8 +303,25 @@ def track_record_heuristic(weight_rho1,delta_sharpe=.20):
       'warning':'Heuristic illustrating persistence cost; not a substitute for a full power model.'}
 
 
-def prospective_count():
-    p=ROOT/'data'/'evidence'/'decisions';return len(list(p.glob('*.json'))) if p.exists() else 0
+def prospective_count(now=None):
+    """Completed observation months for this live version, not file count.
+
+    This still counts observations, not realized returns. A current-month entry
+    or a decision from another version cannot advance the prospective gate.
+    """
+    now=now or datetime.now(timezone.utc)
+    month=now.strftime('%Y-%m');version=load_json(ROOT/'data/latest.json',{}).get('model_version')
+    if not version:return 0
+    folder=ROOT/'data/evidence';seen=set()
+    for path in (folder/'decisions').glob('*.json'):
+        d=load_json(path,{})
+        if not isinstance(d.get('month'),str) or d['month']>=month:continue
+        sid=d.get('snapshot_id','')
+        if len(sid)!=64 or any(c not in '0123456789abcdef' for c in sid):continue
+        s=load_json(folder/'snapshots'/f'{sid}.json',{})
+        if (s.get('calculation') or {}).get('model_version')==version and (s.get('calculation') or {}).get('allocationReady'):
+            seen.add(d['month'])
+    return len(seen)
 
 
 def build():

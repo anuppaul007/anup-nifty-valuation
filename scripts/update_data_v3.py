@@ -62,8 +62,12 @@ def india_yield(old):
         df=m.oecd_india_10y();dt=df.attrs['asof'];v=float(df.value.iloc[-1])
         if not 3<v<15 or not m.fresh(dt,100):raise RuntimeError('OECD India monthly long-term yield is stale')
         return v,{'asof':dt,'source_url':df.attrs['source'],'source':'OECD monthly India long-term government bond yield','status':'lagged','max_age_days':100}
+    # Monthly averages and cached inputs remain diagnostic context. They cannot
+    # silently take a daily yield's live allocation authority.
     found=m.safe('OECD India monthly yield',monthly)
-    if found:return found
+    if found:
+        value,meta=found
+        return value,dict(meta,status='excluded',exclusion_reason='Monthly yield is not a current daily allocation input')
     meta=(old.get('nifty') or {}).get('gsec_meta') or {};value=(old.get('nifty') or {}).get('gsec10')
     if m.finite(value) and meta.get('status')!='excluded' and m.fresh(meta.get('asof'),meta.get('max_age_days',7)):return float(value),dict(meta,status='cached')
     return value,{'asof':meta.get('asof'),'status':'excluded','source':'India 10Y unavailable or undated','source_url':meta.get('source_url'),'max_age_days':7}
@@ -101,11 +105,19 @@ def nifty_trend():
         completed=s[s.index.to_period('M')<current]
         monthly=completed.groupby(completed.index.to_period('M')).last().sort_index()
         if len(monthly)<10:raise RuntimeError(f'only {len(monthly)} completed monthly closes')
-        last10=monthly.tail(10);month=last10.index[-1];close=float(last10.iloc[-1]);sma=float(last10.mean())
+        last10=monthly.tail(10)
+        expected=pd.period_range(end=current-1,periods=10,freq='M')
+        if not last10.index.equals(expected):raise RuntimeError('Trend requires ten consecutive months ending in the previous completed month')
+        monthly_closes=[]
+        for period,value in last10.items():
+            observed=completed[completed.index.to_period('M')==period].index[-1]
+            if (period.end_time.normalize()-observed.normalize()).days>7:raise RuntimeError('Incomplete month-end source history: '+str(period))
+            monthly_closes.append({'month':str(period),'asof':str(observed.date()),'close':float(value)})
+        month=last10.index[-1];close=float(last10.iloc[-1]);sma=float(last10.mean())
         month_dates=completed[completed.index.to_period('M')==month]
         if month_dates.empty:raise RuntimeError('completed-month observation date unavailable')
         asof=str(month_dates.index[-1].date());risk_off=bool(close<sma)
-        return {'status':'live','policy_id':policy,'source':'Nifty Indices / NSE NIFTY 50 price index','source_url':'https://www.niftyindices.com/reports/historical-data','asof':asof,'completed_month':str(month),'completed_month_close':close,'sma10':sma,'distance_to_sma10_pct':100*(close/sma-1),'lookback_months':10,'risk_off':risk_off,'risk_off_adjustment_pp':-20 if risk_off else 0,'rule':'previous completed-month close strictly below mean of latest 10 consecutive completed monthly closes'}
+        return {'status':'live','policy_id':policy,'source':'Nifty Indices / NSE NIFTY 50 price index','source_url':'https://www.niftyindices.com/reports/historical-data','asof':asof,'completed_month':str(month),'completed_month_close':close,'sma10':sma,'monthly_closes':monthly_closes,'distance_to_sma10_pct':100*(close/sma-1),'lookback_months':10,'risk_off':risk_off,'risk_off_adjustment_pp':-20 if risk_off else 0,'rule':'previous completed-month close strictly below mean of latest 10 consecutive completed monthly closes'}
     except Exception as e:
         return {'status':'unavailable','policy_id':policy,'asof':None,'completed_month':None,'completed_month_close':None,'sma10':None,'lookback_months':10,'risk_off':None,'risk_off_adjustment_pp':None,'error':f'{type(e).__name__}: {e}'}
 
@@ -132,10 +144,10 @@ def main():
     coverage=mac['active_block_weight'];vf=(mac.get('factors') or {}).get('vix') or {};confidence=None
     if vf.get('status')=='live' and m.finite(vf.get('value')):
         stress=float(np.clip(1-max(0,vf['value']-18)/40,.35,1));confidence=stress*(.65+.35*coverage)
-    out={'schema_version':4,'model_version':'3.12-evidence-first-1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<.999,'nifty':latest,'earnings':n['earnings'],'macro':mac,'trend':trend,'confidence':confidence,'valuation_diagnostics':valuation_diag,'history':n['history'],'calibration':cal,'sources':[
+    out={'schema_version':4,'model_version':'3.13-reliability-1','generated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),'macro_stale':coverage==0,'macro_partial':coverage<.999,'nifty':latest,'earnings':n['earnings'],'macro':mac,'trend':trend,'confidence':confidence,'valuation_diagnostics':valuation_diag,'history':n['history'],'calibration':cal,'sources':[
         {'name':'Nifty Indices / NSE','role':'NIFTY index and ratio history; EPS is an index-implied proxy; completed monthly price closes drive the live SMA10 crash guard','url':'https://www.niftyindices.com/reports/historical-data'},
         {'name':gmeta['source'],'role':'Current India ~10Y yield; its own observation date determines eligibility','url':gmeta.get('source_url')},
-        {'name':'U.S. Treasury / Federal Reserve / CBOE','role':'Dated real/nominal yields, broad USD, Fed balance sheet and VIX; V3.12 displays these as context and evaluates a shadow macro challenger rather than using them in the live allocation'},
+        {'name':'U.S. Treasury / Federal Reserve / CBOE','role':'Dated real/nominal yields, broad USD, Fed balance sheet and VIX; V3.13 displays these as context and evaluates a shadow macro challenger rather than using them in the live allocation'},
         {'name':'BIS Statistics API','role':'India broad REER and monthly USD/INR history from official SDMX feeds','url':'https://data.bis.org/'},
         {'name':'OECD Data Explorer','role':'Monthly India long-term government bond history used to standardise India-US carry','url':'https://data-explorer.oecd.org/'},
         {'name':'MoSPI / NSO via Press Information Bureau','role':'Official All-India CPI inflation and Index of Industrial Production releases; newest URL is discovered and prior verified URL is carried forward','url':dm.PIB_ALL},
@@ -145,5 +157,5 @@ def main():
         {'name':'NBS China','role':'Official manufacturing PMI and new orders','url':(mac.get('china_pmi') or {}).get('source_url')}
     ]}
     tmp=OUT.with_suffix('.tmp');tmp.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8');tmp.replace(OUT)
-    print(json.dumps({'nifty_asof':latest['date'],'gsec_status':gmeta['status'],'macro_score':mac['score'],'coverage':coverage,'trend_status':trend.get('status'),'trend_risk_off':trend.get('risk_off'),'domestic_status':(mac.get('domestic') or {}).get('status'),'valuation_cheapness':valuation_diag.get('composite_cheapness'),'valuation_months':valuation_diag.get('months'),'version':'3.12-evidence-first-1'}))
+    print(json.dumps({'nifty_asof':latest['date'],'gsec_status':gmeta['status'],'macro_score':mac['score'],'coverage':coverage,'trend_status':trend.get('status'),'trend_risk_off':trend.get('risk_off'),'domestic_status':(mac.get('domestic') or {}).get('status'),'valuation_cheapness':valuation_diag.get('composite_cheapness'),'valuation_months':valuation_diag.get('months'),'version':'3.13-reliability-1'}))
 if __name__=='__main__':main()

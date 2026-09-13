@@ -30,6 +30,14 @@ class LiveV311Tests(unittest.TestCase):
         self.assertEqual(x['risk_off'],x['completed_month_close']<x['sma10'])
         self.assertEqual(x['risk_off_adjustment_pp'],-20 if x['risk_off'] else 0)
 
+    def test_trend_rejects_missing_month_even_with_enough_daily_rows(self):
+        import pandas as pd
+        today=date.today();missing=str(pd.Period(today,freq='M')-4)
+        rows=[{'Date':str(d.date()),'Close':100.0} for d in pd.date_range(today-timedelta(days=580),today,freq='B') if str(d.to_period('M'))!=missing]
+        with patch('jugaad_data.nse.index_raw',return_value=rows):x=u.nifty_trend()
+        self.assertEqual(x['status'],'unavailable')
+        self.assertIn('consecutive',x['error'])
+
     def test_trend_fails_closed_when_history_is_insufficient(self):
         with patch('jugaad_data.nse.index_raw',return_value=[]):
             x=u.nifty_trend()

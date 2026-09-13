@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
-  "model_version": "3.12-evidence-first-1",
-  "generated_at": "2026-09-13T09:38:58+00:00",
+  "model_version": "3.13-reliability-1",
+  "generated_at": "2026-09-13T10:13:39+00:00",
   "macro_stale": false,
   "macro_partial": false,
   "nifty": {
@@ -32,7 +32,7 @@
   },
   "macro": {
     "us_real_10y": 2.6,
-    "usd_3m_pct": 0.06061667362635692,
+    "usd_3m_pct": 0.06065336399516674,
     "fed_assets_6m_pct": 1.4184489999313987,
     "vix": 15.84,
     "brent_3m_pct": 15.744637961244745,
@@ -51,21 +51,21 @@
         "status": "live"
       },
       "usd_3m_pct": {
-        "value": 0.06061667362635692,
-        "z": -0.0399358076743089,
-        "score": 0.02661758296140187,
+        "value": 0.06065336399516674,
+        "z": -0.05793417963434162,
+        "score": 0.03860359308567304,
         "asof": "2026-08-31",
-        "observations": 120,
-        "source_url": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=120&layout=seriescolumn&rel=H10&series=847be2166a425bda9b4d92465f797544&type=package",
+        "observations": 248,
+        "source_url": "https://fred.stlouisfed.org/series/DTWEXBGS",
         "status": "live"
       },
       "fed_assets_6m_pct": {
         "value": 1.4184489999313987,
-        "z": 1.558696546600374,
-        "score": 0.7775446872753102,
+        "z": 1.573506427223624,
+        "score": 0.7814189431779461,
         "asof": "2026-09-09",
-        "observations": 180,
-        "source_url": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package",
+        "observations": 1239,
+        "source_url": "https://fred.stlouisfed.org/series/WALCL",
         "status": "live"
       },
       "vix": {
@@ -175,7 +175,7 @@
       "z": null
     },
     "blocks": {
-      "global_liquidity": -0.1511669019371614,
+      "global_liquidity": -0.1478011359366482,
       "india_external_carry": -0.04077906406043283,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null,
@@ -194,8 +194,8 @@
     "stale_factors": [],
     "sources_live": {
       "us_real_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
-      "usd_3m_pct": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=120&layout=seriescolumn&rel=H10&series=847be2166a425bda9b4d92465f797544&type=package",
-      "fed_assets_6m_pct": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package",
+      "usd_3m_pct": "https://fred.stlouisfed.org/series/DTWEXBGS",
+      "fed_assets_6m_pct": "https://fred.stlouisfed.org/series/WALCL",
       "vix": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
       "brent_3m_pct": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
       "india_reer_bis": "https://stats.bis.org/api/v1/data/WS_EER/M.R.B.IN/all?startPeriod=2012-01&detail=dataonly&format=csv",
@@ -203,7 +203,7 @@
       "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
     },
-    "score": -0.03995923505344261,
+    "score": -0.03894950525328865,
     "active_block_weight": 1.0,
     "block_weight_detail": {
       "global_liquidity": {
@@ -282,6 +282,58 @@
     "completed_month": "2026-08",
     "completed_month_close": 24080.4,
     "sma10": 24503.829999999998,
+    "monthly_closes": [
+      {
+        "month": "2025-11",
+        "asof": "2025-11-28",
+        "close": 26202.95
+      },
+      {
+        "month": "2025-12",
+        "asof": "2025-12-31",
+        "close": 26129.6
+      },
+      {
+        "month": "2026-01",
+        "asof": "2026-01-30",
+        "close": 25320.65
+      },
+      {
+        "month": "2026-02",
+        "asof": "2026-02-27",
+        "close": 25178.65
+      },
+      {
+        "month": "2026-03",
+        "asof": "2026-03-30",
+        "close": 22331.4
+      },
+      {
+        "month": "2026-04",
+        "asof": "2026-04-30",
+        "close": 23997.55
+      },
+      {
+        "month": "2026-05",
+        "asof": "2026-05-29",
+        "close": 23547.75
+      },
+      {
+        "month": "2026-06",
+        "asof": "2026-06-30",
+        "close": 23865.75
+      },
+      {
+        "month": "2026-07",
+        "asof": "2026-07-31",
+        "close": 24383.6
+      },
+      {
+        "month": "2026-08",
+        "asof": "2026-08-31",
+        "close": 24080.4
+      }
+    ],
     "distance_to_sma10_pct": -1.728015579605302,
     "lookback_months": 10,
     "risk_off": true,
@@ -850,7 +902,7 @@
     },
     {
       "name": "U.S. Treasury / Federal Reserve / CBOE",
-      "role": "Dated real/nominal yields, broad USD, Fed balance sheet and VIX; V3.12 displays these as context and evaluates a shadow macro challenger rather than using them in the live allocation"
+      "role": "Dated real/nominal yields, broad USD, Fed balance sheet and VIX; V3.13 displays these as context and evaluates a shadow macro challenger rather than using them in the live allocation"
     },
     {
       "name": "BIS Statistics API",
