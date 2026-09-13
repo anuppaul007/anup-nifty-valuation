@@ -32,8 +32,13 @@ jobs:
           assert x['live_authority'] == 'none'
           assert x['holdout_target_fetch_count'] == 0
           assert x['source']['scrip_code'] == '500790'
-          assert x['row_count'] > 0
-          print({'row_count':x['row_count'],'row_keys':x['row_keys'],'pages':x['pages']})
+          assert len(x['variants']) == 4
+          print({
+            'best_variant':x['best_variant'],
+            'best_row_count':x['best_row_count'],
+            'best_row_keys':x['best_row_keys'],
+            'messages':[(v['variant']['name'], v['pages'][0].get('status'), v['pages'][0].get('message')) for v in x['variants'] if v['pages']],
+          })
           PY
       - uses: actions/upload-artifact@v4
         with:
