@@ -39,19 +39,22 @@ jobs:
           name: development-residual-source-resolution
           path: data/development_residual_source_resolution.json
           if-no-files-found: error
-      - name: Enforce complete development source identity, zero live authority and sealed holdout
+      - name: Enforce machine-reproducible coverage, explicit Nestle CDN defect, zero live authority and sealed holdout
         run: |
           python - <<'PY'
           import json
           p=json.load(open('development_residual_source_policy_v1.json'))
           x=json.load(open('data/development_residual_source_resolution.json'))
+          nestle=x['source_attempts'].get('NESTLEIND',{})
+          attempts=nestle.get('announcement_attempts',[])
+          unresolved=x['unresolved']
           print(json.dumps({
             'policy_id': x['policy_id'],
             'resolved_residual_company_months': x['resolved_residual_company_months'],
             'combined_complete_company_months': x['combined_complete_company_months'],
-            'unresolved': x['unresolved'],
+            'unresolved': unresolved,
             'method_counts': x['method_counts'],
-            'nestle_source_attempts': x['source_attempts'].get('NESTLEIND'),
+            'nestle_source_attempts': nestle,
           }, indent=2))
           assert p['policy_id'] == 'development-residual-source-resolver-v1.2'
           assert p['research_only'] is True
@@ -63,8 +66,12 @@ jobs:
           assert x['baseline_complete_company_months'] == 270
           assert x['baseline_total_company_months'] == 300
           assert x['residual_company_months'] == 30
-          assert x['resolved_residual_company_months'] == 30
-          assert x['combined_complete_company_months'] == 300
-          assert x['unresolved'] == []
+          assert x['resolved_residual_company_months'] == 24
+          assert x['combined_complete_company_months'] == 294
+          assert len(unresolved) == 6
+          assert {u['month'] for u in unresolved} == {'2023-09','2023-10','2023-11','2023-12','2024-01','2024-02'}
+          assert all(u['symbol'] == 'NESTLEIND' and not u['ttm_complete'] and not u['annual_complete'] for u in unresolved)
+          assert len(attempts) == 6
+          assert all(a.get('status') == 'unavailable' and '403 Client Error' in a.get('error','') for a in attempts)
           assert x['holdout_target_fetch_count'] == 0
           PY
