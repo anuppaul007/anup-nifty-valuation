@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "months": 63,
+  "scope": "Legacy fixed-reference valuation-core timing window; not a certified full-stack V3.11 backtest.",
+  "observed_tradeoff_sentence": "Over the tested window, moving equity exposure added 0.16 pp/year of return and 1.0 pp of additional drawdown.",
+  "comparators": {
+    "ex_post_realised_mean_static": {
+      "name": "Ex-post realised-mean static",
+      "available_ex_ante": false,
+      "note": "Uses the full sample realised mean equity weight. Useful for beta removal but unavailable to an investor at sample start.",
+      "comparator_mean_equity_pct": 53.536467520187315,
+      "comparator_cagr_pct": 8.762585209768382,
+      "comparator_max_drawdown_pct": -8.593167893589237,
+      "dynamic_cagr_pct": 8.922713446031395,
+      "dynamic_max_drawdown_pct": -9.603649549576366,
+      "dynamic_minus_comparator_cagr_pp": 0.16012823626301298,
+      "dynamic_additional_drawdown_pp": 1.0104816559871281,
+      "timing_residual_monthly_sharpe": 0.02168845280020123,
+      "timing_residual_t_stat_naive": 0.17214675729328466,
+      "timing_residual_effective_sample": {
+        "raw_n": 63,
+        "effective_n": 26.546478588757804,
+        "positive_acf_sum": 0.6865980602542127,
+        "acf_1_to_12": {"1": 0.00989297074567434, "2": 0.06803076845482707, "3": 0.24535772529943076, "4": 0.040213700521817976, "5": 0.18114899987403532, "6": -0.15553741009954294, "7": -0.026243372239308844, "8": 0.07826469637874794, "9": -0.037845701986481975, "10": 0.06368919897967922, "11": -0.11913040805961911, "12": -0.08287566193986641},
+        "method": "Bartlett-style positive-autocorrelation design effect; diagnostic only"
+      },
+      "comparator_realised_turnover_x": 0.43593626717150225
+    },
+    "fixed_60_40_policy": {
+      "name": "Fixed 60/40 policy",
+      "available_ex_ante": true,
+      "note": "Pre-declared policy null fixed at 60% equity for the entire return window.",
+      "comparator_mean_equity_pct": 60.00000000000002,
+      "comparator_cagr_pct": 9.171121632944823,
+      "comparator_max_drawdown_pct": -9.450813468327656,
+      "dynamic_cagr_pct": 8.922713446031395,
+      "dynamic_max_drawdown_pct": -9.603649549576366,
+      "dynamic_minus_comparator_cagr_pp": -0.24840818691342825,
+      "dynamic_additional_drawdown_pp": 0.15283608124870973,
+      "timing_residual_monthly_sharpe": -0.022455928756830414,
+      "timing_residual_t_stat_naive": -0.17823840884867131,
+      "timing_residual_effective_sample": {
+        "raw_n": 63,
+        "effective_n": 19.98721911190231,
+        "positive_acf_sum": 1.0760071385439447,
+        "acf_1_to_12": {"1": 0.12035803552336305, "2": 0.11620283430165218, "3": 0.284159634364383, "4": 0.10178224979162662, "5": 0.24254517778072204, "6": -0.29607054031890634, "7": 0.013129980259105365, "8": 0.10812182460460108, "9": -0.09258286851662775, "10": 0.08970740191849137, "11": -0.13432380846409292, "12": -0.07241285933692719},
+        "method": "Bartlett-style positive-autocorrelation design effect; diagnostic only"
+      },
+      "comparator_realised_turnover_x": 0.4204192552539894
+    },
+    "expanding_mean_investable": {
+      "name": "Expanding-mean investable policy",
+      "available_ex_ante": true,
+      "note": "At each decision, target equity equals the mean of valuation targets observed through that decision; no future target weights are used.",
+      "comparator_mean_equity_pct": 39.87035206421214,
+      "comparator_cagr_pct": 6.809699357115129,
+      "comparator_max_drawdown_pct": -8.358644004945093,
+      "dynamic_cagr_pct": 8.922713446031395,
+      "dynamic_max_drawdown_pct": -9.603649549576366,
+      "dynamic_minus_comparator_cagr_pp": 2.113014088916266,
+      "dynamic_additional_drawdown_pp": 1.2450055446312724,
+      "timing_residual_monthly_sharpe": 0.2294632013656219,
+      "timing_residual_t_stat_naive": 1.8213076975625169,
+      "timing_residual_effective_sample": {
+        "raw_n": 63,
+        "effective_n": 39.48210051030381,
+        "positive_acf_sum": 0.2978298923528477,
+        "acf_1_to_12": {"1": -0.30210040038415437, "2": -0.17892164811055555, "3": 0.06613168159593812, "4": -0.030308317231885203, "5": -0.07959344245132641, "6": -0.036124199513961314, "7": 0.20224828407797135, "8": -0.13960391250332835, "9": -0.0172590064291969, "10": -0.006448281576535909, "11": 0.029449926678938202, "12": -0.07917665505540286},
+        "method": "Bartlett-style positive-autocorrelation design effect; diagnostic only"
+      },
+      "comparator_realised_turnover_x": 0.7637937200974482
+    }
+  },
+  "observed_effect_scale": {
+    "status": "heuristic_only",
+    "observed_naive_t_stat": 0.17214675729328466,
+    "observations": 63,
+    "target_absolute_t_stat": 2.0,
+    "raw_months_if_iid_effect_persisted": 8503.600485319084,
+    "raw_years_if_iid_effect_persisted": 708.6333737765904,
+    "observed_effective_sample_ratio": 0.42137267601202866,
+    "serial_dependence_adjusted_months_if_same_efficiency_persisted": 20180.711682112815,
+    "serial_dependence_adjusted_years_if_same_efficiency_persisted": 1681.7259735094012,
+    "interpretation": "Do not read these horizons literally. They show that the observed effect is far too small to justify a claim that merely waiting longer will validate it. Prospective evidence is useful for detecting a materially larger edge if one emerges and documenting its absence otherwise.",
+    "warning": "This scaling assumes the observed effect, variance and serial-dependence structure remain stationary; that assumption is not credible over century-scale horizons."
+  },
+  "governance": "The ex-post mean comparator remains valid for beta-removal diagnostics but is explicitly not investable. Promotion claims should also survive investable nulls; no result here changes live parameters automatically."
+}
