@@ -129,32 +129,26 @@ def _numbers(line: str) -> list[float]:
 
 
 def _preceding_weight(lines: list[str], idx: int) -> float | None:
-    """Find a wrapped row's weight on the nearest preceding nonblank line."""
+    """Recover a wrapped row's weight from its preceding security-name line.
+
+    In the official PDF a long security name can occupy the line immediately
+    above the symbol row while the weight remains on that name line. Such a line
+    has exactly one numeric field. A preceding completed constituent row has
+    close, market-cap and weight (three numeric fields), so it is rejected.
+    """
     for j in range(idx - 1, max(-1, idx - 4), -1):
         raw = lines[j].strip()
         if not raw:
             continue
-        # Do not steal a weight from the preceding security row.
-        if re.match(r"^[A-Z0-9&-]{2,20}\s+", raw):
-            return None
         nums = _numbers(raw)
-        if nums:
-            x = nums[-1]
-            if 0 < x < 30:
-                return x
+        if len(nums) == 1 and 0 < nums[0] < 30:
+            return nums[0]
         return None
     return None
 
 
 def parse_weight_table(text: str) -> tuple[list[dict], dict]:
-    """Parse official NIFTY 50 symbol/close/index-MCap/weight rows.
-
-    The official PDF exposes the historical security symbol directly. Some long
-    security names wrap onto a line above the symbol, and in those rows the
-    displayed weight may sit on that preceding line. We therefore anchor on the
-    Symbol column and recover a preceding weight only when the symbol line has
-    close price and index market cap but no weight.
-    """
+    """Parse official NIFTY 50 symbol/close/index-MCap/weight rows."""
     lines = text.splitlines()
     rows: list[dict] = []
     seen = set()
@@ -180,15 +174,14 @@ def parse_weight_table(text: str) -> tuple[list[dict], dict]:
             continue
         if close_price <= 0 or index_mcap <= 0 or not (0 < weight < 30):
             continue
-        row = {
+        rows.append({
             "symbol": symbol,
             "close_price": close_price,
             "index_mcap_crore": index_mcap,
             "weight_pct": weight,
             "weight_source": weight_source,
             "raw_symbol_line": re.sub(r"\s+", " ", raw).strip(),
-        }
-        rows.append(row)
+        })
         seen.add(symbol)
         if len(rows) == 50:
             break
@@ -246,6 +239,7 @@ def probe_financial_api(session: requests.Session, symbol: str, include_schema: 
             "symbol": symbol,
             "status": "ok",
             "records": len(records),
+            "has_records": bool(records),
             "earliest_filing_date": str(min(filing_dates).date()) if filing_dates else None,
             "latest_filing_date": str(max(filing_dates).date()) if filing_dates else None,
             "consolidated_rows": consolidated_rows,
@@ -260,7 +254,7 @@ def probe_financial_api(session: requests.Session, symbol: str, include_schema: 
             out["date_keys"] = sorted(k for k in keys if any(t in k.lower() for t in ("date", "time")))
         return out
     except Exception as e:
-        return {"symbol": symbol, "status": "unavailable", "error": f"{type(e).__name__}: {e}"}
+        return {"symbol": symbol, "status": "unavailable", "has_records": False, "error": f"{type(e).__name__}: {e}"}
 
 
 def probe_corporate_actions_api(session: requests.Session, symbol: str) -> dict:
@@ -287,12 +281,13 @@ def probe_corporate_actions_api(session: requests.Session, symbol: str) -> dict:
             "symbol": symbol,
             "status": "ok",
             "records": len(records),
+            "has_records": bool(records),
             "dividend_rows": dividend_rows,
             "earliest_dated_record": str(min(dated).date()) if dated else None,
             "latest_dated_record": str(max(dated).date()) if dated else None,
         }
     except Exception as e:
-        return {"symbol": symbol, "status": "unavailable", "error": f"{type(e).__name__}: {e}"}
+        return {"symbol": symbol, "status": "unavailable", "has_records": False, "error": f"{type(e).__name__}: {e}"}
 
 
 def build() -> dict:
@@ -309,20 +304,15 @@ def build() -> dict:
         raw_master = _get_bytes(session, security_master_url)
         security_master_symbols = parse_security_master_symbols(raw_master)
         security_master_status = {
-            "status": "ok",
-            "symbols": len(security_master_symbols),
-            "sha256": sha256_bytes(raw_master),
-            "url": security_master_url,
+            "status": "ok", "symbols": len(security_master_symbols),
+            "sha256": sha256_bytes(raw_master), "url": security_master_url,
         }
     except Exception as e:
         security_master_status["error"] = f"{type(e).__name__}: {e}"
 
     month_rows = []
     debug_chunks = []
-    dev_targets_ok = 0
-    weights_ok = 0
-    parsed_symbol_rows = 0
-    current_master_symbol_matches = 0
+    dev_targets_ok = weights_ok = parsed_symbol_rows = current_master_symbol_matches = 0
 
     for month in months:
         row = {
@@ -342,14 +332,10 @@ def build() -> dict:
             parsed, diagnostics = parse_weight_table(text)
             current_matches = sum(1 for x in parsed if x["symbol"] in security_master_symbols)
             row["weights"] = {
-                "url": weights_zip_url(month),
-                "status": "ok" if parsed else "unparsed",
-                "zip_sha256": sha256_bytes(zip_raw),
-                "pdf_member": member,
-                "pdf_sha256": sha256_bytes(pdf_raw),
-                "diagnostics": diagnostics,
-                "constituents": parsed,
-                "current_security_master_symbol_matches": current_matches,
+                "url": weights_zip_url(month), "status": "ok" if parsed else "unparsed",
+                "zip_sha256": sha256_bytes(zip_raw), "pdf_member": member,
+                "pdf_sha256": sha256_bytes(pdf_raw), "diagnostics": diagnostics,
+                "constituents": parsed, "current_security_master_symbol_matches": current_matches,
             }
             if parsed:
                 weights_ok += 1
@@ -381,12 +367,10 @@ def build() -> dict:
         for x in month_rows
     )
     result = {
-        "schema_version": 2,
+        "schema_version": 3,
         "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
-        "policy_id": policy["policy_id"],
-        "research_only": True,
-        "live_model_changed": False,
-        "live_allocation_changed": False,
+        "policy_id": policy["policy_id"], "research_only": True,
+        "live_model_changed": False, "live_allocation_changed": False,
         "purpose": "Source-harvest stage for blinded recent-regime current-definition reconstruction.",
         "months": month_rows,
         "summary": {
@@ -399,8 +383,10 @@ def build() -> dict:
             "symbol_rows_possible": 50 * len(month_rows),
             "unique_historical_symbols": len(unique_symbols),
             "current_security_master_symbol_matches": current_master_symbol_matches,
-            "financial_api_symbols_ok": sum(x.get("status") == "ok" for x in financial_coverage),
-            "corporate_action_symbols_ok": sum(x.get("status") == "ok" for x in corporate_action_coverage),
+            "financial_api_symbols_http_ok": sum(x.get("status") == "ok" for x in financial_coverage),
+            "financial_api_symbols_with_records": sum(x.get("has_records") for x in financial_coverage),
+            "corporate_action_symbols_http_ok": sum(x.get("status") == "ok" for x in corporate_action_coverage),
+            "corporate_action_symbols_with_records": sum(x.get("has_records") for x in corporate_action_coverage),
             "holdout_target_values_present": holdout_values_present,
         },
         "security_master": security_master_status,
