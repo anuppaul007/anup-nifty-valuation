@@ -108,8 +108,8 @@ def build(data):
 
     panel = _panel_from_records(data)
     f = _aligned_frame(panel)
-    eq, db = f.eq.astype(float), f.db.astype(float)
-    dynamic_w = f.w.astype(float)
+    eq, db = f["eq"].astype(float), f["db"].astype(float)
+    dynamic_w = f["w"].astype(float)
 
     dyn_gross, dyn_net, dyn_turn = _net_returns(dynamic_w, eq, db)
     mean_w = float(dynamic_w.mean())
