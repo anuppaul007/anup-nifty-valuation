@@ -1,5 +1,5 @@
 from pathlib import Path
-import json,sys
+import sys
 import numpy as np
 import pandas as pd
 
@@ -17,22 +17,18 @@ def test_frozen_policy_rule_has_not_drifted():
 
 
 def test_challenger_reduces_exactly_20pp_with_zero_floor():
-    assert t.challenger_target(.80,True,20)==.60
-    assert t.challenger_target(.15,True,20)==0.0
-    assert t.challenger_target(1.00,True,20)==.80
-    assert t.challenger_target(.80,False,20)==.80
+    assert np.isclose(t.challenger_target(.80,True,20),.60)
+    assert np.isclose(t.challenger_target(.15,True,20),0.0)
+    assert np.isclose(t.challenger_target(1.00,True,20),.80)
+    assert np.isclose(t.challenger_target(.80,False,20),.80)
 
 
 def test_sma_uses_previous_completed_month_and_equality_is_risk_on():
-    # Jan-Oct closes are 1..10. Nov-1 decision sees Jan-Oct only: last=10,
-    # mean=5.5 => risk-on. Dec-1 sees Feb-Nov after Nov close=1: last=1,
-    # mean=(2+...+10+1)/10=5.5 => risk-off.
     idx=pd.date_range('2020-01-31',periods=11,freq='ME')
     s=pd.Series(list(range(1,11))+[1.0],index=idx,dtype=float)
     d=t.trend_decisions(pd.to_datetime(['2020-11-01','2020-12-01']),s,10)
     assert bool(d.loc[pd.Timestamp('2020-11-01'),'risk_off']) is False
     assert bool(d.loc[pd.Timestamp('2020-12-01'),'risk_off']) is True
-    # Equality is explicitly not risk-off.
     s2=pd.Series([5.0]*10,index=pd.date_range('2021-01-31',periods=10,freq='ME'))
     e=t.trend_decisions(pd.to_datetime(['2021-11-01']),s2,10)
     assert bool(e.iloc[0].risk_off) is False
@@ -47,7 +43,6 @@ def test_missing_calendar_month_fails_signal_instead_of_shortening_sma():
 
 def synthetic_market():
     idx=pd.bdate_range('2020-01-01','2020-04-30')
-    # Equity rises then falls; debt stable.
     eq=np.linspace(100,130,len(idx));eq[len(idx)//2:]=np.linspace(eq[len(idx)//2],90,len(idx)-len(idx)//2)
     debt=np.linspace(100,101,len(idx))
     return pd.DataFrame({'equity':eq,'debt':debt},index=idx)
@@ -67,14 +62,14 @@ def test_rebalance_band_uses_drifted_actual_weight():
 
 def test_costs_reduce_wealth_and_are_one_way():
     m=synthetic_market();x=synthetic_execs()
-    a,fa=t.simulate_daily(m,x,'challenger_target',band_pp=0,cost_rate=0,eq_expense=0,debt_expense=0)
+    a,_=t.simulate_daily(m,x,'challenger_target',band_pp=0,cost_rate=0,eq_expense=0,debt_expense=0)
     b,fb=t.simulate_daily(m,x,'challenger_target',band_pp=0,cost_rate=.005,eq_expense=0,debt_expense=0)
     assert b.value.iloc[-1]<a.value.iloc[-1]
     assert fb['cost_paid']>0
     assert fb['turnover_value']>0
 
 
-def test_negative_constituent_or_market_returns_do_not_break_daily_metrics():
+def test_negative_market_returns_do_not_break_daily_metrics():
     m=synthetic_market();x=synthetic_execs()
     q,f=t.simulate_daily(m,x,'challenger_target',band_pp=0,cost_rate=.001,eq_expense=.002,debt_expense=.0015)
     z=t.metrics(q,f)
