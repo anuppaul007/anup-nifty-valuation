@@ -1,17 +1,71 @@
 {
-  "protocol_version": "2026-09-12-v1",
-  "status": "Prospective research protocol; evaluation implementation incomplete",
-  "objective": "Evaluate whether valuation-guided deployment and rebalancing improve downside outcomes while reporting the return sacrificed.",
+  "protocol_version": "2026-09-13-v2",
+  "status": "Prospective research protocol; no automatic live allocation changes",
+  "objective": "Evaluate whether valuation-guided allocation has economically material decision value, while separating long-horizon valuation anchoring, tactical timing claims and deliberately purchased crash insurance.",
   "first_process_review": "2027-09-12",
   "review_date_is_not_validation_deadline": true,
   "primary_metric": "Maximum daily drawdown of a net total-return equity/debt portfolio",
-  "mandatory_companion_metrics": ["CAGR", "95% monthly expected shortfall", "Ulcer index", "time under water", "turnover", "average equity exposure"],
-  "benchmarks": ["NIFTY 50 total-return buy and hold", "60% NIFTY / 40% short-duration debt, annual rebalance", "Valuation-only rule with the same costs and observations"],
-  "cashflow_tests": ["Lump sum: immediate deployment versus 6- and 12-month equal instalments; undeployed money earns the same debt return", "Equal monthly contributions; report terminal wealth and money-weighted return", "Inflation-linked retirement withdrawals; publish all withdrawal assumptions before comparing outcomes"],
-  "implementation_tests": ["Short-duration debt versus 10-year government-bond total returns", "Actual instrument availability, expense ratios, tracking difference, slippage and date-applicable taxes", "Rebalance bands of 0, 5 and 10 percentage points"],
+  "mandatory_companion_metrics": [
+    "CAGR",
+    "95% monthly expected shortfall",
+    "Ulcer index",
+    "time under water",
+    "turnover",
+    "average equity exposure"
+  ],
+  "benchmark_policy": {
+    "beta_removal_diagnostic": "Static equity weight equal to the strategy's full-sample realised mean exposure. This is an ex-post attribution diagnostic and is explicitly not investable at sample start.",
+    "investable_expanding_mean_null": "At each decision, compare with a static-equivalent target equal to the mean of allocation targets observed through that decision only. No future target weight may enter.",
+    "predeclared_policy_null": "60% NIFTY / 40% debt fixed as the policy weight before the comparison window; use the same return and cost conventions.",
+    "market_benchmarks": [
+      "NIFTY 50 total-return buy and hold",
+      "60% NIFTY / 40% short-duration debt, annual rebalance where implementable",
+      "Valuation-only rule with the same costs and observations"
+    ],
+    "claim_rule": "An ex-post exposure-matched comparator is useful for removing equity beta but is not sufficient by itself for an investable timing claim. Timing claims must also disclose performance against at least one information-available-at-the-time null."
+  },
+  "insurance_policy_controls": {
+    "definition": "A deliberately asymmetric risk brake may remain a policy choice even when it is not demonstrated alpha, but its premium cannot be hidden behind the label risk control.",
+    "mandatory_disclosure": [
+      "Annualized CAGR given up or gained versus the unbraked baseline",
+      "Maximum daily drawdown avoided or worsened versus the unbraked baseline",
+      "95% expected-shortfall change",
+      "Ulcer-index change",
+      "Longest time-under-water change",
+      "Average equity exposure change"
+    ],
+    "windows": [
+      "The calendar-return window shared with the primary valuation timing audit when available",
+      "The longest exact common equity/debt/index history available under the frozen rule"
+    ],
+    "interpretation": "Insurance is judged as an explicit return-versus-protection tradeoff. A policy override does not become evidence of timing alpha merely because the owner accepts the premium."
+  },
+  "cashflow_tests": [
+    "Lump sum: immediate deployment versus 6- and 12-month equal instalments; undeployed money earns the same debt return",
+    "Equal monthly contributions; report terminal wealth and money-weighted return",
+    "Inflation-linked retirement withdrawals; publish all withdrawal assumptions before comparing outcomes"
+  ],
+  "implementation_tests": [
+    "Short-duration debt versus 10-year government-bond total returns",
+    "Actual instrument availability, expense ratios, tracking difference, slippage and date-applicable taxes",
+    "Rebalance bands of 0, 5 and 10 percentage points"
+  ],
   "macro_challengers_pp": [0, 3, 6, 9, 12, 15],
-  "promotion_rule": "No automatic winner selection. Record all trials, assess serial dependence and multiple testing, require held-out or prospective evidence, and report return/drawdown tradeoffs. A smaller drawdown alone does not establish skill if it only reflects lower equity exposure.",
-  "statistical_plan": "Evaluate non-overlapping monthly portfolio returns; use paired time-block resampling for comparisons and disclose block lengths and all tested variants. Overlapping annual outcomes are not independent observations.",
-  "historical_limits": ["Current-vintage historical inputs are not certified point-in-time", "Freezing a version now does not validate earlier periods", "Pre-April 2021 NIFTY ratios are not directly comparable with the current methodology", "Daily archives capture what this project observed, not every original economic release"],
+  "prospective_evidence_purpose": {
+    "statement": "The prospective ledger is a detector of a materially larger, stable edge if one emerges and a tamper-resistant record of its absence otherwise. It is not a promise that a tiny retrospective effect will become statistically or economically actionable merely by waiting longer.",
+    "minimum_completed_months_before_promotion_review": 60,
+    "minimum_is_necessary_not_sufficient": true,
+    "effect_size_rule": "Report effect size and uncertainty together. If the observed edge is economically negligible and would require implausibly long stationary history to distinguish from zero, describe that directly rather than presenting additional calendar time as the remedy.",
+    "large_edge_rule": "A materially different prospective effect may justify a fresh review, subject to the same predeclared multiple-testing, implementation, tax and benchmark gates."
+  },
+  "promotion_rule": "No automatic winner selection. Record all comparable trials, assess serial dependence and multiple testing, require held-out or prospective evidence, and report return/drawdown tradeoffs. A smaller drawdown alone does not establish skill if it only reflects lower equity exposure. Production labels do not exempt a comparable hypothesis from the trial count.",
+  "statistical_plan": "Evaluate non-overlapping monthly portfolio returns; use paired time-block resampling for comparisons and disclose block lengths and all tested comparable variants. Overlapping annual outcomes are not independent observations. Ex-post beta-removal diagnostics and investable nulls must be labelled separately.",
+  "historical_limits": [
+    "Current-vintage historical inputs are not certified point-in-time",
+    "Freezing a version now does not validate earlier periods",
+    "Pre-April 2021 NIFTY ratios are not directly comparable with the current methodology",
+    "Daily archives capture what this project observed, not every original economic release",
+    "Century-scale sample-size extrapolations assume stationarity that is not credible and are heuristic illustrations only"
+  ],
   "automatic_parameter_changes": false
 }
