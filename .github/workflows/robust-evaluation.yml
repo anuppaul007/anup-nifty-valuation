@@ -1,0 +1,55 @@
+name: Robust evaluation gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/robust_evaluation.py'
+      - 'tests/test_robust_evaluation.py'
+      - 'robust_evaluation_policy.json'
+      - 'research_trial_registry.json'
+      - 'release_timing_policy.json'
+      - 'data/retrospective.json'
+      - 'data/robustness.json'
+      - 'data/latest.json'
+      - 'data/trend_challenger_summary.json'
+      - 'model.js'
+      - '.github/workflows/robust-evaluation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - name: Unit tests
+        run: python -m unittest tests/test_robust_evaluation.py
+      - name: Build robust evaluation
+        run: python scripts/robust_evaluation.py
+      - name: Validate fail-closed output schema
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('data/robust_evaluation.json')
+          d=json.loads(p.read_text())
+          assert d['status']=='complete', d
+          assert d['decision'] in {'NOT_ELIGIBLE_FOR_PROMOTION','ELIGIBLE_FOR_SEPARATE_PROMOTION_REVIEW'}
+          assert 'gate_matrix' in d and 'multiple_testing_and_overfit' in d
+          assert d['multiple_testing_and_overfit']['trial_count']==24
+          assert d['governance']
+          print(json.dumps({'decision':d['decision'],'gates':d['gate_matrix']},separators=(',',':')))
+          PY
+      - name: Macro crash-guard candidate test
+        run: node tests/macro_guard_candidate.test.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: robust-evaluation
+          path: data/robust_evaluation.json
