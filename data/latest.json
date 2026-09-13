@@ -1,9 +1,9 @@
 {
   "schema_version": 4,
-  "model_version": "3.10-pb-regime-1",
-  "generated_at": "2026-09-13T07:04:12+00:00",
+  "model_version": "3.11-crash-aware-1",
+  "generated_at": "2026-09-13T07:11:55+00:00",
   "macro_stale": false,
-  "macro_partial": true,
+  "macro_partial": false,
   "nifty": {
     "date": "2026-09-11",
     "level": 23398.1,
@@ -61,12 +61,12 @@
       },
       "fed_assets_6m_pct": {
         "value": 1.4184489999313987,
-        "z": null,
-        "score": null,
+        "z": 1.558696546600374,
+        "score": 0.7775446872753102,
         "asof": "2026-09-09",
-        "observations": 0,
-        "source_url": null,
-        "status": "cached"
+        "observations": 180,
+        "source_url": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package",
+        "status": "live"
       },
       "vix": {
         "value": 15.84,
@@ -175,29 +175,27 @@
       "z": null
     },
     "blocks": {
-      "global_liquidity": -0.460737431674652,
+      "global_liquidity": -0.1511669019371614,
       "india_external_carry": -0.04077906406043283,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null,
       "india_domestic": 0.057009151848864285
     },
     "factor_coverage": {
-      "global_liquidity": 0.75,
+      "global_liquidity": 1.0,
       "india_external_carry": 1.0,
       "china_industrial": 1.0,
       "relative_em_valuation": 0,
-      "block_weight": 0.925,
+      "block_weight": 1.0,
       "india_domestic": 1.0
     },
     "india_reer_z": -2.579902483154261,
     "india_us_spread_z": -1.4584667790779038,
-    "stale_factors": [
-      "fed_assets_6m_pct"
-    ],
+    "stale_factors": [],
     "sources_live": {
       "us_real_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "usd_3m_pct": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=120&layout=seriescolumn&rel=H10&series=847be2166a425bda9b4d92465f797544&type=package",
-      "fed_assets_6m_pct": null,
+      "fed_assets_6m_pct": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package",
       "vix": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
       "brent_3m_pct": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
       "india_reer_bis": "https://stats.bis.org/api/v1/data/WS_EER/M.R.B.IN/all?startPeriod=2012-01&detail=dataonly&format=csv",
@@ -205,13 +203,13 @@
       "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
     },
-    "score": -0.106243336863882,
-    "active_block_weight": 0.925,
+    "score": -0.03995923505344261,
+    "active_block_weight": 1.0,
     "block_weight_detail": {
       "global_liquidity": {
         "strategic_weight": 0.3,
-        "internal_coverage": 0.75,
-        "effective_weight": 0.22499999999999998
+        "internal_coverage": 1.0,
+        "effective_weight": 0.3
       },
       "india_external_carry": {
         "strategic_weight": 0.25,
@@ -275,7 +273,22 @@
       "source_policy": "official-PIB-discovery-with-prior-release-carry-forward"
     }
   },
-  "confidence": 0.97375,
+  "trend": {
+    "status": "live",
+    "policy_id": "trend-sma10-minus20-v1",
+    "source": "Nifty Indices / NSE NIFTY 50 price index",
+    "source_url": "https://www.niftyindices.com/reports/historical-data",
+    "asof": "2026-08-31",
+    "completed_month": "2026-08",
+    "completed_month_close": 24080.4,
+    "sma10": 24503.829999999998,
+    "distance_to_sma10_pct": -1.728015579605302,
+    "lookback_months": 10,
+    "risk_off": true,
+    "risk_off_adjustment_pp": -20,
+    "rule": "previous completed-month close strictly below mean of latest 10 consecutive completed monthly closes"
+  },
+  "confidence": 1.0,
   "valuation_diagnostics": {
     "status": "live",
     "months": 36,
@@ -827,7 +840,7 @@
   "sources": [
     {
       "name": "Nifty Indices / NSE",
-      "role": "NIFTY index and ratio history; EPS is an index-implied proxy",
+      "role": "NIFTY index and ratio history; EPS is an index-implied proxy; completed monthly price closes drive the live SMA10 crash guard",
       "url": "https://www.niftyindices.com/reports/historical-data"
     },
     {
