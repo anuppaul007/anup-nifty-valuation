@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
   "model_version": "3.13-reliability-1",
-  "generated_at": "2026-09-13T10:13:39+00:00",
+  "generated_at": "2026-09-13T10:45:26+00:00",
   "macro_stale": false,
   "macro_partial": false,
   "nifty": {
@@ -32,7 +32,7 @@
   },
   "macro": {
     "us_real_10y": 2.6,
-    "usd_3m_pct": 0.06065336399516674,
+    "usd_3m_pct": 0.06061667362635692,
     "fed_assets_6m_pct": 1.4184489999313987,
     "vix": 15.84,
     "brent_3m_pct": 15.744637961244745,
@@ -51,21 +51,21 @@
         "status": "live"
       },
       "usd_3m_pct": {
-        "value": 0.06065336399516674,
-        "z": -0.05793417963434162,
-        "score": 0.03860359308567304,
+        "value": 0.06061667362635692,
+        "z": -0.0399358076743089,
+        "score": 0.02661758296140187,
         "asof": "2026-08-31",
-        "observations": 248,
-        "source_url": "https://fred.stlouisfed.org/series/DTWEXBGS",
+        "observations": 120,
+        "source_url": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=120&layout=seriescolumn&rel=H10&series=847be2166a425bda9b4d92465f797544&type=package",
         "status": "live"
       },
       "fed_assets_6m_pct": {
         "value": 1.4184489999313987,
-        "z": 1.573506427223624,
-        "score": 0.7814189431779461,
+        "z": 1.558696546600374,
+        "score": 0.7775446872753102,
         "asof": "2026-09-09",
-        "observations": 1239,
-        "source_url": "https://fred.stlouisfed.org/series/WALCL",
+        "observations": 180,
+        "source_url": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package",
         "status": "live"
       },
       "vix": {
@@ -139,43 +139,12 @@
       "source_url": "https://www.stats.gov.cn/english/PressRelease/202609/t20260901_1965170.html"
     },
     "relative_em": {
-      "available": true,
+      "status": "not_refreshed",
       "score": null,
-      "history_count": 5,
-      "status": "pending_history",
-      "quarantine": [
-        {
-          "record": {
-            "month": "2026-02",
-            "asof": "2026-02-27",
-            "method": "largecap-fundamentals-v1",
-            "em_pe": 17.3,
-            "em_pb": 0.5,
-            "nifty_pe": 22.03,
-            "nifty_pb": 3.42,
-            "relative_log_premium": 0.9141342882400948
-          },
-          "reason": "EM plausibility review: PB outside [0.8,5] or PB/PE outside [0.05,0.30]",
-          "status": "excluded_pending_source_review",
-          "first_seen_at": "2026-09-13"
-        }
-      ],
-      "validation_policy": "PB 0.8\u20135 and PB/PE 0.05\u20130.30 are review bounds, not impossibility bounds",
-      "em_ex_india_pe": 13.6,
-      "em_ex_india_pb": 2.4,
-      "em_ex_india_div_yield": 2.8,
-      "asof": "2026-08-31",
-      "source_url": "https://stoxx.com/index/swexilv/?factsheet=true",
-      "pe_basis": "Trailing, including negative earnings",
-      "method": "largecap-fundamentals-v1",
-      "comparison_month": "2026-08",
-      "relative_log_premium": 0.32054739093470563,
-      "nifty_pe_premium_pct": 49.705882352941174,
-      "nifty_pb_premium_pct": 21.66666666666668,
-      "z": null
+      "allocation_effect": "none"
     },
     "blocks": {
-      "global_liquidity": -0.1478011359366482,
+      "global_liquidity": -0.1511669019371614,
       "india_external_carry": -0.04077906406043283,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null,
@@ -194,8 +163,8 @@
     "stale_factors": [],
     "sources_live": {
       "us_real_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
-      "usd_3m_pct": "https://fred.stlouisfed.org/series/DTWEXBGS",
-      "fed_assets_6m_pct": "https://fred.stlouisfed.org/series/WALCL",
+      "usd_3m_pct": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=120&layout=seriescolumn&rel=H10&series=847be2166a425bda9b4d92465f797544&type=package",
+      "fed_assets_6m_pct": "https://www.federalreserve.gov/datadownload/Output.aspx?filetype=csv&label=include&lastobs=180&layout=seriescolumn&rel=H41&series=17398fbf71bc6a47df150bceebdea2bc&type=package",
       "vix": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
       "brent_3m_pct": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
       "india_reer_bis": "https://stats.bis.org/api/v1/data/WS_EER/M.R.B.IN/all?startPeriod=2012-01&detail=dataonly&format=csv",
@@ -203,7 +172,7 @@
       "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
     },
-    "score": -0.03894950525328865,
+    "score": -0.03995923505344261,
     "active_block_weight": 1.0,
     "block_weight_detail": {
       "global_liquidity": {
@@ -349,7 +318,7 @@
     "methodology_start": "2023-09",
     "methodology_note": "Common current-definition month-end observations from September 2023 only; P/B changed on 29 September 2023. Earlier P/B is excluded.",
     "allocation_effect": "none",
-    "purpose": "independent sanity check on fixed-reference valuation core",
+    "purpose": "separate diagnostic cross-check on fixed-reference valuation core",
     "current": {
       "pe": 19.78,
       "pb": 2.83,
@@ -869,23 +838,7 @@
         "source_url": "https://stoxx.com/index/swexilv/?factsheet=true"
       }
     ],
-    "em_ex_india_quarantine": [
-      {
-        "record": {
-          "month": "2026-02",
-          "asof": "2026-02-27",
-          "method": "largecap-fundamentals-v1",
-          "em_pe": 17.3,
-          "em_pb": 0.5,
-          "nifty_pe": 22.03,
-          "nifty_pb": 3.42,
-          "relative_log_premium": 0.9141342882400948
-        },
-        "reason": "EM plausibility review: PB outside [0.8,5] or PB/PE outside [0.05,0.30]",
-        "status": "excluded_pending_source_review",
-        "first_seen_at": "2026-09-13"
-      }
-    ],
+    "em_ex_india_quarantine": [],
     "carry_spread_history": [],
     "india_yield_transitions": []
   },
