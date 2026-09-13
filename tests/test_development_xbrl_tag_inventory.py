@@ -1,8 +1,12 @@
 from pathlib import Path
 import importlib.util
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("inv", ROOT / "scripts" / "development_xbrl_tag_inventory.py")
+SCRIPTS = ROOT / "scripts"
+if str(SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS))
+SPEC = importlib.util.spec_from_file_location("inv", SCRIPTS / "development_xbrl_tag_inventory.py")
 inv = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(inv)
 
