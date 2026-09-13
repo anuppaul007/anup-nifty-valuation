@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "research_only": true,
+  "live_authority": "none",
+  "status": "supersedes_positive-constituent-ratio-helper_for_future_reconstruction",
+  "official_sources": {
+    "pe": "https://www.niftyindices.com/resources/index-concepts/price-earnings-ratio",
+    "pb": "https://www.niftyindices.com/resources/index-concepts/price-to-book-value",
+    "dy": "https://www.niftyindices.com/resources/index-concepts/dividend-yield"
+  },
+  "pe_rule": "Aggregate index market capitalisation divided by aggregate adjusted trailing-four-quarter earnings. Constituent profits and losses are both included. If aggregate index earnings are non-positive, reconstructed P/E is not publishable.",
+  "pb_rule": "Aggregate index market capitalisation divided by aggregate adjusted annual net worth/book value. Constituent net-worth contributions are aggregated with the same index adjustment factors as market capitalisation; no positive-constituent-P/B prefilter is allowed.",
+  "dy_rule": "Aggregate rolling-12-month equity dividends divided by aggregate index market capitalisation, using ex-dividend dates and the same index adjustment factors.",
+  "historical_weight_identity": "If w_i is the actual published historical index weight and M_i is the matching unadjusted company market capitalisation, then w_i*(E_i/M_i), w_i*(B_i/M_i), and w_i*(D_i/M_i) recover the index-adjusted denominator/numerator yields because the unknown IWF/capping factor cancels into the published weight.",
+  "required_company_inputs": [
+    "actual historical index weight",
+    "matching company market capitalisation basis",
+    "point-in-time eligible TTM earnings (signed)",
+    "point-in-time eligible annual net worth/book value (signed if reported)",
+    "rolling-12-month dividends by ex-date"
+  ],
+  "prohibited_shortcuts": [
+    "rejecting a constituent solely because its TTM earnings are negative",
+    "dropping loss-making constituents from the P/E denominator",
+    "requiring every constituent P/E or P/B to be positive before aggregation",
+    "replacing signed earnings or net worth with zero",
+    "neutral-filling a missing company numerator",
+    "publishing a positive index P/E when aggregate adjusted index earnings are non-positive"
+  ],
+  "promotion_rule": "Research algebra only. It cannot alter V3.13 or promote any historical result without a fully point-in-time 50/50 reconstruction and a predeclared recent-regime reproduction tolerance."
+}
