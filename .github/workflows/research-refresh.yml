@@ -51,10 +51,21 @@ jobs:
       - continue-on-error: true
         name: Research real-fund implementation and long-lived fund ranking
         run: python scripts/fund_strategy_rank.py
+      - continue-on-error: true
+        name: Quantify actual-fund implementation friction
+        run: python scripts/implementation_realism_audit.py
       - name: Publish successful research outputs independently of live data
         run: |
-          paths=(data/multiasset.json data/retrospective.json data/robustness.json data/robust_evaluation.json data/benchmark_audit.json data/macro_authority_audit.json data/backtest_monthly_2000.csv data/backtest_monthly_2000.json data/fund_strategy_rank.json)
-          git add "${paths[@]}"
+          paths=(data/multiasset.json data/retrospective.json data/robustness.json data/robust_evaluation.json data/benchmark_audit.json data/macro_authority_audit.json data/backtest_monthly_2000.csv data/backtest_monthly_2000.json data/fund_strategy_rank.json data/implementation_realism_audit.json)
+          existing=()
+          for p in "${paths[@]}"; do
+            [[ -e "$p" ]] && existing+=("$p")
+          done
+          if (( ${#existing[@]} == 0 )); then
+            echo 'No research outputs exist'
+            exit 0
+          fi
+          git add "${existing[@]}"
           if git diff --cached --quiet; then exit 0; fi
           git config user.name 'anup-nifty-bot'
           git config user.email 'anup-nifty-bot@users.noreply.github.com'
