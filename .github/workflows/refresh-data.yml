@@ -10,6 +10,7 @@ on:
       - "data/health.json"
       - "data/latest.json"
       - "data/reliability_audit.json"
+      - "data/calibration_stability_audit.json"
       - "data/walkforward_v3_13.json"
       - "data/multiasset.json"
       - "data/multiasset_backtest.json"
@@ -62,11 +63,13 @@ jobs:
         run: python scripts/update_data_v3.py
       - name: Validate reproducible live reliability
         run: python scripts/reliability_audit.py
+      - name: Quantify calibration fragility
+        run: python scripts/calibration_stability_audit.py
       - name: Record prospective observation
         run: python scripts/walkforward.py
       - name: Commit only when data changed
         run: |
-          paths=(data/latest.json data/reliability_audit.json data/walkforward_v3_13.json)
+          paths=(data/latest.json data/reliability_audit.json data/calibration_stability_audit.json data/walkforward_v3_13.json)
           existing=()
           for p in "${paths[@]}"; do
             [[ -e "$p" ]] && existing+=("$p")
