@@ -20,6 +20,7 @@ on:
       - 'robustness.js'
       - 'app.js'
       - 'index.html'
+      - 'AUDIT.md'
       - 'ROBUSTNESS_AUDIT.md'
       - 'MULTIASSET.md'
       - '.github/workflows/refresh-data.yml'
@@ -51,15 +52,21 @@ jobs:
           from pathlib import Path
           p=Path('data/robust_evaluation.json')
           d=json.loads(p.read_text())
+          assert d['schema_version'] == 2, d
           assert d['status']=='complete', d
           assert d['decision'] in {'NOT_ELIGIBLE_FOR_PROMOTION','ELIGIBLE_FOR_SEPARATE_PROMOTION_REVIEW'}
           assert 'gate_matrix' in d and 'multiple_testing_and_overfit' in d
-          assert d['multiple_testing_and_overfit']['trial_count']==24
+          mt=d['multiple_testing_and_overfit']
+          assert mt['trial_count']==24
+          assert mt['return_series'].startswith('exposure-matched timing residual')
+          assert mt['live_variant']['moment_source']=='selected exposure-matched timing-residual series'
           assert 'fair_null_and_timing' in d
           assert 'beta_matched_static_net' in d['fair_null_and_timing']
           assert 'placebo' in d['fair_null_and_timing']
+          assert 'ar1_surrogate_null' in d and d['ar1_surrogate_null']['draws'] >= 1000
+          assert 'ar1_surrogate_placebo_95th_percentile' in d['gate_matrix']
           assert d['governance']
-          print(json.dumps({'decision':d['decision'],'gates':d['gate_matrix']},separators=(',',':')))
+          print(json.dumps({'decision':d['decision'],'gates':d['gate_matrix'],'dsr':mt['live_variant'].get('probability'),'pbo':mt['cscv'].get('pbo'),'ar1':d['ar1_surrogate_null'].get('actual_excess_cagr_percentile')},separators=(',',':')))
           PY
       - name: Macro crash-guard candidate test
         run: node tests/macro_guard_candidate.test.cjs
