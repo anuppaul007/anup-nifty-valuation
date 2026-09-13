@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Prospective, no-lookahead validation ledger for Anup Nifty Valuation.
 
-Records one evolving snapshot per calendar month from the fully verified live
-model, freezes that snapshot when the month changes, and later attaches 6m/12m
-NIFTY price returns using only subsequently observed monthly snapshots.
+V3.12 records one evolving snapshot per calendar month from the live model,
+freezes that snapshot when the month changes, and later attaches 6m/12m NIFTY
+price returns using only subsequently observed monthly snapshots.
 
-Candidate settings are recorded prospectively but are never auto-selected.
+Macro has zero live allocation authority in V3.12. When the full macro context
+is independently eligible, the previously used ±6pp macro rule is still
+recorded prospectively as a shadow challenger. Candidate settings are never
+auto-selected.
 """
 from __future__ import annotations
 from datetime import datetime,timezone
@@ -15,9 +18,9 @@ import pandas as pd
 
 ROOT=Path(__file__).resolve().parents[1]
 LATEST=ROOT/'data'/'latest.json'
-LIVE_VERSION='3.11-crash-aware-1'
+LIVE_VERSION='3.12-evidence-first-1'
 
-C={'k':1.35,'zc':2.5,'earnMax':6.0,'macroMax':6.0,'trendRiskOffPP':20.0}
+C={'k':1.35,'zc':2.5,'earnMax':6.0,'macroMax':0.0,'macroShadowMax':6.0,'trendRiskOffPP':20.0}
 CANDIDATE_MACRO_CAPS=[0,3,6,9,12,15]
 CANDIDATE_CURVE_SLOPES=[.60,.80,1.00,1.15,1.35,1.50]
 CANDIDATE_EXTREMES=[2.5,3.0,3.5,4.0]
@@ -45,29 +48,28 @@ def model_snapshot(d,now=None):
     if not checked.get('allocationReady'):return None
     required=['level','pe','pb','div_yield','gsec10']
     if d.get('model_version')!=LIVE_VERSION or any(not finite(n.get(k)) for k in required):return None
-    if not finite(m.get('score')) or float(m.get('active_block_weight') or 0)<.999:return None
     if not finite(e.get('score')) or float(e.get('coverage') or 0)<.999:return None
     if t.get('status')!='live' or not isinstance(t.get('risk_off'),bool):return None
-    dom=m.get('domestic') or {}
-    if dom.get('status')!='live' or not finite(dom.get('score')):return None
     pe,pb,dy,gsec=map(float,(n['pe'],n['pb'],n['div_yield'],n['gsec10']))
-    z,core,ea=checked['z'],checked['core'],checked['ea'];ms=clip(m['score'],-1,1);trend_adj=float(checked.get('ta') or 0);damp=overlay_damp(z,C['zc'])
-    macro_candidates={str(cap):clip(core+ea+ms*cap*damp+trend_adj,0,100) for cap in CANDIDATE_MACRO_CAPS}
-    curve_candidates={str(k):clip(curve(z,k,C['zc'])+ea+ms*C['macroMax']*damp+trend_adj,0,100) for k in CANDIDATE_CURVE_SLOPES}
+    z,core,ea=checked['z'],checked['core'],checked['ea'];trend_adj=float(checked.get('ta') or 0);damp=overlay_damp(z,C['zc'])
+    macro_context=bool(checked.get('macroContextEligible')) and finite(m.get('score'))
+    ms=clip(m['score'],-1,1) if macro_context else None
+    macro_candidates={str(cap):(clip(core+ea+ms*cap*damp+trend_adj,0,100) if ms is not None else None) for cap in CANDIDATE_MACRO_CAPS}
+    curve_candidates={str(k):clip(curve(z,k,C['zc'])+ea+trend_adj,0,100) for k in CANDIDATE_CURVE_SLOPES}
     def candidate(k,zc):
         damping=overlay_damp(z,zc)
-        return clip(curve(z,k,zc)+(clip(e['score'],-1,1)*C['earnMax']+ms*C['macroMax'])*damping+trend_adj,0,100)
+        return clip(curve(z,k,zc)+clip(e['score'],-1,1)*C['earnMax']*damping+trend_adj,0,100)
     extreme_candidates={str(zc):candidate(C['k'],zc) for zc in CANDIDATE_EXTREMES}
     grid_candidates={f'k={k:.2f}|zc={zc:.1f}':candidate(k,zc) for zc in CANDIDATE_EXTREMES for k in CANDIDATE_CURVE_SLOPES}
-    vd=d.get('valuation_diagnostics') or {}
+    vd=d.get('valuation_diagnostics') or {};dom=m.get('domestic') or {}
     return {
-      'model_version':d.get('model_version'),'validation_method':'live-engine-source-gates-v3.11-crash-aware','research_only':True,'month':str(n['date'])[:7],'asof':n['date'],'generated_at':d.get('generated_at'),
+      'model_version':d.get('model_version'),'validation_method':'live-engine-source-gates-v3.12-evidence-first','research_only':True,'month':str(n['date'])[:7],'asof':n['date'],'generated_at':d.get('generated_at'),
       'nifty_level':float(n['level']),'pe':pe,'pb':pb,'dividend_yield':dy,'gsec10':gsec,
-      'valuation_z':z,'core_equity':core,'overlay_authority':checked['damp'],'earnings_adjustment_pp':checked['ea'],'macro_adjustment_pp':checked['ma'],'trend_adjustment_pp':checked['ta'],
+      'valuation_z':z,'core_equity':core,'overlay_authority':checked['damp'],'earnings_adjustment_pp':checked['ea'],'macro_adjustment_pp':0.0,'macro_shadow_adjustment_pp':checked.get('macroShadowAdjustment'),'macro_context_eligible':macro_context,'trend_adjustment_pp':checked['ta'],
       'trend_risk_off':bool(checked['trendRiskOff']),'trend_completed_month':t.get('completed_month'),'trend_close':t.get('completed_month_close'),'trend_sma10':t.get('sma10'),
       'empirical_valuation_cheapness':float(vd['composite_cheapness']) if finite(vd.get('composite_cheapness')) else None,
-      'earnings_score':float(e['score']),'macro_score':float(m['score']),'domestic_score':float(dom['score']),
-      'macro_blocks':{k:float(v) for k,v in (m.get('blocks') or {}).items() if finite(v)},
+      'earnings_score':float(e['score']),'macro_score':float(m['score']) if macro_context else None,'domestic_score':float(dom['score']) if macro_context and finite(dom.get('score')) else None,
+      'macro_blocks':{k:float(v) for k,v in (m.get('blocks') or {}).items() if macro_context and finite(v)},
       'live_equity_target':float(checked['final']),
       'candidate_equity_targets':macro_candidates,'candidate_curve_targets':curve_candidates,
       'candidate_extreme_targets':extreme_candidates,'candidate_grid_targets':grid_candidates,
@@ -87,17 +89,18 @@ def update_outcomes(records,current_month):
 
 def summary(records):
     realized6=sum(finite(r.get('forward_nifty_price_return_6m')) for r in records);realized12=sum(finite(r.get('forward_nifty_price_return_12m')) for r in records)
+    macro_shadow_months=sum(bool(r.get('macro_context_eligible')) for r in records)
     eligible=len(records)>=MIN_SIGNAL_MONTHS and realized12>=MIN_REALIZED_12M
-    return {'status':'eligible_for_review' if eligible else 'collecting_prospective_data','signal_months':len(records),'realized_6m_outcomes':realized6,'realized_12m_outcomes':realized12,
+    return {'status':'eligible_for_review' if eligible else 'collecting_prospective_data','signal_months':len(records),'macro_shadow_eligible_months':macro_shadow_months,'realized_6m_outcomes':realized6,'realized_12m_outcomes':realized12,
       'required_signal_months':MIN_SIGNAL_MONTHS,'required_realized_12m_outcomes':MIN_REALIZED_12M,'eligible_for_parameter_change':eligible,
-      'parameter_lock':'V3.11 valuation references, macro/earn ±6 pp, SMA10 −20 pp, curve k=1.35 and extreme threshold zc=2.5 remain locked until a separate review',
-      'note':'Overlapping 12-month outcomes are not independent samples; this gate permits review, not proof or automatic deployment. Candidate settings are recorded prospectively and never auto-selected from future outcomes.'}
+      'parameter_lock':'V3.12 valuation references, earnings ±6 pp, live macro 0 pp with ±6 pp shadow challenger, SMA10 −20 pp, curve k=1.35 and extreme threshold zc=2.5 remain locked until a separate review',
+      'note':'Overlapping 12-month outcomes are not independent samples; this gate permits review, not proof or automatic deployment. Macro shadow settings and all other candidates are recorded prospectively and never auto-selected from future outcomes.'}
 
 def main():
     d=json.loads(LATEST.read_text())
     if d.get('model_version')!=LIVE_VERSION:
-        print('Current ledger preserved; wait for a V3.11 packet');return
-    out_path=ROOT/'data'/'walkforward_v3_11.json'
+        print('Current ledger preserved; wait for a V3.12 packet');return
+    out_path=ROOT/'data'/'walkforward_v3_12.json'
     try:w=json.loads(out_path.read_text())
     except (OSError,ValueError):w={'schema_version':1,'records':[]}
     records=[r for r in w.get('records',[]) if isinstance(r,dict) and r.get('month')]
@@ -105,8 +108,9 @@ def main():
     if snap and snap['month']==current_month:
         records=[r for r in records if r['month']!=snap['month']];records.append(snap)
     records=sorted(records,key=lambda r:r['month'])[-180:];records=update_outcomes(records,current_month)
-    out={'schema_version':3,'model_version':d.get('model_version'),'updated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),
+    out={'schema_version':4,'model_version':d.get('model_version'),'updated_at':datetime.now(timezone.utc).isoformat(timespec='seconds'),
          'candidate_macro_caps_pp':CANDIDATE_MACRO_CAPS,'candidate_curve_slopes':CANDIDATE_CURVE_SLOPES,'candidate_extreme_thresholds':CANDIDATE_EXTREMES,
+         'live_macro_budget_pp':0,'macro_shadow_budget_pp':6,
          'validation':summary(records),'records':records}
     tmp=out_path.with_suffix('.tmp');tmp.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8');tmp.replace(out_path)
     print(json.dumps(out['validation']))
