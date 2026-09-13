@@ -6,6 +6,7 @@ on:
     paths:
       - 'development_residual_source_policy_v1.json'
       - 'scripts/development_residual_source_resolver.py'
+      - 'scripts/development_residual_source_resolver_v11.py'
       - 'tests/test_development_residual_source_resolver.py'
       - 'DEVELOPMENT_RESIDUAL_SOURCE_RESOLUTION.md'
       - '.github/workflows/development-residual-source-resolver.yml'
@@ -29,13 +30,14 @@ jobs:
       - name: Unit tests
         run: pytest -q tests/test_development_residual_source_resolver.py
       - name: Resolve residual official sources
-        run: python scripts/development_residual_source_resolver.py
+        run: python scripts/development_residual_source_resolver_v11.py
       - name: Enforce zero live authority and sealed holdout
         run: |
           python - <<'PY'
           import json
           p=json.load(open('development_residual_source_policy_v1.json'))
           x=json.load(open('data/development_residual_source_resolution.json'))
+          assert p['policy_id'] == 'development-residual-source-resolver-v1.1'
           assert p['research_only'] is True
           assert p['live_authority'] == 'none'
           assert x['research_only'] is True
@@ -45,9 +47,10 @@ jobs:
           assert x['baseline_complete_company_months'] == 270
           assert x['baseline_total_company_months'] == 300
           assert x['residual_company_months'] == 30
-          assert x['combined_complete_company_months'] >= 270
+          assert x['combined_complete_company_months'] >= 282
           assert x['holdout_target_fetch_count'] == 0
           print(json.dumps({
+            'policy_id': x['policy_id'],
             'resolved_residual_company_months': x['resolved_residual_company_months'],
             'combined_complete_company_months': x['combined_complete_company_months'],
             'unresolved': x['unresolved'],
