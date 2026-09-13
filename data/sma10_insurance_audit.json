@@ -13,8 +13,30 @@
     "trend_executions": 63,
     "risk_off_months": 15,
     "risk_off_pct": 23.809523809523807,
-    "baseline": {"start": "2021-05-03", "end": "2026-07-31", "days": 1303, "ending_value": 1537195.0865538295, "cagr_pct": 8.546116064133136, "max_daily_drawdown_pct": -10.253902278156367, "monthly_expected_shortfall_95_pct": -4.459753996624211, "daily_ulcer_index_pct": 2.6825543833132373, "longest_underwater_trading_days": 141, "average_equity_exposure_pct": 53.49995372377521},
-    "braked": {"start": "2021-05-03", "end": "2026-07-31", "days": 1303, "ending_value": 1530351.3534622705, "cagr_pct": 8.453779297132336, "max_daily_drawdown_pct": -9.488799345260013, "monthly_expected_shortfall_95_pct": -3.48342966320436, "daily_ulcer_index_pct": 2.4928467002250145, "longest_underwater_trading_days": 144, "average_equity_exposure_pct": 48.81403854456586},
+    "baseline": {
+      "start": "2021-05-03",
+      "end": "2026-07-31",
+      "days": 1303,
+      "ending_value": 1537195.0865538295,
+      "cagr_pct": 8.546116064133136,
+      "max_daily_drawdown_pct": -10.253902278156367,
+      "monthly_expected_shortfall_95_pct": -4.459753996624211,
+      "daily_ulcer_index_pct": 2.6825543833132373,
+      "longest_underwater_trading_days": 141,
+      "average_equity_exposure_pct": 53.49995372377521
+    },
+    "braked": {
+      "start": "2021-05-03",
+      "end": "2026-07-31",
+      "days": 1303,
+      "ending_value": 1530351.3534622705,
+      "cagr_pct": 8.453779297132336,
+      "max_daily_drawdown_pct": -9.488799345260013,
+      "monthly_expected_shortfall_95_pct": -3.48342966320436,
+      "daily_ulcer_index_pct": 2.4928467002250145,
+      "longest_underwater_trading_days": 144,
+      "average_equity_exposure_pct": 48.81403854456586
+    },
     "cagr_premium_paid_pp_per_year": 0.09233676700080018,
     "max_daily_drawdown_avoided_pp": 0.7651029328963546,
     "monthly_expected_shortfall_improvement_pp": 0.9763243334198508,
@@ -32,8 +54,22 @@
     "trend_executions": 189,
     "risk_off_months": 55,
     "risk_off_pct": 29.1005291005291,
-    "baseline": {"cagr_pct": 10.182194942836142, "max_daily_drawdown_pct": -14.525664987390863, "monthly_expected_shortfall_95_pct": -5.209231418943618, "daily_ulcer_index_pct": 3.1201538872318193, "longest_underwater_trading_days": 212, "average_equity_exposure_pct": 49.09690555648621},
-    "braked": {"cagr_pct": 9.726115918868805, "max_daily_drawdown_pct": -13.150933447906976, "monthly_expected_shortfall_95_pct": -3.87311389581946, "daily_ulcer_index_pct": 2.709383808493492, "longest_underwater_trading_days": 250, "average_equity_exposure_pct": 43.44790761812023},
+    "baseline": {
+      "cagr_pct": 10.182194942836142,
+      "max_daily_drawdown_pct": -14.525664987390863,
+      "monthly_expected_shortfall_95_pct": -5.209231418943618,
+      "daily_ulcer_index_pct": 3.1201538872318193,
+      "longest_underwater_trading_days": 212,
+      "average_equity_exposure_pct": 49.09690555648621
+    },
+    "braked": {
+      "cagr_pct": 9.726115918868805,
+      "max_daily_drawdown_pct": -13.150933447906976,
+      "monthly_expected_shortfall_95_pct": -3.87311389581946,
+      "daily_ulcer_index_pct": 2.709383808493492,
+      "longest_underwater_trading_days": 250,
+      "average_equity_exposure_pct": 43.44790761812023
+    },
     "cagr_premium_paid_pp_per_year": 0.45607902396733735,
     "max_daily_drawdown_avoided_pp": 1.3747315394838875,
     "monthly_expected_shortfall_improvement_pp": 1.3361175231241584,
@@ -44,8 +80,22 @@
     "interpretation": "Positive CAGR premium means return was given up. Positive drawdown/expected-shortfall/Ulcer improvement means path risk improved. Positive underwater change means recovery took longer."
   },
   "source_metadata_for_63_month_recompute": {
-    "equity": {"index": "NIFTY 50 TRI", "family": "NIFTY 50", "rows": 1665, "first": "2020-01-01", "last": "2026-09-11"},
-    "debt": {"index": "NIFTY 10 YR BENCHMARK G-SEC", "retrieval": "historical index close", "total_return_basis": "NSE Indices fixed-income convention; Clean Price is a separately named excluded index", "rows": 1662, "first": "2020-01-01", "last": "2026-09-11", "substituted": false}
+    "equity": {
+      "index": "NIFTY 50 TRI",
+      "family": "NIFTY 50",
+      "rows": 1665,
+      "first": "2020-01-01",
+      "last": "2026-09-11"
+    },
+    "debt": {
+      "index": "NIFTY 10 YR BENCHMARK G-SEC",
+      "retrieval": "historical index close",
+      "total_return_basis": "NSE Indices fixed-income convention; Clean Price is a separately named excluded index",
+      "rows": 1662,
+      "first": "2020-01-01",
+      "last": "2026-09-11",
+      "substituted": false
+    }
   },
   "limitations": [
     "The baseline is the legacy fixed-reference valuation-core screen, not a historical reconstruction of the complete V3.11 macro/earnings stack.",

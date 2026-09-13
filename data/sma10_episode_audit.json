@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "policy_id": "trend-sma10-minus20-v1",
+  "research_role": "Episode-level insurance payout attribution for the already-frozen -20pp rule. No alternative trend magnitude or continuous rule is tested.",
+  "episode_definition": "Five largest non-overlapping peak-to-trough drawdowns of the unbraked legacy valuation-core portfolio on the longest exact shared NIFTY/debt history.",
+  "top_five_drawdown_episodes": [
+    {
+      "rank": 1,
+      "baseline_peak_date": "2011-04-05",
+      "baseline_trough_date": "2011-12-20",
+      "baseline_recovery_date": "2012-02-14",
+      "baseline_full_episode_drawdown_pct": -14.525664987390863,
+      "same_window_baseline_drawdown_pct": -14.525664987390863,
+      "same_window_braked_drawdown_pct": -10.031943404628807,
+      "brake_drawdown_payout_pp": 4.493721582762056,
+      "brake_active_at_peak": false,
+      "brake_engaged_date": "2011-06-01",
+      "brake_disengaged_date": "2012-03-01",
+      "engagement_days_before_trough": 202,
+      "engaged_before_or_on_trough": true,
+      "recovery_12m": {
+        "baseline_return_pct": 30.24055277221369,
+        "braked_return_pct": 24.539529102182268,
+        "braked_minus_baseline_return_pp": -5.701023670031422,
+        "baseline_average_equity_pct": 85.09822304976477,
+        "braked_average_equity_pct": 79.50922306909341,
+        "braked_minus_baseline_average_equity_pp": -5.58899998067136,
+        "through": "2012-12-20"
+      }
+    },
+    {
+      "rank": 2,
+      "baseline_peak_date": "2013-05-17",
+      "baseline_trough_date": "2013-08-28",
+      "baseline_recovery_date": "2013-10-18",
+      "baseline_full_episode_drawdown_pct": -13.607499827677561,
+      "same_window_baseline_drawdown_pct": -13.607499827677561,
+      "same_window_braked_drawdown_pct": -13.150933447906976,
+      "brake_drawdown_payout_pp": 0.45656637977058523,
+      "brake_active_at_peak": false,
+      "brake_engaged_date": "2013-08-01",
+      "brake_disengaged_date": "2013-11-01",
+      "engagement_days_before_trough": 27,
+      "engaged_before_or_on_trough": true,
+      "recovery_12m": {
+        "baseline_return_pct": 43.24890010525599,
+        "braked_return_pct": 39.19628646195872,
+        "braked_minus_baseline_return_pp": -4.052613643297271,
+        "baseline_average_equity_pct": 74.14199736651688,
+        "braked_average_equity_pct": 70.67808445839802,
+        "braked_minus_baseline_average_equity_pp": -3.463912908118857,
+        "through": "2014-08-28"
+      }
+    },
+    {
+      "rank": 3,
+      "baseline_peak_date": "2012-02-21",
+      "baseline_trough_date": "2012-05-23",
+      "baseline_recovery_date": "2012-09-14",
+      "baseline_full_episode_drawdown_pct": -11.528014092820339,
+      "same_window_baseline_drawdown_pct": -11.528014092820339,
+      "same_window_braked_drawdown_pct": -10.720246711212788,
+      "brake_drawdown_payout_pp": 0.807767381607551,
+      "brake_active_at_peak": true,
+      "brake_engaged_date": "2011-06-01",
+      "brake_disengaged_date": "2012-03-01",
+      "engagement_days_before_trough": 357,
+      "engaged_before_or_on_trough": true,
+      "recovery_12m": {
+        "baseline_return_pct": 25.221484526257655,
+        "braked_return_pct": 23.214216666667543,
+        "braked_minus_baseline_return_pp": -2.0072678595901117,
+        "baseline_average_equity_pct": 86.31876768882658,
+        "braked_average_equity_pct": 84.67853942087558,
+        "braked_minus_baseline_average_equity_pp": -1.6402282679510023,
+        "through": "2013-05-23"
+      }
+    },
+    {
+      "rank": 4,
+      "baseline_peak_date": "2020-02-19",
+      "baseline_trough_date": "2020-03-23",
+      "baseline_recovery_date": "2020-04-09",
+      "baseline_full_episode_drawdown_pct": -11.260989945841281,
+      "same_window_baseline_drawdown_pct": -11.260989945841281,
+      "same_window_braked_drawdown_pct": -5.021465673946512,
+      "brake_drawdown_payout_pp": 6.239524271894769,
+      "brake_active_at_peak": false,
+      "brake_engaged_date": "2020-03-02",
+      "brake_disengaged_date": "2020-08-03",
+      "engagement_days_before_trough": 21,
+      "engaged_before_or_on_trough": true,
+      "recovery_12m": {
+        "baseline_return_pct": 31.735240146285705,
+        "braked_return_pct": 24.01736414798816,
+        "braked_minus_baseline_return_pp": -7.717875998297544,
+        "baseline_average_equity_pct": 26.060904881382328,
+        "braked_average_equity_pct": 19.113960916366654,
+        "braked_minus_baseline_average_equity_pp": -6.946943965015674,
+        "through": "2021-03-23"
+      }
+    },
+    {
+      "rank": 5,
+      "baseline_peak_date": "2015-10-23",
+      "baseline_trough_date": "2016-02-25",
+      "baseline_recovery_date": "2016-04-18",
+      "baseline_full_episode_drawdown_pct": -10.338332895055945,
+      "same_window_baseline_drawdown_pct": -10.338332895055945,
+      "same_window_braked_drawdown_pct": -7.159141033767746,
+      "brake_drawdown_payout_pp": 3.1791918612881993,
+      "brake_active_at_peak": true,
+      "brake_engaged_date": "2015-09-01",
+      "brake_disengaged_date": "2016-06-01",
+      "engagement_days_before_trough": 177,
+      "engaged_before_or_on_trough": true,
+      "recovery_12m": {
+        "baseline_return_pct": 27.726262051402493,
+        "braked_return_pct": 23.24748399890053,
+        "braked_minus_baseline_return_pp": -4.478778052501962,
+        "baseline_average_equity_pct": 55.90540866319198,
+        "braked_average_equity_pct": 49.11693523429057,
+        "braked_minus_baseline_average_equity_pp": -6.788473428901405,
+        "through": "2017-02-23"
+      }
+    }
+  ],
+  "covid_feb_sep_2020": {
+    "window": "2020-02-01 through 2020-09-30",
+    "nifty_price_trough_date": "2020-03-23",
+    "nifty_price_trough_level": 7610.25,
+    "first_risk_off_transition": "2020-03-02",
+    "first_risk_on_transition_after": "2020-08-03",
+    "risk_off_engaged_before_nifty_trough": true,
+    "days_engaged_before_nifty_trough": 21,
+    "monthly_execution_timeline": [
+      {
+        "execution_date": "2020-02-03",
+        "signal_date": "2020-02-01",
+        "prior_month_close": 11962.1,
+        "sma10": 11713.955,
+        "risk_off": false,
+        "baseline_equity_pct": 21.48611615926519,
+        "braked_equity_pct": 21.48611615926519,
+        "adjustment_pp": 0.0
+      },
+      {
+        "execution_date": "2020-03-02",
+        "signal_date": "2020-03-01",
+        "prior_month_close": 11201.75,
+        "sma10": 11659.315,
+        "risk_off": true,
+        "baseline_equity_pct": 32.00786238873246,
+        "braked_equity_pct": 12.007862388732459,
+        "adjustment_pp": -20.0
+      },
+      {
+        "execution_date": "2020-04-01",
+        "signal_date": "2020-04-01",
+        "prior_month_close": 8597.75,
+        "sma10": 11326.810000000001,
+        "risk_off": true,
+        "baseline_equity_pct": 93.89938104655002,
+        "braked_equity_pct": 73.89938104655003,
+        "adjustment_pp": -19.999999999999996
+      },
+      {
+        "execution_date": "2020-05-04",
+        "signal_date": "2020-05-01",
+        "prior_month_close": 9859.9,
+        "sma10": 11133.914999999999,
+        "risk_off": true,
+        "baseline_equity_pct": 70.05955915865003,
+        "braked_equity_pct": 50.05955915865003,
+        "adjustment_pp": -19.999999999999996
+      },
+      {
+        "execution_date": "2020-06-01",
+        "signal_date": "2020-06-01",
+        "prior_month_close": 9580.3,
+        "sma10": 10980.145,
+        "risk_off": true,
+        "baseline_equity_pct": 70.34781847864203,
+        "braked_equity_pct": 50.347818478642026,
+        "adjustment_pp": -19.999999999999996
+      },
+      {
+        "execution_date": "2020-07-01",
+        "signal_date": "2020-07-01",
+        "prior_month_close": 10302.1,
+        "sma10": 10908.03,
+        "risk_off": true,
+        "baseline_equity_pct": 44.43174704109072,
+        "braked_equity_pct": 24.431747041090723,
+        "adjustment_pp": -20.0
+      },
+      {
+        "execution_date": "2020-08-03",
+        "signal_date": "2020-08-01",
+        "prior_month_close": 11073.45,
+        "sma10": 10867.93,
+        "risk_off": false,
+        "baseline_equity_pct": 15.250311429263219,
+        "braked_equity_pct": 15.250311429263219,
+        "adjustment_pp": 0.0
+      },
+      {
+        "execution_date": "2020-09-01",
+        "signal_date": "2020-09-01",
+        "prior_month_close": 11387.5,
+        "sma10": 10818.935,
+        "risk_off": false,
+        "baseline_equity_pct": 6.996332444507545,
+        "braked_equity_pct": 6.996332444507545,
+        "adjustment_pp": 0.0
+      }
+    ]
+  },
+  "summary": {
+    "episodes_with_positive_drawdown_payout": 5,
+    "episodes_with_negative_drawdown_payout": 0,
+    "median_drawdown_payout_pp": 3.1791918612881993,
+    "episodes_with_lower_12m_recovery_return": 5,
+    "median_12m_recovery_return_difference_pp": -4.478778052501962
+  },
+  "source_metadata": {
+    "equity": {
+      "index": "NIFTY 50 TRI",
+      "family": "NIFTY 50",
+      "rows": 6639,
+      "first": "2000-01-03",
+      "last": "2026-09-11"
+    },
+    "debt": {
+      "index": "NIFTY 10 YR BENCHMARK G-SEC",
+      "retrieval": "historical index close",
+      "total_return_basis": "NSE Indices fixed-income convention; Clean Price is a separately named excluded index",
+      "rows": 3977,
+      "first": "2011-01-03",
+      "last": "2026-09-11",
+      "substituted": false
+    }
+  },
+  "limitations": [
+    "This is a legacy valuation-core insurance attribution, not a historical reconstruction of the full V3.11 stack.",
+    "Episodes are selected by baseline portfolio drawdown, so results are descriptive insurance attribution rather than an untouched out-of-sample test.",
+    "The audit does not test -10pp, -30pp, dual-SMA, continuous, or any other trend rule. Testing such alternatives would create a new selection family and must carry its own trial burden.",
+    "Taxes are excluded and the debt sleeve is the NIFTY 10 YR BENCHMARK G-SEC index."
+  ],
+  "live_rule_changed": false
+}
