@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "research_only": true,
+  "policy_id": "trend-sma10-minus20-v1",
+  "policy_freeze_commit": "bffe1536e7ff0752f4798f07767d39d2b89718b1",
+  "historical_scope": "Legacy fixed-reference V3.6 valuation core only; not a historical test of the full modern model.",
+  "exact_shared_sample": {
+    "first_execution": "2011-01-03",
+    "last_market_date": "2026-09-11",
+    "monthly_decisions": 189,
+    "risk_off_months": 55,
+    "risk_off_pct": 29.1005291005291,
+    "reason_start_is_2011": "The reproducible exact NIFTY 10 YR BENCHMARK G-SEC total-return index history returned by the current automated index endpoint begins 2011-01-03. No earlier debt returns are fabricated."
+  },
+  "reference_variant": {
+    "rebalance_band_pp": 0,
+    "one_way_cost_bps": 10,
+    "baseline": {
+      "cagr_pct": 10.182194942836142,
+      "max_daily_drawdown_pct": -14.525664987390863,
+      "monthly_expected_shortfall_95_pct": -5.209231418943618,
+      "daily_ulcer_index_pct": 3.1201538872318193,
+      "longest_underwater_trading_days": 212,
+      "average_equity_exposure_pct": 49.09690555648621
+    },
+    "challenger": {
+      "cagr_pct": 9.726115918868805,
+      "max_daily_drawdown_pct": -13.150933447906976,
+      "monthly_expected_shortfall_95_pct": -3.87311389581946,
+      "daily_ulcer_index_pct": 2.709383808493492,
+      "longest_underwater_trading_days": 250,
+      "average_equity_exposure_pct": 43.44790761812023
+    },
+    "delta": {
+      "max_drawdown_improvement_pp": 1.3747315394838875,
+      "cagr_delta_pp": -0.45607902396733735,
+      "expected_shortfall_improvement_pp": 1.336117523124158,
+      "ulcer_index_improvement_pp": 0.4107700787383271
+    }
+  },
+  "robustness": {
+    "band0_cost50bps": {"drawdown_improvement_pp": 1.6347, "cagr_delta_pp": -0.4464},
+    "band5_cost10bps": {"drawdown_improvement_pp": 1.5604, "cagr_delta_pp": -0.4039},
+    "band5_cost50bps": {"drawdown_improvement_pp": 1.8182, "cagr_delta_pp": -0.3901}
+  },
+  "stress_reference": {
+    "gfc": "outside reproducible exact-debt sample; not estimated",
+    "taper": {"baseline_mdd_pct": -13.607499827677561, "challenger_mdd_pct": -13.150933447906976, "improvement_pp": 0.4565663797705847},
+    "covid": {"baseline_mdd_pct": -11.260989945841281, "challenger_mdd_pct": -6.594955067974495, "improvement_pp": 4.666034877866786},
+    "rates_2022": {"baseline_mdd_pct": -10.253902278156346, "challenger_mdd_pct": -9.488799345260023, "improvement_pp": 0.7651029328963228}
+  },
+  "exposure_matched_static_diagnostic": {
+    "target_equity_pct": 43.44790761812023,
+    "cagr_pct": 8.24808502076051,
+    "max_daily_drawdown_pct": -16.480641697810917,
+    "monthly_expected_shortfall_95_pct": -3.82947121893305,
+    "daily_ulcer_index_pct": 2.982450572776028,
+    "interpretation": "The challenger has higher CAGR, lower maximum drawdown and lower Ulcer Index than a static portfolio with the same average equity exposure, so the observed risk benefit is not explained solely by holding less equity. Expected shortfall is marginally worse than the exposure-matched static diagnostic."
+  },
+  "cashflow_companions": {
+    "sip": {
+      "initial_value": 1000000,
+      "monthly_contribution": 10000,
+      "total_subsequent_contributions": 1880000,
+      "baseline_terminal_value": 8944021.600534672,
+      "challenger_terminal_value": 8514748.4500401,
+      "note": "No CAGR is reported because external contributions invalidate terminal/start CAGR as a return statistic."
+    },
+    "retirement_withdrawal": {
+      "initial_value": 1000000,
+      "initial_annual_withdrawal_rate": 0.04,
+      "withdrawal_inflation": 0.06,
+      "baseline_terminal_value": 2481996.75186194,
+      "challenger_terminal_value": 2245914.3763470515,
+      "baseline_withdrawal_shortfall": 0,
+      "challenger_withdrawal_shortfall": 0,
+      "total_withdrawn_each": 1026352.2804401814,
+      "note": "No CAGR is reported because withdrawals invalidate terminal/start CAGR as a return statistic."
+    }
+  },
+  "frozen_gate_assessment": {
+    "required_overall_drawdown_improvement_pp": 5,
+    "actual_reference_improvement_pp": 1.3747315394838875,
+    "drawdown_requirement_met": false,
+    "maximum_allowed_cagr_sacrifice_pp": 1,
+    "actual_cagr_sacrifice_pp": 0.45607902396733735,
+    "cagr_sacrifice_requirement_met": true,
+    "beats_exposure_matched_drawdown": true,
+    "historical_result_can_promote_live": false
+  },
+  "conclusion": "retain_as_prospective_challenger_not_promote",
+  "live_model_changed": false,
+  "live_allocation_changed": false,
+  "existing_evidence_ledger_changed": false,
+  "live_change_authorized": false,
+  "green_ci_run": 34735857779,
+  "green_artifact_id": 10310663164,
+  "green_artifact_digest": "sha256:fcd242865a6c535da68f58cb44bd9f6ca2889add01cd8d38c1eb8461e6f09887"
+}
