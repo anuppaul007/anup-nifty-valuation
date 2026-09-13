@@ -94,7 +94,7 @@ def main():
     rows=[r for r in screen['records'] if r.get('methodology_era')=='Current ratio definitions']
     if len(rows)!=36:raise RuntimeError(f'current_definition_count_{len(rows)}_expected_36')
     x=np.vstack([raw_vector(r['pe'],r['pb'],r['dy'],r['gsec10']) for r in rows])
-    n=latest['nifty'];cur=raw_vector(n['pe'],n['pb'],n['dividend_yield'],n['gsec10'])
+    n=latest['nifty'];cur=raw_vector(n['pe'],n['pb'],n['div_yield'],n['gsec10'])
     earn=float(latest['earnings']['score']);risk_off=bool(latest['trend']['risk_off'])
     pc,ps=production_centers_scales();prod_z=z_from(cur,pc,ps);prod=allocation(prod_z,earn,risk_off)
     expected=float(reliability['current_formula']['new_policy_equity_pct'])
@@ -113,8 +113,6 @@ def main():
 
     loo=[v for v in variants if v['name'].startswith('leave_months_')]
     vals=[v['policy_equity_pct'] for v in loo]
-    # One-lens-at-a-time sensitivity using each leave-block calibration while
-    # keeping the other three production z-scores unchanged.
     lens_impacts={k:[] for k in LABELS}
     for v in loo:
         alt=np.array([v['current_z'][k] for k in LABELS])
@@ -127,7 +125,7 @@ def main():
       'schema_version':1,'generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'model_version':version,
       'question':'How fragile is today’s policy allocation to deterministic re-estimation of lens centers/scales within the short current-definition era?',
       'sample':{'months':36,'first_signal_date':rows[0]['signal_date'],'last_signal_date':rows[-1]['signal_date'],'methodology':'Current ratio definitions','historical_yield_caveat':screen.get('yield_rule')},
-      'current_packet':{'generated_at':latest['generated_at'],'nifty_date':n['date'],'level':n['level'],'pe':n['pe'],'pb':n['pb'],'dividend_yield':n['dividend_yield'],'gsec10':n['gsec10'],'gsec_asof':n['gsec_meta']['asof']},
+      'current_packet':{'generated_at':latest['generated_at'],'nifty_date':n['date'],'level':n['level'],'pe':n['pe'],'pb':n['pb'],'dividend_yield':n['div_yield'],'gsec10':n['gsec10'],'gsec_asof':n['gsec_meta']['asof']},
       'production_reproduction':{'centers':dict(zip(LABELS,js(pc))),'scales':dict(zip(LABELS,js(ps))),'current_z':dict(zip(LABELS,js(prod_z))),**prod},
       'full_36_descriptive_recalibration':{'centers':dict(zip(LABELS,js(fc))),'scales':dict(zip(LABELS,js(fs)))},
       'leave_six_month_block_out':{'variants':6,'min_policy_equity_pct':min(vals),'max_policy_equity_pct':max(vals),'range_pp':max(vals)-min(vals),'min_change_vs_production_pp':min(vals)-prod['policy_equity_pct'],'max_change_vs_production_pp':max(vals)-prod['policy_equity_pct']},
