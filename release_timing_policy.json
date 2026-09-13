@@ -1,0 +1,25 @@
+{
+  "policy_version": "2026-09-13-v1",
+  "purpose": "Prevent one flat publication lag from being treated as point-in-time evidence for heterogeneous economic series.",
+  "historical_rule": "A historical observation may enter a decision only when an archived or otherwise verified available_at timestamp is no later than the decision timestamp.",
+  "unknown_release_time": "exclude_from_full_stack_backtest",
+  "no_flat_lag_substitution": true,
+  "series": {
+    "nifty_valuation_ratios": {"frequency": "daily", "required_timing": "completed market observation before decision"},
+    "india_gsec": {"frequency": "daily_or_monthly_proxy", "required_timing": "instrument/value observable before decision; security identity recorded"},
+    "us_real_10y": {"frequency": "daily", "required_timing": "published observation before decision"},
+    "us_nominal_10y": {"frequency": "daily", "required_timing": "published observation before decision"},
+    "fed_assets": {"frequency": "weekly", "required_timing": "actual release timestamp, not observation-period end"},
+    "broad_usd": {"frequency": "daily_or_monthly_aggregate", "required_timing": "aggregate must consist only of observations known before decision"},
+    "vix": {"frequency": "daily", "required_timing": "completed close before decision"},
+    "brent": {"frequency": "daily", "required_timing": "completed observation before decision"},
+    "india_reer": {"frequency": "monthly", "required_timing": "actual publication/release date required"},
+    "usd_inr": {"frequency": "daily_or_monthly_aggregate", "required_timing": "aggregate available before decision"},
+    "india_cpi": {"frequency": "monthly", "required_timing": "actual MoSPI/PIB release timestamp required"},
+    "india_iip": {"frequency": "monthly", "required_timing": "actual MoSPI/PIB release timestamp required"},
+    "rbi_repo": {"frequency": "event_driven", "required_timing": "policy rate effective at decision timestamp"},
+    "china_pmi": {"frequency": "monthly", "required_timing": "official publication timestamp required"}
+  },
+  "research_sensitivity_allowed": "Assumed lags may be shown as sensitivities if clearly labelled non-vintage and never used to certify the full stack.",
+  "automatic_parameter_change": false
+}

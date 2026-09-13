@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "source_workflow_run_id": 34743774581,
+  "source_artifact_id": 10313382126,
+  "source_artifact_sha256": "1bb3c5d02d314b739ca71e475043c7b052f672d6ce0ad7bdd29acb020073b63a",
+  "decision": "NOT_ELIGIBLE_FOR_PROMOTION",
+  "scope": "Reproducible valuation-core evidence plus separately governed current-model sensitivity and crash-challenger diagnostics; not a certified historical full-stack V3.10 macro+earnings backtest.",
+  "fair_null": {
+    "months": 63,
+    "mean_equity_pct": 53.536467520187294,
+    "dynamic_net_cagr_pct": 8.922713446031395,
+    "beta_matched_static_net_cagr_pct": 8.762585209768382,
+    "dynamic_minus_static_cagr_pp": 0.16012823626301298,
+    "dynamic_max_drawdown_pct": -9.603649549576366,
+    "beta_matched_static_max_drawdown_pct": -8.593167893589237,
+    "net_timing_t_stat_naive": 0.17214675729328466,
+    "timing_effective_sample_n": 26.54569362963877,
+    "signal_weight_lag1_autocorrelation": 0.8227580303048794,
+    "dynamic_realised_turnover_x": 5.890908426675395,
+    "static_realised_turnover_x": 0.43593626717150225
+  },
+  "placebo": {
+    "unique_circular_shift_paths": 62,
+    "actual_percentile": 61.29032258064516,
+    "p05_excess_cagr_pp": -2.33976572637527,
+    "median_excess_cagr_pp": -0.04065763740448425,
+    "p95_excess_cagr_pp": 1.6064435800358186,
+    "max_excess_cagr_pp": 2.1813245478378818,
+    "gate_95th_percentile_pass": false
+  },
+  "paired_moving_block_bootstrap": [
+    {"block_months": 3, "ci95_pp": [-2.44563, 2.33048], "probability_mean_gt_zero": 0.5968},
+    {"block_months": 6, "ci95_pp": [-2.85275, 2.23994], "probability_mean_gt_zero": 0.6172},
+    {"block_months": 12, "ci95_pp": [-2.79228, 2.15255], "probability_mean_gt_zero": 0.6072}
+  ],
+  "multiple_testing": {
+    "valuation_curve_variants": 24,
+    "live_variant_deflated_sharpe_probability": 0.9840751408619333,
+    "cscv_pbo": 0.5714285714285714,
+    "dsr_gate_pass": true,
+    "pbo_gate_pass": false,
+    "interpretation": "A favorable Deflated Sharpe result by itself does not establish timing skill. The fair-null, placebo, paired block-bootstrap and PBO diagnostics remain controlling companion evidence."
+  },
+  "lens_redundancy": {
+    "effective_independent_lenses": 1.757,
+    "max_absolute_pairwise_correlation": 0.89167,
+    "note": "The four displayed valuation lenses behave more like roughly 1.8 independent dimensions than four independent bets in the available comparable sample."
+  },
+  "fair_pe_sensitivity": {
+    "assumed_fair_pe_range": [18, 26],
+    "current_pe": 19.78,
+    "mechanical_full_equity_pct_at_fair_pe_18": 58.83,
+    "mechanical_full_equity_pct_at_fair_pe_26": 90.44,
+    "allocation_spread_pp": 31.61,
+    "note": "Only the assumed fair P/E reference changes; all other current V3.10 inputs and references are held fixed. This shows reference dominance, not a forecast range."
+  },
+  "trend_challenger": {
+    "policy_id": "trend-sma10-minus20-v1",
+    "reference_max_drawdown_improvement_pp": 1.3747315394838875,
+    "cagr_delta_pp": -0.45607902396733735,
+    "covid_drawdown_improvement_pp": 4.666034877866786,
+    "historical_gate_pass": false,
+    "conclusion": "retain_as_prospective_challenger_not_promote"
+  },
+  "prospective_evidence": {
+    "completed_monthly_decisions": 1,
+    "minimum_before_promotion_review": 60,
+    "gate_pass": false
+  },
+  "unresolved_critical_gates": {
+    "certified_point_in_time_full_stack_history": false,
+    "taxable_after_tax_implementation_test": false
+  },
+  "gate_matrix": {
+    "exposure_matched_timing_edge_positive": true,
+    "placebo_95th_percentile": false,
+    "paired_block_bootstrap_all_lower_bounds_above_zero": false,
+    "deflated_sharpe_probability": true,
+    "cscv_pbo": false,
+    "prospective_months": false,
+    "certified_point_in_time_full_stack_history": false,
+    "taxable_after_tax_implementation_test": false
+  },
+  "governance": "No live parameter change. No composite score may average away a failed critical gate."
+}

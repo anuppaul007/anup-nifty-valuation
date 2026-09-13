@@ -1,0 +1,58 @@
+{
+  "policy_version": "2026-09-13-v2",
+  "status": "research governance; no automatic live allocation changes",
+  "objective": "Determine whether the allocation framework adds genuine risk-adjusted decision value rather than equity beta, path luck, look-ahead, duplicated factors, or parameter selection noise.",
+  "principles": [
+    "Fail closed when point-in-time availability cannot be established.",
+    "Compare every dynamic rule with an exposure-matched static null using identical returns, costs and rebalance conventions.",
+    "Treat retrospective results as evidence, never as an optimizer.",
+    "Separate valuation, earnings, macro and trend evidence so one layer cannot hide another layer's failure.",
+    "No single composite score may override a failed critical gate."
+  ],
+  "critical_gates": {
+    "data_vintage": "Historical full-stack claims require observation available_at timestamps at or before each decision time. Current-vintage substitutes are exploratory only.",
+    "fair_null": "Dynamic strategy must be compared with a static portfolio at the dynamic strategy's realised mean equity weight.",
+    "placebo": "Timing claim requires at least 95th percentile versus a pre-declared placebo/randomisation family before it may be described as strong evidence.",
+    "block_bootstrap": "Paired timing-effect confidence intervals must be shown for 3, 6 and 12 month moving-block resampling; intervals crossing zero are reported as inconclusive.",
+    "multiple_testing": "Deflated Sharpe probability and CSCV probability of backtest overfitting must be reported for the exact candidate family being compared.",
+    "prospective_record": "No challenger is eligible for promotion before at least 60 completed prospective monthly decisions, regardless of retrospective performance.",
+    "implementation": "Costs, taxes and instrument constraints must match the claim. Tax-excluded studies cannot be described as taxable-investor net returns.",
+    "reproducibility": "Inputs, engine files, policy and output must be hashable and version identified."
+  },
+  "promotion_evidence_thresholds": {
+    "placebo_percentile_min": 95,
+    "deflated_sharpe_probability_min": 0.95,
+    "pbo_max": 0.10,
+    "paired_block_bootstrap_lower_bound_gt_zero_required": true,
+    "prospective_completed_months_min": 60,
+    "automatic_promotion": false
+  },
+  "mandatory_diagnostics": [
+    "Exposure-matched static benchmark",
+    "Brinson-style timing contribution",
+    "Circular-shift placebo distribution",
+    "Moving-block paired bootstrap",
+    "Deflated Sharpe Ratio probability",
+    "CSCV probability of backtest overfitting",
+    "Effective sample size and serial dependence",
+    "Minimum track-record heuristic for a 0.20 Sharpe difference",
+    "Calibration-family sensitivity",
+    "Valuation-lens correlation and effective independent-lens count",
+    "Fair-P/E reference fan",
+    "Crash-regime challenger evidence",
+    "Model/input/policy hashes"
+  ],
+  "historical_claim_limits": [
+    "The 2021-present comparable valuation sample is too short to prove timing skill.",
+    "The current full macro plus earnings model does not have a certified point-in-time history through 2008 and March 2020.",
+    "Fixed reference constants applied before their freeze date are look-ahead sensitivity, not implementable historical evidence.",
+    "Monthly drawdowns understate intramonth losses.",
+    "Tax-excluded results are not after-tax investor outcomes."
+  ],
+  "decision_language": {
+    "pass": "Evidence clears the pre-declared threshold for this diagnostic only.",
+    "inconclusive": "Evidence is insufficient; do not treat absence of rejection as validation.",
+    "fail": "Evidence contradicts the required threshold or exposes an implementation defect.",
+    "not_testable": "Required point-in-time data or comparable history are unavailable; do not fabricate a result."
+  }
+}

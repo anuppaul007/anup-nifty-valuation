@@ -1,0 +1,33 @@
+name: Fair-null placebo and macro-guard research
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/fair_null_placebo_audit.py'
+      - 'macro_guard_candidate.js'
+      - 'tests/macro_guard_candidate.test.cjs'
+      - 'data/retrospective.json'
+      - '.github/workflows/fair-null-placebo-macro-guard.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  research-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - name: Beta-matched null and placebo audit
+        run: python scripts/fair_null_placebo_audit.py
+      - name: Macro crash-guard unit test
+        run: node tests/macro_guard_candidate.test.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fair-null-placebo-audit
+          path: data/fair_null_placebo_audit.json
