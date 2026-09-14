@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-09-14T15:47:57+00:00",
-  "source_commit": "d15d2e5ad6b08d19aade5f09d99698e38b36989d",
-  "packet_generated_at": "2026-09-14T15:47:43+00:00",
+  "checked_at": "2026-09-14T18:41:30+00:00",
+  "source_commit": "df50477f0cc5172595a011e7c495a39a4311496f",
+  "packet_generated_at": "2026-09-14T18:41:14+00:00",
   "status": "healthy",
   "checks": [
     {
@@ -13,12 +13,12 @@
     {
       "name": "published_bytes",
       "ok": true,
-      "detail": "Pinned commit API, raw source and checkout bytes match: 61e1c5766728f89dceeb03f90b73624628757f0a30e1ac5e2e9bfe4ed65dedae"
+      "detail": "Pinned commit API, raw source and checkout bytes match: 82442e81b5ce85080353e0554707689cb796b17e3c65401ab0248acf3635594b"
     },
     {
       "name": "refresh_workflow",
       "ok": true,
-      "detail": "Latest completed refresh: success \u00b7 https://github.com/anuppaul007/anup-nifty-valuation/actions/runs/34864318721"
+      "detail": "Latest completed refresh: success \u00b7 https://github.com/anuppaul007/anup-nifty-valuation/actions/runs/34882146230"
     },
     {
       "name": "allocation_inputs",
