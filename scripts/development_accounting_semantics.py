@@ -26,7 +26,6 @@ class SemanticError(ValueError):
 
 
 def context_role(context_ref: str | None) -> str:
-    """Map only preregistered legacy column IDs; unknown contexts fail closed."""
     if context_ref == CURRENT_CONTEXT:
         return "current_period"
     if context_ref == YTD_CONTEXT:
@@ -35,7 +34,6 @@ def context_role(context_ref: str | None) -> str:
 
 
 def normalise_numeric(value: object, *, scale: object = None, sign: object = None) -> float:
-    """Normalise one XBRL numeric fact without interpreting decimals as scale."""
     text = str(value).strip().replace(",", "")
     paren_negative = text.startswith("(") and text.endswith(")")
     if paren_negative:
@@ -46,7 +44,6 @@ def normalise_numeric(value: object, *, scale: object = None, sign: object = Non
         number = float(text)
     except Exception as exc:
         raise SemanticError(f"non-numeric accounting fact: {value!r}") from exc
-
     explicit_negative = str(sign or "").strip() == "-"
     if paren_negative and number < 0:
         raise SemanticError("negative sign encoded twice")
@@ -54,7 +51,6 @@ def normalise_numeric(value: object, *, scale: object = None, sign: object = Non
         raise SemanticError("negative sign encoded twice")
     if paren_negative or explicit_negative:
         number = -number
-
     if scale not in (None, ""):
         try:
             power = int(str(scale))
@@ -65,24 +61,12 @@ def normalise_numeric(value: object, *, scale: object = None, sign: object = Non
 
 
 def _dimensions(fact: dict) -> list:
-    context = fact.get("context") or {}
-    dims = context.get("dimensions") or []
-    return list(dims)
+    return list((fact.get("context") or {}).get("dimensions") or [])
 
 
-def select_entity_fact(
-    facts: Iterable[dict],
-    *,
-    local_name: str,
-    context_ref: str = CURRENT_CONTEXT,
-) -> dict:
-    """Select one total-entity fact for an exact concept/context or reject ambiguity.
-
-    Dimensional/segment facts are not eligible for company-level earnings or
-    net worth. Duplicate eligible facts are accepted only when their normalised
-    numeric values are exactly equal.
-    """
-    context_role(context_ref)  # fail if caller attempts an unregistered context
+def select_entity_fact(facts: Iterable[dict], *, local_name: str, context_ref: str = CURRENT_CONTEXT) -> dict:
+    """Select one exact, non-dimensional entity fact or reject ambiguity."""
+    context_role(context_ref)
     eligible = [
         f for f in facts
         if f.get("local_name") == local_name
@@ -91,11 +75,7 @@ def select_entity_fact(
     ]
     if not eligible:
         raise SemanticError(f"missing {local_name} in {context_ref}")
-
-    values = [
-        normalise_numeric(f.get("value"), scale=f.get("scale"), sign=f.get("sign"))
-        for f in eligible
-    ]
+    values = [normalise_numeric(f.get("value"), scale=f.get("scale"), sign=f.get("sign")) for f in eligible]
     first = values[0]
     if any(v != first for v in values[1:]):
         raise SemanticError(f"unequal duplicate facts for {local_name} in {context_ref}: {values}")
@@ -141,7 +121,6 @@ def validate_four_quarter_chain(period_ends: Iterable[str | date | datetime]) ->
 
 
 def ttm_from_current_quarters(quarters: Iterable[dict]) -> float:
-    """Sum four signed quarter-only facts; YTD facts are explicitly inadmissible."""
     rows = list(quarters)
     if len(rows) != 4:
         raise SemanticError("TTM requires exactly four quarter facts")
@@ -150,10 +129,7 @@ def ttm_from_current_quarters(quarters: Iterable[dict]) -> float:
         if row.get("context_ref") != CURRENT_CONTEXT:
             role = context_role(row.get("context_ref"))
             raise SemanticError(f"TTM cannot sum {role} facts")
-    return sum(
-        normalise_numeric(r.get("value"), scale=r.get("scale"), sign=r.get("sign"))
-        for r in rows
-    )
+    return sum(normalise_numeric(r.get("value"), scale=r.get("scale"), sign=r.get("sign")) for r in rows)
 
 
 def validate_policy() -> dict:
@@ -170,13 +146,27 @@ def validate_policy() -> dict:
         raise SemanticError("development window changed")
 
     ids = []
-    for family in ("INDAS", "BANKING"):
-        for candidate in POLICY["profit_candidates"][family]:
+    for family in ("INDAS", "BANKING", "NBFC"):
+        candidates = POLICY["profit_candidates"].get(family)
+        if not candidates:
+            raise SemanticError(f"missing profit candidate family: {family}")
+        for candidate in candidates:
             if candidate["context_ref"] != CURRENT_CONTEXT:
                 raise SemanticError(f"profit candidate is not quarter-only: {candidate}")
             ids.append(candidate["candidate_id"])
     if len(ids) != len(set(ids)):
         raise SemanticError("duplicate candidate IDs")
+
+    book = POLICY["annual_net_worth_candidates"]
+    for family in ("BANKING", "NBFC"):
+        if not book.get(family):
+            raise SemanticError(f"missing annual book candidate family: {family}")
+        if any(x.get("status") != "candidate_not_yet_authorized" for x in book[family]):
+            raise SemanticError(f"{family} book candidate authorized too early")
+
+    anomaly = POLICY["market_capitalisation_candidates"].get("anomaly_rule", "")
+    if "ICICIBANK" not in anomaly or "fail closed" not in anomaly:
+        raise SemanticError("known share-count anomaly is not explicitly governed")
 
     return {
         "policy_id": POLICY["policy_id"],
@@ -186,6 +176,7 @@ def validate_policy() -> dict:
         "current_period_context": CURRENT_CONTEXT,
         "ytd_context": YTD_CONTEXT,
         "profit_candidate_ids": ids,
+        "book_candidate_families": sorted(book),
         "holdout_target_fetch_count": 0,
         "ratios_computed": False,
     }
