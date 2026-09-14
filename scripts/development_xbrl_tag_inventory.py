@@ -77,16 +77,18 @@ def _valid_xbrl_url(url: str | None) -> bool:
 
 def _template_family(url: str | None) -> str:
     upper = str(url or "").upper()
+    # Specific template families must be matched before generic INDAS because
+    # filenames such as NBFC_INDAS_... contain both tokens.
     if "BANKING_" in upper:
         return "BANKING"
-    if "INDAS_" in upper:
-        return "INDAS"
     if "NBFC_" in upper:
         return "NBFC"
     if "INSURANCE_" in upper or "_LI_" in upper:
         return "LIFE_INSURANCE"
     if "_GI_" in upper:
         return "GENERAL_INSURANCE"
+    if "INDAS_" in upper:
+        return "INDAS"
     return "OTHER"
 
 
