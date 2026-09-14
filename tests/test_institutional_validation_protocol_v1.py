@@ -4,6 +4,7 @@ import json
 ROOT = Path(__file__).resolve().parents[1]
 P = json.loads((ROOT / "institutional_validation_protocol_v1.json").read_text(encoding="utf-8"))
 V = json.loads((ROOT / "validation_policy.json").read_text(encoding="utf-8"))
+R = json.loads((ROOT / "historical_regime_policy_v1.json").read_text(encoding="utf-8"))
 
 
 def test_protocol_has_zero_live_authority():
@@ -67,3 +68,17 @@ def test_legacy_validation_policy_is_harmonized():
     assert V["prospective_evidence_purpose"]["minimum_completed_months_before_promotion_review"] == 60
     assert "confirmation-eligible only" in V["promotion_rule"]
     assert V["automatic_parameter_changes"] is False
+
+
+def test_current_definition_and_long_vintage_claims_are_separate():
+    assert R["policy_id"] == "historical-methodology-regime-policy-v1"
+    assert R["research_only"] is True
+    assert R["live_authority"] == "none"
+    assert R["current_definition_track"]["legacy_ratio_backfill_allowed"] is False
+    assert R["current_definition_track"]["promotion_effect"] == "data_lineage_confidence_only"
+    assert R["long_vintage_track"]["every_row_requires_methodology_regime"] is True
+    assert R["long_vintage_track"]["hindsight_rewrite_to_current_definition_allowed"] is False
+    assert R["long_vintage_track"]["ex_post_level_stitching_allowed"] is False
+    assert R["long_vintage_track"]["regime_specific_results_required"] is True
+    assert "validated timing residual" in R["claim_boundary"]["neither_alone_may_support"]
+    assert R["automatic_parameter_changes"] is False
