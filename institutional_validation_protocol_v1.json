@@ -6,6 +6,11 @@
   "live_authority": "none",
   "live_model_changed": false,
   "live_allocation_changed": false,
+  "subordinate_policies": {
+    "methodology_regimes": "historical_regime_policy_v1.json",
+    "point_in_time_panel": "point_in_time_panel_spec_v1.json",
+    "implementation_cost_tax": "implementation_cost_tax_policy_v1.json"
+  },
   "primary_claim": "A valuation-core-only equity/debt allocation rule produces a positive and economically material timing residual after equity-exposure matching, realistic implementation frictions, honest multiple-testing correction and certified point-in-time inputs.",
   "claim_separation": [
     "data_integrity",
@@ -41,7 +46,9 @@
     "sensitivity_one_way_bps": [10, 25],
     "include_ter_where_applicable": true,
     "include_tracking_difference_where_applicable": true,
-    "charge_cost_only_on_actual_trades": true
+    "double_count_embedded_nav_costs_allowed": false,
+    "charge_cost_only_on_actual_trades": true,
+    "controlling_policy": "implementation_cost_tax_policy_v1.json"
   },
   "tax": {
     "universal_india_after_tax_return_prohibited": true,
@@ -49,7 +56,9 @@
     "after_tax_requires_versioned_investor_vehicle_profile": true,
     "historical_effective_date_rules_required": true,
     "lot_aware_realized_gains_required": true,
-    "incomplete_tax_engine_cannot_be_sole_promotion_basis": true
+    "taxable_implementation_after_tax_residual_cagr_pp_per_year_min": 0.8,
+    "incomplete_tax_engine_cannot_be_sole_promotion_basis": true,
+    "controlling_policy": "implementation_cost_tax_policy_v1.json"
   },
   "nulls": [
     "ex_post_static_weight_equal_to_full_sample_mean_equity_exposure_diagnostic",
