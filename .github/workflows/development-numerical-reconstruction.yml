@@ -1,0 +1,38 @@
+name: Development numerical reconstruction
+
+on:
+  pull_request:
+    paths:
+      - "scripts/development_numerical_reconstruction.py"
+      - "scripts/current_definition_aggregation.py"
+      - "development_accounting_semantics_policy_v1.json"
+      - "tests/test_development_numerical_reconstruction.py"
+      - ".github/workflows/development-numerical-reconstruction.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/development_numerical_reconstruction.py"
+      - "scripts/current_definition_aggregation.py"
+      - "development_accounting_semantics_policy_v1.json"
+      - "tests/test_development_numerical_reconstruction.py"
+      - ".github/workflows/development-numerical-reconstruction.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Validate sealed development engine contract
+        run: python scripts/development_numerical_reconstruction.py
+      - name: Test development numerical reconstruction
+        run: python -m unittest tests.test_development_numerical_reconstruction -v
