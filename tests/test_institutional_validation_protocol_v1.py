@@ -6,6 +6,7 @@ P = json.loads((ROOT / "institutional_validation_protocol_v1.json").read_text(en
 V = json.loads((ROOT / "validation_policy.json").read_text(encoding="utf-8"))
 R = json.loads((ROOT / "historical_regime_policy_v1.json").read_text(encoding="utf-8"))
 D = json.loads((ROOT / "point_in_time_panel_spec_v1.json").read_text(encoding="utf-8"))
+I = json.loads((ROOT / "implementation_cost_tax_policy_v1.json").read_text(encoding="utf-8"))
 
 
 def test_protocol_has_zero_live_authority():
@@ -103,3 +104,19 @@ def test_point_in_time_panel_contract_fails_closed():
     assert D["separation_of_concerns"]["join_rule"].startswith("Signal and outcome panels may be joined")
     assert D["promotion_effect"].startswith("none")
     assert D["automatic_parameter_changes"] is False
+
+
+def test_cost_tax_policy_is_path_aware_and_no_double_counting():
+    assert I["policy_id"] == "implementation-cost-tax-policy-v1"
+    assert I["research_only"] is True
+    assert I["live_authority"] == "none"
+    assert I["primary_trading_friction"]["one_way_bps_on_traded_notional"] == 15
+    assert I["primary_trading_friction"]["sensitivities_bps"] == [10, 25]
+    assert I["embedded_cost_rule"]["double_counting_prohibited"] is True
+    assert I["tax_profile_rule"]["universal_india_tax_assumption_prohibited"] is True
+    assert I["tax_profile_rule"]["lot_aware_realization_required"] is True
+    assert I["claim_gates"]["taxable_implementation_claim_requires_after_tax_residual_cagr_pp_per_year_min"] == 0.8
+    assert I["claim_gates"]["incomplete_tax_engine_may_support_promotion"] is False
+    assert I["claim_gates"]["favorable_tax_profile_selection_after_outcomes_allowed"] is False
+    assert I["debt_vehicle_rule"]["selection_based_on_backtest_return_allowed"] is False
+    assert I["automatic_parameter_changes"] is False
