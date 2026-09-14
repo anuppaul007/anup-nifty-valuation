@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "policy_id": "development-accounting-semantics-v1",
   "research_only": true,
   "live_authority": "none",
@@ -108,6 +108,19 @@
     "sign": "A negative sign attribute or parenthesized presentation is applied exactly once.",
     "decimals": "Decimals metadata expresses precision and must not be treated as an additional scale multiplier.",
     "duplicate_fact_rule": "More than one eligible fact for the same candidate, context and reporting period is ambiguous unless values are exactly equal after normalisation; unequal duplicates are rejected."
+  },
+  "development_candidate_reproduction_gate": {
+    "provenance": "Reuse the already-preregistered holdout error limits from recent_reconstruction_policy_v1.json rather than choosing a new easier development tolerance after candidate outputs are seen.",
+    "full_constituent_completeness_required": true,
+    "months_required": 6,
+    "per_month_pe_relative_error_max_pct": 2.0,
+    "per_month_pb_relative_error_max_pct": 2.0,
+    "per_month_dividend_yield_abs_error_max_pp": 0.05,
+    "median_pe_relative_error_max_pct": 1.0,
+    "median_pb_relative_error_max_pct": 1.0,
+    "median_dividend_yield_abs_error_max_pp": 0.025,
+    "selection_rule": "A candidate family is eligible to be frozen for the holdout only if all six development months are fully reconstructable without imputation and every month meets the applicable per-month threshold, with the six-month median also meeting the tighter threshold. If multiple complete candidates pass, retain all passing candidates as explicit alternatives until a source-semantic reason independent of holdout performance resolves them; do not pick the numerically closest candidate merely because its development error is smallest.",
+    "failure_rule": "Failure or incomplete coverage keeps the accounting mapping unresolved; it is not permission to relax thresholds, fill missing companies, combine candidate concepts opportunistically, or inspect holdout targets."
   },
   "gates_before_development_ratio_reconstruction": [
     "XBRL inventory/retrieval stage passes its own gate or an explicitly versioned frozen-manifest replacement is approved without using valuation outcomes.",
