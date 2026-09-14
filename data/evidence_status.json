@@ -1,21 +1,23 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-14T06:57:03+00:00",
+  "updated_at": "2026-09-14T08:47:52+00:00",
   "archive_started_at": "2026-09-12T08:36:13+00:00",
-  "snapshot_count": 35,
+  "snapshot_count": 36,
   "decision_count": 1,
-  "current_model": "40e8b2a242a080dde9d36e6f76d64348368deb059a9c9b1c851893419b597580",
-  "model_first_seen_at": "2026-09-14T06:46:21+00:00",
-  "latest_snapshot_id": "1fe1a156c0bf11566d46d7959d643b9c24fe50d5dd1289cc06f0cb5448dd1812",
+  "current_model": "ff34a67cdeac3e792fc5840a50ccabf0c25c3a9082f60c6b2f9aeb8e393c212b",
+  "model_first_seen_at": "2026-09-14T08:47:52+00:00",
+  "latest_snapshot_id": "4cadbf750984415013bdf8366246cd0a68a6c83b15f925162f83685eca2cc879",
   "original_release_vintages_verified": false,
   "historical_full_model_backtest_validated": false,
   "policy": {
-    "protocol_version": "2026-09-13-v3",
-    "status": "Prospective research protocol; no automatic live allocation changes",
+    "protocol_version": "2026-09-14-v4",
+    "status": "Prospective research protocol aligned to Institutional Validation Protocol v1; no automatic live allocation changes",
+    "controlling_institutional_protocol": "institutional_validation_protocol_v1.json",
     "objective": "Evaluate whether valuation-guided allocation has economically material decision value, while separating long-horizon valuation anchoring, tactical timing claims, deliberately purchased crash insurance, and macro context whose live authority must be earned by evidence.",
     "first_process_review": "2027-09-12",
     "review_date_is_not_validation_deadline": true,
-    "primary_metric": "Maximum daily drawdown of a net total-return equity/debt portfolio",
+    "primary_metric": "Exposure-matched valuation-core timing residual on a certified point-in-time common outcome matrix under the controlling institutional protocol",
+    "primary_risk_metric": "Maximum daily drawdown of a net total-return equity/debt portfolio",
     "mandatory_companion_metrics": [
       "CAGR",
       "95% monthly expected shortfall",
@@ -59,7 +61,7 @@
     "macro_governance": {
       "live_budget_pp": 0,
       "shadow_budget_pp": 6,
-      "role": "Verified macro blocks are displayed economic context and a prospective shadow challenger. They do not change or withhold the V3.12 live equity/debt allocation.",
+      "role": "Verified macro blocks are displayed economic context and a prospective shadow challenger. They do not change or withhold the live equity/debt allocation.",
       "shadow_eligibility": "A shadow macro adjustment is recorded only when the full defined macro score can be reconstructed from fresh, internally consistent observations at the required coverage. Missing, stale or inconsistent macro data are never neutral-filled.",
       "historical_pricing_status": "Unavailable until a certified release-vintage full macro stack exists on a comparable outcome window. Current-vintage backfilling must not be substituted and called historical evidence.",
       "operational_risk_rule": "Do not estimate a monthly probability of a wrong-but-plausible semantic source error from a handful of caught incidents without a defensible denominator. Publish such probability as not identifiable when that is the evidence state.",
@@ -72,7 +74,7 @@
       "Inflation-linked retirement withdrawals; publish all withdrawal assumptions before comparing outcomes"
     ],
     "implementation_tests": [
-      "Short-duration debt versus 10-year government-bond total returns",
+      "Primary low-duration dry-powder debt sleeve versus longer-duration government-bond sensitivity",
       "Actual instrument availability, expense ratios, tracking difference, slippage and date-applicable taxes",
       "Rebalance bands of 0, 5 and 10 percentage points"
     ],
@@ -91,8 +93,8 @@
       "effect_size_rule": "Report effect size and uncertainty together. If the observed edge is economically negligible and would require implausibly long stationary history to distinguish from zero, describe that directly rather than presenting additional calendar time as the remedy.",
       "large_edge_rule": "A materially different prospective effect may justify a fresh review, subject to the same predeclared multiple-testing, implementation, tax and benchmark gates."
     },
-    "promotion_rule": "No automatic winner selection. Record all comparable trials, assess serial dependence and multiple testing, require held-out or prospective evidence, and report return/drawdown tradeoffs. A smaller drawdown alone does not establish skill if it only reflects lower equity exposure. Production labels do not exempt a comparable hypothesis from the trial count.",
-    "statistical_plan": "Evaluate non-overlapping monthly portfolio returns; use paired time-block resampling for comparisons and disclose block lengths and all tested comparable variants. Overlapping annual outcomes are not independent observations. Ex-post beta-removal diagnostics and investable nulls must be labelled separately.",
+    "promotion_rule": "No automatic winner selection. Record all comparable trials, assess serial dependence and multiple testing, require held-out or prospective evidence, and report return/drawdown tradeoffs. A smaller drawdown alone does not establish skill if it only reflects lower equity exposure. Production labels do not exempt a comparable hypothesis from the trial count. Under Institutional Validation Protocol v1, a historical pass is confirmation-eligible only; validated timing or institutional-validation language additionally requires independent reimplementation and the controlling confirmation requirements.",
+    "statistical_plan": "Evaluate non-overlapping monthly portfolio returns; use paired time-block resampling for comparisons, apply family-wise correction across every comparable variant on the common matrix, and disclose block lengths and all tested comparable variants. Overlapping annual outcomes are not independent observations. Ex-post beta-removal diagnostics and investable nulls must be labelled separately. DSR/PBO are supporting diagnostics and become hard gates only when their sample/family adequacy is documented under the controlling institutional protocol.",
     "historical_limits": [
       "Current-vintage historical inputs are not certified point-in-time",
       "Freezing a version now does not validate earlier periods",
