@@ -8,6 +8,8 @@ on:
       - 'institutional_validation_protocol_v1.json'
       - 'HISTORICAL_REGIME_POLICY_v1.md'
       - 'historical_regime_policy_v1.json'
+      - 'POINT_IN_TIME_PANEL_SPEC_v1.md'
+      - 'point_in_time_panel_spec_v1.json'
       - 'validation_policy.json'
       - 'tests/test_institutional_validation_protocol_v1.py'
       - '.github/workflows/institutional-validation-protocol.yml'
@@ -35,6 +37,7 @@ jobs:
           p=json.load(open('institutional_validation_protocol_v1.json'))
           v=json.load(open('validation_policy.json'))
           r=json.load(open('historical_regime_policy_v1.json'))
+          d=json.load(open('point_in_time_panel_spec_v1.json'))
           assert p['protocol_id'] == 'institutional-validation-protocol-v1'
           assert p['research_only'] is True
           assert p['live_authority'] == 'none'
@@ -57,6 +60,11 @@ jobs:
           assert r['current_definition_track']['promotion_effect'] == 'data_lineage_confidence_only'
           assert r['long_vintage_track']['hindsight_rewrite_to_current_definition_allowed'] is False
           assert r['long_vintage_track']['ex_post_level_stitching_allowed'] is False
+          assert d['spec_id'] == 'point-in-time-panel-v1'
+          assert d['availability_policy']['after_cutoff_use_allowed'] is False
+          assert d['source_integrity']['secondary_source_fill_allowed'] is False
+          assert d['selection_policy']['missing_value_imputation_allowed'] is False
+          assert d['certification_gates']['selected_row_without_source_hash_allowed'] is False
           print(json.dumps({
             'protocol_id':p['protocol_id'],
             'minimum_months':p['sample']['minimum_completed_months_for_validation_language_review'],
@@ -66,5 +74,6 @@ jobs:
             'historical_pass_effect':p['historical_pass_effect'],
             'prospective_confirmation_months':p['prospective_confirmation']['minimum_completed_months_before_promotion_review'],
             'current_definition_effect':r['current_definition_track']['promotion_effect'],
+            'pit_panel_spec':d['spec_id'],
           },indent=2))
           PY
