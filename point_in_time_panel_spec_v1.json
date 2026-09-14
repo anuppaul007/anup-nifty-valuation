@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "spec_id": "point-in-time-panel-v1",
+  "research_only": true,
+  "live_authority": "none",
+  "purpose": "Define a reproducible point-in-time historical input panel before any certified-panel valuation outcome analysis.",
+  "separation_of_concerns": {
+    "signal_source_panel": "Raw/reconstructed economic observations and their availability metadata.",
+    "decision_panel": "For each monthly decision timestamp, the exact eligible observation selected for every required field.",
+    "outcome_panel": "Equity/debt total returns and implementation data stored separately from signal construction until protocol/trial freeze.",
+    "join_rule": "Signal and outcome panels may be joined for strategy evaluation only after data version, trial family, cost/tax profile and evaluator commit are frozen."
+  },
+  "source_observation_required_columns": [
+    "observation_id",
+    "entity_id",
+    "symbol_as_reported",
+    "field_id",
+    "raw_value",
+    "normalized_value",
+    "unit",
+    "economic_period_start",
+    "economic_period_end",
+    "observation_date",
+    "publication_timestamp_raw",
+    "availability_timestamp_used",
+    "availability_rule_id",
+    "retrieval_timestamp_utc",
+    "source_uri",
+    "source_sha256",
+    "source_type",
+    "source_priority",
+    "filing_or_release_id",
+    "methodology_regime_id",
+    "accounting_scope",
+    "template_family",
+    "consolidated_status",
+    "audit_status",
+    "revision_sequence",
+    "selection_status",
+    "ambiguity_status",
+    "notes"
+  ],
+  "decision_panel_required_columns": [
+    "decision_id",
+    "decision_timestamp_ist",
+    "field_id",
+    "entity_or_index_id",
+    "selected_observation_id",
+    "value_used",
+    "unit",
+    "age_days",
+    "methodology_regime_id",
+    "transformation_version",
+    "selection_reason",
+    "eligibility_status"
+  ],
+  "availability_policy": {
+    "timezone": "Asia/Kolkata",
+    "field_specific_cutoffs_required": true,
+    "exchange_filing_precedence": [
+      "exchange_dissemination_timestamp",
+      "broadcast_timestamp",
+      "filing_timestamp",
+      "conservative_date_only_rule"
+    ],
+    "date_only_rule": "When only a publication date is known, use a conservative end-of-day availability timestamp or the stricter source-specific rule already preregistered; same-day use is prohibited unless a verified dissemination time is available.",
+    "after_cutoff_use_allowed": false,
+    "future_revision_backfill_allowed": false
+  },
+  "source_integrity": {
+    "raw_bytes_hash_required": true,
+    "hash_algorithm": "sha256",
+    "source_uri_required": true,
+    "retrieval_timestamp_required": true,
+    "all_revisions_retained": true,
+    "silent_overwrite_allowed": false,
+    "secondary_source_fill_allowed": false,
+    "secondary_source_diagnostic_only": true
+  },
+  "selection_policy": {
+    "point_in_time_only": true,
+    "missing_value_imputation_allowed": false,
+    "cross_sectional_imputation_allowed": false,
+    "neutral_fill_allowed": false,
+    "interpolation_allowed": false,
+    "ambiguous_fact_eligible": false,
+    "unsupported_template_eligible": false,
+    "stale_observation_eligible": false,
+    "consolidated_preferred_where_methodology_requires": true,
+    "standalone_fallback_must_be_explicit": true
+  },
+  "allowed_selection_statuses": [
+    "eligible_selected",
+    "eligible_not_selected_later_revision",
+    "after_cutoff",
+    "missing",
+    "source_route_unavailable",
+    "archive_not_found",
+    "ambiguous",
+    "unsupported_template",
+    "stale",
+    "methodology_incompatible",
+    "withheld_by_policy"
+  ],
+  "methodology_regimes": {
+    "regime_id_required_every_row": true,
+    "current_definition_and_long_vintage_tracks_separate": true,
+    "hindsight_rewrite_to_later_definition_allowed": false,
+    "ex_post_level_stitching_allowed": false,
+    "regime_break_manifest_required": true
+  },
+  "transformations": {
+    "raw_values_preserved": true,
+    "transformed_values_must_reference_version": true,
+    "signed_losses_preserved": true,
+    "scale_and_unit_normalization_auditable": true,
+    "transformation_may_not_depend_on_future_outcomes": true
+  },
+  "outcome_panel_required_columns": [
+    "decision_id",
+    "return_start_timestamp",
+    "return_end_timestamp",
+    "equity_total_return",
+    "debt_total_return",
+    "equity_source_id",
+    "debt_source_id",
+    "equity_source_sha256",
+    "debt_source_sha256",
+    "implementation_regime_id"
+  ],
+  "manifest": {
+    "panel_version_required": true,
+    "builder_commit_sha_required": true,
+    "row_count_required": true,
+    "date_range_required": true,
+    "field_coverage_required": true,
+    "regime_counts_required": true,
+    "missing_status_counts_required": true,
+    "source_hash_manifest_required": true,
+    "output_file_sha256_required": true
+  },
+  "certification_gates": {
+    "duplicate_observation_id_allowed": false,
+    "selected_row_without_source_hash_allowed": false,
+    "selected_row_after_decision_cutoff_allowed": false,
+    "selected_ambiguous_row_allowed": false,
+    "selected_row_without_methodology_regime_allowed": false,
+    "selected_row_without_transformation_version_allowed": false,
+    "silent_missing_row_drop_allowed": false
+  },
+  "promotion_effect": "none; panel certification is data-integrity evidence only",
+  "automatic_parameter_changes": false
+}

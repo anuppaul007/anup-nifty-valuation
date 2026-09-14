@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "policy_id": "implementation-cost-tax-policy-v1",
+  "research_only": true,
+  "live_authority": "none",
+  "primary_trading_friction": {
+    "one_way_bps_on_traded_notional": 15,
+    "sensitivities_bps": [10, 25],
+    "charged_on": "actual traded notional only"
+  },
+  "embedded_cost_rule": {
+    "actual_fund_nav": "TER and ordinary portfolio-level tracking effects already reflected in NAV must not be charged a second time.",
+    "clean_index_return": "When a clean index/benchmark return is used, map to a specified implementation vehicle and add only costs not already embedded in the return series.",
+    "double_counting_prohibited": true
+  },
+  "tax_profile_rule": {
+    "universal_india_tax_assumption_prohibited": true,
+    "profile_must_name_investor_and_vehicle": true,
+    "historical_rules_by_effective_date_required": true,
+    "lot_aware_realization_required": true,
+    "holding_period_classification_required": true,
+    "grandfathering_and_transition_rules_explicit": true,
+    "loss_setoff_carryforward_assumptions_explicit": true,
+    "surcharge_cess_assumptions_explicit": true,
+    "dividend_or_distribution_treatment_explicit": true,
+    "source_citations_required": true
+  },
+  "reporting": {
+    "pre_tax_net_of_cost_required": true,
+    "after_tax_required_for_each_claimed_taxable_profile": true,
+    "tax_paid_by_period_required": true,
+    "realized_gain_loss_ledger_required": true,
+    "turnover_required": true,
+    "terminal_wealth_required": true
+  },
+  "claim_gates": {
+    "generic_timing_claim_uses_protocol_economic_hurdle_after_primary_non_tax_costs": true,
+    "taxable_implementation_claim_requires_after_tax_residual_cagr_pp_per_year_min": 0.8,
+    "taxable_implementation_claim_requires_positive_after_tax_residual": true,
+    "incomplete_tax_engine_may_support_promotion": false,
+    "favorable_tax_profile_selection_after_outcomes_allowed": false
+  },
+  "debt_vehicle_rule": {
+    "primary_role": "low-duration defensive dry powder",
+    "selection_based_on_backtest_return_allowed": false,
+    "credit_or_duration_risk_must_be_disclosed": true,
+    "vehicle_change_requires_implementation_regime_id": true
+  },
+  "automatic_parameter_changes": false
+}
