@@ -1,5 +1,6 @@
 from pathlib import Path
 import importlib.util
+import json
 import sys
 import pytest
 
@@ -98,6 +99,23 @@ def test_policy_contains_competing_candidates_before_target_fit():
         "bank_post_tax_parent_adjusted_profit",
     ]
     assert p["annual_net_worth_candidates"]["BANKING"][0]["status"] == "candidate_not_yet_authorized"
+
+
+def test_development_error_hurdle_reuses_existing_preregistered_limits():
+    prior = json.loads((ROOT / "recent_reconstruction_policy_v1.json").read_text(encoding="utf-8"))
+    old = prior["predeclared_holdout_tolerance"]
+    gate = sem.POLICY["development_candidate_reproduction_gate"]
+    assert gate["months_required"] == 6
+    assert gate["full_constituent_completeness_required"] is True
+    for key in (
+        "per_month_pe_relative_error_max_pct",
+        "per_month_pb_relative_error_max_pct",
+        "per_month_dividend_yield_abs_error_max_pp",
+        "median_pe_relative_error_max_pct",
+        "median_pb_relative_error_max_pct",
+        "median_dividend_yield_abs_error_max_pp",
+    ):
+        assert gate[key] == old[key]
 
 
 def test_module_has_no_index_ratio_or_holdout_fetch_authority():
