@@ -5,6 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 P = json.loads((ROOT / "institutional_validation_protocol_v1.json").read_text(encoding="utf-8"))
 V = json.loads((ROOT / "validation_policy.json").read_text(encoding="utf-8"))
 R = json.loads((ROOT / "historical_regime_policy_v1.json").read_text(encoding="utf-8"))
+D = json.loads((ROOT / "point_in_time_panel_spec_v1.json").read_text(encoding="utf-8"))
 
 
 def test_protocol_has_zero_live_authority():
@@ -82,3 +83,23 @@ def test_current_definition_and_long_vintage_claims_are_separate():
     assert R["long_vintage_track"]["regime_specific_results_required"] is True
     assert "validated timing residual" in R["claim_boundary"]["neither_alone_may_support"]
     assert R["automatic_parameter_changes"] is False
+
+
+def test_point_in_time_panel_contract_fails_closed():
+    assert D["spec_id"] == "point-in-time-panel-v1"
+    assert D["research_only"] is True
+    assert D["live_authority"] == "none"
+    assert D["availability_policy"]["after_cutoff_use_allowed"] is False
+    assert D["availability_policy"]["future_revision_backfill_allowed"] is False
+    assert D["source_integrity"]["raw_bytes_hash_required"] is True
+    assert D["source_integrity"]["secondary_source_fill_allowed"] is False
+    assert D["selection_policy"]["missing_value_imputation_allowed"] is False
+    assert D["selection_policy"]["neutral_fill_allowed"] is False
+    assert D["selection_policy"]["ambiguous_fact_eligible"] is False
+    assert D["methodology_regimes"]["hindsight_rewrite_to_later_definition_allowed"] is False
+    assert D["methodology_regimes"]["ex_post_level_stitching_allowed"] is False
+    assert D["certification_gates"]["selected_row_after_decision_cutoff_allowed"] is False
+    assert D["certification_gates"]["selected_row_without_source_hash_allowed"] is False
+    assert D["separation_of_concerns"]["join_rule"].startswith("Signal and outcome panels may be joined")
+    assert D["promotion_effect"].startswith("none")
+    assert D["automatic_parameter_changes"] is False
