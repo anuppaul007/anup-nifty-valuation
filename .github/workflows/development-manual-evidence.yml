@@ -1,0 +1,38 @@
+name: Development manual evidence
+
+on:
+  pull_request:
+    paths:
+      - "development_manual_evidence/**"
+      - "scripts/development_manual_evidence.py"
+      - "scripts/development_accounting_semantics.py"
+      - "tests/test_development_manual_evidence.py"
+      - ".github/workflows/development-manual-evidence.yml"
+  push:
+    branches: [main]
+    paths:
+      - "development_manual_evidence/**"
+      - "scripts/development_manual_evidence.py"
+      - "scripts/development_accounting_semantics.py"
+      - "tests/test_development_manual_evidence.py"
+      - ".github/workflows/development-manual-evidence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Validate controlled first-party evidence bridge
+        run: python scripts/development_manual_evidence.py
+      - name: Test manual evidence fail-closed rules
+        run: python -m unittest tests.test_development_manual_evidence -v
