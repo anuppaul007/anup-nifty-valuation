@@ -37,7 +37,7 @@ jobs:
           python scripts/development_xbrl_tag_inventory.py
           cp data/development_xbrl_tag_inventory.json /tmp/xbrl_sweep_b.json
           python - <<'PY'
-          import json, shutil
+          import json
           a=json.load(open('/tmp/xbrl_sweep_a.json'))
           b=json.load(open('/tmp/xbrl_sweep_b.json'))
           best=a if a['xbrl_files_ok'] >= b['xbrl_files_ok'] else b
@@ -81,6 +81,7 @@ jobs:
           assert x['selected_sources'] >= 250
           assert x['xbrl_files_ok'] / x['selected_sources'] >= 0.98
           assert x['template_family_counts'].get('BANKING', 0) > 0
+          assert x['template_family_counts'].get('NBFC', 0) > 0
           assert x['template_family_counts'].get('INDAS', 0) > 0
           allowed_indus_periods={'2022-12-31','2023-03-31','2023-06-30'}
           for f in x['failures']:
