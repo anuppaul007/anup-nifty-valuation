@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "policy_id": "development-accounting-semantics-v1",
   "research_only": true,
   "live_authority": "none",
@@ -45,13 +45,13 @@
         "candidate_id": "indas_profit_for_period",
         "local_name": "ProfitLossForPeriod",
         "context_ref": "OneD",
-        "rationale": "Broad period profit concept with current-period coverage across the retrieved development IndAS inventory."
+        "rationale": "Broad period profit concept with current-period coverage across the retrieved ordinary-company IndAS inventory."
       },
       {
         "candidate_id": "indas_parent_attributable_profit",
         "local_name": "ProfitOrLossAttributableToOwnersOfParent",
         "context_ref": "OneD",
-        "rationale": "Parent-equity-holder profit concept; retained as a separate candidate because it is not present in every retrieved IndAS filing. Missing facts make this candidate unavailable for that constituent-period rather than triggering an outcome-driven fallback."
+        "rationale": "Parent-equity-holder profit concept; retained as a separate candidate because it is not present in every retrieved filing. Missing facts make this candidate unavailable for that constituent-period rather than triggering an outcome-driven fallback."
       }
     ],
     "BANKING": [
@@ -66,6 +66,20 @@
         "context_ref": "OneD"
       }
     ],
+    "NBFC": [
+      {
+        "candidate_id": "nbfc_profit_for_period",
+        "local_name": "ProfitLossForPeriod",
+        "context_ref": "OneD",
+        "rationale": "Present in every retrieved NBFC_INDAS development XBRL in the discovery inventory."
+      },
+      {
+        "candidate_id": "nbfc_parent_attributable_profit",
+        "local_name": "ProfitOrLossAttributableToOwnersOfParent",
+        "context_ref": "OneD",
+        "rationale": "Retained as a separate parent-attributable candidate; missing in at least one retrieved NBFC filing, so no automatic fallback is allowed."
+      }
+    ],
     "candidate_selection_rule": "No candidate may be promoted by looking at holdout targets. Development targets may be used only after all candidate definitions, completeness rules and comparison tolerances are frozen. If no candidate meets the preregistered development reproduction hurdle, the mapping remains unresolved."
   },
   "annual_net_worth_candidates": {
@@ -74,32 +88,60 @@
         "candidate_id": "indas_parent_equity",
         "local_name": "EquityAttributableToOwnersOfParent",
         "source": "latest eligible annual filing",
-        "context_type": "instant_at_annual_period_end"
+        "context_type": "instant_at_annual_period_end",
+        "status": "candidate_not_yet_authorized"
       }
     ],
     "BANKING": [
       {
-        "candidate_id": "bank_capital_plus_reserves",
-        "components": ["Capital", "ReservesAndSurplus"],
+        "candidate_id": "bank_paidup_plus_reserve_ex_revaluation",
+        "components": ["PaidUpValueOfEquityShareCapital", "ReserveExcludingRevaluationReserves"],
         "source": "latest eligible annual filing",
-        "context_type": "annual balance-sheet instant",
+        "component_contexts": ["OneD_or_equivalent_annual_paidup_capital", "FourD_annual_reserve_excluding_revaluation"],
+        "status": "candidate_not_yet_authorized",
+        "rationale": "The retrieved Mar-2023 bank annual XBRLs consistently expose ReserveExcludingRevaluationReserves and paid-up capital, while generic IndAS parent-equity is absent."
+      },
+      {
+        "candidate_id": "bank_capital_plus_reserves_and_surplus",
+        "components": ["Capital", "ReservesAndSurplus"],
+        "source": "latest eligible annual balance-sheet filing when both total-company components are explicitly present",
+        "context_type": "annual_balance_sheet_instant",
+        "status": "candidate_not_yet_authorized",
+        "rationale": "NSE rendered banking balance sheets expose Capital and Reserves and surplus, but the selected legacy annual XBRLs do not expose this pair uniformly; this remains a separate candidate rather than an automatic substitute."
+      }
+    ],
+    "NBFC": [
+      {
+        "candidate_id": "nbfc_paidup_plus_reserve_ex_revaluation",
+        "components": ["PaidUpValueOfEquityShareCapital", "ReserveExcludingRevaluationReserves"],
+        "source": "latest eligible annual NBFC filing",
+        "component_contexts": ["OneD_or_equivalent_annual_paidup_capital", "FourD_annual_reserve_excluding_revaluation"],
+        "status": "candidate_not_yet_authorized",
+        "rationale": "The BAJAJFINSV Mar-2023 NBFC_INDAS annual filing lacks EquityAttributableToOwnersOfParent but exposes paid-up capital and ReserveExcludingRevaluationReserves."
+      },
+      {
+        "candidate_id": "nbfc_parent_equity_if_explicit",
+        "local_name": "EquityAttributableToOwnersOfParent",
+        "source": "latest eligible annual NBFC filing only when explicitly present",
+        "context_type": "instant_at_annual_period_end",
         "status": "candidate_not_yet_authorized"
       }
     ],
-    "rule": "Bank net worth is a separate semantic mapping problem and must not inherit the ordinary IndAS equity tag. Any minority-interest or other-equity treatment must be preregistered before development target comparison."
+    "rule": "Annual net worth is template-specific. Banking and NBFC filings must not inherit the ordinary-company IndAS equity mapping. None of the banking/NBFC book candidates is authorized in this stage; minority-interest, revaluation-reserve and other-equity treatment must be resolved from source semantics before holdout use."
   },
   "market_capitalisation_candidates": {
     "candidate_a": "Outstanding shares = PaidUpValueOfEquityShareCapital / FaceValueOfEquityShareCapital; full-company market cap = outstanding shares * close price.",
     "candidate_b": "Where candidate_a facts are unavailable, EquityShareCapital / FaceValueOfEquityShareCapital may be evaluated as a separate preregistered development candidate; it is not an automatic fallback.",
-    "corporate_action_rule": "Share-count continuity must be reconciled for splits, bonuses, rights, mergers/demergers and other capital changes before a company-month is eligible.",
+    "corporate_action_rule": "Share-count continuity must be independently reconciled against point-in-time official corporate actions and adjacent filings for splits, bonuses, rights, mergers/demergers and other capital changes before a company-month is eligible. A populated XBRL share-capital tag is not sufficient by itself.",
+    "anomaly_rule": "Orders-of-magnitude share-count discontinuities without an official capital action are filing/tag anomalies and fail closed. The observed ICICIBANK Mar/Jun-2023 implied-share collapse is a known development defect to reconcile before numerical reconstruction.",
     "index_weight_rule": "Published index weights already contain free-float/capping effects; they may weight company earnings/book yields only when the company market-cap basis matches the accounting numerator basis."
   },
   "template_boundaries": {
-    "INDAS": "supported for semantic discovery",
-    "BANKING": "supported for semantic discovery with separate bank mappings",
-    "LIFE_INSURANCE": "separate extraction path required; do not force INDAS or BANKING mappings",
+    "INDAS": "ordinary-company IndAS mapping only",
+    "BANKING": "separate banking mapping",
+    "NBFC": "separate NBFC_INDAS mapping; filenames containing both NBFC and INDAS are NBFC, not generic INDAS",
+    "LIFE_INSURANCE": "separate extraction path required; do not force INDAS, NBFC or BANKING mappings",
     "GENERAL_INSURANCE": "separate extraction path required",
-    "NBFC": "must be separately classified if encountered; do not assume INDAS equivalence without evidence",
     "issuer_pdf_exception": "NESTLEIND remains a separately governed source/retrieval exception and is not silently converted into XBRL coverage"
   },
   "normalisation_rules": {
@@ -126,7 +168,8 @@
     "XBRL inventory/retrieval stage passes its own gate or an explicitly versioned frozen-manifest replacement is approved without using valuation outcomes.",
     "Every numerical candidate has deterministic concept, context, unit, sign, scale and duplicate handling.",
     "Consolidated-versus-standalone selection follows official Nifty methodology and is point-in-time.",
-    "Bank, insurer and ordinary-company mappings remain separate where templates differ.",
+    "Bank, NBFC, insurer and ordinary-company mappings remain separate where templates differ.",
+    "Full-company share count passes official corporate-action/capital-continuity checks rather than relying on tag presence alone.",
     "No holdout P/E/P/B/dividend-yield target has been fetched."
   ],
   "promotion_effect": "none"
