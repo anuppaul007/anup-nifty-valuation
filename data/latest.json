@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
   "model_version": "3.13-reliability-1",
-  "generated_at": "2026-09-14T08:49:22+00:00",
+  "generated_at": "2026-09-14T14:36:18+00:00",
   "macro_stale": false,
   "macro_partial": false,
   "nifty": {
@@ -35,7 +35,7 @@
     "usd_3m_pct": 0.06061667362635692,
     "fed_assets_6m_pct": 1.4184489999313987,
     "vix": 15.84,
-    "brent_3m_pct": 23.588684349249256,
+    "brent_3m_pct": 25.088738776281126,
     "india_reer_bis": 90.37,
     "usd_inr_3m_pct": 0.17928493769474585,
     "india_us_10y_spread": 2.0111,
@@ -78,9 +78,9 @@
         "status": "live"
       },
       "brent_3m_pct": {
-        "value": 23.588684349249256,
-        "z": 1.0708558197186229,
-        "score": -0.613119018988206,
+        "value": 25.088738776281126,
+        "z": 1.1442042102698005,
+        "score": -0.6427249060314493,
         "asof": "2026-09-14",
         "observations": 755,
         "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
@@ -145,7 +145,7 @@
     },
     "blocks": {
       "global_liquidity": -0.1511669019371614,
-      "india_external_carry": -0.09577935991775341,
+      "india_external_carry": -0.10466112603072641,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null,
       "india_domestic": 0.057009151848864285
@@ -172,7 +172,7 @@
       "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
     },
-    "score": -0.05370930901777275,
+    "score": -0.055929750546016004,
     "active_block_weight": 1.0,
     "block_weight_detail": {
       "global_liquidity": {
