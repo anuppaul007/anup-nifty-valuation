@@ -3,6 +3,7 @@ import json
 
 ROOT = Path(__file__).resolve().parents[1]
 P = json.loads((ROOT / "institutional_validation_protocol_v1.json").read_text(encoding="utf-8"))
+V = json.loads((ROOT / "validation_policy.json").read_text(encoding="utf-8"))
 
 
 def test_protocol_has_zero_live_authority():
@@ -55,3 +56,14 @@ def test_claim_language_is_conservative():
     assert P["current_state"]["v3_13_changed_by_protocol"] is False
     assert "independent review" in P["claims_language"]["validated_timing_or_institutional_validation"].lower()
     assert "confirmation" in P["claims_language"]["validated_timing_or_institutional_validation"].lower()
+
+
+def test_legacy_validation_policy_is_harmonized():
+    assert V["protocol_version"] == "2026-09-14-v4"
+    assert V["controlling_institutional_protocol"] == "institutional_validation_protocol_v1.json"
+    assert "Exposure-matched" in V["primary_metric"]
+    assert "Maximum daily drawdown" in V["primary_risk_metric"]
+    assert V["macro_governance"]["live_budget_pp"] == 0
+    assert V["prospective_evidence_purpose"]["minimum_completed_months_before_promotion_review"] == 60
+    assert "confirmation-eligible only" in V["promotion_rule"]
+    assert V["automatic_parameter_changes"] is False
