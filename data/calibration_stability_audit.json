@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-14T06:28:09+00:00",
+  "generated_at": "2026-09-14T06:46:06+00:00",
   "research_only": true,
   "model_version": "3.13-reliability-1",
   "question": "How fragile is today\u2019s policy allocation to deterministic re-estimation of lens centers/scales within the short current-definition era?",
@@ -12,7 +12,7 @@
     "historical_yield_caveat": "Two calendar-month lag; RBI archived SGL tenor yields before OECD coverage, then OECD monthly long-term yields. Series definitions differ. Publication times and historical vintages are not verified."
   },
   "current_packet": {
-    "generated_at": "2026-09-14T06:28:09+00:00",
+    "generated_at": "2026-09-14T06:46:06+00:00",
     "nifty_date": "2026-09-11",
     "level": 23398.1,
     "pe": 19.78,
