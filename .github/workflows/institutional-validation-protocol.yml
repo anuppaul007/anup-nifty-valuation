@@ -6,6 +6,7 @@ on:
     paths:
       - 'INSTITUTIONAL_VALIDATION_PROTOCOL_v1.md'
       - 'institutional_validation_protocol_v1.json'
+      - 'validation_policy.json'
       - 'tests/test_institutional_validation_protocol_v1.py'
       - '.github/workflows/institutional-validation-protocol.yml'
 
@@ -30,6 +31,7 @@ jobs:
           python - <<'PY'
           import json
           p=json.load(open('institutional_validation_protocol_v1.json'))
+          v=json.load(open('validation_policy.json'))
           assert p['protocol_id'] == 'institutional-validation-protocol-v1'
           assert p['research_only'] is True
           assert p['live_authority'] == 'none'
@@ -45,6 +47,9 @@ jobs:
           assert p['prospective_confirmation']['minimum_completed_months_before_promotion_review'] == 60
           assert p['overlays']['macro_live_authority_pp'] == 0
           assert p['automatic_parameter_changes'] is False
+          assert v['controlling_institutional_protocol'] == 'institutional_validation_protocol_v1.json'
+          assert v['macro_governance']['live_budget_pp'] == 0
+          assert v['prospective_evidence_purpose']['minimum_completed_months_before_promotion_review'] == 60
           print(json.dumps({
             'protocol_id':p['protocol_id'],
             'minimum_months':p['sample']['minimum_completed_months_for_validation_language_review'],
