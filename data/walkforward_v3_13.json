@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
   "model_version": "3.13-reliability-1",
-  "updated_at": "2026-09-14T06:46:07+00:00",
+  "updated_at": "2026-09-14T06:51:54+00:00",
   "candidate_macro_caps_pp": [
     0,
     3,
@@ -45,7 +45,7 @@
       "research_only": true,
       "month": "2026-09",
       "asof": "2026-09-11",
-      "generated_at": "2026-09-14T06:46:06+00:00",
+      "generated_at": "2026-09-14T06:51:53+00:00",
       "nifty_level": 23398.1,
       "pe": 19.78,
       "pb": 2.83,
@@ -56,7 +56,7 @@
       "overlay_authority": 1,
       "earnings_adjustment_pp": -1.7572628006703377,
       "macro_adjustment_pp": 0.0,
-      "macro_shadow_adjustment_pp": -0.31153242616358995,
+      "macro_shadow_adjustment_pp": -0.31186112437835234,
       "macro_context_eligible": true,
       "trend_adjustment_pp": -20,
       "trend_risk_off": true,
@@ -65,22 +65,22 @@
       "trend_sma10": 24503.829999999998,
       "empirical_valuation_cheapness": 70.37037037037037,
       "earnings_score": -0.2928771334450563,
-      "macro_score": -0.05192207102726499,
+      "macro_score": -0.05197685406305872,
       "domestic_score": 0.057009151848864285,
       "macro_blocks": {
         "global_liquidity": -0.1511669019371614,
-        "india_external_carry": -0.08863040795572236,
+        "india_external_carry": -0.08884954009889728,
         "china_industrial": 0.006666567902989752,
         "india_domestic": 0.057009151848864285
       },
       "live_equity_target": 66.70253395990869,
       "candidate_equity_targets": {
         "0": 66.70253395990869,
-        "3": 66.5467677468269,
-        "6": 66.3910015337451,
-        "9": 66.2352353206633,
-        "12": 66.07946910758152,
-        "15": 65.92370289449971
+        "3": 66.54660339771952,
+        "6": 66.39067283553034,
+        "9": 66.23474227334117,
+        "12": 66.07881171115199,
+        "15": 65.92288114896282
       },
       "candidate_curve_targets": {
         "0.6": 58.27613357538256,
