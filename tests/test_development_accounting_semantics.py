@@ -70,7 +70,6 @@ def test_ttm_requires_four_consecutive_current_period_quarters():
         {"period_end": "2023-09-30", "context_ref": "OneD", "value": "7"},
     ]
     assert sem.ttm_from_current_quarters(rows) == 20
-
     broken = [dict(r) for r in rows]
     broken[2]["period_end"] = "2023-09-30"
     with pytest.raises(sem.SemanticError):
@@ -98,7 +97,21 @@ def test_policy_contains_competing_candidates_before_target_fit():
         "bank_profit_for_period",
         "bank_post_tax_parent_adjusted_profit",
     ]
-    assert p["annual_net_worth_candidates"]["BANKING"][0]["status"] == "candidate_not_yet_authorized"
+    assert [x["candidate_id"] for x in p["profit_candidates"]["NBFC"]] == [
+        "nbfc_profit_for_period",
+        "nbfc_parent_attributable_profit",
+    ]
+    assert all(x["status"] == "candidate_not_yet_authorized" for x in p["annual_net_worth_candidates"]["BANKING"])
+    assert all(x["status"] == "candidate_not_yet_authorized" for x in p["annual_net_worth_candidates"]["NBFC"])
+    assert "NBFC" in p["template_boundaries"]
+    assert "not generic INDAS" in p["template_boundaries"]["NBFC"]
+
+
+def test_share_count_requires_external_continuity_and_known_anomaly_fails_closed():
+    m = sem.POLICY["market_capitalisation_candidates"]
+    assert "independently reconciled" in m["corporate_action_rule"]
+    assert "ICICIBANK" in m["anomaly_rule"]
+    assert "fail closed" in m["anomaly_rule"]
 
 
 def test_development_error_hurdle_reuses_existing_preregistered_limits():
@@ -123,5 +136,6 @@ def test_module_has_no_index_ratio_or_holdout_fetch_authority():
     assert "aggregate_from_point_in_time_inputs" not in text
     assert "niftyindices.com/Index_Dashboard" not in text
     result = sem.validate_policy()
+    assert "NBFC" in result["book_candidate_families"]
     assert result["holdout_target_fetch_count"] == 0
     assert result["ratios_computed"] is False
