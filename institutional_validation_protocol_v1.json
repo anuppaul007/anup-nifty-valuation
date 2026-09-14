@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "protocol_id": "institutional-validation-protocol-v1",
+  "status": "preregistered research governance; zero automatic live authority",
+  "research_only": true,
+  "live_authority": "none",
+  "live_model_changed": false,
+  "live_allocation_changed": false,
+  "primary_claim": "A valuation-core-only equity/debt allocation rule produces a positive and economically material timing residual after equity-exposure matching, realistic implementation frictions, honest multiple-testing correction and certified point-in-time inputs.",
+  "claim_separation": [
+    "data_integrity",
+    "valuation_anchor_quality",
+    "timing_efficacy",
+    "insurance_value",
+    "implementation_value",
+    "operational_reliability"
+  ],
+  "sample": {
+    "target_completed_months": 180,
+    "minimum_completed_months_for_validation_language_review": 120,
+    "shorter_sample_status": "research_only",
+    "point_in_time_required": true,
+    "required_fields": [
+      "observation_or_economic_period_date",
+      "first_available_or_conservative_availability_date",
+      "source_identity_and_hash",
+      "methodology_regime",
+      "transformation_version",
+      "missing_stale_ambiguous_status"
+    ]
+  },
+  "outcome_matrix": {
+    "frequency": "monthly decision returns",
+    "equity": "NIFTY 50 total-return representation with a separately modelled investable implementation layer",
+    "debt_selection_rule": "Freeze a low-duration sovereign/very-high-quality dry-powder series before strategy-return inspection; selection may not be return-optimized.",
+    "rebalance_band_sensitivities_pp": [0, 5, 10],
+    "primary_band_must_be_frozen_before_outcomes": true
+  },
+  "costs": {
+    "primary_one_way_bps_on_traded_notional": 15,
+    "sensitivity_one_way_bps": [10, 25],
+    "include_ter_where_applicable": true,
+    "include_tracking_difference_where_applicable": true,
+    "charge_cost_only_on_actual_trades": true
+  },
+  "tax": {
+    "universal_india_after_tax_return_prohibited": true,
+    "pre_tax_net_of_cost_results_required": true,
+    "after_tax_requires_versioned_investor_vehicle_profile": true,
+    "historical_effective_date_rules_required": true,
+    "lot_aware_realized_gains_required": true,
+    "incomplete_tax_engine_cannot_be_sole_promotion_basis": true
+  },
+  "nulls": [
+    "ex_post_static_weight_equal_to_full_sample_mean_equity_exposure_diagnostic",
+    "information_available_expanding_mean_equity_null",
+    "fixed_60_40_same_cost_convention",
+    "nifty_50_total_return_buy_and_hold"
+  ],
+  "primary_effect": {
+    "economic_metric": "annualized geometric return difference versus ex-post exposure-matched static comparator",
+    "economic_materiality_min_pp_per_year": 0.8,
+    "inferential_series": "paired monthly residual returns",
+    "primary_test": "dependence-aware paired block resampling/permutation with predeclared block-length rule and family-wise multiple-testing adjustment",
+    "familywise_one_sided_alpha_max": 0.05,
+    "paired_block_bootstrap_95_lower_bound_must_exceed_zero": true,
+    "circular_shift_percentile_preferred_min": 95
+  },
+  "mandatory_companion_metrics": [
+    "residual_sharpe",
+    "information_ratio",
+    "strategy_and_comparator_cagr",
+    "maximum_daily_drawdown",
+    "calmar",
+    "ulcer_index",
+    "monthly_expected_shortfall_95",
+    "longest_time_under_water",
+    "average_equity_exposure",
+    "equity_exposure_distribution",
+    "annualized_one_way_turnover",
+    "trade_count_and_size",
+    "terminal_wealth_cost_tax_sensitivity"
+  ],
+  "dsr_pbo": {
+    "mandatory_diagnostics_when_estimable": true,
+    "hard_gate_only_after_adequacy_documented": true,
+    "preferred_dsr_probability_min_pct_when_decision_grade": 95,
+    "preferred_pbo_max_pct_when_decision_grade": 10,
+    "not_adequate_label": "not_decision_grade"
+  },
+  "trial_family": {
+    "maximum_preregistered_variants_first_certified_panel_family": 6,
+    "comparable_existing_lineage_consumes_family_count": true,
+    "labels_do_not_exempt_trials": ["control", "bug_fix", "research", "production"],
+    "planned_candidate_themes": [
+      "equal_weight_three_lens_earnings_yield_spread_profitability_adjusted_log_pb_dividend_yield",
+      "earnings_yield_spread_dominant_three_lens",
+      "two_lens_ablation",
+      "current_v3_13_valuation_core_control",
+      "at_most_one_preregistered_smoothing_variant"
+    ],
+    "exact_formulas_must_be_frozen_separately_before_outcomes": true
+  },
+  "core_design": {
+    "prefer_fewer_less_redundant_lenses": true,
+    "redundancy_diagnostics_required": [
+      "cross_lens_correlation",
+      "condition_or_effective_rank",
+      "economic_shared_denominator_explanation"
+    ],
+    "pb_profitability_correction_may_not_be_optimized_on_returns": true,
+    "valuation_core_only_baseline_required": true
+  },
+  "overlays": {
+    "trend": "insurance unless independently validated; premium and protection reported separately",
+    "earnings": "separate challenger with own PIT evidence and trial count",
+    "macro_live_authority_pp": 0
+  },
+  "historical_pass_effect": "confirmation_eligible_only",
+  "production_promotion_requires": [
+    "independent_reimplementation",
+    "no_unresolved_critical_or_high_finding_affecting_claim",
+    "reproduction_within_declared_tolerance",
+    "untouched_confirmation_source"
+  ],
+  "prospective_confirmation": {
+    "minimum_completed_months_before_promotion_review": 60,
+    "legacy_developed_rules_prefer_prospective_confirmation": true,
+    "code_withheld_historical_segment_not_automatically_untouched": true
+  },
+  "independent_review": {
+    "another_ai_or_author_duplicate_is_not_independent": true,
+    "reviewer_must_reimplement_core_and_residual_evaluator": true
+  },
+  "claims_language": {
+    "valuation_anchor": "permitted when calculation is reproducible and internally coherent",
+    "experimental_allocation_rule": "permitted while efficacy remains unproven",
+    "historical_timing_residual": "requires certified historical matrix to clear preregistered gates with model-selection limitations disclosed",
+    "insurance_overlay": "risk brake priced separately from alpha",
+    "validated_timing_or_institutional_validation": "reserved for historical gates plus independent review plus confirmation"
+  },
+  "failure_conclusion": "Current valuation timing residual is not distinguishable from noise after realistic frictions under the frozen protocol; retain the model as a transparent valuation anchor and continue prospective evidence collection.",
+  "current_state": {
+    "historical_timing_promotion_eligible": false,
+    "current_definition_reconstruction_is_data_lineage_not_efficacy_validation": true,
+    "trend_is_validated_alpha": false,
+    "macro_live_authority_pp": 0,
+    "v3_13_changed_by_protocol": false
+  },
+  "automatic_parameter_changes": false
+}
