@@ -34,7 +34,27 @@ jobs:
       - name: Test multi-asset safeguards
         run: python -m unittest tests.test_multiasset -v
       - name: Build Gold Silver and BTC research layer
-        run: python scripts/multiasset.py || true
+        run: python scripts/multiasset.py
+      - name: Verify packet is live and synchronized to current core
+        run: |
+          python - <<'PY'
+          import json
+          latest = json.load(open('data/latest.json', encoding='utf-8'))
+          packet = json.load(open('data/multiasset.json', encoding='utf-8'))
+          assert packet.get('status') == 'live', packet.get('error') or 'multi-asset packet is not live'
+          assert packet.get('source_latest_generated_at') == latest.get('generated_at'), (
+              f"multi-asset/core snapshot mismatch: {packet.get('source_latest_generated_at')} != {latest.get('generated_at')}"
+          )
+          allocation = packet.get('core_allocation') or {}
+          total = sum(float(allocation[k]) for k in ('equity_pct','debt_pct','gold_pct','silver_pct'))
+          assert abs(total - 100.0) < 1e-8, f'core allocation total is {total}'
+          print(json.dumps({
+              'status': packet['status'],
+              'source_latest_generated_at': packet['source_latest_generated_at'],
+              'latest_generated_at': latest['generated_at'],
+              'core_total_pct': total,
+          }, indent=2))
+          PY
       - name: Commit published multi-asset packet
         run: |
           if [ -z "$(git status --porcelain -- data/multiasset.json)" ]; then
