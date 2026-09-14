@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "evidence_id": "nestleind-development-manual-evidence-v1",
+  "research_only": true,
+  "live_authority": "none",
+  "holdout_target_fetch_count": 0,
+  "symbol": "NESTLEIND",
+  "isin_pre_split": "INE239A01016",
+  "isin_post_split": "INE239A01024",
+  "unit": "INR_million",
+  "purpose": "Controlled first-party evidence bridge for the six visible development months where issuer PDF retrieval is blocked in GitHub Actions. Values are frozen from the already-preregistered Nestle India result packets before any holdout inspection. This file does not by itself upgrade machine-reproducible source coverage or authorize a development pass.",
+  "source_policy": "development-residual-source-resolver-v1.2",
+  "quarter_facts": [
+    {
+      "period_end": "2022-09-30",
+      "publication_date": "2022-10-19",
+      "source_id": "nestle-q3-2022",
+      "source_url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2022-10/Outcome%20of%20Board%20Meeting_19.10.2022.pdf",
+      "profit_for_period": 6683.4,
+      "paid_up_equity_capital": 964.2,
+      "face_value_rupees": 10.0,
+      "shares_outstanding": 96415716,
+      "source_location": "financial-results table, page 2 of PDF"
+    },
+    {
+      "period_end": "2022-12-31",
+      "publication_date": "2023-02-16",
+      "source_id": "nestle-fy2022-q4",
+      "source_url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2023-02/Outcome-Board-Meeting-result.pdf",
+      "profit_for_period": 6280.6,
+      "paid_up_equity_capital": 964.2,
+      "face_value_rupees": 10.0,
+      "shares_outstanding": 96415716,
+      "audited_annual": true,
+      "annual_total_equity": 24591.7,
+      "annual_equity_share_capital": 964.2,
+      "annual_other_equity": 23627.5,
+      "source_location": "audited financial-results table page 4 and balance sheet page 5 of PDF"
+    },
+    {
+      "period_end": "2023-03-31",
+      "publication_date": "2023-04-25",
+      "source_id": "nestle-q1-2023",
+      "source_url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2023-04/BSEOutcomeofBM25042023Signed.pdf",
+      "profit_for_period": 7366.4,
+      "paid_up_equity_capital": 964.2,
+      "face_value_rupees": 10.0,
+      "shares_outstanding": 96415716,
+      "source_location": "financial-results table, page 2 of PDF"
+    },
+    {
+      "period_end": "2023-06-30",
+      "publication_date": "2023-07-27",
+      "source_id": "nestle-q2-2023",
+      "source_url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2023-07/BSE_Intimation_27072023_signed-v1.pdf",
+      "profit_for_period": 6983.4,
+      "paid_up_equity_capital": 964.2,
+      "face_value_rupees": 10.0,
+      "shares_outstanding": 96415716,
+      "source_location": "financial-results table, page 2 of PDF"
+    },
+    {
+      "period_end": "2023-09-30",
+      "publication_date": "2023-10-19",
+      "source_id": "nestle-q3-2023",
+      "source_url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2023-10/BSENSE19102023signed-v2.pdf",
+      "profit_for_period": 9080.8,
+      "paid_up_equity_capital": 964.2,
+      "face_value_rupees": 10.0,
+      "shares_outstanding": 96415716,
+      "source_location": "financial-results table, page 3 of PDF"
+    },
+    {
+      "period_end": "2023-12-31",
+      "publication_date": "2024-02-07",
+      "source_id": "nestle-q4-2023",
+      "source_url": "https://www.nestle.in/sites/g/files/pydnoa451/files/2024-02/Stock%20Exchange%20Intimation%20BSE%26amp%3B%20NSE%2007.02.2024.pdf",
+      "profit_for_period": 6556.1,
+      "paid_up_equity_capital": 964.2,
+      "face_value_rupees": 1.0,
+      "shares_outstanding": 964157160,
+      "audited_annual": false,
+      "source_location": "financial-results table, page 3 of PDF"
+    }
+  ],
+  "corporate_actions": [
+    {
+      "action": "share_split",
+      "record_date": "2024-01-05",
+      "effective_date": "2024-01-05",
+      "ratio_old_to_new": "1:10",
+      "old_face_value_rupees": 10.0,
+      "new_face_value_rupees": 1.0,
+      "old_shares": 96415716,
+      "new_shares": 964157160,
+      "official_nse_circular": "NSE/CML/59895 dated 2023-12-22",
+      "official_nse_url": "https://nsearchives.nseindia.com/content/circulars/CML59895.pdf",
+      "issuer_url": "https://www.nestle.in/media/specialannouncements/fixation-record-date-sub-division-split-equity-shares-company"
+    }
+  ],
+  "annual_book_rule": {
+    "development_months": ["2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02"],
+    "eligible_annual_period_end": "2022-12-31",
+    "eligible_total_equity": 24591.7,
+    "reason": "The 2023 transition financial year ran 15 months through 2024-03-31; the 2023-12 twelve-month result is unaudited and is not an eligible annual book source."
+  },
+  "ttm_profit_by_development_month": {
+    "2023-09": 27313.8,
+    "2023-10": 29711.2,
+    "2023-11": 29711.2,
+    "2023-12": 29711.2,
+    "2024-01": 29711.2,
+    "2024-02": 29986.7
+  },
+  "dividend_evidence_status": "not_frozen_here; exact rolling-12-month ex-date events remain a separate required source before NESTLEIND can be marked fully reconstructable",
+  "machine_reproducible_source_retrieval": false,
+  "controlled_manual_evidence": true,
+  "promotion_effect": "none"
+}
