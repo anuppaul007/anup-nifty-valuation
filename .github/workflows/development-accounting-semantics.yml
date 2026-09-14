@@ -1,0 +1,64 @@
+name: Development accounting semantics
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'development_accounting_semantics_policy_v1.json'
+      - 'scripts/development_accounting_semantics.py'
+      - 'tests/test_development_accounting_semantics.py'
+      - 'DEVELOPMENT_ACCOUNTING_SEMANTICS.md'
+      - '.github/workflows/development-accounting-semantics.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  semantics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt pytest
+      - name: Unit tests
+        run: pytest -q tests/test_development_accounting_semantics.py
+      - name: Validate preregistered semantics
+        run: python scripts/development_accounting_semantics.py
+      - name: Enforce zero live authority and sealed holdout
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('development_accounting_semantics_policy_v1.json'))
+          assert p['policy_id'] == 'development-accounting-semantics-v1'
+          assert p['research_only'] is True
+          assert p['live_authority'] == 'none'
+          assert p['live_model_changed'] is False
+          assert p['live_allocation_changed'] is False
+          assert p['holdout_target_fetch_count'] == 0
+          assert p['ratios_computed'] is False
+          assert p['scope']['development_months'] == ['2023-09','2023-10','2023-11','2023-12','2024-01','2024-02']
+          assert p['xbrl_column_semantics']['legacy_current_period_context'] == 'OneD'
+          assert p['xbrl_column_semantics']['legacy_ytd_current_period_context'] == 'FourD'
+          assert all(x['status'] == 'candidate_not_yet_authorized' for x in p['annual_net_worth_candidates']['BANKING'])
+          assert all(x['status'] == 'candidate_not_yet_authorized' for x in p['annual_net_worth_candidates']['NBFC'])
+          assert 'not generic INDAS' in p['template_boundaries']['NBFC']
+          assert 'ICICIBANK' in p['market_capitalisation_candidates']['anomaly_rule']
+          assert '2024-03 through 2026-08 remain sealed' == p['scope']['holdout_months']
+          print(json.dumps({
+            'policy_id':p['policy_id'],
+            'development_months':p['scope']['development_months'],
+            'current_period_context':p['xbrl_column_semantics']['legacy_current_period_context'],
+            'ytd_context':p['xbrl_column_semantics']['legacy_ytd_current_period_context'],
+            'indas_candidates':[x['candidate_id'] for x in p['profit_candidates']['INDAS']],
+            'bank_candidates':[x['candidate_id'] for x in p['profit_candidates']['BANKING']],
+            'nbfc_candidates':[x['candidate_id'] for x in p['profit_candidates']['NBFC']],
+            'bank_book_candidates':[x['candidate_id'] for x in p['annual_net_worth_candidates']['BANKING']],
+            'nbfc_book_candidates':[x['candidate_id'] for x in p['annual_net_worth_candidates']['NBFC']],
+            'holdout_target_fetch_count':p['holdout_target_fetch_count'],
+            'ratios_computed':p['ratios_computed'],
+          },indent=2))
+          PY
