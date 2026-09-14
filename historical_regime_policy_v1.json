@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "policy_id": "historical-methodology-regime-policy-v1",
+  "research_only": true,
+  "live_authority": "none",
+  "current_definition_track": {
+    "purpose": "Exact point-in-time reproduction of the current NIFTY valuation definitions.",
+    "legacy_ratio_backfill_allowed": false,
+    "neutral_fill_allowed": false,
+    "hindsight_scaling_allowed": false,
+    "promotion_effect": "data_lineage_confidence_only"
+  },
+  "long_vintage_track": {
+    "purpose": "Long-horizon timing evidence using certified published-vintage valuation observations with methodology-regime tags.",
+    "published_legacy_regimes_allowed": true,
+    "every_row_requires_methodology_regime": true,
+    "hindsight_rewrite_to_current_definition_allowed": false,
+    "ex_post_level_stitching_allowed": false,
+    "regime_aware_signal_calibration_required": true,
+    "regime_specific_results_required": true,
+    "pooled_result_requires_preregistered_stitching_rule": true,
+    "uncertified_breaks_or_release_rules_fail_closed": true
+  },
+  "claim_boundary": {
+    "current_definition_track_may_support": "current-definition reconstruction/data-lineage confidence",
+    "long_vintage_track_may_support": "historical valuation-timing evidence under published-vintage regimes",
+    "neither_alone_may_support": [
+      "validated timing residual",
+      "institutionally validated allocation"
+    ]
+  },
+  "automatic_parameter_changes": false
+}
