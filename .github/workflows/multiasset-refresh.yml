@@ -2,8 +2,11 @@ name: Refresh multi-asset research
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Refresh valuation data"]
+    types: [completed]
   schedule:
-    # Runs after the main weekday valuation refresh; also updates BTC over weekends.
+    # Backup/weekend refresh. Weekday synchronized refreshes are chained from the core valuation workflow.
     - cron: "0 14 * * *"
 
 permissions:
@@ -15,12 +18,14 @@ concurrency:
 
 jobs:
   refresh:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
