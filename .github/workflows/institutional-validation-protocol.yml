@@ -1,0 +1,89 @@
+name: Institutional validation protocol v1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'INSTITUTIONAL_VALIDATION_PROTOCOL_v1.md'
+      - 'institutional_validation_protocol_v1.json'
+      - 'HISTORICAL_REGIME_POLICY_v1.md'
+      - 'historical_regime_policy_v1.json'
+      - 'POINT_IN_TIME_PANEL_SPEC_v1.md'
+      - 'point_in_time_panel_spec_v1.json'
+      - 'IMPLEMENTATION_COST_TAX_POLICY_v1.md'
+      - 'implementation_cost_tax_policy_v1.json'
+      - 'validation_policy.json'
+      - 'tests/test_institutional_validation_protocol_v1.py'
+      - '.github/workflows/institutional-validation-protocol.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test dependency
+        run: python -m pip install pytest
+      - name: Run protocol invariants
+        run: python -m pytest -q tests/test_institutional_validation_protocol_v1.py
+      - name: Enforce protocol freeze rules
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('institutional_validation_protocol_v1.json'))
+          v=json.load(open('validation_policy.json'))
+          r=json.load(open('historical_regime_policy_v1.json'))
+          d=json.load(open('point_in_time_panel_spec_v1.json'))
+          i=json.load(open('implementation_cost_tax_policy_v1.json'))
+          assert p['protocol_id'] == 'institutional-validation-protocol-v1'
+          assert p['research_only'] is True
+          assert p['live_authority'] == 'none'
+          assert p['live_model_changed'] is False
+          assert p['live_allocation_changed'] is False
+          assert p['sample']['minimum_completed_months_for_validation_language_review'] == 120
+          assert p['sample']['target_completed_months'] == 180
+          assert p['costs']['primary_one_way_bps_on_traded_notional'] == 15
+          assert p['primary_effect']['economic_materiality_min_pp_per_year'] == 0.8
+          assert p['primary_effect']['familywise_one_sided_alpha_max'] == 0.05
+          assert p['trial_family']['maximum_preregistered_variants_first_certified_panel_family'] == 6
+          assert p['historical_pass_effect'] == 'confirmation_eligible_only'
+          assert p['prospective_confirmation']['minimum_completed_months_before_promotion_review'] == 60
+          assert p['overlays']['macro_live_authority_pp'] == 0
+          assert p['automatic_parameter_changes'] is False
+          assert v['controlling_institutional_protocol'] == 'institutional_validation_protocol_v1.json'
+          assert v['macro_governance']['live_budget_pp'] == 0
+          assert v['prospective_evidence_purpose']['minimum_completed_months_before_promotion_review'] == 60
+          assert r['policy_id'] == 'historical-methodology-regime-policy-v1'
+          assert r['current_definition_track']['promotion_effect'] == 'data_lineage_confidence_only'
+          assert r['long_vintage_track']['hindsight_rewrite_to_current_definition_allowed'] is False
+          assert r['long_vintage_track']['ex_post_level_stitching_allowed'] is False
+          assert d['spec_id'] == 'point-in-time-panel-v1'
+          assert d['availability_policy']['after_cutoff_use_allowed'] is False
+          assert d['source_integrity']['secondary_source_fill_allowed'] is False
+          assert d['selection_policy']['missing_value_imputation_allowed'] is False
+          assert d['certification_gates']['selected_row_without_source_hash_allowed'] is False
+          assert i['policy_id'] == 'implementation-cost-tax-policy-v1'
+          assert i['primary_trading_friction']['one_way_bps_on_traded_notional'] == 15
+          assert i['embedded_cost_rule']['double_counting_prohibited'] is True
+          assert i['tax_profile_rule']['lot_aware_realization_required'] is True
+          assert i['claim_gates']['taxable_implementation_claim_requires_after_tax_residual_cagr_pp_per_year_min'] == 0.8
+          assert i['claim_gates']['incomplete_tax_engine_may_support_promotion'] is False
+          print(json.dumps({
+            'protocol_id':p['protocol_id'],
+            'minimum_months':p['sample']['minimum_completed_months_for_validation_language_review'],
+            'target_months':p['sample']['target_completed_months'],
+            'economic_hurdle_pp_per_year':p['primary_effect']['economic_materiality_min_pp_per_year'],
+            'family_cap':p['trial_family']['maximum_preregistered_variants_first_certified_panel_family'],
+            'historical_pass_effect':p['historical_pass_effect'],
+            'prospective_confirmation_months':p['prospective_confirmation']['minimum_completed_months_before_promotion_review'],
+            'current_definition_effect':r['current_definition_track']['promotion_effect'],
+            'pit_panel_spec':d['spec_id'],
+            'taxable_profile_hurdle_pp_per_year':i['claim_gates']['taxable_implementation_claim_requires_after_tax_residual_cagr_pp_per_year_min'],
+          },indent=2))
+          PY
