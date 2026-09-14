@@ -43,7 +43,10 @@ jobs:
           assert p['scope']['development_months'] == ['2023-09','2023-10','2023-11','2023-12','2024-01','2024-02']
           assert p['xbrl_column_semantics']['legacy_current_period_context'] == 'OneD'
           assert p['xbrl_column_semantics']['legacy_ytd_current_period_context'] == 'FourD'
-          assert p['annual_net_worth_candidates']['BANKING'][0]['status'] == 'candidate_not_yet_authorized'
+          assert all(x['status'] == 'candidate_not_yet_authorized' for x in p['annual_net_worth_candidates']['BANKING'])
+          assert all(x['status'] == 'candidate_not_yet_authorized' for x in p['annual_net_worth_candidates']['NBFC'])
+          assert 'not generic INDAS' in p['template_boundaries']['NBFC']
+          assert 'ICICIBANK' in p['market_capitalisation_candidates']['anomaly_rule']
           assert '2024-03 through 2026-08 remain sealed' == p['scope']['holdout_months']
           print(json.dumps({
             'policy_id':p['policy_id'],
@@ -52,6 +55,9 @@ jobs:
             'ytd_context':p['xbrl_column_semantics']['legacy_ytd_current_period_context'],
             'indas_candidates':[x['candidate_id'] for x in p['profit_candidates']['INDAS']],
             'bank_candidates':[x['candidate_id'] for x in p['profit_candidates']['BANKING']],
+            'nbfc_candidates':[x['candidate_id'] for x in p['profit_candidates']['NBFC']],
+            'bank_book_candidates':[x['candidate_id'] for x in p['annual_net_worth_candidates']['BANKING']],
+            'nbfc_book_candidates':[x['candidate_id'] for x in p['annual_net_worth_candidates']['NBFC']],
             'holdout_target_fetch_count':p['holdout_target_fetch_count'],
             'ratios_computed':p['ratios_computed'],
           },indent=2))
