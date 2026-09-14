@@ -20,10 +20,11 @@ def test_candidate_family_normalisation():
     assert "face_value" in inv._candidate_family("FaceValueOfEquityShareCapital")
 
 
-def test_template_family_uses_filename_not_stage_b_hint():
+def test_template_family_uses_specific_filename_family_before_generic_indas():
     assert inv._template_family("https://nsearchives.nseindia.com/corporate/xbrl/BANKING_123.xml") == "BANKING"
     assert inv._template_family("https://nsearchives.nseindia.com/corporate/xbrl/INDAS_123.xml") == "INDAS"
     assert inv._template_family("https://nsearchives.nseindia.com/corporate/xbrl/NBFC_123.xml") == "NBFC"
+    assert inv._template_family("https://nsearchives.nseindia.com/corporate/xbrl/NBFC_INDAS_123.xml") == "NBFC"
 
 
 def test_only_official_nse_xml_is_selected():
