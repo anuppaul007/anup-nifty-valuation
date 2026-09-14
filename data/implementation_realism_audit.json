@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-13T14:03:45+00:00",
+  "generated_at": "2026-09-14T00:01:02+00:00",
   "research_only": true,
   "live_model_changed": false,
   "live_allocation_changed": false,
-  "source_generated_on": "2026-09-13",
+  "source_generated_on": "2026-09-14",
   "source_scheme_codes": {
     "equity": 101349,
     "debt": 101758
