@@ -21,6 +21,28 @@ class ManualEvidenceError(ValueError):
     pass
 
 
+def _share_count_within_reported_capital_rounding(*, paid_up_mn: float, face_value: float,
+                                                   disclosed_shares: int) -> bool:
+    """Reconcile exact disclosed shares to paid-up capital reported to 0.1 INR mn.
+
+    The Nestle result tables present paid-up capital as 964.2 INR million while
+    the board/result packet discloses an exact share count. Treat the exact share
+    count as authoritative and use the rounded capital figure only as a sanity
+    check. A one-decimal INR-million presentation has +/-0.05 million rupees of
+    rounding uncertainty, which maps into a face-value-dependent share-count
+    band. This prevents false exactness while still failing closed on a material
+    inconsistency.
+    """
+    paid_up_mn = float(paid_up_mn)
+    face_value = float(face_value)
+    disclosed_shares = int(disclosed_shares)
+    if paid_up_mn <= 0 or face_value <= 0 or disclosed_shares <= 0:
+        return False
+    implied = paid_up_mn * 1_000_000.0 / face_value
+    rounding_band = 0.05 * 1_000_000.0 / face_value + 1.0
+    return abs(implied - disclosed_shares) <= rounding_band
+
+
 def validate_nestle_evidence(path: Path = NESTLE_PATH) -> dict:
     d = json.loads(path.read_text(encoding="utf-8"))
     if d.get("research_only") is not True or d.get("live_authority") != "none":
@@ -43,8 +65,11 @@ def validate_nestle_evidence(path: Path = NESTLE_PATH) -> dict:
             raise ManualEvidenceError("Nestle evidence must remain first-party")
         if float(q["paid_up_equity_capital"]) != 964.2:
             raise ManualEvidenceError("unexpected paid-up capital")
-        implied = round(float(q["paid_up_equity_capital"]) * 1_000_000 / float(q["face_value_rupees"]))
-        if implied != int(q["shares_outstanding"]):
+        if not _share_count_within_reported_capital_rounding(
+            paid_up_mn=q["paid_up_equity_capital"],
+            face_value=q["face_value_rupees"],
+            disclosed_shares=q["shares_outstanding"],
+        ):
             raise ManualEvidenceError(f"share-count reconciliation failed for {q['period_end']}")
 
     action = (d.get("corporate_actions") or [None])[0]
@@ -87,6 +112,7 @@ def validate_nestle_evidence(path: Path = NESTLE_PATH) -> dict:
         "evidence_id": d["evidence_id"],
         "quarters": len(quarters),
         "development_ttm_months": len(chains),
+        "share_count_rounding_reconciled": True,
         "share_split_reconciled": True,
         "annual_book_reconciled": True,
         "dividend_evidence_complete": False,
