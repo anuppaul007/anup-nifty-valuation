@@ -1,0 +1,43 @@
+name: Institutional readiness score v1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'INSTITUTIONAL_READINESS.md'
+      - 'institutional_readiness_policy_v1.json'
+      - 'scripts/institutional_readiness.py'
+      - 'data/institutional_readiness.json'
+      - 'data/robust_evaluation_summary.json'
+      - 'tests/test_institutional_readiness.py'
+      - '.github/workflows/institutional-readiness.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run readiness invariants
+        run: python -m unittest tests.test_institutional_readiness -v
+      - name: Fail closed on readiness drift
+        run: python scripts/institutional_readiness.py --check
+      - name: Assert no CIO eligibility without all frozen gates
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('data/institutional_readiness.json'))
+          assert p['score']['rounded_1dp'] == 51.8
+          assert p['eligible_for_cio_framework'] is False
+          assert p['decision'] == 'NOT_CIO_ELIGIBLE'
+          assert p['controlling_gates']['all_controlling_gates_pass'] is False
+          assert p['critical_dimensions']['threshold_pass'] is False
+          assert p['material_model_risk_clearance']['cleared'] is False
+          print('readiness gate is fail-closed and current score remains 51.8/100')
+          PY
