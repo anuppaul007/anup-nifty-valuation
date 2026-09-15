@@ -8,6 +8,7 @@ on:
       - 'scripts/development_residual_source_resolver.py'
       - 'scripts/development_residual_source_resolver_v11.py'
       - 'scripts/development_residual_source_resolver_v12.py'
+      - 'scripts/development_residual_source_resolver_v13.py'
       - 'tests/test_development_residual_source_resolver.py'
       - 'DEVELOPMENT_RESIDUAL_SOURCE_RESOLUTION.md'
       - '.github/workflows/development-residual-source-resolver.yml'
@@ -30,8 +31,8 @@ jobs:
       - run: pip install -r requirements.txt pytest
       - name: Unit tests
         run: pytest -q tests/test_development_residual_source_resolver.py
-      - name: Resolve residual official/first-party sources
-        run: python scripts/development_residual_source_resolver_v12.py
+      - name: Resolve residual official exchange sources
+        run: python scripts/development_residual_source_resolver_v13.py
       - name: Upload resolver ledger even when a later gate fails
         if: always()
         uses: actions/upload-artifact@v4
@@ -39,7 +40,7 @@ jobs:
           name: development-residual-source-resolution
           path: data/development_residual_source_resolution.json
           if-no-files-found: error
-      - name: Enforce machine-reproducible coverage, explicit Nestle CDN defect, zero live authority and sealed holdout
+      - name: Enforce 300/300 machine-reproducible source coverage, zero live authority and sealed holdout
         run: |
           python - <<'PY'
           import json
@@ -56,7 +57,7 @@ jobs:
             'method_counts': x['method_counts'],
             'nestle_source_attempts': nestle,
           }, indent=2))
-          assert p['policy_id'] == 'development-residual-source-resolver-v1.2'
+          assert p['policy_id'] == 'development-residual-source-resolver-v1.3'
           assert p['research_only'] is True
           assert p['live_authority'] == 'none'
           assert x['research_only'] is True
@@ -66,12 +67,13 @@ jobs:
           assert x['baseline_complete_company_months'] == 270
           assert x['baseline_total_company_months'] == 300
           assert x['residual_company_months'] == 30
-          assert x['resolved_residual_company_months'] == 24
-          assert x['combined_complete_company_months'] == 294
-          assert len(unresolved) == 6
-          assert {u['month'] for u in unresolved} == {'2023-09','2023-10','2023-11','2023-12','2024-01','2024-02'}
-          assert all(u['symbol'] == 'NESTLEIND' and not u['ttm_complete'] and not u['annual_complete'] for u in unresolved)
+          assert x['resolved_residual_company_months'] == 30
+          assert x['combined_complete_company_months'] == 300
+          assert unresolved == []
           assert len(attempts) == 6
-          assert all(a.get('status') == 'unavailable' and '403 Client Error' in a.get('error','') for a in attempts)
+          assert all(a.get('status') == 'ok' and len(a.get('sha256','')) == 64 for a in attempts)
+          assert {a['period_end'] for a in attempts} == {
+            '2022-09-30','2022-12-31','2023-03-31','2023-06-30','2023-09-30','2023-12-31'
+          }
           assert x['holdout_target_fetch_count'] == 0
           PY
