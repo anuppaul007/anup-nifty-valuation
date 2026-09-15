@@ -103,10 +103,27 @@ def test_nestle_identity_gate_requires_company_and_security():
     assert not resolver._nestle_identity_visible("Other Company BSE Scrip Code: 500790")
 
 
+def test_exchange_period_visibility_accepts_typography_not_inference():
+    examples = [
+        "Three months ended 31.3.2023",
+        "Three months ended 31 . 03 . 2023",
+        "Quarter ended 31st March, 2023",
+        "Quarter ended Mar. 31, 2023",
+        "For the period ended 30-Jun-2023",
+        "For the period ended June 30th, 2023",
+    ]
+    for text in examples[:4]:
+        assert resolver._period_visible(text, "2023-03-31")
+    for text in examples[4:]:
+        assert resolver._period_visible(text, "2023-06-30")
+    assert not resolver._period_visible("Quarter ended 30 June 2023", "2023-03-31")
+    assert not resolver._period_visible("Quarter ended 31 March 2022", "2023-03-31")
+
+
 def test_nestle_period_visibility_is_explicit():
-    assert resolver.v12._period_visible("quarter ended 30 September 2023", "2023-09-30")
-    assert resolver.v12._period_visible("31.12.2023", "2023-12-31")
-    assert not resolver.v12._period_visible("quarter ended 30 June 2023", "2023-09-30")
+    assert resolver._period_visible("quarter ended 30 September 2023", "2023-09-30")
+    assert resolver._period_visible("31.12.2023", "2023-12-31")
+    assert not resolver._period_visible("quarter ended 30 June 2023", "2023-09-30")
 
 
 def test_policy_revision_is_source_driven_and_zero_authority():
