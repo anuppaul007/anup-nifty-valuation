@@ -37,6 +37,16 @@ class ReviewManifestTests(unittest.TestCase):
                 self.assertEqual(len(r['sha256']), 64)
                 self.assertGreaterEqual(r['size_bytes'], 0)
 
+    def test_readiness_governance_is_immutable_review_scope(self):
+        required = set(m.REQUIRED_FILES)
+        self.assertTrue({
+            'INSTITUTIONAL_READINESS.md',
+            'institutional_readiness_policy_v1.json',
+            'scripts/institutional_readiness.py',
+            'data/institutional_readiness.json',
+            'data/robust_evaluation_summary.json',
+        }.issubset(required))
+
     def test_requirement_parser_matches_exact_version_file(self):
         names = m.parse_requirement_names(ROOT / 'requirements.txt')
         self.assertIn('numpy', names)
