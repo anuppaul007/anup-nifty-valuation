@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "policy_id": "institutional-readiness-score-v1",
+  "frozen_as_of": "2026-09-14",
+  "purpose": "Evidence-gated CIO admission readiness index. This score is not a probability of correctness and is not an investment-performance forecast.",
+  "score_is_probability": false,
+  "research_only": true,
+  "live_authority": "none",
+  "live_model_changed": false,
+  "live_allocation_changed": false,
+  "admission_rule": {
+    "overall_score_min": 90.0,
+    "critical_dimension_score_min": 80.0,
+    "require_all_controlling_gates_pass": true,
+    "require_material_model_risk_clearance": true
+  },
+  "controlling_evidence": {
+    "robust_evaluation_summary": "data/robust_evaluation_summary.json",
+    "eligible_promotion_decision": "ELIGIBLE_FOR_PROMOTION",
+    "required_gate_keys": [
+      "exposure_matched_timing_edge_positive",
+      "placebo_95th_percentile",
+      "paired_block_bootstrap_all_lower_bounds_above_zero",
+      "deflated_sharpe_probability",
+      "cscv_pbo",
+      "prospective_months",
+      "certified_point_in_time_full_stack_history",
+      "taxable_after_tax_implementation_test"
+    ]
+  },
+  "material_model_risk_clearance": {
+    "cleared": false,
+    "reason": "Current preregistered promotion gates remain failed or unresolved; no separate material model-risk clearance has been recorded."
+  },
+  "dimensions": [
+    {
+      "id": "data_integrity_pit_lineage",
+      "name": "Data integrity / point-in-time lineage",
+      "weight_pct": 20.0,
+      "critical": true,
+      "score": 58.0,
+      "evidence_note": "Development source routing is strong but only 294/300 company-months are machine-reproducible; six Nestle rows remain an explicit reproducibility defect and full independent P/E, P/B and dividend-yield reconstruction is incomplete. Holdout remains sealed."
+    },
+    {
+      "id": "reproducibility_operational_reliability",
+      "name": "Reproducibility / operational reliability",
+      "weight_pct": 15.0,
+      "critical": true,
+      "score": 88.0,
+      "evidence_note": "Automated refresh, fail-closed freshness/version guards, publication monitoring, synchronized refresh, CI controls and reproducibility artifacts are substantial, but operational history remains short."
+    },
+    {
+      "id": "economic_rationale_specification_discipline",
+      "name": "Economic rationale / specification discipline",
+      "weight_pct": 10.0,
+      "critical": false,
+      "score": 78.0,
+      "evidence_note": "Valuation, earnings, macro and trend components have explicit rationales and governance; valuation-lens redundancy and influential reference choices remain material limitations."
+    },
+    {
+      "id": "historical_efficacy_after_costs_taxes",
+      "name": "Historical efficacy after exposure matching, costs and taxes",
+      "weight_pct": 20.0,
+      "critical": true,
+      "score": 30.0,
+      "evidence_note": "Robust evaluation is NOT_ELIGIBLE_FOR_PROMOTION; exposure-matched excess CAGR is small, placebo and paired block-bootstrap gates fail, and taxable after-tax implementation remains unresolved."
+    },
+    {
+      "id": "statistical_robustness_multiple_testing",
+      "name": "Statistical robustness / multiple-testing control",
+      "weight_pct": 15.0,
+      "critical": true,
+      "score": 42.0,
+      "evidence_note": "Trial registry, placebo, bootstrap, Deflated Sharpe and CSCV/PBO controls exist; PBO fails, bootstrap intervals include zero and the effective timing sample remains small."
+    },
+    {
+      "id": "drawdown_insurance_characterization",
+      "name": "Drawdown / insurance characterization",
+      "weight_pct": 7.5,
+      "critical": false,
+      "score": 68.0,
+      "evidence_note": "SMA10 insurance cost and episode behavior are measured, but the challenger fails its historical promotion gate and is not demonstrated alpha."
+    },
+    {
+      "id": "independent_replication_adversarial_review",
+      "name": "Independent replication / adversarial review",
+      "weight_pct": 7.5,
+      "critical": true,
+      "score": 20.0,
+      "evidence_note": "External review packet and immutable manifest process exist, but no qualifying independent replication is recorded."
+    },
+    {
+      "id": "prospective_live_evidence",
+      "name": "Prospective live evidence",
+      "weight_pct": 5.0,
+      "critical": true,
+      "score": 5.0,
+      "evidence_note": "Robust evaluation records one completed monthly decision versus the preregistered minimum of 60 before promotion review."
+    }
+  ],
+  "score_change_rule": "Scores may change only when repository evidence changes. Every score change must cite a new artifact, test, qualifying independent review, or completed prospective observation. Weights and thresholds must not be changed to make the current model pass."
+}
