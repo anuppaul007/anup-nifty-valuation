@@ -35,15 +35,19 @@ REQUIRED_FILES = [
     'review_scope_v1.json',
     'INDEPENDENT_REVIEW.md',
     'EXTERNAL_REVIEW_PACKET.md',
+    'INSTITUTIONAL_READINESS.md',
+    'institutional_readiness_policy_v1.json',
     'CURRENT_DEFINITION_ALGEBRA_CORRECTION.md',
     'research_trial_registry.json',
     'scripts/robust_evaluation.py',
     'scripts/calibration_stability_audit.py',
     'scripts/implementation_realism_audit.py',
     'scripts/current_definition_aggregation.py',
+    'scripts/institutional_readiness.py',
     'data/latest.json',
     'data/robust_evaluation_summary.json',
     'data/calibration_stability_audit.json',
+    'data/institutional_readiness.json',
 ]
 
 OPTIONAL_FILES = [
