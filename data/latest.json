@@ -1,15 +1,15 @@
 {
   "schema_version": 4,
   "model_version": "3.13-reliability-1",
-  "generated_at": "2026-09-15T11:46:23+00:00",
+  "generated_at": "2026-09-15T17:42:41+00:00",
   "macro_stale": false,
   "macro_partial": false,
   "nifty": {
-    "date": "2026-09-11",
-    "level": 23398.1,
-    "pe": 19.78,
-    "pb": 2.83,
-    "div_yield": 1.21,
+    "date": "2026-09-15",
+    "level": 23118.6,
+    "pe": 19.54,
+    "pb": 2.8,
+    "div_yield": 1.23,
     "gsec10": 7.0159,
     "gsec_meta": {
       "asof": "2026-09-11",
@@ -35,7 +35,7 @@
     "usd_3m_pct": 0.06061667362635692,
     "fed_assets_6m_pct": 1.4184489999313987,
     "vix": 17.1,
-    "brent_3m_pct": 21.522185788098945,
+    "brent_3m_pct": 31.35746351476132,
     "india_reer_bis": 90.37,
     "usd_inr_3m_pct": 0.17928493769474585,
     "india_us_10y_spread": 2.0459000000000005,
@@ -78,9 +78,9 @@
         "status": "live"
       },
       "brent_3m_pct": {
-        "value": 21.522185788098945,
-        "z": 0.9670835013701402,
-        "score": -0.5681063574529363,
+        "value": 31.35746351476132,
+        "z": 1.448152607081185,
+        "score": -0.7466914004844616,
         "asof": "2026-09-15",
         "observations": 755,
         "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
@@ -145,7 +145,7 @@
     },
     "blocks": {
       "global_liquidity": -0.17888029078538786,
-      "india_external_carry": -0.07683003359296844,
+      "india_external_carry": -0.13040554650242606,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null,
       "india_domestic": 0.057009151848864285
@@ -172,7 +172,7 @@
       "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
     },
-    "score": -0.05728599409104445,
+    "score": -0.07067987231840885,
     "active_block_weight": 1.0,
     "block_weight_detail": {
       "global_liquidity": {
@@ -320,17 +320,17 @@
     "allocation_effect": "none",
     "purpose": "separate diagnostic cross-check on fixed-reference valuation core",
     "current": {
-      "pe": 19.78,
-      "pb": 2.83,
-      "dividend_yield": 1.21
+      "pe": 19.54,
+      "pb": 2.8,
+      "dividend_yield": 1.23
     },
     "cheapness_percentiles": {
-      "pe_cheapness": 94.44444444444444,
+      "pe_cheapness": 100.0,
       "pb_cheapness": 100.0,
-      "dividend_yield_cheapness": 16.666666666666664
+      "dividend_yield_cheapness": 25.0
     },
-    "composite_cheapness": 70.37037037037037,
-    "label": "below typical valuation within current-methodology era",
+    "composite_cheapness": 75.0,
+    "label": "cheap within current-methodology era",
     "pe_stats": {
       "median": 22.015,
       "q25": 21.36,
@@ -362,15 +362,15 @@
       "observations": 36
     },
     "lens_disagreement": {
-      "spread_pp": 83.33333333333334,
+      "spread_pp": 75.0,
       "threshold_pp": 60,
       "flagged": true,
       "interpretation": "Review signal: divergent ranks can reflect fundamentals or a data break; this does not prove a break."
     },
     "vs_median_pct": {
-      "pe": -10.152168975698384,
-      "pb": -20.056497175141242,
-      "dividend_yield": -5.46875
+      "pe": -11.242334771746542,
+      "pb": -20.903954802259893,
+      "dividend_yield": -3.90625
     },
     "ratio_breaks": [
       {
@@ -769,9 +769,9 @@
     ],
     [
       "2026-09",
-      19.78,
-      2.83,
-      1.21
+      19.54,
+      2.8,
+      1.23
     ]
   ],
   "calibration": {
