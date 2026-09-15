@@ -107,18 +107,18 @@
     "observed_signal": {
       "mean": -0.0785526226088449,
       "sd": 0.6577160493876019,
-      "lag1_phi_ols": 0.7368316664436415
+      "lag1_phi_ols": 0.7368316664436414
     },
     "surrogate_diagnostics": {
-      "median_mean_equity_pct": 52.384465096951274,
-      "median_lag1_acf": 0.6963646282935863
+      "median_mean_equity_pct": 52.38446509695126,
+      "median_lag1_acf": 0.696364628293586
     },
     "actual_excess_cagr_pp": 0.16012823626301298,
     "actual_timing_residual_monthly_sharpe": 0.02168845280020123,
     "actual_excess_cagr_percentile": 62.78,
     "actual_timing_sharpe_percentile": 62.86,
     "p05_excess_cagr_pp": -1.9593774723339308,
-    "median_excess_cagr_pp": -0.19221112610064983,
+    "median_excess_cagr_pp": -0.19221112610063873,
     "p95_excess_cagr_pp": 1.5370584029980177,
     "interpretation": "Tests whether the specific valuation signal beats generic persistent mean-reverting signals with similar first-order structure; it is a model null, not a market forecast."
   },
@@ -207,12 +207,12 @@
       }
     },
     "eigenvalues": [
-      0.08533114591541321,
-      0.2884105643500081,
-      0.7083433340389762,
-      2.917914955695603
+      0.08533114591541299,
+      0.28841056435000817,
+      0.7083433340389766,
+      2.9179149556956037
     ],
-    "effective_independent_lenses": 1.7569983390817943,
+    "effective_independent_lenses": 1.7569983390817947,
     "max_absolute_pairwise_correlation": 0.891670200418282,
     "interpretation": "Displayed lenses are correlated; participation ratio estimates effective independent dimensions."
   },
@@ -377,8 +377,8 @@
     "files": {
       "model.js": "ccd60e5aeaef75e6dee7f84de5410f689dadada23f2ee619bf420d57a6748358",
       "data/retrospective.json": "ebb38b1e8c7ebe7a0ce644c646f73e66101d17910e2ab7891f23e68ded555fec",
-      "data/latest.json": "b65cee7e76797ecc9a7687f71f2cceb95e151743282b15836567ea456392ad9b",
-      "validation_policy.json": "2c883eec9efeb4955e06c6eb0480b98c12613d0f2fa712cac1ef5d420c779c32",
+      "data/latest.json": "5630917fc08efdf19ddc328e737b3da1dac706cee8315fdc5e068a75036bf0ca",
+      "validation_policy.json": "e8aa03b832a9f02b522cf902ed622b1ce153f1f2678ba1a3a9bac28df80c678d",
       "robust_evaluation_policy.json": "de75f801957322d0a5e707d42eace524e5fc08548f0e17bc2728a1cf549f5023",
       "research_trial_registry.json": "bff324fd6d0c3be24ac22e87768c4923f12b7069bcb9866858a67f43a033d85b",
       "release_timing_policy.json": "6f0a711fe79c79f0a9bad287b9f19cf633f841f9aa8327304e9adf49cb7affbc"

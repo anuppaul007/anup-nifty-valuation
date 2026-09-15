@@ -1,6 +1,6 @@
 {
   "status": "complete",
-  "generated_on": "2026-09-14",
+  "generated_on": "2026-09-15",
   "basis": {
     "rebalancing": "monthly using backtest_monthly_2000.csv",
     "taxes_loads_slippage": "excluded",
@@ -12,10 +12,10 @@
   "strategy": {
     "start_value_inr": 10000000.0,
     "start_date": "2000-01-01",
-    "end_date": "2026-09-11",
+    "end_date": "2026-09-15",
     "ending_value_inr": 389801815.97503555,
     "multiple_x": 38.98018159750355,
-    "cagr_pct": 14.708139192260216,
+    "cagr_pct": 14.701684445760899,
     "months_used": 321,
     "source_month_counts": {
       "equity_fund": 246,
@@ -2942,8 +2942,8 @@
         "name": "Anup monthly allocation methodology (reconstructed)",
         "scheme_code": null,
         "start_date": "2000-01-01",
-        "end_date": "2026-09-11",
-        "cagr_pct": 14.708139192260216,
+        "end_date": "2026-09-15",
+        "cagr_pct": 14.701684445760899,
         "value_of_1cr_inr": 389801815.97503555,
         "multiple_x": 38.98018159750355,
         "is_methodology": true,
@@ -2970,17 +2970,13 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "HDFC Flexi Cap Fund",
-        "selected": "HDFC Flexi Cap Fund - Regular Plan - Growth Option",
+        "query": "HDFC ELSS Tax saver",
+        "selected": "HDFC ELSS - Tax Saver Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "SBI Long Term Equity Fund",
-        "error": "no regular-growth match"
-      },
-      {
-        "query": "HDFC ELSS Tax saver",
-        "selected": "HDFC ELSS - Tax Saver Fund - Regular Plan - Growth Option",
+        "query": "HDFC Flexi Cap Fund",
+        "selected": "HDFC Flexi Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -2989,13 +2985,17 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "SBI Contra Fund",
-        "selected": "SBI CONTRA FUND - Regular Plan - Growth",
-        "error": "no NAV close enough to Jan-2000"
+        "query": "SBI Long Term Equity Fund",
+        "error": "no regular-growth match"
       },
       {
         "query": "Nippon India Growth Fund",
         "selected": "Nippon India Liquid Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "SBI Contra Fund",
+        "selected": "SBI CONTRA FUND - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -3020,13 +3020,13 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "JM Flexicap Fund",
-        "error": "no regular-growth match"
-      },
-      {
         "query": "Tata Mid Cap Growth Fund",
         "selected": "Tata Mid Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "JM Flexicap Fund",
+        "error": "no regular-growth match"
       },
       {
         "query": "Sundaram Diversified Equity",
@@ -3037,17 +3037,17 @@
         "error": "no regular-growth match"
       },
       {
-        "query": "Tata Large & Mid Cap Fund",
-        "selected": "Tata Large & Mid Cap Fund - Regular Plan - Growth Option",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
         "query": "HSBC Value Fund",
         "error": "no regular-growth match"
       },
       {
         "query": "Canara Robeco ELSS Tax Saver",
         "selected": "Canara Robeco ELSS - Tax Saver Fund - Regular Plan - GROWTH OPTION",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "Tata Large & Mid Cap Fund",
+        "selected": "Tata Large & Mid Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
       },
       {
