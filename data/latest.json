@@ -1,7 +1,7 @@
 {
   "schema_version": 4,
   "model_version": "3.13-reliability-1",
-  "generated_at": "2026-09-14T18:41:14+00:00",
+  "generated_at": "2026-09-15T11:46:23+00:00",
   "macro_stale": false,
   "macro_partial": false,
   "nifty": {
@@ -10,9 +10,9 @@
     "pe": 19.78,
     "pb": 2.83,
     "div_yield": 1.21,
-    "gsec10": 6.9711,
+    "gsec10": 7.0159,
     "gsec_meta": {
-      "asof": "2026-09-10",
+      "asof": "2026-09-11",
       "source_url": "https://www.rbi.org.in/",
       "source": "RBI dated government bond near 10 years",
       "security": "6.94% GS 2036",
@@ -34,19 +34,19 @@
     "us_real_10y": 2.6,
     "usd_3m_pct": 0.06061667362635692,
     "fed_assets_6m_pct": 1.4184489999313987,
-    "vix": 15.84,
-    "brent_3m_pct": 20.725979725886944,
+    "vix": 17.1,
+    "brent_3m_pct": 21.522185788098945,
     "india_reer_bis": 90.37,
     "usd_inr_3m_pct": 0.17928493769474585,
-    "india_us_10y_spread": 2.0111,
-    "us_10y": 4.96,
+    "india_us_10y_spread": 2.0459000000000005,
+    "us_10y": 4.97,
     "factors": {
       "us_real_10y": {
         "value": 2.6,
-        "z": 2.9438309029543253,
-        "score": -0.9612842347127127,
-        "asof": "2026-09-11",
-        "observations": 924,
+        "z": 2.9233374920591904,
+        "score": -0.960233082733555,
+        "asof": "2026-09-14",
+        "observations": 925,
         "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
         "status": "live"
       },
@@ -69,19 +69,19 @@
         "status": "live"
       },
       "vix": {
-        "value": 15.84,
-        "z": -0.34218586588055594,
-        "score": 0.22424735691210518,
-        "asof": "2026-09-11",
-        "observations": 9271,
+        "value": 17.1,
+        "z": -0.055057250851050905,
+        "score": 0.03668835931284155,
+        "asof": "2026-09-14",
+        "observations": 9272,
         "source_url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
         "status": "live"
       },
       "brent_3m_pct": {
-        "value": 20.725979725886944,
-        "z": 0.9308777142824665,
-        "score": -0.5515353074819956,
-        "asof": "2026-09-14",
+        "value": 21.522185788098945,
+        "z": 0.9670835013701402,
+        "score": -0.5681063574529363,
+        "asof": "2026-09-15",
         "observations": 755,
         "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
         "status": "live"
@@ -106,23 +106,23 @@
         "status": "live"
       },
       "india_us_10y_spread": {
-        "value": 2.0111,
-        "z": -1.4584667790779038,
-        "score": -0.7497181627269922,
-        "asof": "2026-09-11",
-        "observations": 924,
+        "value": 2.0459000000000005,
+        "z": -1.386484347768796,
+        "score": -0.727936051270176,
+        "asof": "2026-09-14",
+        "observations": 925,
         "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
         "status": "live",
-        "india_asof": "2026-09-10",
+        "india_asof": "2026-09-11",
         "india_source_url": "https://www.rbi.org.in/",
         "history_source_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/IND.M.IRLT.PA.....?startPeriod=2012-01&dimensionAtObservation=AllDimensions&format=csvfile"
       },
       "us_10y": {
-        "value": 4.96,
+        "value": 4.97,
         "z": null,
         "score": null,
-        "asof": "2026-09-11",
-        "observations": 924,
+        "asof": "2026-09-14",
+        "observations": 925,
         "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
         "status": "live",
         "display_only": true
@@ -144,8 +144,8 @@
       "allocation_effect": "none"
     },
     "blocks": {
-      "global_liquidity": -0.1511669019371614,
-      "india_external_carry": -0.07730424646589032,
+      "global_liquidity": -0.17888029078538786,
+      "india_external_carry": -0.07683003359296844,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null,
       "india_domestic": 0.057009151848864285
@@ -159,7 +159,7 @@
       "india_domestic": 1.0
     },
     "india_reer_z": -2.579902483154261,
-    "india_us_spread_z": -1.4584667790779038,
+    "india_us_spread_z": -1.386484347768796,
     "stale_factors": [],
     "sources_live": {
       "us_real_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
@@ -172,7 +172,7 @@
       "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
     },
-    "score": -0.04909053065480698,
+    "score": -0.05728599409104445,
     "active_block_weight": 1.0,
     "block_weight_detail": {
       "global_liquidity": {
@@ -225,7 +225,7 @@
         },
         "india_repo_rate": {
           "value": 5.25,
-          "asof": "2026-09-14",
+          "asof": "2026-09-15",
           "source_url": "https://www.rbi.org.in/",
           "status": "live",
           "label": "RBI policy repo rate",
