@@ -58,6 +58,32 @@ def _nestle_identity_visible(text: str) -> bool:
     return company and security
 
 
+def _period_visible(text: str, period_end: str) -> bool:
+    """Recognize one exact expected period despite harmless PDF layout variance.
+
+    The test remains fail-closed: it searches only for the supplied frozen date.
+    It accepts common exchange-PDF typography (spaces around numeric separators,
+    ordinal suffixes, commas and abbreviated/full English month names) rather
+    than inferring a reporting period from nearby dates.
+    """
+    d = pd.Timestamp(period_end)
+    day = str(d.day)
+    month_num = str(d.month)
+    year = str(d.year)
+    full = d.strftime("%B")
+    abbr = d.strftime("%b")
+    flat = re.sub(r"\s+", " ", text[:50000])
+    ordinal = r"(?:st|nd|rd|th)?"
+    month_word = rf"(?:{re.escape(full)}|{re.escape(abbr)}\.?)"
+    patterns = [
+        rf"(?<!\d){day}\s*[./-]\s*0?{month_num}\s*[./-]\s*{year}(?!\d)",
+        rf"(?<!\d)0?{day}\s*[./-]\s*0?{month_num}\s*[./-]\s*{year}(?!\d)",
+        rf"\b{day}{ordinal}\s+{month_word}\s*,?\s*{year}\b",
+        rf"\b{month_word}\s+{day}{ordinal}\s*,?\s*{year}\b",
+    ]
+    return any(re.search(pattern, flat, flags=re.I) for pattern in patterns)
+
+
 def nestle_exchange_sources(session) -> dict:
     sources: list[dict] = []
     attempts: list[dict] = []
@@ -75,7 +101,7 @@ def nestle_exchange_sources(session) -> dict:
 
             if not _nestle_identity_visible(text):
                 raise ValueError("Nestle India / exchange security identity not visible")
-            if not v12._period_visible(text, spec["period_end"]):
+            if not _period_visible(text, spec["period_end"]):
                 raise ValueError(f"expected period end {spec['period_end']} not visible in exchange packet")
             if spec["audited_annual"] and not v12._looks_audited(text):
                 raise ValueError("frozen audited annual-book comparative lacks visible audited language")
