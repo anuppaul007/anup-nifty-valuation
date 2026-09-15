@@ -63,8 +63,8 @@ def _period_visible(text: str, period_end: str) -> bool:
 
     The test remains fail-closed: it searches only for the supplied frozen date.
     It accepts common exchange-PDF typography (spaces around numeric separators,
-    ordinal suffixes, commas and abbreviated/full English month names) rather
-    than inferring a reporting period from nearby dates.
+    ordinal suffixes, commas, hyphens and abbreviated/full English month names)
+    rather than inferring a reporting period from nearby dates.
     """
     d = pd.Timestamp(period_end)
     day = str(d.day)
@@ -75,11 +75,12 @@ def _period_visible(text: str, period_end: str) -> bool:
     flat = re.sub(r"\s+", " ", text[:50000])
     ordinal = r"(?:st|nd|rd|th)?"
     month_word = rf"(?:{re.escape(full)}|{re.escape(abbr)}\.?)"
+    word_sep = r"\s*[-./]?\s*"
+    year_sep = r"\s*[-./,]?\s*"
     patterns = [
-        rf"(?<!\d){day}\s*[./-]\s*0?{month_num}\s*[./-]\s*{year}(?!\d)",
         rf"(?<!\d)0?{day}\s*[./-]\s*0?{month_num}\s*[./-]\s*{year}(?!\d)",
-        rf"\b{day}{ordinal}\s+{month_word}\s*,?\s*{year}\b",
-        rf"\b{month_word}\s+{day}{ordinal}\s*,?\s*{year}\b",
+        rf"\b{day}{ordinal}{word_sep}{month_word}{year_sep}{year}\b",
+        rf"\b{month_word}{word_sep}{day}{ordinal}{year_sep}{year}\b",
     ]
     return any(re.search(pattern, flat, flags=re.I) for pattern in patterns)
 
