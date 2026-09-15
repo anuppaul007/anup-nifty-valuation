@@ -51,6 +51,14 @@ For critical dimensions, 80 means the dimension is strong enough for institution
 
 Weights and thresholds are frozen in this v1 document before the score can influence any CIO admission decision. Changing weights or thresholds later requires a separately documented governance revision and must not be motivated by making the current model pass.
 
+## Machine enforcement
+
+The frozen v1 weights, critical flags, assessment scores and CIO thresholds are mirrored in `institutional_readiness_policy_v1.json`. `scripts/institutional_readiness.py` mechanically recomputes the weighted score from that frozen policy and reads the controlling gate matrix from `data/robust_evaluation_summary.json`; it does not infer, optimize or tune assessment scores.
+
+`data/institutional_readiness.json` is the deterministic machine-readable status. CI fails if that status drifts from the policy/evidence inputs, if a required promotion gate is missing or is not an explicit boolean, if weights stop summing exactly to 100, if admission thresholds are weakened, or if a score attempts to bypass a failed critical dimension, failed promotion gate, or uncleared material model-risk defect.
+
+The readiness document, frozen policy, evaluator and generated status are all required inputs to the immutable external-review manifest, so a reviewer can identify exactly which readiness rules and status were reviewed. This strengthens governance/reproducibility only: **the score remains 51.8/100, V3.13 remains unchanged, the holdout remains sealed, challengers retain zero additional authority, and live investment authority did not change.**
+
 ## Evidence anchors
 
 - `data/robust_evaluation_summary.json`
