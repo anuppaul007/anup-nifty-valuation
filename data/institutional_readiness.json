@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "policy_id": "institutional-readiness-score-v1",
+  "generated_from": {
+    "policy": "institutional_readiness_policy_v1.json",
+    "robust_evaluation_summary": "data/robust_evaluation_summary.json"
+  },
+  "source_robust_evaluation_decision": "NOT_ELIGIBLE_FOR_PROMOTION",
+  "score": {
+    "exact": 51.75,
+    "rounded_1dp": 51.8,
+    "minimum_required": 90.0,
+    "threshold_pass": false
+  },
+  "critical_dimensions": {
+    "minimum_required": 80.0,
+    "minimum_observed": 5.0,
+    "failed": [
+      {
+        "id": "data_integrity_pit_lineage",
+        "score": 58.0
+      },
+      {
+        "id": "historical_efficacy_after_costs_taxes",
+        "score": 30.0
+      },
+      {
+        "id": "statistical_robustness_multiple_testing",
+        "score": 42.0
+      },
+      {
+        "id": "independent_replication_adversarial_review",
+        "score": 20.0
+      },
+      {
+        "id": "prospective_live_evidence",
+        "score": 5.0
+      }
+    ],
+    "threshold_pass": false
+  },
+  "controlling_gates": {
+    "required_gate_keys": [
+      "exposure_matched_timing_edge_positive",
+      "placebo_95th_percentile",
+      "paired_block_bootstrap_all_lower_bounds_above_zero",
+      "deflated_sharpe_probability",
+      "cscv_pbo",
+      "prospective_months",
+      "certified_point_in_time_full_stack_history",
+      "taxable_after_tax_implementation_test"
+    ],
+    "observed": {
+      "exposure_matched_timing_edge_positive": true,
+      "placebo_95th_percentile": false,
+      "paired_block_bootstrap_all_lower_bounds_above_zero": false,
+      "deflated_sharpe_probability": true,
+      "cscv_pbo": false,
+      "prospective_months": false,
+      "certified_point_in_time_full_stack_history": false,
+      "taxable_after_tax_implementation_test": false
+    },
+    "failed_gate_keys": [
+      "placebo_95th_percentile",
+      "paired_block_bootstrap_all_lower_bounds_above_zero",
+      "cscv_pbo",
+      "prospective_months",
+      "certified_point_in_time_full_stack_history",
+      "taxable_after_tax_implementation_test"
+    ],
+    "eligible_promotion_decision": "ELIGIBLE_FOR_PROMOTION",
+    "promotion_decision_pass": false,
+    "all_controlling_gates_pass": false
+  },
+  "material_model_risk_clearance": {
+    "cleared": false,
+    "reason": "Current preregistered promotion gates remain failed or unresolved; no separate material model-risk clearance has been recorded."
+  },
+  "eligible_for_cio_framework": false,
+  "decision": "NOT_CIO_ELIGIBLE",
+  "guardrail": "This readiness score is not a probability. A high weighted score cannot override a failed critical dimension, controlling promotion gate, or uncleared material model-risk defect.",
+  "dimensions": [
+    {
+      "id": "data_integrity_pit_lineage",
+      "name": "Data integrity / point-in-time lineage",
+      "weight_pct": 20.0,
+      "critical": true,
+      "score": 58.0,
+      "weighted_points": 11.6
+    },
+    {
+      "id": "reproducibility_operational_reliability",
+      "name": "Reproducibility / operational reliability",
+      "weight_pct": 15.0,
+      "critical": true,
+      "score": 88.0,
+      "weighted_points": 13.2
+    },
+    {
+      "id": "economic_rationale_specification_discipline",
+      "name": "Economic rationale / specification discipline",
+      "weight_pct": 10.0,
+      "critical": false,
+      "score": 78.0,
+      "weighted_points": 7.8
+    },
+    {
+      "id": "historical_efficacy_after_costs_taxes",
+      "name": "Historical efficacy after exposure matching, costs and taxes",
+      "weight_pct": 20.0,
+      "critical": true,
+      "score": 30.0,
+      "weighted_points": 6.0
+    },
+    {
+      "id": "statistical_robustness_multiple_testing",
+      "name": "Statistical robustness / multiple-testing control",
+      "weight_pct": 15.0,
+      "critical": true,
+      "score": 42.0,
+      "weighted_points": 6.3
+    },
+    {
+      "id": "drawdown_insurance_characterization",
+      "name": "Drawdown / insurance characterization",
+      "weight_pct": 7.5,
+      "critical": false,
+      "score": 68.0,
+      "weighted_points": 5.1
+    },
+    {
+      "id": "independent_replication_adversarial_review",
+      "name": "Independent replication / adversarial review",
+      "weight_pct": 7.5,
+      "critical": true,
+      "score": 20.0,
+      "weighted_points": 1.5
+    },
+    {
+      "id": "prospective_live_evidence",
+      "name": "Prospective live evidence",
+      "weight_pct": 5.0,
+      "critical": true,
+      "score": 5.0,
+      "weighted_points": 0.25
+    }
+  ]
+}
