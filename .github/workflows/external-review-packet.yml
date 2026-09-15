@@ -5,6 +5,11 @@ on:
     paths:
       - 'EXTERNAL_REVIEW_PACKET.md'
       - 'review_scope_v1.json'
+      - 'INSTITUTIONAL_READINESS.md'
+      - 'institutional_readiness_policy_v1.json'
+      - 'scripts/institutional_readiness.py'
+      - 'data/institutional_readiness.json'
+      - 'data/robust_evaluation_summary.json'
       - 'scripts/build_review_manifest.py'
       - 'tests/test_review_manifest.py'
       - '.github/workflows/external-review-packet.yml'
@@ -41,6 +46,11 @@ jobs:
           assert p['allow_dirty_used'] is False
           required=[x for x in p['files'] if x['required']]
           assert required and all(x['present'] and len(x['sha256'])==64 for x in required)
+          paths={x['path'] for x in required}
+          assert 'INSTITUTIONAL_READINESS.md' in paths
+          assert 'institutional_readiness_policy_v1.json' in paths
+          assert 'scripts/institutional_readiness.py' in paths
+          assert 'data/institutional_readiness.json' in paths
           assert 'not evidence of investment efficacy' in p['purpose'].lower()
           print(f"manifest verified for {head} with {len(required)} required files")
           PY
