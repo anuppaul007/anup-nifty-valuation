@@ -1,29 +1,29 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-09-18T12:58:37+00:00",
-  "source_commit": "f1e9ee43479329c962a907106c919415b414a2c6",
-  "packet_generated_at": "2026-09-17T17:40:28+00:00",
-  "status": "attention_required",
+  "checked_at": "2026-09-18T17:07:47+00:00",
+  "source_commit": "030903030076b562a23cbacf2d127043fddab66d",
+  "packet_generated_at": "2026-09-18T17:07:31+00:00",
+  "status": "healthy",
   "checks": [
     {
       "name": "packet_freshness",
       "ok": true,
-      "detail": "Packet age 19.30 hours; maximum 72 hours"
+      "detail": "Packet age 0.00 hours; maximum 72 hours"
     },
     {
       "name": "published_bytes",
       "ok": true,
-      "detail": "Pinned commit API, raw source and checkout bytes match: 2cbc290b944ea9de42dbd5e6ef6e42b2ac029f4643d1b47b2cfb65e5bd3d380e"
+      "detail": "Pinned commit API, raw source and checkout bytes match: cb7138f473ef9813fe4a8b9152dc157a232c3e6122610f37ffedf4def3343b32"
     },
     {
       "name": "refresh_workflow",
       "ok": true,
-      "detail": "Latest completed refresh: success \u00b7 https://github.com/anuppaul007/anup-nifty-valuation/actions/runs/35253976372"
+      "detail": "Latest completed refresh: success \u00b7 https://github.com/anuppaul007/anup-nifty-valuation/actions/runs/35372323862"
     },
     {
       "name": "allocation_inputs",
-      "ok": false,
-      "detail": "current dated India ~10Y yield unavailable"
+      "ok": true,
+      "detail": "Defined input gates passed"
     }
   ],
   "scope": "Operational checks only; not investment validation. A delayed watchdog can also miss failures; the website checks this status age."
