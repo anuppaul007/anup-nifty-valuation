@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-09-17T22:51:22+00:00",
-  "source_commit": "d57705a0d962b077dabd572fe5548e780cc4cab8",
+  "checked_at": "2026-09-18T04:45:53+00:00",
+  "source_commit": "f11951d83146fc6d563ba28d6cfb2608c124f3fb",
   "packet_generated_at": "2026-09-17T17:40:28+00:00",
-  "status": "healthy",
+  "status": "attention_required",
   "checks": [
     {
       "name": "packet_freshness",
       "ok": true,
-      "detail": "Packet age 5.18 hours; maximum 72 hours"
+      "detail": "Packet age 11.09 hours; maximum 72 hours"
     },
     {
       "name": "published_bytes",
@@ -22,8 +22,8 @@
     },
     {
       "name": "allocation_inputs",
-      "ok": true,
-      "detail": "Defined input gates passed"
+      "ok": false,
+      "detail": "current dated India ~10Y yield unavailable"
     }
   ],
   "scope": "Operational checks only; not investment validation. A delayed watchdog can also miss failures; the website checks this status age."
