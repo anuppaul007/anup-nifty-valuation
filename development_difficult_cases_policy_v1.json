@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "policy_id": "development-difficult-cases-v1",
+  "research_only": true,
+  "live_authority": "none",
+  "live_model_changed": false,
+  "live_allocation_changed": false,
+  "holdout_target_fetch_count": 0,
+  "development_window": ["2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02"],
+  "sealed_holdout": "2024-03 through 2026-08",
+  "purpose": "Freeze source-semantic resolution requirements for the remaining difficult constituent accounting cases before any holdout target is opened.",
+  "global_rules": {
+    "no_outcome_driven_selection": true,
+    "no_imputation": true,
+    "no_index_renormalisation": true,
+    "no_loss_maker_exclusion": true,
+    "point_in_time_only": true,
+    "source_priority": ["official_NSE_structured", "official_NSE_archive_or_announcement", "preregistered_first_party_issuer_exception"],
+    "secondary_finance_sites": "prohibited_as_source_of_record",
+    "resolution_requires": [
+      "source identity and publication timestamp frozen before numerical comparison",
+      "accounting concept/context/unit/sign/scale deterministic",
+      "consolidated-versus-standalone status explicit",
+      "corporate-action continuity reconciled where share count is used",
+      "machine-reproducible artifact hash where retrieval is available",
+      "unavailable evidence remains an explicit gap"
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "NESTLEIND_TRANSITION_YEAR",
+      "symbols": ["NESTLEIND"],
+      "status": "blocked_retrieval",
+      "known_evidence": "Six first-party development packets are frozen by reporting period/publication date; GitHub Actions historically receives HTTP 403 from issuer CDN.",
+      "frozen_semantics": [
+        "31-Dec-2022 remains latest eligible audited annual book source for Sep-2023 through Feb-2024 development signals",
+        "31-Dec-2023 result may enter TTM only after its 07-Feb-2024 publication",
+        "31-Dec-2023 twelve-month result is unaudited and cannot replace audited annual book source"
+      ],
+      "completion_gate": "All required numerical facts must be reproducibly extracted from a frozen first-party or higher-priority official artifact without weakening the issuer-specific preregistration. A 403 is not permission to substitute a secondary source."
+    },
+    {
+      "case_id": "INDUSINDBK_ARCHIVE_XML",
+      "symbols": ["INDUSINDBK"],
+      "status": "blocked_archive",
+      "known_evidence": "Three selected historical structured XML links for Dec-2022, Mar-2023 and Jun-2023 returned 404 in the frozen development inventory.",
+      "completion_gate": "Recover the exact official filing from an NSE/NSE-archive route with period and dissemination identity preserved, or retain an explicit gap. Do not reconstruct missing quarterly facts from later YTD values under semantics v1."
+    },
+    {
+      "case_id": "BANK_ANNUAL_NET_WORTH",
+      "symbols": ["BANKING_TEMPLATE_FAMILY"],
+      "status": "semantic_unresolved",
+      "candidate_families": ["paid_up_capital_plus_reserve_ex_revaluation", "capital_plus_reserves_and_surplus_if_explicit"],
+      "completion_gate": "Choose or reject candidates from official template/accounting semantics independent of six-month valuation fit; treatment of revaluation reserves, minority interest and total-company basis must be explicit."
+    },
+    {
+      "case_id": "NBFC_ANNUAL_NET_WORTH",
+      "symbols": ["NBFC_TEMPLATE_FAMILY", "BAJAJFINSV"],
+      "status": "semantic_unresolved",
+      "candidate_families": ["paid_up_capital_plus_reserve_ex_revaluation", "parent_equity_if_explicit"],
+      "completion_gate": "Resolve from official NBFC filing semantics independently of development-target closeness; generic ordinary-company IndAS mapping may not be inherited by default."
+    },
+    {
+      "case_id": "LIFE_INSURANCE_ACCOUNTING",
+      "symbols": ["HDFCLIFE", "SBILIFE"],
+      "status": "separate_template_required",
+      "completion_gate": "Freeze an insurer-specific profit, annual net-worth and share-count extraction mapping from official insurance result packets. Do not force INDAS, BANKING or NBFC mappings."
+    },
+    {
+      "case_id": "ICICIBANK_SHARE_COUNT",
+      "symbols": ["ICICIBANK"],
+      "status": "capital_continuity_unresolved",
+      "known_evidence": "Development inventory observed an orders-of-magnitude implied-share discontinuity around Mar/Jun-2023 from paid-up-capital/face-value facts.",
+      "completion_gate": "Reconcile the candidate share-count facts to adjacent official filings and point-in-time official corporate actions. If no matching capital action explains the discontinuity, reject the anomalous fact/context rather than smoothing or carrying it forward."
+    }
+  ],
+  "milestone_gate": {
+    "required_case_status": "resolved_or_explicitly_proven_unreconstructable",
+    "all_50_constituents_required_each_development_month": true,
+    "development_ratio_evaluation_allowed_only_after_all_cases_resolved": true,
+    "holdout_opening_allowed": false,
+    "note": "Even a successful six-month development reconstruction does not itself open the holdout. The reconstruction engine and mappings must be separately frozen first."
+  }
+}
