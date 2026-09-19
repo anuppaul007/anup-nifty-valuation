@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_version": "multiasset-research-v1",
-  "generated_at": "2026-09-19T08:37:32+00:00",
+  "generated_at": "2026-09-19T17:01:27+00:00",
   "status": "live",
   "source_latest_generated_at": "2026-09-19T08:36:59+00:00",
   "core_source": "V3.6 NIFTY equity/debt research signal; gold and silver are a diversification layer carved proportionally from both sleeves",
@@ -107,7 +107,7 @@
     }
   },
   "btc": {
-    "score": 0.1826115151566718,
+    "score": 0.1856629796725392,
     "tactical_signal_pct": 5.0,
     "range_pct": [
       0,
@@ -116,14 +116,14 @@
     "included_in_core_100pct": false,
     "drivers": {
       "price_vs_200d": {
-        "value": 15.37118492476026,
-        "score": 0.6460908966431629,
+        "value": 16.05094826326583,
+        "score": 0.6654585067105147,
         "weight": 0.3,
         "asof": "2026-09-19"
       },
       "btc_12m_momentum": {
-        "value": -29.73103233389883,
-        "score": -0.458584378983986,
+        "value": -29.314593413070376,
+        "score": -0.45308593360886595,
         "weight": 0.2,
         "asof": "2026-09-19"
       },
@@ -134,21 +134,21 @@
         "asof": "2026-09-19T08:36:59+00:00"
       },
       "drawdown_value": {
-        "value": -34.83629841178072,
-        "score": 0.45565572425992595,
+        "value": -34.45011511539972,
+        "score": 0.4402216939424774,
         "weight": 0.25,
         "asof": "2026-09-19"
       }
     },
     "market": {
-      "price": 81293.3671875,
+      "price": 81775.140625,
       "asof": "2026-09-19",
       "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD",
-      "ma200": 70462.453203125,
-      "vs_ma200_pct": 15.37118492476026,
-      "momentum_12m_pct": -29.73103233389883,
+      "ma200": 70464.8620703125,
+      "vs_ma200_pct": 16.05094826326583,
+      "momentum_12m_pct": -29.314593413070376,
       "three_year_high": 124752.53125,
-      "drawdown_from_3y_high_pct": -34.83629841178072,
+      "drawdown_from_3y_high_pct": -34.45011511539972,
       "observations": 1097
     }
   },
