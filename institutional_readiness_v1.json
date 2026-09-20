@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-09-20",
+  "status": "NOT_CIO_ELIGIBLE",
+  "score_is_probability": false,
+  "overall_score": 45.35,
+  "cio_eligibility_threshold": 90,
+  "critical_dimension_minimum": 80,
+  "dimensions": {
+    "data_integrity_point_in_time_lineage": {"weight_pct": 15, "score": 55, "critical": true, "reason": "Development source routing is 294/300 machine-reproducible, but six Nestle rows remain unretrievable in CI and numerical accounting reconstruction/full-stack PIT history are not yet certified."},
+    "reproducibility_operational_reliability": {"weight_pct": 15, "score": 90, "critical": true, "reason": "Fail-closed publication, synchronization guards, reproducible manifests and CI are strong; this score does not imply independent replication."},
+    "economic_rationale": {"weight_pct": 10, "score": 75, "critical": false, "reason": "Valuation anchoring and explicit crash-insurance framing are economically coherent, but lens redundancy and reference dominance materially weaken the claim of diversified signal content."},
+    "historical_efficacy_after_exposure_costs_taxes": {"weight_pct": 20, "score": 25, "critical": true, "reason": "Controlling 63-month fair-null timing edge is only +0.16 pp CAGR, placebo 95th-percentile and block-bootstrap gates fail, and taxable after-tax implementation remains unresolved. A separate long actual-fund reconstruction is retrospective and not certified PIT V3.13 evidence."},
+    "statistical_robustness_multiple_testing": {"weight_pct": 15, "score": 30, "critical": true, "reason": "DSR diagnostic passes but PBO, placebo and paired moving-block bootstrap gates fail; serial dependence is high and effective sample size is low."},
+    "drawdown_insurance_characterization": {"weight_pct": 10, "score": 65, "critical": false, "reason": "SMA10 is correctly governed as purchased insurance rather than alpha and episode audits exist, but its historical promotion gate fails and recovery/premium trade-offs remain material."},
+    "independent_replication": {"weight_pct": 10, "score": 0, "critical": true, "reason": "An external review packet exists, but no genuinely independent reimplementation/replication has been completed."},
+    "prospective_live_evidence": {"weight_pct": 5, "score": 2, "critical": true, "reason": "Only one completed monthly decision is recorded versus a minimum 60 months before promotion review; the minimum is necessary, not sufficient."}
+  },
+  "hard_gates": {
+    "overall_at_least_90": false,
+    "every_critical_dimension_at_least_80": false,
+    "pre_registered_promotion_gates_pass": false,
+    "independent_replication_complete": false,
+    "no_unresolved_material_model_risk_defects": false
+  },
+  "controlling_adverse_evidence": [
+    "data/robust_evaluation_summary.json",
+    "data/calibration_stability_audit.json",
+    "data/implementation_realism_audit.json",
+    "DEVELOPMENT_RESIDUAL_SOURCE_RESOLUTION.md",
+    "DEVELOPMENT_ACCOUNTING_SEMANTICS.md",
+    "EXTERNAL_REVIEW_PACKET.md",
+    "validation_policy.json"
+  ],
+  "governance": "This is a readiness index, not a probability of correctness or a forecast-confidence percentage. No weighted average can override a failed critical gate. Scores may rise only when the cited evidence state improves under frozen rules; favorable backtests alone do not authorize score inflation or live promotion."
+}
