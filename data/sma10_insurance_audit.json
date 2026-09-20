@@ -83,17 +83,17 @@
     "equity": {
       "index": "NIFTY 50 TRI",
       "family": "NIFTY 50",
-      "rows": 1665,
+      "rows": 1669,
       "first": "2020-01-01",
-      "last": "2026-09-11"
+      "last": "2026-09-18"
     },
     "debt": {
       "index": "NIFTY 10 YR BENCHMARK G-SEC",
       "retrieval": "historical index close",
       "total_return_basis": "NSE Indices fixed-income convention; Clean Price is a separately named excluded index",
-      "rows": 1662,
+      "rows": 1666,
       "first": "2020-01-01",
-      "last": "2026-09-11",
+      "last": "2026-09-18",
       "substituted": false
     }
   },
