@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-19T08:37:18+00:00",
+  "updated_at": "2026-09-21T18:46:33+00:00",
   "archive_started_at": "2026-09-12T08:36:13+00:00",
-  "snapshot_count": 47,
+  "snapshot_count": 48,
   "decision_count": 1,
   "current_model": "be6a38e4534efa11dba466aa3fd99e59af41a41819fd1455e73abb96f140e4bf",
   "model_first_seen_at": "2026-09-15T11:46:42+00:00",
-  "latest_snapshot_id": "ded7b9091d9adf546e09377d023c69f5457f216407ca2996348efd880fa7c58e",
+  "latest_snapshot_id": "70a9185d6326ad807342279f42a0ee9fd8a333604433d010366d5ff63a7a5422",
   "original_release_vintages_verified": false,
   "historical_full_model_backtest_validated": false,
   "policy": {
