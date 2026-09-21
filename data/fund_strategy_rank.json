@@ -1,6 +1,6 @@
 {
   "status": "complete",
-  "generated_on": "2026-09-15",
+  "generated_on": "2026-09-21",
   "basis": {
     "rebalancing": "monthly using backtest_monthly_2000.csv",
     "taxes_loads_slippage": "excluded",
@@ -12,10 +12,10 @@
   "strategy": {
     "start_value_inr": 10000000.0,
     "start_date": "2000-01-01",
-    "end_date": "2026-09-15",
-    "ending_value_inr": 389801815.97503555,
-    "multiple_x": 38.98018159750355,
-    "cagr_pct": 14.701684445760899,
+    "end_date": "2026-09-21",
+    "ending_value_inr": 389098172.6055746,
+    "multiple_x": 38.90981726055746,
+    "cagr_pct": 14.684258476158485,
     "months_used": 321,
     "source_month_counts": {
       "equity_fund": 246,
@@ -27,20 +27,20 @@
       "scheme_code": 101349,
       "name": "ICICI Prudential Nifty 50 Index Fund - Regular Plan - Cumulative",
       "nav_first_date": "2006-04-02",
-      "nav_last_date": "2026-09-11"
+      "nav_last_date": "2026-09-18"
     },
     "debt_fund": {
       "scheme_code": 101758,
       "name": "ICICI Prudential Short Term Fund - Regular Plan - Growth",
       "nav_first_date": "2006-04-02",
-      "nav_last_date": "2026-09-11"
+      "nav_last_date": "2026-09-18"
     },
     "strict_actual_funds": {
       "start_month": "2006-04",
       "months": 246,
-      "ending_value_inr": 109758293.0627164,
-      "multiple_x": 10.97582930627164,
-      "cagr_pct": 12.430817668459149
+      "ending_value_inr": 109560164.9576337,
+      "multiple_x": 10.95601649576337,
+      "cagr_pct": 12.40855809478061
     },
     "timeline": [
       {
@@ -2926,11 +2926,11 @@
       {
         "month": "2026-09",
         "equity_weight_pct": 78.0,
-        "equity_return_pct": -2.7138218937248104,
-        "debt_return_pct": 0.15695683997705157,
+        "equity_return_pct": -2.9367920431193184,
+        "debt_return_pct": 0.14405840659279523,
         "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
         "debt_source": "ICICI Pru Short Term Fund Regular Growth",
-        "end_value": 389801815.97503555
+        "end_value": 389098172.6055746
       }
     ]
   },
@@ -2942,10 +2942,10 @@
         "name": "Anup monthly allocation methodology (reconstructed)",
         "scheme_code": null,
         "start_date": "2000-01-01",
-        "end_date": "2026-09-15",
-        "cagr_pct": 14.701684445760899,
-        "value_of_1cr_inr": 389801815.97503555,
-        "multiple_x": 38.98018159750355,
+        "end_date": "2026-09-21",
+        "cagr_pct": 14.684258476158485,
+        "value_of_1cr_inr": 389098172.6055746,
+        "multiple_x": 38.90981726055746,
         "is_methodology": true,
         "rank": 1
       }
@@ -2965,6 +2965,11 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
+        "query": "HDFC Flexi Cap Fund",
+        "selected": "HDFC Flexi Cap Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
         "query": "Franklin India Flexi Cap Fund",
         "selected": "Franklin India Flexi Cap Fund - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
@@ -2975,22 +2980,13 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "HDFC Flexi Cap Fund",
-        "selected": "HDFC Flexi Cap Fund - Regular Plan - Growth Option",
+        "query": "Nippon India Growth Fund",
+        "selected": "Nippon India Growth Mid Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
       },
       {
         "query": "Nippon India Vision Fund",
         "selected": "Nippon India Vision Large & Mid Cap Fund - Regular Plan - GROWTH Option",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
-        "query": "SBI Long Term Equity Fund",
-        "error": "no regular-growth match"
-      },
-      {
-        "query": "Nippon India Growth Fund",
-        "selected": "Nippon India Liquid Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -3000,18 +2996,6 @@
       },
       {
         "query": "Aditya Birla Sun Life Tax Relief 96",
-        "error": "no regular-growth match"
-      },
-      {
-        "query": "Kotak Bluechip Fund",
-        "error": "no regular-growth match"
-      },
-      {
-        "query": "ICICI Prudential Multicap Fund",
-        "error": "no regular-growth match"
-      },
-      {
-        "query": "UTI Mastershare Unit Scheme",
         "error": "no regular-growth match"
       },
       {
@@ -3025,22 +3009,6 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "JM Flexicap Fund",
-        "error": "no regular-growth match"
-      },
-      {
-        "query": "Sundaram Diversified Equity",
-        "error": "no regular-growth match"
-      },
-      {
-        "query": "Taurus Starshare",
-        "error": "no regular-growth match"
-      },
-      {
-        "query": "HSBC Value Fund",
-        "error": "no regular-growth match"
-      },
-      {
         "query": "Canara Robeco ELSS Tax Saver",
         "selected": "Canara Robeco ELSS - Tax Saver Fund - Regular Plan - GROWTH OPTION",
         "error": "no NAV close enough to Jan-2000"
@@ -3051,14 +3019,46 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
+        "query": "ICICI Prudential Multicap Fund",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "JM Flexicap Fund",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "UTI Mastershare Unit Scheme",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "Taurus Starshare",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "Sundaram Diversified Equity",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "Kotak Bluechip Fund",
+        "error": "no regular-growth match"
+      },
+      {
         "query": "LIC MF Large & Mid Cap Fund",
         "selected": "LIC MF Large & Mid Cap Fund - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "DSP Flexi Cap Fund",
-        "selected": "DSP Flexi Cap Fund - Regular Plan - Growth",
+        "query": "HSBC Value Fund",
+        "selected": "HSBC Value Fund - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "SBI Long Term Equity Fund",
+        "error": "RuntimeError: GET failed https://api.mfapi.in/mf/search: HTTPSConnectionPool(host='api.mfapi.in', port=443): Read timed out. (read timeout=25)"
+      },
+      {
+        "query": "DSP Flexi Cap Fund",
+        "error": "RuntimeError: GET failed https://api.mfapi.in/mf/search: HTTPSConnectionPool(host='api.mfapi.in', port=443): Read timed out. (read timeout=25)"
       }
     ],
     "warning": "Screened surviving-fund cohort, not a complete Jan-2000 universe; survivorship and selection bias apply."

@@ -3,11 +3,11 @@
   "status": "complete",
   "model_version": "3.13-reliability-1",
   "current_snapshot": {
-    "generated_at": "2026-09-15T17:42:41+00:00",
-    "macro_score": -0.07067987231840885,
+    "generated_at": "2026-09-21T18:46:18+00:00",
+    "macro_score": -0.04648975619658631,
     "macro_context_eligible": true,
     "live_macro_adjustment_pp": 0.0,
-    "shadow_macro_adjustment_pp": -0.4240792339104531,
+    "shadow_macro_adjustment_pp": -0.2789385371795179,
     "live_macro_budget_pp": 0.0,
     "shadow_macro_budget_pp": 6.0
   },

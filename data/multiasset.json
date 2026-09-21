@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_version": "multiasset-research-v1",
-  "generated_at": "2026-09-21T18:46:44+00:00",
+  "generated_at": "2026-09-21T18:47:19+00:00",
   "status": "live",
   "source_latest_generated_at": "2026-09-21T18:46:18+00:00",
   "core_source": "V3.6 NIFTY equity/debt research signal; gold and silver are a diversification layer carved proportionally from both sleeves",
@@ -15,15 +15,15 @@
     "model_version": "3.13-reliability-1"
   },
   "core_allocation": {
-    "equity_pct": 55.6988878006882,
-    "debt_pct": 28.809273769131277,
-    "gold_pct": 12.239396303440062,
-    "silver_pct": 3.252442126740461
+    "equity_pct": 55.69875511702126,
+    "debt_pct": 28.809205140829413,
+    "gold_pct": 12.239716802935199,
+    "silver_pct": 3.252322939214131
   },
   "core_total_pct": 100.0,
   "gold": {
-    "score": -0.1521207393119876,
-    "target_pct": 12.239396303440062,
+    "score": -0.15205663941296038,
+    "target_pct": 12.239716802935199,
     "range_pct": [
       8,
       18
@@ -42,8 +42,8 @@
         "asof": "2026-08-31"
       },
       "gold_12m_momentum": {
-        "value": 18.34960728856403,
-        "score": 0.7247032618584273,
+        "value": 18.360411719988413,
+        "score": 0.724959661454536,
         "weight": 0.25,
         "asof": "2026-09-21"
       },
@@ -55,29 +55,29 @@
       }
     },
     "market": {
-      "price": 4385.7998046875,
+      "price": 4386.2001953125,
       "asof": "2026-09-21",
       "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/GC=F",
-      "ma200": 4554.176002197266,
-      "vs_ma200_pct": -3.6971824854491575,
-      "momentum_12m_pct": 18.34960728856403,
+      "ma200": 4554.178004150391,
+      "vs_ma200_pct": -3.6884330978017577,
+      "momentum_12m_pct": 18.360411719988413,
       "three_year_high": 5318.39990234375,
-      "drawdown_from_3y_high_pct": -17.535351135315437,
+      "drawdown_from_3y_high_pct": -17.527822731427957,
       "observations": 755
     }
   },
   "silver": {
-    "score": -0.0707308209312969,
-    "target_pct": 3.252442126740461,
+    "score": -0.07076487451024832,
+    "target_pct": 3.252322939214131,
     "range_pct": [
       0,
       7
     ],
     "drivers": {
       "gold_silver_ratio": {
-        "value": 65.95683319846074,
-        "z": -1.2770301941124689,
-        "score": -0.6917758887114726,
+        "value": 65.95294153007539,
+        "z": -1.2773597001677233,
+        "score": -0.691890417741442,
         "weight": 0.45,
         "observations": 753
       },
@@ -88,26 +88,26 @@
         "asof": "2026-08-31"
       },
       "silver_12m_momentum": {
-        "value": 56.326414904654534,
-        "score": 0.9542734344718753,
+        "value": 56.34991148872652,
+        "score": 0.9543433724100145,
         "weight": 0.25,
         "asof": "2026-09-21"
       }
     },
     "market": {
-      "price": 66.49500274658203,
+      "price": 66.50499725341797,
       "asof": "2026-09-21",
       "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/SI=F",
-      "ma200": 72.524969997406,
-      "vs_ma200_pct": -8.314332637489741,
-      "momentum_12m_pct": 56.326414904654534,
+      "ma200": 72.52501996994019,
+      "vs_ma200_pct": -8.300615041564097,
+      "momentum_12m_pct": 56.34991148872652,
       "three_year_high": 115.08000183105469,
-      "drawdown_from_3y_high_pct": -42.21845525845469,
+      "drawdown_from_3y_high_pct": -42.20977042470694,
       "observations": 754
     }
   },
   "btc": {
-    "score": 0.1994502482615187,
+    "score": 0.19938423585286497,
     "tactical_signal_pct": 5.0,
     "range_pct": [
       0,
@@ -116,14 +116,14 @@
     "included_in_core_100pct": false,
     "drivers": {
       "price_vs_200d": {
-        "value": 21.81567568986733,
-        "score": 0.7971640353424095,
+        "value": 21.724043096556265,
+        "score": 0.7954877857127174,
         "weight": 0.3,
         "asof": "2026-09-21"
       },
       "btc_12m_momentum": {
-        "value": -25.435423919215026,
-        "score": -0.4002308081299797,
+        "value": -25.491856593659,
+        "score": -0.40102039439315607,
         "weight": 0.2,
         "asof": "2026-09-21"
       },
@@ -134,21 +134,21 @@
         "asof": "2026-09-21T18:46:18+00:00"
       },
       "drawdown_value": {
-        "value": -31.08155871586774,
-        "score": 0.2950400335570125,
+        "value": -31.1337182286632,
+        "score": 0.29741915248856926,
         "weight": 0.25,
         "asof": "2026-09-21"
       }
     },
     "market": {
-      "price": 85977.5,
+      "price": 85912.4296875,
       "asof": "2026-09-21",
       "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD",
-      "ma200": 70579.996796875,
-      "vs_ma200_pct": 21.81567568986733,
-      "momentum_12m_pct": -25.435423919215026,
+      "ma200": 70579.6714453125,
+      "vs_ma200_pct": 21.724043096556265,
+      "momentum_12m_pct": -25.491856593659,
       "three_year_high": 124752.53125,
-      "drawdown_from_3y_high_pct": -31.08155871586774,
+      "drawdown_from_3y_high_pct": -31.1337182286632,
       "observations": 1097
     }
   },
