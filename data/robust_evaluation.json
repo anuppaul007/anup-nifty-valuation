@@ -377,7 +377,7 @@
     "files": {
       "model.js": "ccd60e5aeaef75e6dee7f84de5410f689dadada23f2ee619bf420d57a6748358",
       "data/retrospective.json": "ebb38b1e8c7ebe7a0ce644c646f73e66101d17910e2ab7891f23e68ded555fec",
-      "data/latest.json": "c26b1e2c44d3d3faec2e49a07a38bb8c93981c7df8a63b0282be5c5b203324f5",
+      "data/latest.json": "fb6a4b644956645e73c3e213438a7b17cd91f193447b1c9ee7a25fe257921bb0",
       "validation_policy.json": "e8aa03b832a9f02b522cf902ed622b1ce153f1f2678ba1a3a9bac28df80c678d",
       "robust_evaluation_policy.json": "de75f801957322d0a5e707d42eace524e5fc08548f0e17bc2728a1cf549f5023",
       "research_trial_registry.json": "bff324fd6d0c3be24ac22e87768c4923f12b7069bcb9866858a67f43a033d85b",
