@@ -1,6 +1,6 @@
 {
   "status": "complete",
-  "generated_at": "2026-09-19T17:21:46+00:00",
+  "generated_at": "2026-09-26T17:50:49+00:00",
   "start_month": "2000-01",
   "end_month": "2026-09",
   "months": 321,
@@ -9,11 +9,11 @@
   "performance": {
     "baseline": {
       "gross": {
-        "multiple_x": 38.90981726055744,
-        "ending_value_of_1cr_inr": 389098172.60557437,
-        "cagr_pct": 14.687479096711108,
+        "multiple_x": 38.633747323205085,
+        "ending_value_of_1cr_inr": 386337473.23205084,
+        "cagr_pct": 14.645675853430795,
         "max_drawdown_pct": -37.99990551051307,
-        "annualized_volatility_pct": 17.435977978317776,
+        "annualized_volatility_pct": 17.4417584353776,
         "worst_calendar_year": 2008,
         "worst_calendar_year_return_pct": -26.65713593823368,
         "average_monthly_turnover_pct": 9.049844236760125,
@@ -21,11 +21,11 @@
         "cost_bps_per_one_way_turnover": 0
       },
       "turnover_10bps": {
-        "multiple_x": 37.80450739999286,
-        "ending_value_of_1cr_inr": 378045073.9999286,
-        "cagr_pct": 14.563835986864792,
+        "multiple_x": 37.5362660499477,
+        "ending_value_of_1cr_inr": 375362660.49947697,
+        "cagr_pct": 14.522164798224257,
         "max_drawdown_pct": -38.0825355684536,
-        "annualized_volatility_pct": 17.437522793826606,
+        "annualized_volatility_pct": 17.443296701172272,
         "worst_calendar_year": 2008,
         "worst_calendar_year_return_pct": -26.79528698340209,
         "average_monthly_turnover_pct": 9.049844236760125,
@@ -35,11 +35,11 @@
     },
     "multiasset_core": {
       "gross": {
-        "multiple_x": 45.207027090333106,
-        "ending_value_of_1cr_inr": 452070270.90333104,
-        "cagr_pct": 15.333229642327462,
+        "multiple_x": 44.747839755730226,
+        "ending_value_of_1cr_inr": 447478397.55730224,
+        "cagr_pct": 15.277407414483868,
         "max_drawdown_pct": -33.26404270873171,
-        "annualized_volatility_pct": 15.881521273606431,
+        "annualized_volatility_pct": 15.88980490463652,
         "worst_calendar_year": 2008,
         "worst_calendar_year_return_pct": -19.08439032682605,
         "average_monthly_turnover_pct": 8.111646243478141,
@@ -47,11 +47,11 @@
         "cost_bps_per_one_way_turnover": 0
       },
       "turnover_10bps": {
-        "multiple_x": 44.053626994545,
-        "ending_value_of_1cr_inr": 440536269.94545,
-        "cagr_pct": 15.221713178914564,
+        "multiple_x": 43.606135355981586,
+        "ending_value_of_1cr_inr": 436061353.5598159,
+        "cagr_pct": 15.166022824172964,
         "max_drawdown_pct": -33.283169763563215,
-        "annualized_volatility_pct": 15.88371651417434,
+        "annualized_volatility_pct": 15.891990182036137,
         "worst_calendar_year": 2008,
         "worst_calendar_year_return_pct": -19.21430911436466,
         "average_monthly_turnover_pct": 8.111646243478141,
@@ -61,11 +61,11 @@
     },
     "multiasset_with_btc": {
       "gross": {
-        "multiple_x": 75.52903991553532,
-        "ending_value_of_1cr_inr": 755290399.1553532,
-        "cagr_pct": 17.57037771981289,
+        "multiple_x": 74.9215556159111,
+        "ending_value_of_1cr_inr": 749215556.159111,
+        "cagr_pct": 17.52123343800569,
         "max_drawdown_pct": -33.26404270873171,
-        "annualized_volatility_pct": 16.2217792441056,
+        "annualized_volatility_pct": 16.22767726493482,
         "worst_calendar_year": 2008,
         "worst_calendar_year_return_pct": -19.08439032682605,
         "average_monthly_turnover_pct": 8.087063108858402,
@@ -73,11 +73,11 @@
         "cost_bps_per_one_way_turnover": 0
       },
       "turnover_10bps": {
-        "multiple_x": 73.60974618343049,
-        "ending_value_of_1cr_inr": 736097461.8343049,
-        "cagr_pct": 17.457160097900747,
+        "multiple_x": 73.0176739651651,
+        "ending_value_of_1cr_inr": 730176739.651651,
+        "cagr_pct": 17.40814272966307,
         "max_drawdown_pct": -33.283169763563215,
-        "annualized_volatility_pct": 16.224209584392767,
+        "annualized_volatility_pct": 16.230099503798087,
         "worst_calendar_year": 2008,
         "worst_calendar_year_return_pct": -19.21430911436466,
         "average_monthly_turnover_pct": 8.087063108858402,
@@ -87,11 +87,11 @@
     },
     "nifty100": {
       "gross": {
-        "multiple_x": 21.010329061145192,
-        "ending_value_of_1cr_inr": 210103290.61145192,
-        "cagr_pct": 12.072416850750024,
+        "multiple_x": 20.825051526853184,
+        "ending_value_of_1cr_inr": 208250515.26853183,
+        "cagr_pct": 12.026140256827267,
         "max_drawdown_pct": -55.93553717016426,
-        "annualized_volatility_pct": 22.562029627863556,
+        "annualized_volatility_pct": 22.568450626971476,
         "worst_calendar_year": 2008,
         "worst_calendar_year_return_pct": -50.09459743535842,
         "average_monthly_turnover_pct": 0.0,
@@ -99,11 +99,11 @@
         "cost_bps_per_one_way_turnover": 0
       },
       "turnover_10bps": {
-        "multiple_x": 21.010329061145192,
-        "ending_value_of_1cr_inr": 210103290.61145192,
-        "cagr_pct": 12.072416850750024,
+        "multiple_x": 20.825051526853184,
+        "ending_value_of_1cr_inr": 208250515.26853183,
+        "cagr_pct": 12.026140256827267,
         "max_drawdown_pct": -55.93553717016426,
-        "annualized_volatility_pct": 22.562029627863556,
+        "annualized_volatility_pct": 22.568450626971476,
         "worst_calendar_year": 2008,
         "worst_calendar_year_return_pct": -50.09459743535842,
         "average_monthly_turnover_pct": 0.0,
@@ -3976,9 +3976,9 @@
       "btc_funded_test_pct": 5.0,
       "core_equity_pct": 65.58088308137849,
       "core_debt_pct": 18.49717215115803,
-      "baseline_return_pct": -2.2590049441826534,
-      "multiasset_core_return_pct": -1.719558048167457,
-      "multiasset_with_btc_return_pct": -1.3563725214391635
+      "baseline_return_pct": -2.952489321174817,
+      "multiasset_core_return_pct": -2.717835021640567,
+      "multiasset_with_btc_return_pct": -2.1497687438487114
     }
   ]
 }

@@ -2,7 +2,7 @@
   "status": "complete",
   "schema_version": 1,
   "audit_version": "multiasset-robustness-v2",
-  "generated_at": "2026-09-19T17:22:14+00:00",
+  "generated_at": "2026-09-26T17:51:10+00:00",
   "history_start": "2000-01",
   "history_end": "2026-09",
   "months": 321,
@@ -10,102 +10,102 @@
   "static_vs_dynamic": {
     "common_start": "2006-05",
     "baseline": {
-      "cagr_pct": 12.199180871010329,
+      "cagr_pct": 12.147909607062246,
       "max_drawdown_pct": -38.082535568453615,
-      "annualized_volatility_pct": 15.636070724799007,
-      "calmar": 0.3203353108955211,
-      "sortino": 1.0930278359006613,
+      "annualized_volatility_pct": 15.644077132634926,
+      "calmar": 0.3189889912982894,
+      "sortino": 1.0900361319938465,
       "average_monthly_turnover_pct": 9.534693877551021,
       "months": 245
     },
     "dynamic_research_v1": {
-      "cagr_pct": 13.045306956543733,
+      "cagr_pct": 12.975747903893197,
       "max_drawdown_pct": -33.283169763563215,
-      "annualized_volatility_pct": 13.294275337991607,
-      "calmar": 0.3919490556102351,
-      "sortino": 1.3234722730163493,
+      "annualized_volatility_pct": 13.306527258833913,
+      "calmar": 0.3898591389002381,
+      "sortino": 1.3181067391426824,
       "average_monthly_turnover_pct": 8.237339201874711,
       "months": 245
     },
     "static_gold_10": {
-      "cagr_pct": 12.668159846762684,
+      "cagr_pct": 12.606900441351087,
       "max_drawdown_pct": -34.0941406617859,
-      "annualized_volatility_pct": 13.99320082342355,
-      "calmar": 0.3715641339205734,
-      "sortino": 1.2062634440291375,
+      "annualized_volatility_pct": 14.003711272961109,
+      "calmar": 0.3697673616828071,
+      "sortino": 1.2020963202177495,
       "average_monthly_turnover_pct": 8.581224489795918,
       "months": 245
     },
     "static_gold_15": {
-      "cagr_pct": 12.878133875039532,
+      "cagr_pct": 12.811903196767549,
       "max_drawdown_pct": -32.38944719525794,
-      "annualized_volatility_pct": 13.268765814615838,
-      "calmar": 0.39760276850063037,
-      "sortino": 1.268181230811997,
+      "annualized_volatility_pct": 13.280585288406913,
+      "calmar": 0.3955579457572005,
+      "sortino": 1.2633029606017565,
       "average_monthly_turnover_pct": 8.104489795918369,
       "months": 245
     },
     "static_gold10_silver5": {
-      "cagr_pct": 12.929159491932296,
+      "cagr_pct": 12.859454927114268,
       "max_drawdown_pct": -33.984179415764245,
-      "annualized_volatility_pct": 13.677988605629979,
-      "calmar": 0.38044642284153096,
-      "sortino": 1.274297583472842,
+      "annualized_volatility_pct": 13.689909976482564,
+      "calmar": 0.378395334187447,
+      "sortino": 1.2693221040064524,
       "average_monthly_turnover_pct": 8.104489795918369,
       "months": 245
     },
     "static_neutral_13_3_5": {
-      "cagr_pct": 12.974942925942567,
+      "cagr_pct": 12.90479018026951,
       "max_drawdown_pct": -32.99961847163909,
-      "annualized_volatility_pct": 13.350073271366531,
-      "calmar": 0.39318463445550567,
-      "sortino": 1.3017240940827448,
+      "annualized_volatility_pct": 13.362349196895904,
+      "calmar": 0.3910587690994153,
+      "sortino": 1.2964484603600637,
       "average_monthly_turnover_pct": 7.961469387755102,
       "months": 245
     },
     "dynamic_minus_static_neutral": {
-      "cagr_pp": 0.0703640306011657,
+      "cagr_pp": 0.07095772362368713,
       "max_drawdown_pp": -0.28355129192412676,
-      "volatility_pp": -0.055797933374924114,
-      "calmar_delta": -0.0012355788452705907
+      "volatility_pp": -0.05582193806199065,
+      "calmar_delta": -0.0011996301991771818
     }
   },
   "funding_rule_audit": {
     "common_start": "2006-05",
     "baseline": {
-      "cagr_pct": 12.199180871010329,
+      "cagr_pct": 12.147909607062246,
       "max_drawdown_pct": -38.082535568453615,
-      "annualized_volatility_pct": 15.636070724799007,
-      "calmar": 0.3203353108955211,
-      "sortino": 1.0930278359006613,
+      "annualized_volatility_pct": 15.644077132634926,
+      "calmar": 0.3189889912982894,
+      "sortino": 1.0900361319938465,
       "average_monthly_turnover_pct": 9.534693877551021,
       "months": 245
     },
     "variants": {
       "proportional": {
-        "cagr_pct": 13.045306956543733,
+        "cagr_pct": 12.975747903893197,
         "max_drawdown_pct": -33.283169763563215,
-        "annualized_volatility_pct": 13.294275337991607,
-        "calmar": 0.3919490556102351,
-        "sortino": 1.3234722730163493,
+        "annualized_volatility_pct": 13.306527258833913,
+        "calmar": 0.3898591389002381,
+        "sortino": 1.3181067391426824,
         "average_monthly_turnover_pct": 8.237339201874711,
         "months": 245
       },
       "equity_first": {
-        "cagr_pct": 13.337622637805824,
+        "cagr_pct": 13.269216084202506,
         "max_drawdown_pct": -33.04999033484021,
-        "annualized_volatility_pct": 12.766585464274582,
-        "calmar": 0.4035590480565358,
-        "sortino": 1.343000965295865,
+        "annualized_volatility_pct": 12.778605199544115,
+        "calmar": 0.4014892576296622,
+        "sortino": 1.337980221667074,
         "average_monthly_turnover_pct": 9.038635886751342,
         "months": 245
       },
       "debt_first": {
-        "cagr_pct": 13.142978210657684,
+        "cagr_pct": 13.067545059953133,
         "max_drawdown_pct": -34.388910950403925,
-        "annualized_volatility_pct": 14.296289845954616,
-        "calmar": 0.3821865202306824,
-        "sortino": 1.2558038187925582,
+        "annualized_volatility_pct": 14.310474680435073,
+        "calmar": 0.3799929889841319,
+        "sortino": 1.2501669959294217,
         "average_monthly_turnover_pct": 8.811024447878241,
         "months": 245
       }
@@ -114,11 +114,11 @@
   "gold_silver_ratio_lookback_audit": {
     "common_start": "2008-10",
     "baseline": {
-      "cagr_pct": 11.676029130277321,
+      "cagr_pct": 11.618687118895332,
       "max_drawdown_pct": -14.321936346259678,
-      "annualized_volatility_pct": 14.937399863665865,
-      "calmar": 0.8152549241937272,
-      "sortino": 1.0944096443780427,
+      "annualized_volatility_pct": 14.946784449983424,
+      "calmar": 0.8112511351811498,
+      "sortino": 1.090597987653674,
       "average_monthly_turnover_pct": 8.63888888888889,
       "months": 216
     },
@@ -126,11 +126,11 @@
       "live_3y_legacy": {
         "first_eligible": "2006-05",
         "performance": {
-          "cagr_pct": 12.577431047272025,
+          "cagr_pct": 12.499338415126493,
           "max_drawdown_pct": -9.587454919767069,
-          "annualized_volatility_pct": 12.874215843849612,
-          "calmar": 1.3118633831946716,
-          "sortino": 1.3155905926314322,
+          "annualized_volatility_pct": 12.88839920834758,
+          "calmar": 1.303718089913081,
+          "sortino": 1.3088304747630768,
           "average_monthly_turnover_pct": 7.514226801771177,
           "months": 216
         }
@@ -138,11 +138,11 @@
       "3y_full": {
         "first_eligible": "2006-05",
         "performance": {
-          "cagr_pct": 12.577431047272025,
+          "cagr_pct": 12.499338415126493,
           "max_drawdown_pct": -9.587454919767069,
-          "annualized_volatility_pct": 12.874215843849612,
-          "calmar": 1.3118633831946716,
-          "sortino": 1.3155905926314322,
+          "annualized_volatility_pct": 12.88839920834758,
+          "calmar": 1.303718089913081,
+          "sortino": 1.3088304747630768,
           "average_monthly_turnover_pct": 7.514226801771177,
           "months": 216
         }
@@ -150,11 +150,11 @@
       "5y": {
         "first_eligible": "2006-05",
         "performance": {
-          "cagr_pct": 12.609083838434977,
+          "cagr_pct": 12.53121655897733,
           "max_drawdown_pct": -9.593082266832342,
-          "annualized_volatility_pct": 12.883775495704242,
-          "calmar": 1.314393381367147,
-          "sortino": 1.3240732966849007,
+          "annualized_volatility_pct": 12.897921182061111,
+          "calmar": 1.3062763573188003,
+          "sortino": 1.3172677091769274,
           "average_monthly_turnover_pct": 7.505167140978869,
           "months": 216
         }
@@ -162,11 +162,11 @@
       "7y": {
         "first_eligible": "2006-06",
         "performance": {
-          "cagr_pct": 12.595383440134444,
+          "cagr_pct": 12.517390657641215,
           "max_drawdown_pct": -9.613236636589628,
-          "annualized_volatility_pct": 12.894919592579512,
-          "calmar": 1.3102125658900619,
-          "sortino": 1.32209867382055,
+          "annualized_volatility_pct": 12.909069284357425,
+          "calmar": 1.3020995041355665,
+          "sortino": 1.3152953350627796,
           "average_monthly_turnover_pct": 7.502656939044708,
           "months": 216
         }
@@ -174,11 +174,11 @@
       "10y": {
         "first_eligible": "2008-10",
         "performance": {
-          "cagr_pct": 12.590776402607151,
+          "cagr_pct": 12.512834160036522,
           "max_drawdown_pct": -9.609234756506657,
-          "annualized_volatility_pct": 12.898895982243012,
-          "calmar": 1.31027878094888,
-          "sortino": 1.3223673525679898,
+          "annualized_volatility_pct": 12.913034277022922,
+          "calmar": 1.3021675999291997,
+          "sortino": 1.315569231933281,
           "average_monthly_turnover_pct": 7.488455760537223,
           "months": 216
         }
@@ -186,11 +186,11 @@
       "expanding": {
         "first_eligible": "2006-05",
         "performance": {
-          "cagr_pct": 12.629437290168699,
+          "cagr_pct": 12.549581676849119,
           "max_drawdown_pct": -9.609234756506657,
-          "annualized_volatility_pct": 12.904898200991074,
-          "calmar": 1.3143020865024644,
-          "sortino": 1.3202077348179422,
+          "annualized_volatility_pct": 12.91928584658318,
+          "calmar": 1.3059917875719997,
+          "sortino": 1.3133605343076837,
           "average_monthly_turnover_pct": 7.469601009168156,
           "months": 216
         }
@@ -198,11 +198,11 @@
       "5y_robust_median_mad": {
         "first_eligible": "2006-05",
         "performance": {
-          "cagr_pct": 12.617989445549638,
+          "cagr_pct": 12.540589522061186,
           "max_drawdown_pct": -9.592756147728988,
-          "annualized_volatility_pct": 12.882816843919906,
-          "calmar": 1.3153664339249207,
-          "sortino": 1.3249000859815028,
+          "annualized_volatility_pct": 12.896900978832097,
+          "calmar": 1.3072978536028017,
+          "sortino": 1.3181267085426374,
           "average_monthly_turnover_pct": 7.508650623843089,
           "months": 216
         }
@@ -213,101 +213,101 @@
     "common_start": "2006-05",
     "gold": {
       "full": {
-        "cagr_pct": 13.045306956543733,
+        "cagr_pct": 12.975747903893197,
         "max_drawdown_pct": -33.283169763563215,
-        "annualized_volatility_pct": 13.294275337991607,
-        "calmar": 0.3919490556102351,
-        "sortino": 1.3234722730163493,
+        "annualized_volatility_pct": 13.306527258833913,
+        "calmar": 0.3898591389002381,
+        "sortino": 1.3181067391426824,
         "average_monthly_turnover_pct": 8.237339201874711,
         "months": 245
       },
       "drop_real_yield": {
-        "cagr_pct": 13.132596908568207,
+        "cagr_pct": 13.061474240972037,
         "max_drawdown_pct": -33.022000746290246,
-        "annualized_volatility_pct": 13.273916940659394,
-        "calmar": 0.3976923448541666,
-        "sortino": 1.3263801718313608,
+        "annualized_volatility_pct": 13.286404230649984,
+        "calmar": 0.3955385484157676,
+        "sortino": 1.321060068286878,
         "average_monthly_turnover_pct": 8.342955279455873,
         "months": 245,
-        "delta_cagr_pp_vs_full": 0.08728995202447365,
-        "delta_calmar_vs_full": 0.005743289243931526
+        "delta_cagr_pp_vs_full": 0.08572633707884059,
+        "delta_calmar_vs_full": 0.005679409515529477
       },
       "drop_broad_usd_3m": {
-        "cagr_pct": 13.049842930959631,
+        "cagr_pct": 12.980357148275834,
         "max_drawdown_pct": -32.92391013740883,
-        "annualized_volatility_pct": 13.208593405488486,
-        "calmar": 0.3963637027465984,
-        "sortino": 1.3325259019094167,
+        "annualized_volatility_pct": 13.220911139024318,
+        "calmar": 0.3942532066848063,
+        "sortino": 1.3270906687324315,
         "average_monthly_turnover_pct": 8.191745110627583,
         "months": 245,
-        "delta_cagr_pp_vs_full": 0.004535974415897925,
-        "delta_calmar_vs_full": 0.004414647136363303
+        "delta_cagr_pp_vs_full": 0.004609244382637101,
+        "delta_calmar_vs_full": 0.00439406778456819
       },
       "drop_gold_12m_momentum": {
-        "cagr_pct": 12.96213336756411,
+        "cagr_pct": 12.894123673749892,
         "max_drawdown_pct": -33.55913127558896,
-        "annualized_volatility_pct": 13.351671063725737,
-        "calmar": 0.3862475837386415,
-        "sortino": 1.3114882429522992,
+        "annualized_volatility_pct": 13.363653954299407,
+        "calmar": 0.3842210207368844,
+        "sortino": 1.3062256462467063,
         "average_monthly_turnover_pct": 8.308896778693194,
         "months": 245,
-        "delta_cagr_pp_vs_full": -0.08317358897962279,
-        "delta_calmar_vs_full": -0.005701471871593589
+        "delta_cagr_pp_vs_full": -0.081624230143305,
+        "delta_calmar_vs_full": -0.005638118163353689
       },
       "drop_vix_stress": {
-        "cagr_pct": 13.045499480058819,
+        "cagr_pct": 12.975707175725958,
         "max_drawdown_pct": -33.555544249908294,
-        "annualized_volatility_pct": 13.34057213851329,
-        "calmar": 0.38877329429977797,
-        "sortino": 1.3221985522608954,
+        "annualized_volatility_pct": 13.352815232902495,
+        "calmar": 0.38669339048975254,
+        "sortino": 1.3168076105848383,
         "average_monthly_turnover_pct": 8.250912636321475,
         "months": 245,
-        "delta_cagr_pp_vs_full": 0.00019252351508569632,
-        "delta_calmar_vs_full": -0.0031757613104571036
+        "delta_cagr_pp_vs_full": -4.0728167238768265e-05,
+        "delta_calmar_vs_full": -0.0031657484104855582
       }
     },
     "silver": {
       "full": {
-        "cagr_pct": 13.045306956543733,
+        "cagr_pct": 12.975747903893197,
         "max_drawdown_pct": -33.283169763563215,
-        "annualized_volatility_pct": 13.294275337991607,
-        "calmar": 0.3919490556102351,
-        "sortino": 1.3234722730163493,
+        "annualized_volatility_pct": 13.306527258833913,
+        "calmar": 0.3898591389002381,
+        "sortino": 1.3181067391426824,
         "average_monthly_turnover_pct": 8.237339201874711,
         "months": 245
       },
       "drop_gold_silver_ratio": {
-        "cagr_pct": 12.911782980591369,
+        "cagr_pct": 12.839803386763048,
         "max_drawdown_pct": -33.69931000157359,
-        "annualized_volatility_pct": 13.358310343747542,
-        "calmar": 0.383146805676094,
-        "sortino": 1.3006573279337375,
+        "annualized_volatility_pct": 13.370803309770912,
+        "calmar": 0.3810108689514264,
+        "sortino": 1.295320996397349,
         "average_monthly_turnover_pct": 8.303506706406974,
         "months": 245,
-        "delta_cagr_pp_vs_full": -0.13352397595236454,
-        "delta_calmar_vs_full": -0.008802249934141082
+        "delta_cagr_pp_vs_full": -0.13594451713014877,
+        "delta_calmar_vs_full": -0.008848269948811716
       },
       "drop_china_industrial": {
-        "cagr_pct": 13.141655817161023,
+        "cagr_pct": 13.071931396539615,
         "max_drawdown_pct": -33.19849069446563,
-        "annualized_volatility_pct": 13.306822069012048,
-        "calmar": 0.3958510023273982,
-        "sortino": 1.3294438095743208,
+        "annualized_volatility_pct": 13.319091655485888,
+        "calmar": 0.39375077369763606,
+        "sortino": 1.3240971683663543,
         "average_monthly_turnover_pct": 8.272111486647313,
         "months": 245,
-        "delta_cagr_pp_vs_full": 0.0963488606172902,
-        "delta_calmar_vs_full": 0.0039019467171631517
+        "delta_cagr_pp_vs_full": 0.09618349264641779,
+        "delta_calmar_vs_full": 0.003891634797397958
       },
       "drop_silver_12m_momentum": {
-        "cagr_pct": 13.049130496409212,
+        "cagr_pct": 12.981511658332945,
         "max_drawdown_pct": -33.057101252308286,
-        "annualized_volatility_pct": 13.249386300910587,
-        "calmar": 0.39474515314611947,
-        "sortino": 1.327237664506699,
+        "annualized_volatility_pct": 13.261415583152239,
+        "calmar": 0.3926996368874443,
+        "sortino": 1.3219416562375446,
         "average_monthly_turnover_pct": 8.320253806224585,
         "months": 245,
-        "delta_cagr_pp_vs_full": 0.0038235398654791197,
-        "delta_calmar_vs_full": 0.00279609753588439
+        "delta_cagr_pp_vs_full": 0.00576375443974797,
+        "delta_calmar_vs_full": 0.002840497987206203
       }
     }
   },
@@ -336,40 +336,40 @@
     },
     "reference": {
       "baseline": {
-        "cagr_pct": 12.199180871010329,
+        "cagr_pct": 12.147909607062246,
         "max_drawdown_pct": -38.082535568453615,
-        "annualized_volatility_pct": 15.636070724799007,
-        "calmar": 0.3203353108955211,
-        "sortino": 1.0930278359006613,
+        "annualized_volatility_pct": 15.644077132634926,
+        "calmar": 0.3189889912982894,
+        "sortino": 1.0900361319938465,
         "average_monthly_turnover_pct": 9.534693877551021,
         "months": 245
       },
       "published_dynamic": {
-        "cagr_pct": 13.045306956543733,
+        "cagr_pct": 12.975747903893197,
         "max_drawdown_pct": -33.283169763563215,
-        "annualized_volatility_pct": 13.294275337991607,
-        "calmar": 0.3919490556102351,
-        "sortino": 1.3234722730163493,
+        "annualized_volatility_pct": 13.306527258833913,
+        "calmar": 0.3898591389002381,
+        "sortino": 1.3181067391426824,
         "average_monthly_turnover_pct": 8.237339201874711,
         "months": 245
       },
       "static_neutral_13_3_5": {
-        "cagr_pct": 12.974942925942567,
+        "cagr_pct": 12.90479018026951,
         "max_drawdown_pct": -32.99961847163909,
-        "annualized_volatility_pct": 13.350073271366531,
-        "calmar": 0.39318463445550567,
-        "sortino": 1.3017240940827448,
+        "annualized_volatility_pct": 13.362349196895904,
+        "calmar": 0.3910587690994153,
+        "sortino": 1.2964484603600637,
         "average_monthly_turnover_pct": 7.961469387755102,
         "months": 245
       }
     },
     "distribution": {
       "cagr_pct": {
-        "min": 12.929795319411008,
-        "p10": 12.98852042238687,
-        "median": 13.048242876827054,
-        "p90": 13.107045919779278,
-        "max": 13.160003762158334
+        "min": 12.862580436764404,
+        "p10": 12.919773022377464,
+        "median": 12.978708575860576,
+        "p90": 13.036534340237496,
+        "max": 13.0875827723278
       },
       "max_drawdown_pct": {
         "min": -33.95930560372231,
@@ -379,24 +379,24 @@
         "max": -32.68184962497871
       },
       "annualized_volatility_pct": {
-        "min": 13.094980478257737,
-        "p10": 13.147350530795656,
-        "median": 13.289237877057325,
-        "p90": 13.44729032937625,
-        "max": 13.518717764653207
+        "min": 13.107670001687424,
+        "p10": 13.15980464347204,
+        "median": 13.301578134341055,
+        "p90": 13.459186398089551,
+        "max": 13.530367616348931
       },
       "calmar": {
-        "min": 0.38122727190482825,
-        "p10": 0.3857828004248985,
-        "median": 0.392224192619676,
-        "p90": 0.39887598820070824,
-        "max": 0.40221930336841116
+        "min": 0.3792489177108123,
+        "p10": 0.3837799415340051,
+        "median": 0.3901152450721365,
+        "p90": 0.39673583831073905,
+        "max": 0.40001180024119154
       }
     },
     "pass_rates_pct": {
       "cagr_above_baseline": 100.0,
       "calmar_above_baseline": 100.0,
-      "calmar_above_static_neutral": 45.0,
+      "calmar_above_static_neutral": 45.2,
       "cagr_above_baseline_and_drawdown_no_worse": 100.0
     }
   },
@@ -405,20 +405,20 @@
     "period_start": "2015-10",
     "period_end": "2026-09",
     "core_without_funded_btc": {
-      "cagr_pct": 11.74452183437895,
+      "cagr_pct": 11.619109316578879,
       "max_drawdown_pct": -6.989289855125191,
-      "annualized_volatility_pct": 7.552342881950811,
-      "calmar": 1.680359818782846,
-      "sortino": 2.3791753338749237,
+      "annualized_volatility_pct": 7.591001893328975,
+      "calmar": 1.6624162908422917,
+      "sortino": 2.328319466294815,
       "average_monthly_turnover_pct": 7.747692982972029,
       "months": 131
     },
     "funded_btc_variant": {
-      "cagr_pct": 17.099811338328607,
+      "cagr_pct": 16.981666986237066,
       "max_drawdown_pct": -8.921195867517085,
-      "annualized_volatility_pct": 9.2758985919791,
-      "calmar": 1.916762235945366,
-      "sortino": 3.1882415868436023,
+      "annualized_volatility_pct": 9.300468240308236,
+      "calmar": 1.9035191288724997,
+      "sortino": 3.1660278629067076,
       "average_monthly_turnover_pct": 7.631355190439525,
       "months": 131
     },
@@ -443,8 +443,8 @@
       },
       "5.0%": {
         "months": 54,
-        "mean_btc_month_return_pct": 4.12452843005873,
-        "median_btc_month_return_pct": 5.133158054365927,
+        "mean_btc_month_return_pct": 4.18230599909425,
+        "median_btc_month_return_pct": 5.406328344023348,
         "positive_btc_month_pct": 55.55555555555556
       },
       "7.5%": {
