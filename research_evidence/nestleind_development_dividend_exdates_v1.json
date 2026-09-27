@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "evidence_id": "nestleind-development-dividend-exdates-v1",
+  "research_only": true,
+  "live_authority": "none",
+  "holdout_target_fetch_count": 0,
+  "development_window": ["2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02"],
+  "source": {
+    "type": "official_exchange",
+    "exchange": "Metropolitan Stock Exchange of India",
+    "url": "https://www.msei.in/corporates/corporate-securities-information/corporate-update/default?symbol=NESTLEIND&type=4&vmode=vm",
+    "table_fields": ["Book Closure / Record Date", "Ex-Date", "Purpose"],
+    "observed_on": "2026-09-24"
+  },
+  "events": [
+    {
+      "record_date": "2022-11-01",
+      "ex_date": "2022-10-31",
+      "purpose": "Interim dividend Rs 120 per share",
+      "cash_amount_per_pre_split_share_inr": 120
+    },
+    {
+      "record_date": "2023-04-21",
+      "ex_date": "2023-04-20",
+      "purpose": "Final dividend Rs 75 per share and interim dividend Rs 27 per share",
+      "cash_amount_per_pre_split_share_inr": 102
+    },
+    {
+      "record_date": "2023-11-01",
+      "ex_date": "2023-10-31",
+      "purpose": "Interim dividend Rs 140 per share",
+      "cash_amount_per_pre_split_share_inr": 140
+    }
+  ],
+  "interpretation": {
+    "resolved_question": "Exact ex-date timing for the 2022/2023 NESTLEIND dividend events needed by the six-month development rolling-12-month dividend chain.",
+    "important_correction": "The exchange evidence shows 2023-04-20 and 2023-10-31 as ex-dates; record dates must not be substituted as ex-dates.",
+    "remaining_nestle_blocker": "First-party issuer accounting packet transport remains non-reproducible in GitHub Actions because the issuer CDN historically returns HTTP 403. This evidence file does not reclassify that transport defect.",
+    "holdout_effect": "none",
+    "live_model_effect": "none"
+  }
+}
