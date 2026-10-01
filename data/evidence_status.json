@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-30T18:36:18+00:00",
+  "updated_at": "2026-10-01T18:56:32+00:00",
   "archive_started_at": "2026-09-12T08:36:13+00:00",
-  "snapshot_count": 56,
-  "decision_count": 1,
+  "snapshot_count": 57,
+  "decision_count": 2,
   "current_model": "be6a38e4534efa11dba466aa3fd99e59af41a41819fd1455e73abb96f140e4bf",
   "model_first_seen_at": "2026-09-15T11:46:42+00:00",
-  "latest_snapshot_id": "b5810baba3c18677346db9ccb09189a00e4c22d5ea9fb2f4d3e7794314ca02b9",
+  "latest_snapshot_id": "3237c84a90e60afba9650ab156d4a50e592e6cabed4afc34dcdcf3ffbb53ccfd",
   "original_release_vintages_verified": false,
   "historical_full_model_backtest_validated": false,
   "policy": {
@@ -111,6 +111,14 @@
       "snapshot_id": "fb04905f1c8f33fdf5e6408b0f1e7a0aaa7b0040629c0063dc8e20976f1a9ddd",
       "model_version": "4f5f2b2c13a214dbbba74b7c495c3158c9f5038068950151f2176cfdbfaf1bbe",
       "equity_pct": 81.54994045700387,
+      "decision_rule": "First eligible archived publication observed this month; not necessarily the first calendar day. No retroactive entry."
+    },
+    {
+      "month": "2026-10",
+      "first_seen_at": "2026-10-01T18:56:32+00:00",
+      "snapshot_id": "3237c84a90e60afba9650ab156d4a50e592e6cabed4afc34dcdcf3ffbb53ccfd",
+      "model_version": "be6a38e4534efa11dba466aa3fd99e59af41a41819fd1455e73abb96f140e4bf",
+      "equity_pct": 69.56019650514693,
       "decision_rule": "First eligible archived publication observed this month; not necessarily the first calendar day. No retroactive entry."
     }
   ]

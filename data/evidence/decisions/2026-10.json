@@ -1,0 +1,8 @@
+{
+  "month": "2026-10",
+  "first_seen_at": "2026-10-01T18:56:32+00:00",
+  "snapshot_id": "3237c84a90e60afba9650ab156d4a50e592e6cabed4afc34dcdcf3ffbb53ccfd",
+  "model_version": "be6a38e4534efa11dba466aa3fd99e59af41a41819fd1455e73abb96f140e4bf",
+  "equity_pct": 69.56019650514693,
+  "decision_rule": "First eligible archived publication observed this month; not necessarily the first calendar day. No retroactive entry."
+}
