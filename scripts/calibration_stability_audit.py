@@ -97,8 +97,22 @@ def main():
     n=latest['nifty'];cur=raw_vector(n['pe'],n['pb'],n['div_yield'],n['gsec10'])
     earn=float(latest['earnings']['score']);risk_off=bool(latest['trend']['risk_off'])
     pc,ps=production_centers_scales();prod_z=z_from(cur,pc,ps);prod=allocation(prod_z,earn,risk_off)
-    expected=float(reliability['current_formula_comparison']['new_policy_equity_pct'])
-    if abs(prod['policy_equity_pct']-expected)>1e-8:raise RuntimeError(f'production_reproduction_mismatch_{prod["policy_equity_pct"]}_{expected}')
+    comparison=reliability.get('current_formula_comparison')
+    allocation_ready=bool(reliability.get('allocation_ready_at_capture'))
+    if allocation_ready:
+        if not isinstance(comparison,dict) or comparison.get('new_policy_equity_pct') is None:
+            raise RuntimeError('allocation_ready_but_formula_comparison_missing')
+        expected=float(comparison['new_policy_equity_pct'])
+        if abs(prod['policy_equity_pct']-expected)>1e-8:
+            raise RuntimeError(f'production_reproduction_mismatch_{prod["policy_equity_pct"]}_{expected}')
+    else:
+        # A withheld live allocation is a valid fail-closed state (for example,
+        # when a required daily input is stale/unavailable). Reliability then
+        # intentionally emits no current_formula_comparison. The fragility
+        # audit remains descriptive/research-only and must not turn that
+        # protective state into a CI failure or infer a live recommendation.
+        if comparison is not None:
+            raise RuntimeError('allocation_withheld_but_formula_comparison_present')
 
     variants=[]
     def add(name,idx,note):
