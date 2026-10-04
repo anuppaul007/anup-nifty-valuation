@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-10-04T14:05:24+00:00",
-  "source_commit": "4c11fbbbcb545a502e4527ff917a00ce3f3a698e",
+  "checked_at": "2026-10-04T19:38:43+00:00",
+  "source_commit": "2d48f4020a2e3cb900fb79a29e7e56d475135b2d",
   "packet_generated_at": "2026-10-01T18:56:16+00:00",
   "status": "attention_required",
   "checks": [
     {
       "name": "packet_freshness",
-      "ok": true,
-      "detail": "Packet age 67.15 hours; maximum 72 hours"
+      "ok": false,
+      "detail": "Packet age 72.71 hours; maximum 72 hours"
     },
     {
       "name": "published_bytes",
@@ -22,8 +22,8 @@
     },
     {
       "name": "allocation_inputs",
-      "ok": true,
-      "detail": "Defined input gates passed"
+      "ok": false,
+      "detail": "earnings-cycle history is incomplete or stale"
     }
   ],
   "scope": "Operational checks only; not investment validation. A delayed watchdog can also miss failures; the website checks this status age."
