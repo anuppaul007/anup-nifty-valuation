@@ -97,7 +97,17 @@ def main():
     n=latest['nifty'];cur=raw_vector(n['pe'],n['pb'],n['div_yield'],n['gsec10'])
     earn=float(latest['earnings']['score']);risk_off=bool(latest['trend']['risk_off'])
     pc,ps=production_centers_scales();prod_z=z_from(cur,pc,ps);prod=allocation(prod_z,earn,risk_off)
-    expected=float(reliability['current_formula_comparison']['new_policy_equity_pct'])
+    comparison=reliability.get('current_formula_comparison')
+    if not isinstance(comparison,dict) or comparison.get('new_policy_equity_pct') is None:
+        out={
+          'schema_version':1,'generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'model_version':version,
+          'status':'withheld','reason':'live_allocation_unavailable_for_calibration_reproduction',
+          'source_packet_generated_at':latest.get('generated_at'),'return_data_used':False,'live_model_changed':False,'live_allocation_changed':False,
+          'interpretation_guardrail':'Calibration sensitivity is intentionally withheld when the live reliability audit cannot reproduce an allocation. This is an operational fail-closed state, not evidence for or against the model.'
+        }
+        OUT.parent.mkdir(parents=True,exist_ok=True);OUT.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8')
+        print(json.dumps(out));return
+    expected=float(comparison['new_policy_equity_pct'])
     if abs(prod['policy_equity_pct']-expected)>1e-8:raise RuntimeError(f'production_reproduction_mismatch_{prod["policy_equity_pct"]}_{expected}')
 
     variants=[]
