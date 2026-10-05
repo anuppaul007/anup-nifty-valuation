@@ -6,7 +6,14 @@
   "live_model_changed": false,
   "live_allocation_changed": false,
   "holdout_target_fetch_count": 0,
-  "development_window": ["2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02"],
+  "development_window": [
+    "2023-09",
+    "2023-10",
+    "2023-11",
+    "2023-12",
+    "2024-01",
+    "2024-02"
+  ],
   "sealed_holdout": "2024-03 through 2026-08",
   "purpose": "Freeze source-semantic resolution requirements for the remaining difficult constituent accounting cases before any holdout target is opened.",
   "global_rules": {
@@ -15,7 +22,11 @@
     "no_index_renormalisation": true,
     "no_loss_maker_exclusion": true,
     "point_in_time_only": true,
-    "source_priority": ["official_NSE_structured", "official_NSE_archive_or_announcement", "preregistered_first_party_issuer_exception"],
+    "source_priority": [
+      "official_NSE_structured",
+      "official_NSE_archive_or_announcement",
+      "preregistered_first_party_issuer_exception"
+    ],
     "secondary_finance_sites": "prohibited_as_source_of_record",
     "resolution_requires": [
       "source identity and publication timestamp frozen before numerical comparison",
@@ -29,46 +40,67 @@
   "cases": [
     {
       "case_id": "NESTLEIND_TRANSITION_YEAR",
-      "symbols": ["NESTLEIND"],
-      "status": "blocked_retrieval",
-      "known_evidence": "Six first-party development packets are frozen by reporting period/publication date; GitHub Actions historically receives HTTP 403 from issuer CDN.",
+      "symbols": [
+        "NESTLEIND"
+      ],
+      "status": "accounting_resolved_transport_defect",
+      "known_evidence": "Six first-party development packets are frozen by reporting period/publication date; GitHub Actions historically receives HTTP 403 from issuer CDN. Exchange-source MSE corporate-action history independently exposes exact dividend ex-dates for the development chain: 31-Oct-2022 (₹120 interim; record 01-Nov-2022), 20-Apr-2023 (₹75 final + ₹27 interim; record 21-Apr-2023), and 31-Oct-2023 (₹140 interim; record 01-Nov-2023). NSE/MSE exchange evidence separately fixes the 1:10 split ex/effective date at 05-Jan-2024.",
       "frozen_semantics": [
         "31-Dec-2022 remains latest eligible audited annual book source for Sep-2023 through Feb-2024 development signals",
         "31-Dec-2023 result may enter TTM only after its 07-Feb-2024 publication",
-        "31-Dec-2023 twelve-month result is unaudited and cannot replace audited annual book source"
+        "31-Dec-2023 twelve-month result is unaudited and cannot replace audited annual book source",
+        "For rolling-12-month dividend timing, use exchange-published ex-dates rather than record/payment dates: 31-Oct-2022, 20-Apr-2023, 31-Oct-2023 for the frozen ₹120, ₹75+₹27, and ₹140 distributions respectively."
       ],
-      "completion_gate": "All required numerical facts must be reproducibly extracted from a frozen first-party or higher-priority official artifact without weakening the issuer-specific preregistration. A 403 is not permission to substitute a secondary source."
+      "completion_gate": "Accounting/dividend timing semantics are resolved from first-party issuer plus exchange evidence. The issuer-CDN HTTP 403 remains an explicit transport/reproducibility defect; it may not be silently reclassified as machine-reproducible and does not authorize secondary-source substitution."
     },
     {
       "case_id": "INDUSINDBK_ARCHIVE_XML",
-      "symbols": ["INDUSINDBK"],
+      "symbols": [
+        "INDUSINDBK"
+      ],
       "status": "blocked_archive",
       "known_evidence": "Three selected historical structured XML links for Dec-2022, Mar-2023 and Jun-2023 returned 404 in the frozen development inventory.",
       "completion_gate": "Recover the exact official filing from an NSE/NSE-archive route with period and dissemination identity preserved, or retain an explicit gap. Do not reconstruct missing quarterly facts from later YTD values under semantics v1."
     },
     {
       "case_id": "BANK_ANNUAL_NET_WORTH",
-      "symbols": ["BANKING_TEMPLATE_FAMILY"],
+      "symbols": [
+        "BANKING_TEMPLATE_FAMILY"
+      ],
       "status": "semantic_unresolved",
-      "candidate_families": ["paid_up_capital_plus_reserve_ex_revaluation", "capital_plus_reserves_and_surplus_if_explicit"],
+      "candidate_families": [
+        "paid_up_capital_plus_reserve_ex_revaluation",
+        "capital_plus_reserves_and_surplus_if_explicit"
+      ],
       "completion_gate": "Choose or reject candidates from official template/accounting semantics independent of six-month valuation fit; treatment of revaluation reserves, minority interest and total-company basis must be explicit."
     },
     {
       "case_id": "NBFC_ANNUAL_NET_WORTH",
-      "symbols": ["NBFC_TEMPLATE_FAMILY", "BAJAJFINSV"],
+      "symbols": [
+        "NBFC_TEMPLATE_FAMILY",
+        "BAJAJFINSV"
+      ],
       "status": "semantic_unresolved",
-      "candidate_families": ["paid_up_capital_plus_reserve_ex_revaluation", "parent_equity_if_explicit"],
+      "candidate_families": [
+        "paid_up_capital_plus_reserve_ex_revaluation",
+        "parent_equity_if_explicit"
+      ],
       "completion_gate": "Resolve from official NBFC filing semantics independently of development-target closeness; generic ordinary-company IndAS mapping may not be inherited by default."
     },
     {
       "case_id": "LIFE_INSURANCE_ACCOUNTING",
-      "symbols": ["HDFCLIFE", "SBILIFE"],
+      "symbols": [
+        "HDFCLIFE",
+        "SBILIFE"
+      ],
       "status": "separate_template_required",
       "completion_gate": "Freeze an insurer-specific profit, annual net-worth and share-count extraction mapping from official insurance result packets. Do not force INDAS, BANKING or NBFC mappings."
     },
     {
       "case_id": "ICICIBANK_SHARE_COUNT",
-      "symbols": ["ICICIBANK"],
+      "symbols": [
+        "ICICIBANK"
+      ],
       "status": "capital_continuity_unresolved",
       "known_evidence": "Development inventory observed an orders-of-magnitude implied-share discontinuity around Mar/Jun-2023 from paid-up-capital/face-value facts.",
       "completion_gate": "Reconcile the candidate share-count facts to adjacent official filings and point-in-time official corporate actions. If no matching capital action explains the discontinuity, reject the anomalous fact/context rather than smoothing or carrying it forward."
