@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_version": "multiasset-research-v1",
-  "generated_at": "2026-10-05T21:11:21+00:00",
+  "generated_at": "2026-10-05T21:27:48+00:00",
   "status": "live",
   "source_latest_generated_at": "2026-10-05T21:10:41+00:00",
   "core_source": "V3.6 NIFTY equity/debt research signal; gold and silver are a diversification layer carved proportionally from both sleeves",
@@ -107,7 +107,7 @@
     }
   },
   "btc": {
-    "score": 0.17975310944663275,
+    "score": 0.17997938635025285,
     "tactical_signal_pct": 5.0,
     "range_pct": [
       0,
@@ -116,14 +116,14 @@
     "included_in_core_100pct": false,
     "drivers": {
       "price_vs_200d": {
-        "value": 19.745002089137962,
-        "score": 0.756187318220307,
+        "value": 19.913657969980015,
+        "score": 0.7597751146075534,
         "weight": 0.3,
         "asof": "2026-10-05"
       },
       "btc_12m_momentum": {
-        "value": -30.60334699053905,
-        "score": -0.4699886613391649,
+        "value": -30.50501510937097,
+        "score": -0.46871082128535385,
         "weight": 0.2,
         "asof": "2026-10-05"
       },
@@ -134,21 +134,21 @@
         "asof": "2026-10-05T21:10:41+00:00"
       },
       "drawdown_value": {
-        "value": -31.292601527874808,
-        "score": 0.3046433703255469,
+        "value": -31.195246288840327,
+        "score": 0.3002208502322828,
         "weight": 0.25,
         "asof": "2026-10-05"
       }
     },
     "market": {
-      "price": 85714.21875,
+      "price": 85835.671875,
       "asof": "2026-10-05",
       "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD",
-      "ma200": 71580.623203125,
-      "vs_ma200_pct": 19.745002089137962,
-      "momentum_12m_pct": -30.60334699053905,
+      "ma200": 71581.23046875,
+      "vs_ma200_pct": 19.913657969980015,
+      "momentum_12m_pct": -30.50501510937097,
       "three_year_high": 124752.53125,
-      "drawdown_from_3y_high_pct": -31.292601527874808,
+      "drawdown_from_3y_high_pct": -31.195246288840327,
       "observations": 1097
     }
   },
