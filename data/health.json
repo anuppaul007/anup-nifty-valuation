@@ -1,29 +1,29 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-10-05T17:09:36+00:00",
-  "source_commit": "7d78027b523a0e4b4448c04a90e2d430679e55d1",
-  "packet_generated_at": "2026-10-01T18:56:16+00:00",
-  "status": "attention_required",
+  "checked_at": "2026-10-05T21:11:14+00:00",
+  "source_commit": "705fe8bfa32bfbaa4b5d9c3f28f6a903817f68db",
+  "packet_generated_at": "2026-10-05T21:10:41+00:00",
+  "status": "healthy",
   "checks": [
     {
       "name": "packet_freshness",
-      "ok": false,
-      "detail": "Packet age 94.22 hours; maximum 72 hours"
+      "ok": true,
+      "detail": "Packet age 0.01 hours; maximum 72 hours"
     },
     {
       "name": "published_bytes",
       "ok": true,
-      "detail": "Pinned commit API, raw source and checkout bytes match: 3f0a62d703f8df9810f9f1e4453e4ac9291d5dfcad57a7222cc84b3ba67e9039"
+      "detail": "Pinned commit API, raw source and checkout bytes match: b9519f5ab13c8700f08605648d1868d47db542e0996918e56913b13763a0c33d"
     },
     {
       "name": "refresh_workflow",
-      "ok": false,
-      "detail": "Latest completed refresh: failure \u00b7 https://github.com/anuppaul007/anup-nifty-valuation/actions/runs/37047547939"
+      "ok": true,
+      "detail": "Latest completed refresh: success \u00b7 https://github.com/anuppaul007/anup-nifty-valuation/actions/runs/37373917688"
     },
     {
       "name": "allocation_inputs",
-      "ok": false,
-      "detail": "earnings-cycle history is incomplete or stale"
+      "ok": true,
+      "detail": "Defined input gates passed"
     }
   ],
   "scope": "Operational checks only; not investment validation. A delayed watchdog can also miss failures; the website checks this status age."
