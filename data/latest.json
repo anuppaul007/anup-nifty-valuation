@@ -1,18 +1,18 @@
 {
   "schema_version": 4,
   "model_version": "3.13-reliability-1",
-  "generated_at": "2026-10-05T21:10:41+00:00",
+  "generated_at": "2026-10-06T18:57:06+00:00",
   "macro_stale": false,
   "macro_partial": false,
   "nifty": {
-    "date": "2026-10-05",
-    "level": 22555.75,
-    "pe": 19.3,
-    "pb": 2.77,
-    "div_yield": 1.23,
-    "gsec10": 7.2049,
+    "date": "2026-10-06",
+    "level": 22776.1,
+    "pe": 19.49,
+    "pb": 2.8,
+    "div_yield": 1.21,
+    "gsec10": 7.215,
     "gsec_meta": {
-      "asof": "2026-10-01",
+      "asof": "2026-10-05",
       "source_url": "https://www.rbi.org.in/",
       "source": "RBI dated government bond near 10 years",
       "security": "6.94% GS 2036",
@@ -34,11 +34,11 @@
     "us_real_10y": 2.95,
     "usd_3m_pct": -0.7230801900344419,
     "fed_assets_6m_pct": 1.0139851968677505,
-    "vix": 15.31,
-    "brent_3m_pct": 35.27507381459421,
+    "vix": 15.52,
+    "brent_3m_pct": 29.22328125194047,
     "india_reer_bis": 90.14,
     "usd_inr_3m_pct": 0.17928493769474585,
-    "india_us_10y_spread": 1.8949000000000007,
+    "india_us_10y_spread": 1.9050000000000002,
     "us_10y": 5.31,
     "factors": {
       "us_real_10y": {
@@ -69,19 +69,19 @@
         "status": "live"
       },
       "vix": {
-        "value": 15.31,
-        "z": -0.4499546147902413,
-        "score": 0.29128492308555975,
-        "asof": "2026-10-02",
-        "observations": 9286,
+        "value": 15.52,
+        "z": -0.40049900370781766,
+        "score": 0.26083050953555115,
+        "asof": "2026-10-05",
+        "observations": 9287,
         "source_url": "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
         "status": "live"
       },
       "brent_3m_pct": {
-        "value": 35.27507381459421,
-        "z": 1.552204882756663,
-        "score": -0.7758276123931803,
-        "asof": "2026-10-05",
+        "value": 29.22328125194047,
+        "z": 1.257688533344847,
+        "score": -0.6849919959627415,
+        "asof": "2026-10-06",
         "observations": 755,
         "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F",
         "status": "live"
@@ -106,14 +106,14 @@
         "status": "live"
       },
       "india_us_10y_spread": {
-        "value": 1.8949000000000007,
-        "z": -1.6256651667913204,
-        "score": -0.7945954694248425,
+        "value": 1.9050000000000002,
+        "z": -1.6049991605999718,
+        "score": -0.7894610101250314,
         "asof": "2026-10-05",
         "observations": 940,
         "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
         "status": "live",
-        "india_asof": "2026-10-01",
+        "india_asof": "2026-10-05",
         "india_source_url": "https://www.rbi.org.in/",
         "history_source_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/IND.M.IRLT.PA.....?startPeriod=2012-01&dimensionAtObservation=AllDimensions&format=csvfile"
       },
@@ -144,8 +144,8 @@
       "allocation_effect": "none"
     },
     "blocks": {
-      "global_liquidity": -0.11706478533205236,
-      "india_external_carry": -0.15789478558167316,
+      "global_liquidity": -0.12163294736455364,
+      "india_external_carry": -0.12936048582758877,
       "china_industrial": 0.006666567902989752,
       "relative_em_valuation": null,
       "india_domestic": 0.057009151848864285
@@ -159,7 +159,7 @@
       "india_domestic": 1.0
     },
     "india_reer_z": -2.4822855177148893,
-    "india_us_spread_z": -1.6256651667913204,
+    "india_us_spread_z": -1.6049991605999718,
     "stale_factors": [],
     "sources_live": {
       "us_real_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv",
@@ -172,7 +172,7 @@
       "india_us_10y_spread": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv",
       "us_10y": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_yield_curve&field_tdr_date_value=2026&page&_format=csv"
     },
-    "score": -0.05900753045221998,
+    "score": -0.05324440412344927,
     "active_block_weight": 1.0,
     "block_weight_detail": {
       "global_liquidity": {
@@ -225,7 +225,7 @@
         },
         "india_repo_rate": {
           "value": 5.25,
-          "asof": "2026-10-05",
+          "asof": "2026-10-06",
           "source_url": "https://www.rbi.org.in/",
           "status": "live",
           "label": "RBI policy repo rate",
@@ -320,17 +320,17 @@
     "allocation_effect": "none",
     "purpose": "separate diagnostic cross-check on fixed-reference valuation core",
     "current": {
-      "pe": 19.3,
-      "pb": 2.77,
-      "dividend_yield": 1.23
+      "pe": 19.49,
+      "pb": 2.8,
+      "dividend_yield": 1.21
     },
     "cheapness_percentiles": {
-      "pe_cheapness": 100.0,
-      "pb_cheapness": 100.0,
-      "dividend_yield_cheapness": 27.027027027027028
+      "pe_cheapness": 97.2972972972973,
+      "pb_cheapness": 97.2972972972973,
+      "dividend_yield_cheapness": 16.216216216216218
     },
-    "composite_cheapness": 75.67567567567568,
-    "label": "cheap within current-methodology era",
+    "composite_cheapness": 70.27027027027027,
+    "label": "below typical valuation within current-methodology era",
     "pe_stats": {
       "median": 22.0,
       "q25": 21.33,
@@ -362,15 +362,15 @@
       "observations": 37
     },
     "lens_disagreement": {
-      "spread_pp": 72.97297297297297,
+      "spread_pp": 81.0810810810811,
       "threshold_pp": 60,
       "flagged": true,
       "interpretation": "Review signal: divergent ranks can reflect fundamentals or a data break; this does not prove a break."
     },
     "vs_median_pct": {
-      "pe": -12.272727272727268,
-      "pb": -21.52974504249291,
-      "dividend_yield": -3.90625
+      "pe": -11.409090909090914,
+      "pb": -20.679886685552407,
+      "dividend_yield": -5.46875
     },
     "ratio_breaks": [
       {
@@ -775,9 +775,9 @@
     ],
     [
       "2026-10",
-      19.3,
-      2.77,
-      1.23
+      19.49,
+      2.8,
+      1.21
     ]
   ],
   "calibration": {
