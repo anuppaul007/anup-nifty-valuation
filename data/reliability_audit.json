@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "model_version": "3.13-reliability-1",
-  "evaluated_at": "2026-10-07T19:24:26+00:00",
+  "evaluated_at": "2026-10-08T19:19:22+00:00",
   "evaluation_clock": "Packet generation time; current live eligibility is rechecked in the browser and watchdog",
   "source_hashes": {
     "model.js": "ccd60e5aeaef75e6dee7f84de5410f689dadada23f2ee619bf420d57a6748358",
     "valuation.js": "c9c03169e3ebf0ec54f65eade464e6356eb61f23e7d981716007304d3c328d70",
     "requirements.txt": "55eb714fe8d1d1760cde481e35fa820b3ba14f880c86e7802c2c6c838587e093",
-    "data/latest.json": "c7891c3fc4dc434e305cd445189a9b61c4f4aaa41d4a6f5a25f21eb77a088891",
+    "data/latest.json": "395b5907ff23034b2149a49d82589aa52427e67df189274a1bb27f5d128d5039",
     "data/pb_calibration_v3_10.json": "e1766dfe82f97b5a5ec9d24cd7f646febabe4a692b5a571e2f27983f3a1409f5",
     "robust_evaluation_policy.json": "de75f801957322d0a5e707d42eace524e5fc08548f0e17bc2728a1cf549f5023",
     "validation_policy.json": "e8aa03b832a9f02b522cf902ed622b1ce153f1f2678ba1a3a9bac28df80c678d",
@@ -35,88 +35,88 @@
   },
   "current_formula_comparison": {
     "scope": "Same current inputs; formula effect only, not a historical return test",
-    "old_pb_z": -1.2654828352758454,
-    "new_pb_z": -2.801215412700681,
-    "old_core_equity_pct": 82.54067189160426,
-    "new_core_equity_pct": 90.27820136539194,
-    "old_policy_equity_pct": 60.42244316465758,
-    "new_policy_equity_pct": 68.15997263844525,
-    "change_pp": 7.737529473787674
+    "old_pb_z": -1.407034781860336,
+    "new_pb_z": -3.0779603596601866,
+    "old_core_equity_pct": 85.11585617564027,
+    "new_core_equity_pct": 92.51575730652601,
+    "old_policy_equity_pct": 62.997627448693606,
+    "new_policy_equity_pct": 70.39752857957933,
+    "change_pp": 7.399901130885723
   },
   "valuation_sensitivity": {
     "model_version": "3.13-reliability-1",
-    "asof": "2026-10-07",
+    "asof": "2026-10-08",
     "anchors": [
       {
         "label": "Below-reference boundary",
         "z": -0.674,
-        "index_level": 24387.442595266195
+        "index_level": 24352.595269537564
       },
       {
         "label": "Model reference centre",
         "z": 0,
-        "index_level": 26049.346433780738
+        "index_level": 26012.309783867244
       },
       {
         "label": "Above-reference boundary",
         "z": 0.674,
-        "index_level": 27815.807368235746
+        "index_level": 27776.559723972867
       }
     ],
     "reference_sensitivity": [
       {
         "fair_pe": 18,
-        "equity_pct": 53.58830863140136,
-        "valuation_z": -0.7750027279780325
+        "equity_pct": 57.66128501405993,
+        "valuation_z": -0.9293089790480169
       },
       {
         "fair_pe": 22.44,
-        "equity_pct": 68.15997263844525,
-        "valuation_z": -1.4490917968039436
+        "equity_pct": 70.39752857957933,
+        "valuation_z": -1.603398047873928
       },
       {
         "fair_pe": 26,
-        "equity_pct": 74.59179177296554,
-        "valuation_z": -1.9895776267634577
+        "equity_pct": 75.80934508551817,
+        "valuation_z": -2.1438838778334417
       }
     ],
     "earnings_sensitivity": [
       {
         "earnings_change_pct": -20,
-        "pe": 24.174999999999997,
-        "equity_pct": 16.89635121235365
+        "pe": 23.775,
+        "equity_pct": 22.345238703623274
       },
       {
         "earnings_change_pct": -10,
-        "pe": 21.488888888888887,
-        "equity_pct": 49.15845412199869
+        "pe": 21.133333333333333,
+        "equity_pct": 53.69335404068909
       },
       {
         "earnings_change_pct": 0,
-        "pe": 19.34,
-        "equity_pct": 68.15997263844525
+        "pe": 19.02,
+        "equity_pct": 70.39752857957933
       },
       {
         "earnings_change_pct": 10,
-        "pe": 17.581818181818182,
-        "equity_pct": 76.13446784232141
+        "pe": 17.29090909090909,
+        "equity_pct": 77.0862604956335
       }
     ],
     "drawdown_scenarios": [
       {
         "equity_return_pct": -20,
         "debt_return_pct": 0,
-        "portfolio_return_pct": -13.63199452768905
+        "portfolio_return_pct": -14.079505715915865
       },
       {
         "equity_return_pct": -35,
         "debt_return_pct": 0,
-        "portfolio_return_pct": -23.85599042345584
+        "portfolio_return_pct": -24.639135002852765
       },
       {
         "equity_return_pct": -50,
         "debt_return_pct": 0,
-        "portfolio_return_pct": -34.07998631922263
+        "portfolio_return_pct": -35.198764289789665
       }
     ],
     "assumptions": "Conditional on unchanged index-implied earnings, book value, dividends and bond yield. Reference boundaries are model conventions, not intrinsic-value estimates or statistical confidence intervals. Sensitivities hold the earnings overlay and trend regime fixed; they are not future signals.",
