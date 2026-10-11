@@ -97,7 +97,16 @@ def main():
     n=latest['nifty'];cur=raw_vector(n['pe'],n['pb'],n['div_yield'],n['gsec10'])
     earn=float(latest['earnings']['score']);risk_off=bool(latest['trend']['risk_off'])
     pc,ps=production_centers_scales();prod_z=z_from(cur,pc,ps);prod=allocation(prod_z,earn,risk_off)
-    expected=float(reliability['current_formula_comparison']['new_policy_equity_pct'])
+    comparison=reliability.get('current_formula_comparison')
+    expected_value=comparison.get('new_policy_equity_pct') if isinstance(comparison,dict) else None
+    if expected_value is None or isinstance(expected_value,bool):
+        raise SystemExit('calibration_audit_withheld: reliability policy-equity anchor unavailable')
+    try:
+        expected=float(expected_value)
+    except (TypeError,ValueError,OverflowError):
+        raise SystemExit('calibration_audit_withheld: reliability policy-equity anchor invalid')
+    if not math.isfinite(expected):
+        raise SystemExit('calibration_audit_withheld: reliability policy-equity anchor nonfinite')
     if abs(prod['policy_equity_pct']-expected)>1e-8:raise RuntimeError(f'production_reproduction_mismatch_{prod["policy_equity_pct"]}_{expected}')
 
     variants=[]
