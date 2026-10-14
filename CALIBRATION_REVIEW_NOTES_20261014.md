@@ -8,9 +8,9 @@ Inputs: local reliability and latest-data JSON. No return series or sealed holdo
 
 Reproduce: `python -m unittest discover -s tests -p 'test_calibration_*.py' -v`; `python scripts/calibration_stability_audit.py`; `python scripts/calibration_stability_audit.py --verify-publication`.
 
-Developer CI evidence: run 38500802955 completed successfully on 2026-10-14; six executable tests passed, audit and explicit publication gate passed, research artifact uploaded.
+Developer CI evidence: run 38500969533 completed successfully on 2026-10-14; seven executable tests passed, audit and explicit publication gate passed, research artifact uploaded.
 
-Strongest counter-evidence: no complete synthetic entrypoint test for the missing-anchor branch yet; schema v2 consumer compatibility not independently checked. A deliberately withheld report causes a red publication gate.
+Strongest counter-evidence: one synthetic missing-comparison entrypoint test passes, but null/nonfinite/mismatch entrypoint paths and schema v2 consumer compatibility are not independently checked. A deliberately withheld report causes a red publication gate; this is intentional, but needs independent release-risk review.
 
 Reviewer questions: validate full entrypoint failure paths, consumer compatibility, mismatch tolerance, strict numeric input contract, and artifact-on-failure semantics. Acceptance requires independent review plus current-head CI success before merge.
 
