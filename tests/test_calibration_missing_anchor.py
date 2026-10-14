@@ -1,20 +1,44 @@
-"""Regression tests for absent reliability comparison (stdlib only)."""
-import subprocess
+"""Synthetic-only executable regression tests for reliability-anchor validation."""
+import math
 import sys
+import unittest
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "scripts" / "calibration_stability_audit.py"
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
+from calibration_anchor_guard import validate_anchor
 
 
-def test_missing_anchor_guard_present():
-    source = SCRIPT.read_text(encoding="utf-8")
-    assert "isinstance(comparison,dict)" in source
-    assert "expected_value is None" in source
-    assert "math.isfinite(expected)" in source
-    assert "reliability['current_formula_comparison']" not in source
+class ReliabilityAnchorTests(unittest.TestCase):
+    def test_missing_invalid_and_nonfinite(self):
+        cases = [
+            ({}, 'missing_comparison'),
+            ({'current_formula_comparison': None}, 'missing_comparison'),
+            ({'current_formula_comparison': []}, 'missing_comparison'),
+            ({'current_formula_comparison': {}}, 'missing_anchor'),
+            ({'current_formula_comparison': {'new_policy_equity_pct': None}}, 'null_anchor'),
+            ({'current_formula_comparison': {'new_policy_equity_pct': True}}, 'invalid_anchor_type'),
+            ({'current_formula_comparison': {'new_policy_equity_pct': '45'}}, 'invalid_anchor_type'),
+            ({'current_formula_comparison': {'new_policy_equity_pct': 'bad'}}, 'invalid_anchor_type'),
+            ({'current_formula_comparison': {'new_policy_equity_pct': math.nan}}, 'nonfinite_anchor'),
+            ({'current_formula_comparison': {'new_policy_equity_pct': math.inf}}, 'nonfinite_anchor'),
+            ({'current_formula_comparison': {'new_policy_equity_pct': -1}}, 'out_of_range_anchor'),
+            ({'current_formula_comparison': {'new_policy_equity_pct': 101}}, 'out_of_range_anchor'),
+            (None, 'invalid_reliability_document'),
+            ([], 'invalid_reliability_document')
+        ]
+        for document, reason in cases:
+            with self.subTest(document=repr(document)):
+                value, error = validate_anchor(document)
+                self.assertIsNone(value)
+                self.assertEqual(error, reason)
+
+    def test_valid_numeric_boundaries(self):
+        for number in [0, 1, 50.5, 100]:
+            with self.subTest(number=number):
+                self.assertEqual(validate_anchor(
+                    {'current_formula_comparison': {'new_policy_equity_pct': number}}),
+                    (float(number), None))
 
 
-def test_script_compiles():
-    import ast
-    ast.parse(SCRIPT.read_text(encoding="utf-8"))
+if __name__ == '__main__':
+    unittest.main()
