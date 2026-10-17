@@ -1,6 +1,6 @@
 {
   "status": "complete",
-  "generated_at": "2026-10-10T18:45:07+00:00",
+  "generated_at": "2026-10-17T17:24:27+00:00",
   "start_month": "2000-01",
   "end_month": "2026-09",
   "months": 321,
@@ -11,7 +11,7 @@
       "gross": {
         "multiple_x": 37.70215920818859,
         "ending_value_of_1cr_inr": 377021592.0818859,
-        "cagr_pct": 14.518795277348406,
+        "cagr_pct": 14.507690542022944,
         "max_drawdown_pct": -37.99990551051307,
         "annualized_volatility_pct": 17.468847910034164,
         "worst_calendar_year": 2008,
@@ -23,7 +23,7 @@
       "turnover_10bps": {
         "multiple_x": 36.631095222386314,
         "ending_value_of_1cr_inr": 366310952.2238631,
-        "cagr_pct": 14.395592007201374,
+        "cagr_pct": 14.384587291036643,
         "max_drawdown_pct": -38.0825355684536,
         "annualized_volatility_pct": 17.47036344788881,
         "worst_calendar_year": 2008,
@@ -37,7 +37,7 @@
       "gross": {
         "multiple_x": 43.652272591447435,
         "ending_value_of_1cr_inr": 436522725.91447437,
-        "cagr_pct": 15.147291755638847,
+        "cagr_pct": 15.135675320746177,
         "max_drawdown_pct": -33.26404270873171,
         "annualized_volatility_pct": 15.919006710394468,
         "worst_calendar_year": 2008,
@@ -49,7 +49,7 @@
       "turnover_10bps": {
         "multiple_x": 42.538472751730595,
         "ending_value_of_1cr_inr": 425384727.51730597,
-        "cagr_pct": 15.036187250967291,
+        "cagr_pct": 15.024661452214128,
         "max_drawdown_pct": -33.283169763563215,
         "annualized_volatility_pct": 15.921166977356688,
         "worst_calendar_year": 2008,
@@ -63,7 +63,7 @@
       "gross": {
         "multiple_x": 73.25586716251051,
         "ending_value_of_1cr_inr": 732558671.6251051,
-        "cagr_pct": 17.395449607903824,
+        "cagr_pct": 17.38198282469787,
         "max_drawdown_pct": -33.26404270873171,
         "annualized_volatility_pct": 16.251268425621337,
         "worst_calendar_year": 2008,
@@ -75,7 +75,7 @@
       "turnover_10bps": {
         "multiple_x": 71.39424458904136,
         "ending_value_of_1cr_inr": 713942445.8904136,
-        "cagr_pct": 17.282637371470578,
+        "cagr_pct": 17.269264176732268,
         "max_drawdown_pct": -33.283169763563215,
         "annualized_volatility_pct": 16.253667385459007,
         "worst_calendar_year": 2008,
@@ -89,7 +89,7 @@
       "gross": {
         "multiple_x": 20.178395441946407,
         "ending_value_of_1cr_inr": 201783954.41946408,
-        "cagr_pct": 11.876042501540262,
+        "cagr_pct": 11.867062264027407,
         "max_drawdown_pct": -55.93553717016426,
         "annualized_volatility_pct": 22.60034815347057,
         "worst_calendar_year": 2008,
@@ -101,7 +101,7 @@
       "turnover_10bps": {
         "multiple_x": 20.178395441946407,
         "ending_value_of_1cr_inr": 201783954.41946408,
-        "cagr_pct": 11.876042501540262,
+        "cagr_pct": 11.867062264027407,
         "max_drawdown_pct": -55.93553717016426,
         "annualized_volatility_pct": 22.60034815347057,
         "worst_calendar_year": 2008,
