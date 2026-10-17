@@ -90,3 +90,65 @@ def enforce_reproduction(path, version, actual, expected):
     if abs(actual - expected) > 1e-8:
         write_withheld(path, 'production_reproduction_mismatch', version)
         raise RuntimeError(f'production_reproduction_mismatch_{actual}_{expected}')
+
+
+# Frozen source set from scripts/reliability_audit.py. Never accept a caller-provided
+# list of hashes: doing so would let a stale receipt omit its changed source.
+RELIABILITY_SOURCE_PATHS = (
+    'model.js', 'valuation.js', 'requirements.txt', 'data/latest.json',
+    'data/pb_calibration_v3_10.json', 'robust_evaluation_policy.json',
+    'validation_policy.json', 'trend_policy_v1.json',
+    'release_timing_policy.json', 'research_trial_registry.json',
+)
+
+
+def validate_provenance(document, *, root, latest, model_version):
+    """Bind a numerical anchor to the exact point-in-time inputs that produced it.
+
+    A matching allocation percentage alone is insufficient: capped/rounded
+    allocations can remain equal even after inputs or policy files change.
+    No wall-clock freshness threshold is invented for retrospective research;
+    exact packet identity and a timezone-aware evaluation vintage are required.
+    """
+    import hashlib
+    import re
+
+    if not isinstance(document, dict):
+        return 'invalid_reliability_document'
+    if not isinstance(latest, dict):
+        return 'invalid_latest_packet'
+    if document.get('schema_version') != 1:
+        return 'invalid_reliability_schema'
+    if document.get('status') != 'structural_checks_passed':
+        return 'unverified_reliability_status'
+    if document.get('allocation_ready_at_capture') is not True:
+        return 'allocation_not_ready_at_capture'
+    if document.get('hold_reason') is not None:
+        return 'reliability_hold_reason'
+    if document.get('model_version') != model_version or latest.get('model_version') != model_version:
+        return 'model_version_mismatch'
+    evaluated = document.get('evaluated_at')
+    generated = latest.get('generated_at')
+    if not isinstance(evaluated, str) or not isinstance(generated, str) or evaluated != generated:
+        return 'stale_reliability_vintage'
+    try:
+        evaluation_time = datetime.fromisoformat(evaluated.replace('Z', '+00:00'))
+        if evaluation_time.tzinfo is None or evaluation_time.utcoffset() is None:
+            return 'invalid_evaluation_timestamp'
+    except ValueError:
+        return 'invalid_evaluation_timestamp'
+    hashes = document.get('source_hashes')
+    if not isinstance(hashes, dict) or set(hashes) != set(RELIABILITY_SOURCE_PATHS):
+        return 'missing_or_extra_source_hash'
+    root = Path(root)
+    for relative in RELIABILITY_SOURCE_PATHS:
+        recorded = hashes[relative]
+        if not isinstance(recorded, str) or re.fullmatch(r'[0-9a-f]{64}', recorded) is None:
+            return 'invalid_source_hash'
+        try:
+            actual = hashlib.sha256((root / relative).read_bytes()).hexdigest()
+        except OSError:
+            return 'unavailable_source_file'
+        if actual != recorded:
+            return 'stale_source_hash'
+    return None
