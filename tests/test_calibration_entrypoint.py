@@ -32,6 +32,17 @@ class WithheldEntrypointTest(unittest.TestCase):
             self.assertEqual(report['publication_status'], 'withheld')
             self.assertEqual(report['withheld_reason'], 'missing_comparison')
             self.assertEqual(report['variants'], [])
+            reliability.write_text(json.dumps({
+                'current_formula_comparison': {'new_policy_equity_pct': 50.0}
+            }))
+            with patch.object(a, 'SCREEN', screen), patch.object(a, 'LATEST', latest), \
+                 patch.object(a, 'RELIABILITY', reliability), patch.object(a, 'OUT', output), \
+                 patch.object(a, 'validate_provenance', return_value='stale_source_hash') as check:
+                a.main()
+                check.assert_called_once()
+            report = json.loads(output.read_text())
+            self.assertEqual(report['publication_status'], 'withheld')
+            self.assertEqual(report['withheld_reason'], 'stale_source_hash')
 
 
 if __name__ == '__main__':
