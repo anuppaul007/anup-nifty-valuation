@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import json, math, re, sys
 import numpy as np
-from calibration_anchor_guard import validate_anchor, write_report, write_withheld, verify_publication, enforce_reproduction
+from calibration_anchor_guard import validate_anchor, write_report, write_withheld, verify_publication, enforce_reproduction, validate_provenance
 
 ROOT=Path(__file__).resolve().parents[1]
 SCREEN=ROOT/'data'/'monthly_signal_screen.json'
@@ -103,6 +103,10 @@ def main():
     if reason:
         write_withheld(OUT, reason, version)
         return
+    provenance_reason = validate_provenance(reliability, root=ROOT, latest=latest, model_version=version)
+    if provenance_reason:
+        write_withheld(OUT, provenance_reason, version)
+        return
     enforce_reproduction(OUT, version, prod['policy_equity_pct'], expected)
 
     variants=[]
@@ -127,6 +131,7 @@ def main():
     impact_summary={k:{'min_change_pp':min(q['change_vs_production_pp'] for q in arr),'max_change_pp':max(q['change_vs_production_pp'] for q in arr),'max_abs_change_pp':max(abs(q['change_vs_production_pp']) for q in arr)} for k,arr in lens_impacts.items()}
     fc,fs=calibrate(x)
     out={
+      'anchor_provenance': {'evaluated_at': reliability['evaluated_at'], 'source_hashes': reliability['source_hashes']},
       'schema_version':2,'publication_status':'published','withheld_reason':None,'anchor_status':'verified','generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'model_version':version,
       'question':'How fragile is today’s policy allocation to deterministic re-estimation of lens centers/scales within the short current-definition era?',
       'sample':{'months':36,'first_signal_date':rows[0]['signal_date'],'last_signal_date':rows[-1]['signal_date'],'methodology':'Current ratio definitions','historical_yield_caveat':screen.get('yield_rule')},
@@ -144,7 +149,8 @@ def main():
 
 if __name__ == '__main__':
     if sys.argv[1:] == ['--verify-publication']:
-        verify_publication(OUT)
+        verify_publication(OUT, root=ROOT, latest=json.loads(LATEST.read_text()),
+                           reliability=json.loads(RELIABILITY.read_text()), model_version=guard_model_source())
     elif len(sys.argv) == 1:
         main()
     else:
