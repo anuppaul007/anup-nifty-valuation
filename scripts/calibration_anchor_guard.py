@@ -52,7 +52,7 @@ def write_withheld(path, reason, version):
     print(json.dumps({'publication_status': 'withheld', 'reason': reason}))
 
 
-def verify_publication(path):
+def verify_publication(path, *, root=None, latest=None, reliability=None, model_version=None):
     """CI must fail if the report was withheld, missing, stale or malformed."""
     target = Path(path)
     if not target.is_file():
@@ -75,6 +75,24 @@ def verify_publication(path):
             or not isinstance(report.get('variants'), list)
             or len(report['variants']) != 9):
         raise SystemExit('calibration_publication_blocked: incomplete or unsafe artifact')
+    if root is None or latest is None or reliability is None or model_version is None:
+        raise SystemExit('calibration_publication_blocked: provenance context missing')
+    reason = validate_provenance(reliability, root=root, latest=latest, model_version=model_version)
+    if reason:
+        raise SystemExit('calibration_publication_blocked: ' + reason)
+    expected, reason = validate_anchor(reliability)
+    if reason:
+        raise SystemExit('calibration_publication_blocked: ' + reason)
+    receipt = {'evaluated_at': reliability['evaluated_at'], 'source_hashes': reliability['source_hashes']}
+    if report.get('anchor_provenance') != receipt:
+        raise SystemExit('calibration_publication_blocked: stale_or_missing_receipt')
+    if (report.get('model_version') != model_version or
+        report.get('current_packet', {}).get('generated_at') != latest['generated_at']):
+        raise SystemExit('calibration_publication_blocked: stale_report_packet')
+    actual = report['production_reproduction'].get('policy_equity_pct')
+    if (isinstance(actual, bool) or not isinstance(actual, (int, float))
+        or not math.isfinite(float(actual)) or abs(actual - expected) > 1e-8):
+        raise SystemExit('calibration_publication_blocked: reproduction_mismatch')
     print('calibration_publication_verified: research-only artifact')
     return report
 
