@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-10-22T20:08:20+00:00",
-  "source_commit": "997f22c267f8d01371a3f91857e6597850b4f27c",
+  "checked_at": "2026-10-22T23:23:53+00:00",
+  "source_commit": "654b9a7a0f82993b0dcf010dbbfb47d577582af5",
   "packet_generated_at": "2026-10-22T18:02:51+00:00",
   "status": "healthy",
   "checks": [
     {
       "name": "packet_freshness",
       "ok": true,
-      "detail": "Packet age 2.09 hours; maximum 72 hours"
+      "detail": "Packet age 5.35 hours; maximum 72 hours"
     },
     {
       "name": "published_bytes",
