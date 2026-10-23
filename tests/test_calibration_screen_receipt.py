@@ -153,6 +153,25 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
                 self.reliability["source_hashes"]["model.js"] = hashlib.sha256(self.model.read_bytes()).hexdigest()
                 self.reliability["evaluated_at"] = self.latest["generated_at"]
 
+    def test_mutation_between_parse_and_publication_cannot_rebind_old_variants(self):
+        original_bytes = self.screen.read_bytes()
+        original_validator = audit.validate_provenance
+
+        def mutate_after_parse(*args, **kwargs):
+            reason = original_validator(*args, **kwargs)
+            self.rows[0]["pe"] += 0.6
+            self.screen.write_text(json.dumps({"records": self.rows, "yield_rule": "synthetic"}))
+            return reason
+
+        with patch.object(audit, "validate_provenance", side_effect=mutate_after_parse):
+            report = self.run_entrypoint()
+        self.assertEqual(report["publication_status"], "published")
+        self.assertEqual(report["calibration_screen_sha256"],
+                         hashlib.sha256(original_bytes).hexdigest())
+        self.assertNotEqual(report["calibration_screen_sha256"], guard.screen_receipt(self.screen))
+        with self.assertRaisesRegex(SystemExit, "stale_calibration_screen"):
+            self.verify()
+
     def test_missing_screen_context_and_missing_file_are_blocked(self):
         self.run_entrypoint()
         with self.assertRaisesRegex(SystemExit, "provenance context missing"):
