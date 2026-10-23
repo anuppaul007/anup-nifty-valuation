@@ -3,8 +3,8 @@
   "model_version": "3.6-long-history-common-lens",
   "scope": "common-factor valuation backtest only; P/E + profitability-adjusted P/B + dividend yield. Yield-gap, earnings and macro overlays excluded for the entire 2000-present series.",
   "start": "2000-01-01",
-  "end": "2026-09-01",
-  "rows": 321,
+  "end": "2026-10-01",
+  "rows": 322,
   "missing_months": [],
   "signal_rule": "first available NIFTY 50 trading day in each calendar month; displayed Date is the calendar month first day",
   "nifty_column_rule": "NIFTY 50 close on the first available trading day of each month",
@@ -2278,6 +2278,13 @@
       "RBI Repo Rate %": 5.25,
       "Equity %": 78,
       "Debt %": 22
+    },
+    {
+      "Date": "2026-10-01",
+      "NIFTY 50": 22421.95,
+      "RBI Repo Rate %": 5.25,
+      "Equity %": 88,
+      "Debt %": 12
     }
   ]
 }

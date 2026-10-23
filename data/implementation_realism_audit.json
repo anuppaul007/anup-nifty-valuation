@@ -1,124 +1,124 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-22T17:47:31+00:00",
+  "generated_at": "2026-10-23T17:58:26+00:00",
   "research_only": true,
   "live_model_changed": false,
   "live_allocation_changed": false,
-  "source_generated_on": "2026-09-21",
+  "source_generated_on": "2026-10-23",
   "source_scheme_codes": {
     "equity": 101349,
     "debt": 101758
   },
   "sample": {
     "first_completed_month": "2006-04",
-    "last_completed_month": "2026-08",
-    "months": 245,
+    "last_completed_month": "2026-09",
+    "months": 246,
     "current_partial_month_excluded": true,
     "actual_mutual_fund_navs_only": true,
     "fund_nav_cost_note": "Fund NAV returns already embed each fund's own expense ratio, portfolio-management effects and realised tracking behaviour. Pre-inception proxy months are excluded from the strict implementation audit."
   },
   "allocation_path": {
-    "mean_equity_pct": 54.44081632653061,
+    "mean_equity_pct": 54.53658536585366,
     "min_equity_pct": 0.0,
     "max_equity_pct": 100.0,
-    "months_with_target_move_ge_5pp": 142,
+    "months_with_target_move_ge_5pp": 143,
     "months_with_target_move_ge_10pp": 83,
-    "median_actual_trade_pct_of_portfolio": 7.326500898307897,
-    "p90_actual_trade_pct_of_portfolio": 23.740265538092338,
+    "median_actual_trade_pct_of_portfolio": 7.2042435353247445,
+    "p90_actual_trade_pct_of_portfolio": 23.71179617802833,
     "max_actual_trade_pct_of_portfolio": 71.17871272905998
   },
   "cost_scenarios": [
     {
       "one_way_turnover_cost_bps": 0.0,
       "dynamic": {
-        "months": 245,
-        "cagr_pct": 12.566146806044864,
+        "months": 246,
+        "cagr_pct": 12.21394096179651,
         "max_drawdown_pct": -37.99990551051305,
-        "ending_wealth_from_100": 1120.9233637847315,
-        "total_one_way_turnover_x": 24.682855978456136,
-        "annualised_one_way_turnover_x": 1.208956211189688
+        "ending_wealth_from_100": 1061.5970654519922,
+        "total_one_way_turnover_x": 24.73897557280211,
+        "annualised_one_way_turnover_x": 1.2067792962342494
       },
       "exposure_matched_static": {
-        "months": 245,
-        "cagr_pct": 10.093871631364948,
-        "max_drawdown_pct": -31.21879370199636,
-        "ending_wealth_from_100": 712.3020654365255,
-        "total_one_way_turnover_x": 2.6036959321555617,
-        "annualised_one_way_turnover_x": 0.12752796402394587
+        "months": 246,
+        "cagr_pct": 9.851711678086982,
+        "max_drawdown_pct": -31.27735274691088,
+        "ending_wealth_from_100": 686.3410604954711,
+        "total_one_way_turnover_x": 2.610472489443958,
+        "annualised_one_way_turnover_x": 0.12734012143629064
       },
-      "dynamic_minus_static_cagr_pp": 2.4722751746799165,
-      "dynamic_minus_static_max_drawdown_pp": -6.781111808516691,
+      "dynamic_minus_static_cagr_pp": 2.362229283709528,
+      "dynamic_minus_static_max_drawdown_pp": -6.722552763602174,
       "dynamic_implementation_drag_vs_zero_friction_cagr_pp": 0.0,
       "dynamic_terminal_wealth_change_vs_zero_friction_pct": 0.0
     },
     {
       "one_way_turnover_cost_bps": 5.0,
       "dynamic": {
-        "months": 245,
-        "cagr_pct": 12.498120015334191,
+        "months": 246,
+        "cagr_pct": 12.146249097391726,
         "max_drawdown_pct": -38.04325112654392,
-        "ending_wealth_from_100": 1107.1738635859565,
-        "total_one_way_turnover_x": 24.682855978456136,
-        "annualised_one_way_turnover_x": 1.208956211189688
+        "ending_wealth_from_100": 1048.5458522738702,
+        "total_one_way_turnover_x": 24.73897557280211,
+        "annualised_one_way_turnover_x": 1.2067792962342494
       },
       "exposure_matched_static": {
-        "months": 245,
-        "cagr_pct": 10.08685179364106,
-        "max_drawdown_pct": -31.229074936479485,
-        "ending_wealth_from_100": 711.3753547895095,
-        "total_one_way_turnover_x": 2.6036959321555617,
-        "annualised_one_way_turnover_x": 0.12752796402394587
+        "months": 246,
+        "cagr_pct": 9.844717597931707,
+        "max_drawdown_pct": -31.287622751706035,
+        "ending_wealth_from_100": 685.4458028347428,
+        "total_one_way_turnover_x": 2.610472489443958,
+        "annualised_one_way_turnover_x": 0.12734012143629064
       },
-      "dynamic_minus_static_cagr_pp": 2.411268221693131,
-      "dynamic_minus_static_max_drawdown_pp": -6.814176190064437,
-      "dynamic_implementation_drag_vs_zero_friction_cagr_pp": -0.06802679071067352,
-      "dynamic_terminal_wealth_change_vs_zero_friction_pct": -1.2266226793909096
+      "dynamic_minus_static_cagr_pp": 2.301531499460019,
+      "dynamic_minus_static_max_drawdown_pp": -6.755628374837887,
+      "dynamic_implementation_drag_vs_zero_friction_cagr_pp": -0.06769186440478414,
+      "dynamic_terminal_wealth_change_vs_zero_friction_pct": -1.2293942403246216
     },
     {
       "one_way_turnover_cost_bps": 10.0,
       "dynamic": {
-        "months": 245,
-        "cagr_pct": 12.430127176147089,
+        "months": 246,
+        "cagr_pct": 12.078590955552016,
         "max_drawdown_pct": -38.08657356699607,
-        "ending_wealth_from_100": 1093.591596184318,
-        "total_one_way_turnover_x": 24.682855978456136,
-        "annualised_one_way_turnover_x": 1.208956211189688
+        "ending_wealth_from_100": 1035.653742773127,
+        "total_one_way_turnover_x": 24.73897557280211,
+        "annualised_one_way_turnover_x": 1.2067792962342494
       },
       "exposure_matched_static": {
-        "months": 245,
-        "cagr_pct": 10.07983232775893,
-        "max_drawdown_pct": -31.23935482916247,
-        "ending_wealth_from_100": 710.4498398177578,
-        "total_one_way_turnover_x": 2.6036959321555617,
-        "annualised_one_way_turnover_x": 0.12752796402394587
+        "months": 246,
+        "cagr_pct": 9.837723887759875,
+        "max_drawdown_pct": -31.297891416506506,
+        "ending_wealth_from_100": 684.5517033178131,
+        "total_one_way_turnover_x": 2.610472489443958,
+        "annualised_one_way_turnover_x": 0.12734012143629064
       },
-      "dynamic_minus_static_cagr_pp": 2.350294848388158,
-      "dynamic_minus_static_max_drawdown_pp": -6.847218737833604,
-      "dynamic_implementation_drag_vs_zero_friction_cagr_pp": -0.13601962989777583,
-      "dynamic_terminal_wealth_change_vs_zero_friction_pct": -2.4383261589025484
+      "dynamic_minus_static_cagr_pp": 2.2408670677921414,
+      "dynamic_minus_static_max_drawdown_pp": -6.788682150489567,
+      "dynamic_implementation_drag_vs_zero_friction_cagr_pp": -0.13535000624449367,
+      "dynamic_terminal_wealth_change_vs_zero_friction_pct": -2.443801280462221
     },
     {
       "one_way_turnover_cost_bps": 25.0,
       "dynamic": {
-        "months": 245,
-        "cagr_pct": 12.226352226696147,
+        "months": 246,
+        "cagr_pct": 11.87581872557697,
         "max_drawdown_pct": -38.21640192378357,
-        "ending_wealth_from_100": 1053.8281423467768,
-        "total_one_way_turnover_x": 24.682855978456136,
-        "annualised_one_way_turnover_x": 1.208956211189688
+        "ending_wealth_from_100": 997.9129183467535,
+        "total_one_way_turnover_x": 24.73897557280211,
+        "annualised_one_way_turnover_x": 1.2067792962342494
       },
       "exposure_matched_static": {
-        "months": 245,
-        "cagr_pct": 10.058776160996663,
-        "max_drawdown_pct": -31.270186457923277,
-        "ending_wealth_from_100": 707.6804536643044,
-        "total_one_way_turnover_x": 2.6036959321555617,
-        "annualised_one_way_turnover_x": 0.12752796402394587
+        "months": 246,
+        "cagr_pct": 9.816744976979464,
+        "max_drawdown_pct": -31.328689372450036,
+        "ending_wealth_from_100": 681.87633878026,
+        "total_one_way_turnover_x": 2.610472489443958,
+        "annualised_one_way_turnover_x": 0.12734012143629064
       },
-      "dynamic_minus_static_cagr_pp": 2.1675760656994836,
-      "dynamic_minus_static_max_drawdown_pp": -6.946215465860295,
-      "dynamic_implementation_drag_vs_zero_friction_cagr_pp": -0.3397945793487178,
-      "dynamic_terminal_wealth_change_vs_zero_friction_pct": -5.985709960707009
+      "dynamic_minus_static_cagr_pp": 2.0590737485975055,
+      "dynamic_minus_static_max_drawdown_pp": -6.887712551333536,
+      "dynamic_implementation_drag_vs_zero_friction_cagr_pp": -0.3381222362195402,
+      "dynamic_terminal_wealth_change_vs_zero_friction_pct": -5.9989000702563295
     }
   ],
   "unmodelled": {

@@ -3,18 +3,18 @@
   "status": "complete",
   "model_version": "3.13-reliability-1",
   "current_snapshot": {
-    "generated_at": "2026-09-22T17:40:47+00:00",
-    "macro_score": -0.05273922025684833,
-    "macro_context_eligible": true,
+    "generated_at": "2026-10-23T17:54:51+00:00",
+    "macro_score": -0.15490640902693856,
+    "macro_context_eligible": false,
     "live_macro_adjustment_pp": 0.0,
-    "shadow_macro_adjustment_pp": -0.31643532154109,
+    "shadow_macro_adjustment_pp": null,
     "live_macro_budget_pp": 0.0,
     "shadow_macro_budget_pp": 6.0
   },
   "pipeline_surface": {
-    "top_level_blocks": 4,
-    "scored_factor_nodes": 12,
-    "raw_scored_indicators": 13,
+    "top_level_blocks": 3,
+    "scored_factor_nodes": 9,
+    "raw_scored_indicators": 10,
     "display_only_factor_count": 1,
     "active_factor_keys": [
       "us_real_10y",
@@ -26,11 +26,7 @@
       "usd_inr_3m_pct",
       "india_us_10y_spread"
     ],
-    "domestic_factor_keys": [
-      "india_cpi_yoy",
-      "india_iip_yoy",
-      "india_repo_rate"
-    ],
+    "domestic_factor_keys": [],
     "display_only_factor_keys": [
       "us_10y"
     ],
@@ -40,13 +36,19 @@
     ]
   },
   "prospective_evidence": {
-    "archived_monthly_decisions": 1,
+    "archived_monthly_decisions": 2,
     "decisions": [
       {
         "month": "2026-09",
         "first_seen_at": "2026-09-12T08:36:13+00:00",
         "equity_pct": 81.54994045700387,
         "model_version": "4f5f2b2c13a214dbbba74b7c495c3158c9f5038068950151f2176cfdbfaf1bbe"
+      },
+      {
+        "month": "2026-10",
+        "first_seen_at": "2026-10-01T18:56:32+00:00",
+        "equity_pct": 69.56019650514693,
+        "model_version": "be6a38e4534efa11dba466aa3fd99e59af41a41819fd1455e73abb96f140e4bf"
       }
     ],
     "realized_monthly_outcomes_available_for_macro_ablation": 0,
