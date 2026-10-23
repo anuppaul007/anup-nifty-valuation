@@ -1,5 +1,6 @@
 """Research-only calibration anchor and publication guards (no live authority)."""
 from datetime import datetime, timezone
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -52,7 +53,15 @@ def write_withheld(path, reason, version):
     print(json.dumps({'publication_status': 'withheld', 'reason': reason}))
 
 
-def verify_publication(path, *, root=None, latest=None, reliability=None, model_version=None):
+def screen_receipt(path):
+    """Bind research sensitivity inputs to exact bytes; does not certify historical PIT."""
+    try:
+        return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    except OSError as exc:
+        raise ValueError('unavailable_calibration_screen') from exc
+
+
+def verify_publication(path, *, root=None, latest=None, reliability=None, model_version=None, screen=None):
     """CI must fail if the report was withheld, missing, stale or malformed."""
     target = Path(path)
     if not target.is_file():
@@ -75,8 +84,14 @@ def verify_publication(path, *, root=None, latest=None, reliability=None, model_
             or not isinstance(report.get('variants'), list)
             or len(report['variants']) != 9):
         raise SystemExit('calibration_publication_blocked: incomplete or unsafe artifact')
-    if root is None or latest is None or reliability is None or model_version is None:
+    if root is None or latest is None or reliability is None or model_version is None or screen is None:
         raise SystemExit('calibration_publication_blocked: provenance context missing')
+    try:
+        current_screen_hash = screen_receipt(screen)
+    except ValueError as exc:
+        raise SystemExit('calibration_publication_blocked: unavailable_calibration_screen') from exc
+    if report.get('calibration_screen_sha256') != current_screen_hash:
+        raise SystemExit('calibration_publication_blocked: stale_calibration_screen')
     reason = validate_provenance(reliability, root=root, latest=latest, model_version=model_version)
     if reason:
         raise SystemExit('calibration_publication_blocked: ' + reason)
