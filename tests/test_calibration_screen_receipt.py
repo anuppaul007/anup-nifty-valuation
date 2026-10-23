@@ -183,5 +183,25 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
             self.verify()
 
 
+    def test_missing_corrupt_or_undecodable_reliability_file_is_explicitly_withheld(self):
+        for label in ("missing", "malformed_json", "invalid_utf8"):
+            with self.subTest(label=label):
+                self.save_reliability()
+                if label == "missing":
+                    self.reliability_path.unlink()
+                elif label == "malformed_json":
+                    self.reliability_path.write_text("{broken json", encoding="utf-8")
+                else:
+                    self.reliability_path.write_bytes(b"\\xff")
+                report = self.run_entrypoint()
+                self.assertEqual(report["publication_status"], "withheld")
+                self.assertEqual(report["withheld_reason"], "unavailable_or_invalid_reliability_document")
+                self.assertEqual(report["variants"], [])
+                self.assertIsNone(report["production_reproduction"])
+                with self.assertRaisesRegex(SystemExit, "calibration_publication_blocked"):
+                    guard.verify_publication(self.output)
+        self.save_reliability()
+
+
 if __name__ == "__main__":
     unittest.main()
