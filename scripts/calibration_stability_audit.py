@@ -91,7 +91,12 @@ def js(a):return [float(x) for x in np.asarray(a)]
 
 def main():
     OUT.unlink(missing_ok=True)  # stale evidence cannot pass the publication gate
-    version=guard_model_source();screen_bytes=SCREEN.read_bytes();screen=json.loads(screen_bytes);latest=json.loads(LATEST.read_text());reliability=json.loads(RELIABILITY.read_text())
+    version=guard_model_source();screen_bytes=SCREEN.read_bytes();screen=json.loads(screen_bytes);latest=json.loads(LATEST.read_text())
+    try:
+        reliability=json.loads(RELIABILITY.read_text(encoding='utf-8'))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        write_withheld(OUT, 'unavailable_or_invalid_reliability_document', version)
+        return
     if latest.get('model_version')!=version:raise RuntimeError('latest_model_version_mismatch')
     rows=[r for r in screen['records'] if r.get('methodology_era')=='Current ratio definitions']
     if len(rows)!=36:raise RuntimeError(f'current_definition_count_{len(rows)}_expected_36')
