@@ -192,7 +192,7 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
                 elif label == "malformed_json":
                     self.reliability_path.write_text("{broken json", encoding="utf-8")
                 else:
-                    self.reliability_path.write_bytes(b"\\xff")
+                    self.reliability_path.write_bytes(bytes([255]))
                 report = self.run_entrypoint()
                 self.assertEqual(report["publication_status"], "withheld")
                 self.assertEqual(report["withheld_reason"], "unavailable_or_invalid_reliability_document")
