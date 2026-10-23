@@ -11,9 +11,9 @@ confidence intervals, or candidates for automatic promotion.
 from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
-import json, math, re, sys
+import hashlib, json, math, re, sys
 import numpy as np
-from calibration_anchor_guard import validate_anchor, write_report, write_withheld, verify_publication, enforce_reproduction, validate_provenance, screen_receipt
+from calibration_anchor_guard import validate_anchor, write_report, write_withheld, verify_publication, enforce_reproduction, validate_provenance
 
 ROOT=Path(__file__).resolve().parents[1]
 SCREEN=ROOT/'data'/'monthly_signal_screen.json'
@@ -91,7 +91,7 @@ def js(a):return [float(x) for x in np.asarray(a)]
 
 def main():
     OUT.unlink(missing_ok=True)  # stale evidence cannot pass the publication gate
-    version=guard_model_source();screen=json.loads(SCREEN.read_text());latest=json.loads(LATEST.read_text());reliability=json.loads(RELIABILITY.read_text())
+    version=guard_model_source();screen_bytes=SCREEN.read_bytes();screen=json.loads(screen_bytes);latest=json.loads(LATEST.read_text());reliability=json.loads(RELIABILITY.read_text())
     if latest.get('model_version')!=version:raise RuntimeError('latest_model_version_mismatch')
     rows=[r for r in screen['records'] if r.get('methodology_era')=='Current ratio definitions']
     if len(rows)!=36:raise RuntimeError(f'current_definition_count_{len(rows)}_expected_36')
@@ -131,7 +131,7 @@ def main():
     impact_summary={k:{'min_change_pp':min(q['change_vs_production_pp'] for q in arr),'max_change_pp':max(q['change_vs_production_pp'] for q in arr),'max_abs_change_pp':max(abs(q['change_vs_production_pp']) for q in arr)} for k,arr in lens_impacts.items()}
     fc,fs=calibrate(x)
     out={
-      'calibration_screen_sha256': screen_receipt(SCREEN),
+      'calibration_screen_sha256': hashlib.sha256(screen_bytes).hexdigest(),
       'anchor_provenance': {'evaluated_at': reliability['evaluated_at'], 'source_hashes': reliability['source_hashes']},
       'schema_version':2,'publication_status':'published','withheld_reason':None,'anchor_status':'verified','generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'model_version':version,
       'question':'How fragile is today’s policy allocation to deterministic re-estimation of lens centers/scales within the short current-definition era?',
