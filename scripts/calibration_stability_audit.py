@@ -11,8 +11,9 @@ confidence intervals, or candidates for automatic promotion.
 from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
-import json, math, re
+import hashlib, json, math, re, sys
 import numpy as np
+from calibration_anchor_guard import validate_anchor, write_report, write_withheld, verify_publication, enforce_reproduction, validate_provenance
 
 ROOT=Path(__file__).resolve().parents[1]
 SCREEN=ROOT/'data'/'monthly_signal_screen.json'
@@ -88,8 +89,25 @@ def calibrate(x):
 def js(a):return [float(x) for x in np.asarray(a)]
 
 
-def main():
-    version=guard_model_source();screen=json.loads(SCREEN.read_text());latest=json.loads(LATEST.read_text());reliability=json.loads(RELIABILITY.read_text())
+def main(output_path=None):
+    out_path = Path(output_path) if output_path is not None else OUT
+    out_path.unlink(missing_ok=True)  # stale evidence cannot pass the publication gate
+    version=guard_model_source()
+    try:
+        screen_bytes=SCREEN.read_bytes()
+        screen=json.loads(screen_bytes)
+        latest=json.loads(LATEST.read_text(encoding='utf-8'))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        write_withheld(out_path, 'unavailable_or_invalid_calibration_input', version)
+        return
+    if not isinstance(screen, dict) or not isinstance(screen.get('records'), list) or not isinstance(latest, dict):
+        write_withheld(out_path, 'invalid_calibration_input_structure', version)
+        return
+    try:
+        reliability=json.loads(RELIABILITY.read_text(encoding='utf-8'))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        write_withheld(out_path, 'unavailable_or_invalid_reliability_document', version)
+        return
     if latest.get('model_version')!=version:raise RuntimeError('latest_model_version_mismatch')
     rows=[r for r in screen['records'] if r.get('methodology_era')=='Current ratio definitions']
     if len(rows)!=36:raise RuntimeError(f'current_definition_count_{len(rows)}_expected_36')
@@ -97,8 +115,15 @@ def main():
     n=latest['nifty'];cur=raw_vector(n['pe'],n['pb'],n['div_yield'],n['gsec10'])
     earn=float(latest['earnings']['score']);risk_off=bool(latest['trend']['risk_off'])
     pc,ps=production_centers_scales();prod_z=z_from(cur,pc,ps);prod=allocation(prod_z,earn,risk_off)
-    expected=float(reliability['current_formula_comparison']['new_policy_equity_pct'])
-    if abs(prod['policy_equity_pct']-expected)>1e-8:raise RuntimeError(f'production_reproduction_mismatch_{prod["policy_equity_pct"]}_{expected}')
+    expected, reason = validate_anchor(reliability)
+    if reason:
+        write_withheld(out_path, reason, version)
+        return
+    provenance_reason = validate_provenance(reliability, root=ROOT, latest=latest, model_version=version)
+    if provenance_reason:
+        write_withheld(out_path, provenance_reason, version)
+        return
+    enforce_reproduction(out_path, version, prod['policy_equity_pct'], expected)
 
     variants=[]
     def add(name,idx,note):
@@ -122,7 +147,9 @@ def main():
     impact_summary={k:{'min_change_pp':min(q['change_vs_production_pp'] for q in arr),'max_change_pp':max(q['change_vs_production_pp'] for q in arr),'max_abs_change_pp':max(abs(q['change_vs_production_pp']) for q in arr)} for k,arr in lens_impacts.items()}
     fc,fs=calibrate(x)
     out={
-      'schema_version':1,'generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'model_version':version,
+      'calibration_screen_sha256': hashlib.sha256(screen_bytes).hexdigest(),
+      'anchor_provenance': {'evaluated_at': reliability['evaluated_at'], 'source_hashes': reliability['source_hashes']},
+      'schema_version':2,'publication_status':'published','withheld_reason':None,'anchor_status':'verified','generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'model_version':version,
       'question':'How fragile is today’s policy allocation to deterministic re-estimation of lens centers/scales within the short current-definition era?',
       'sample':{'months':36,'first_signal_date':rows[0]['signal_date'],'last_signal_date':rows[-1]['signal_date'],'methodology':'Current ratio definitions','historical_yield_caveat':screen.get('yield_rule')},
       'current_packet':{'generated_at':latest['generated_at'],'nifty_date':n['date'],'level':n['level'],'pe':n['pe'],'pb':n['pb'],'dividend_yield':n['div_yield'],'gsec10':n['gsec10'],'gsec_asof':n['gsec_meta']['asof']},
@@ -134,7 +161,40 @@ def main():
       'interpretation_guardrail':'These deterministic recalibrations quantify assumption fragility only. They are not confidence intervals, intrinsic-value estimates, optimized parameters, or alternative live candidates. The historical yield series differs from the current daily RBI security-yield proxy, so gap sensitivity carries an additional definition mismatch.',
       'return_data_used':False,'live_model_changed':False,'live_allocation_changed':False
     }
-    OUT.parent.mkdir(parents=True,exist_ok=True);OUT.write_text(json.dumps(out,indent=2,allow_nan=False),encoding='utf-8')
+    write_report(out_path, out)
     print(json.dumps({'production':out['production_reproduction'],'leave_six_month_block_out':out['leave_six_month_block_out'],'one_lens_at_a_time':impact_summary,'variant_targets':[{'name':v['name'],'equity':v['policy_equity_pct']} for v in variants]},indent=2))
 
-if __name__=='__main__':main()
+
+def verify_recomputed_payload(report):
+    """Reject edited/replayed sensitivity numbers, not merely stale input receipts.
+
+    Recompute from the current provenance-bound inputs into a disposable file;
+    compare every published field except the non-deterministic audit clock.
+    This is a same-code consistency check, NOT independent PIT validation.
+    """
+    import tempfile
+    with tempfile.TemporaryDirectory(prefix='calibration-verify-') as folder:
+        recomputed_path = Path(folder) / 'recomputed.json'
+        main(recomputed_path)
+        recomputed = json.loads(recomputed_path.read_text(encoding='utf-8'))
+    if recomputed.get('publication_status') != 'published':
+        raise SystemExit('calibration_publication_blocked: recomputation_withheld')
+    without_clock = lambda packet: {k: v for k, v in packet.items() if k != 'generated_at'}
+    if without_clock(report) != without_clock(recomputed):
+        raise SystemExit('calibration_publication_blocked: recalculated_payload_mismatch')
+
+
+if __name__ == '__main__':
+    if sys.argv[1:] == ['--verify-publication']:
+        # Gate source receipts AND independently re-run deterministic descriptive
+        # calculations before allowing the research artifact to be published.
+        report = verify_publication(OUT, root=ROOT, latest=json.loads(LATEST.read_text()),
+                                    reliability=json.loads(RELIABILITY.read_text()), model_version=guard_model_source(), screen=SCREEN)
+        verify_recomputed_payload(report)
+        # Recheck source identity after recomputation to narrow TOCTOU exposure.
+        verify_publication(OUT, root=ROOT, latest=json.loads(LATEST.read_text()),
+                           reliability=json.loads(RELIABILITY.read_text()), model_version=guard_model_source(), screen=SCREEN)
+    elif len(sys.argv) == 1:
+        main()
+    else:
+        raise SystemExit('usage: calibration_stability_audit.py [--verify-publication]')
