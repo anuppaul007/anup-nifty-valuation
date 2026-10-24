@@ -101,8 +101,22 @@ def verify_publication(path, *, root=None, latest=None, reliability=None, model_
     receipt = {'evaluated_at': reliability['evaluated_at'], 'source_hashes': reliability['source_hashes']}
     if report.get('anchor_provenance') != receipt:
         raise SystemExit('calibration_publication_blocked: stale_or_missing_receipt')
-    if (report.get('model_version') != model_version or
-        report.get('current_packet', {}).get('generated_at') != latest['generated_at']):
+    # A matching generated_at is not sufficient: consumers must not receive
+    # a receipt whose quoted current-market fields were changed or replayed.
+    # Compare the entire research packet against the already provenance-bound
+    # latest input; no historical or live allocation policy is modified.
+    try:
+        n = latest['nifty']
+        expected_packet = {
+            'generated_at': latest['generated_at'],
+            'nifty_date': n['date'], 'level': n['level'],
+            'pe': n['pe'], 'pb': n['pb'],
+            'dividend_yield': n['div_yield'], 'gsec10': n['gsec10'],
+            'gsec_asof': n['gsec_meta']['asof'],
+        }
+    except (KeyError, TypeError):
+        raise SystemExit('calibration_publication_blocked: invalid_latest_packet')
+    if report.get('model_version') != model_version or report.get('current_packet') != expected_packet:
         raise SystemExit('calibration_publication_blocked: stale_report_packet')
     actual = report['production_reproduction'].get('policy_equity_pct')
     if (isinstance(actual, bool) or not isinstance(actual, (int, float))
