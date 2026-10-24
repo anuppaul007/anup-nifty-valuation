@@ -200,6 +200,33 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
         self.output.write_text(json.dumps(original))
         self.verify()
 
+    def test_recomputed_publication_rejects_tampered_sensitivity_payload(self):
+        # A correct numeric anchor and exact source receipts do not by
+        # themselves prove that all nine research variants were calculated
+        # from those bytes. Exercise the real deterministic publication gate.
+        original = self.run_entrypoint()
+        self.verify()
+        with patch.multiple(audit, ROOT=self.root, SCREEN=self.screen,
+                            LATEST=self.latest_path, RELIABILITY=self.reliability_path,
+                            MODEL=self.model, OUT=self.output):
+            audit.verify_recomputed_payload(original)
+            for label, mutate in (
+                ("variant", lambda p: p["variants"][0].update({
+                    "policy_equity_pct": p["variants"][0]["policy_equity_pct"] + 0.75})),
+                ("lens_summary", lambda p: p["one_lens_at_a_time_leave_block_sensitivity"]["pe"].update({
+                    "max_abs_change_pp": 999.0})),
+                ("sample", lambda p: p["sample"].update({"months": 35})),
+            ):
+                with self.subTest(label=label):
+                    forged = json.loads(json.dumps(original))
+                    mutate(forged)
+                    # This negative proves the *recomputation* gate detects
+                    # altered schema-2 consumer fields, not just anchor hashes.
+                    with self.assertRaisesRegex(SystemExit, "recalculated_payload_mismatch"):
+                        audit.verify_recomputed_payload(forged)
+            # A genuine deterministic artifact remains accepted.
+            audit.verify_recomputed_payload(original)
+
     def test_missing_screen_context_and_missing_file_are_blocked(self):
         self.run_entrypoint()
         with self.assertRaisesRegex(SystemExit, "provenance context missing"):
