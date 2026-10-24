@@ -203,5 +203,39 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
         self.save_reliability()
 
 
+    def test_missing_corrupt_or_structurally_invalid_screen_and_latest_are_withheld(self):
+        # Only synthetic fixtures; each failure must leave an explicit rejected artifact.
+        fixtures = (
+            ("screen_missing", self.screen, None, "unavailable_or_invalid_calibration_input"),
+            ("screen_bad_json", self.screen, b"{broken", "unavailable_or_invalid_calibration_input"),
+            ("screen_bad_utf8", self.screen, bytes([255]), "unavailable_or_invalid_calibration_input"),
+            ("screen_wrong_shape", self.screen, b"[]", "invalid_calibration_input_structure"),
+            ("screen_missing_records", self.screen, b"{}", "invalid_calibration_input_structure"),
+            ("latest_missing", self.latest_path, None, "unavailable_or_invalid_calibration_input"),
+            ("latest_bad_json", self.latest_path, b"{broken", "unavailable_or_invalid_calibration_input"),
+            ("latest_bad_utf8", self.latest_path, bytes([255]), "unavailable_or_invalid_calibration_input"),
+            ("latest_wrong_shape", self.latest_path, b"[]", "invalid_calibration_input_structure"),
+        )
+        original_screen = self.screen.read_bytes()
+        original_latest = self.latest_path.read_bytes()
+        for label, target, corrupted, expected_reason in fixtures:
+            with self.subTest(label=label):
+                self.screen.write_bytes(original_screen)
+                self.latest_path.write_bytes(original_latest)
+                if corrupted is None:
+                    target.unlink()
+                else:
+                    target.write_bytes(corrupted)
+                report = self.run_entrypoint()
+                self.assertEqual(report["publication_status"], "withheld")
+                self.assertEqual(report["withheld_reason"], expected_reason)
+                self.assertEqual(report["variants"], [])
+                self.assertIsNone(report["production_reproduction"])
+                with self.assertRaisesRegex(SystemExit, "calibration_publication_blocked"):
+                    guard.verify_publication(self.output)
+        self.screen.write_bytes(original_screen)
+        self.latest_path.write_bytes(original_latest)
+
+
 if __name__ == "__main__":
     unittest.main()
