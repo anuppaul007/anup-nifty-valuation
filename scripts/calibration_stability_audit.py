@@ -91,7 +91,17 @@ def js(a):return [float(x) for x in np.asarray(a)]
 
 def main():
     OUT.unlink(missing_ok=True)  # stale evidence cannot pass the publication gate
-    version=guard_model_source();screen_bytes=SCREEN.read_bytes();screen=json.loads(screen_bytes);latest=json.loads(LATEST.read_text())
+    version=guard_model_source()
+    try:
+        screen_bytes=SCREEN.read_bytes()
+        screen=json.loads(screen_bytes)
+        latest=json.loads(LATEST.read_text(encoding='utf-8'))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        write_withheld(OUT, 'unavailable_or_invalid_calibration_input', version)
+        return
+    if not isinstance(screen, dict) or not isinstance(screen.get('records'), list) or not isinstance(latest, dict):
+        write_withheld(OUT, 'invalid_calibration_input_structure', version)
+        return
     try:
         reliability=json.loads(RELIABILITY.read_text(encoding='utf-8'))
     except (OSError, UnicodeError, json.JSONDecodeError):
