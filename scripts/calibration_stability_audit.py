@@ -89,23 +89,24 @@ def calibrate(x):
 def js(a):return [float(x) for x in np.asarray(a)]
 
 
-def main():
-    OUT.unlink(missing_ok=True)  # stale evidence cannot pass the publication gate
+def main(output_path=None):
+    out_path = Path(output_path) if output_path is not None else OUT
+    out_path.unlink(missing_ok=True)  # stale evidence cannot pass the publication gate
     version=guard_model_source()
     try:
         screen_bytes=SCREEN.read_bytes()
         screen=json.loads(screen_bytes)
         latest=json.loads(LATEST.read_text(encoding='utf-8'))
     except (OSError, UnicodeError, json.JSONDecodeError):
-        write_withheld(OUT, 'unavailable_or_invalid_calibration_input', version)
+        write_withheld(out_path, 'unavailable_or_invalid_calibration_input', version)
         return
     if not isinstance(screen, dict) or not isinstance(screen.get('records'), list) or not isinstance(latest, dict):
-        write_withheld(OUT, 'invalid_calibration_input_structure', version)
+        write_withheld(out_path, 'invalid_calibration_input_structure', version)
         return
     try:
         reliability=json.loads(RELIABILITY.read_text(encoding='utf-8'))
     except (OSError, UnicodeError, json.JSONDecodeError):
-        write_withheld(OUT, 'unavailable_or_invalid_reliability_document', version)
+        write_withheld(out_path, 'unavailable_or_invalid_reliability_document', version)
         return
     if latest.get('model_version')!=version:raise RuntimeError('latest_model_version_mismatch')
     rows=[r for r in screen['records'] if r.get('methodology_era')=='Current ratio definitions']
@@ -116,13 +117,13 @@ def main():
     pc,ps=production_centers_scales();prod_z=z_from(cur,pc,ps);prod=allocation(prod_z,earn,risk_off)
     expected, reason = validate_anchor(reliability)
     if reason:
-        write_withheld(OUT, reason, version)
+        write_withheld(out_path, reason, version)
         return
     provenance_reason = validate_provenance(reliability, root=ROOT, latest=latest, model_version=version)
     if provenance_reason:
-        write_withheld(OUT, provenance_reason, version)
+        write_withheld(out_path, provenance_reason, version)
         return
-    enforce_reproduction(OUT, version, prod['policy_equity_pct'], expected)
+    enforce_reproduction(out_path, version, prod['policy_equity_pct'], expected)
 
     variants=[]
     def add(name,idx,note):
@@ -160,11 +161,37 @@ def main():
       'interpretation_guardrail':'These deterministic recalibrations quantify assumption fragility only. They are not confidence intervals, intrinsic-value estimates, optimized parameters, or alternative live candidates. The historical yield series differs from the current daily RBI security-yield proxy, so gap sensitivity carries an additional definition mismatch.',
       'return_data_used':False,'live_model_changed':False,'live_allocation_changed':False
     }
-    write_report(OUT, out)
+    write_report(out_path, out)
     print(json.dumps({'production':out['production_reproduction'],'leave_six_month_block_out':out['leave_six_month_block_out'],'one_lens_at_a_time':impact_summary,'variant_targets':[{'name':v['name'],'equity':v['policy_equity_pct']} for v in variants]},indent=2))
+
+
+def verify_recomputed_payload(report):
+    """Reject edited/replayed sensitivity numbers, not merely stale input receipts.
+
+    Recompute from the current provenance-bound inputs into a disposable file;
+    compare every published field except the non-deterministic audit clock.
+    This is a same-code consistency check, NOT independent PIT validation.
+    """
+    import tempfile
+    with tempfile.TemporaryDirectory(prefix='calibration-verify-') as folder:
+        recomputed_path = Path(folder) / 'recomputed.json'
+        main(recomputed_path)
+        recomputed = json.loads(recomputed_path.read_text(encoding='utf-8'))
+    if recomputed.get('publication_status') != 'published':
+        raise SystemExit('calibration_publication_blocked: recomputation_withheld')
+    without_clock = lambda packet: {k: v for k, v in packet.items() if k != 'generated_at'}
+    if without_clock(report) != without_clock(recomputed):
+        raise SystemExit('calibration_publication_blocked: recalculated_payload_mismatch')
+
 
 if __name__ == '__main__':
     if sys.argv[1:] == ['--verify-publication']:
+        # Gate source receipts AND independently re-run deterministic descriptive
+        # calculations before allowing the research artifact to be published.
+        report = verify_publication(OUT, root=ROOT, latest=json.loads(LATEST.read_text()),
+                                    reliability=json.loads(RELIABILITY.read_text()), model_version=guard_model_source(), screen=SCREEN)
+        verify_recomputed_payload(report)
+        # Recheck source identity after recomputation to narrow TOCTOU exposure.
         verify_publication(OUT, root=ROOT, latest=json.loads(LATEST.read_text()),
                            reliability=json.loads(RELIABILITY.read_text()), model_version=guard_model_source(), screen=SCREEN)
     elif len(sys.argv) == 1:
