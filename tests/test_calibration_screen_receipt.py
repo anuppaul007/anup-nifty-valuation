@@ -172,6 +172,34 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, "stale_calibration_screen"):
             self.verify()
 
+    def test_published_packet_tamper_or_partial_replay_is_blocked(self):
+        # A current reliability hash and timestamp must not bless stale or
+        # altered consumer-facing fields in a schema-2 research artifact.
+        original = self.run_entrypoint()
+        self.verify()
+        for label, mutation in (
+            ("price", lambda p: p.update({"pe": p["pe"] + 0.1})),
+            ("date", lambda p: p.update({"nifty_date": "2026-10-19"})),
+            ("yield_vintage", lambda p: p.update({"gsec_asof": "2026-10-01"})),
+            ("missing_field", lambda p: p.pop("level")),
+            ("extra_field", lambda p: p.update({"unverified": True})),
+        ):
+            with self.subTest(label=label):
+                altered = json.loads(json.dumps(original))
+                mutation(altered["current_packet"])
+                self.output.write_text(json.dumps(altered))
+                with self.assertRaisesRegex(SystemExit, "stale_report_packet"):
+                    self.verify()
+        for malformed in (None, [], "replayed"):
+            with self.subTest(malformed=repr(malformed)):
+                altered = json.loads(json.dumps(original))
+                altered["current_packet"] = malformed
+                self.output.write_text(json.dumps(altered))
+                with self.assertRaisesRegex(SystemExit, "stale_report_packet"):
+                    self.verify()
+        self.output.write_text(json.dumps(original))
+        self.verify()
+
     def test_missing_screen_context_and_missing_file_are_blocked(self):
         self.run_entrypoint()
         with self.assertRaisesRegex(SystemExit, "provenance context missing"):
