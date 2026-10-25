@@ -118,6 +118,26 @@ def verify_publication(path, *, root=None, latest=None, reliability=None, model_
         raise SystemExit('calibration_publication_blocked: invalid_latest_packet')
     if report.get('model_version') != model_version or report.get('current_packet') != expected_packet:
         raise SystemExit('calibration_publication_blocked: stale_report_packet')
+    # The deterministic payload replay check deliberately ignores the
+    # nondeterministic audit clock. Validate that clock separately so a
+    # forged pre-source, future, naive or malformed publication vintage
+    # cannot pass while all numeric fields and source receipts still match.
+    # No retrospective age/freshness threshold is introduced here.
+    publication_vintage = report.get('generated_at')
+    if not isinstance(publication_vintage, str):
+        raise SystemExit('calibration_publication_blocked: invalid_publication_vintage')
+    try:
+        published_at = datetime.fromisoformat(publication_vintage.replace('Z', '+00:00'))
+        source_at = datetime.fromisoformat(latest['generated_at'].replace('Z', '+00:00'))
+    except (ValueError, TypeError):
+        raise SystemExit('calibration_publication_blocked: invalid_publication_vintage')
+    if (published_at.tzinfo is None or published_at.utcoffset() is None
+            or source_at.tzinfo is None or source_at.utcoffset() is None):
+        raise SystemExit('calibration_publication_blocked: invalid_publication_vintage')
+    if published_at < source_at:
+        raise SystemExit('calibration_publication_blocked: stale_publication_vintage')
+    if published_at > datetime.now(timezone.utc):
+        raise SystemExit('calibration_publication_blocked: future_publication_vintage')
     actual = report['production_reproduction'].get('policy_equity_pct')
     if (isinstance(actual, bool) or not isinstance(actual, (int, float))
         or not math.isfinite(float(actual)) or abs(actual - expected) > 1e-8):
