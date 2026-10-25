@@ -88,6 +88,77 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
             reliability=self.reliability, model_version=self.version,
             screen=self.screen)
 
+    def test_nested_and_nonfinite_inputs_withhold_without_uncaught_exceptions(self):
+        # Independent review flagged nested structures and NaN bypassing
+        # top-level checks. Run actual audit.main with synthetic input files.
+        baseline_screen = {"records": self.rows, "yield_rule": "synthetic"}
+        baseline_latest = self.latest
+        cases = (
+            ("nondict_screen_row", "invalid_calibration_input_structure"),
+            ("missing_nifty", "invalid_calibration_input_structure"),
+            ("null_nifty", "invalid_calibration_input_structure"),
+            ("nondict_earnings", "invalid_calibration_input_structure"),
+            ("nondict_trend", "invalid_calibration_input_structure"),
+            ("screen_nan_pe", "invalid_calibration_input_values"),
+            ("screen_inf_yield", "invalid_calibration_input_values"),
+            ("latest_nan_pe", "invalid_calibration_input_values"),
+            ("latest_inf_yield", "invalid_calibration_input_values"),
+            ("missing_gsec_meta", "invalid_calibration_input_values"),
+            ("nan_earnings_score", "invalid_calibration_input_values"),
+            ("string_risk_off", "invalid_calibration_input_values"),
+            ("nan_market_level", "invalid_calibration_input_values"),
+            ("missing_signal_date", "invalid_calibration_input_values"),
+            ("short_screen", "invalid_current_definition_count"),
+            ("wrong_latest_model", "latest_model_version_mismatch"),
+        )
+        for label, expected_reason in cases:
+            with self.subTest(label=label):
+                screen = json.loads(json.dumps(baseline_screen))
+                latest = json.loads(json.dumps(baseline_latest))
+                if label == "nondict_screen_row":
+                    screen["records"][0] = "not-a-row"
+                elif label == "missing_nifty":
+                    latest.pop("nifty")
+                elif label == "null_nifty":
+                    latest["nifty"] = None
+                elif label == "nondict_earnings":
+                    latest["earnings"] = []
+                elif label == "nondict_trend":
+                    latest["trend"] = "bad"
+                elif label == "screen_nan_pe":
+                    screen["records"][0]["pe"] = float("nan")
+                elif label == "screen_inf_yield":
+                    screen["records"][0]["gsec10"] = float("inf")
+                elif label == "latest_nan_pe":
+                    latest["nifty"]["pe"] = float("nan")
+                elif label == "latest_inf_yield":
+                    latest["nifty"]["gsec10"] = float("inf")
+                elif label == "missing_gsec_meta":
+                    latest["nifty"].pop("gsec_meta")
+                elif label == "nan_earnings_score":
+                    latest["earnings"]["score"] = float("nan")
+                elif label == "string_risk_off":
+                    latest["trend"]["risk_off"] = "false"
+                elif label == "nan_market_level":
+                    latest["nifty"]["level"] = float("nan")
+                elif label == "missing_signal_date":
+                    screen["records"][0].pop("signal_date")
+                elif label == "short_screen":
+                    screen["records"].pop()
+                elif label == "wrong_latest_model":
+                    latest["model_version"] = "different-v"
+                self.screen.write_text(json.dumps(screen))
+                self.latest_path.write_text(json.dumps(latest))
+                report = self.run_entrypoint()
+                self.assertEqual(report["publication_status"], "withheld")
+                self.assertEqual(report["withheld_reason"], expected_reason)
+                self.assertEqual(report["variants"], [])
+                self.assertIsNone(report["production_reproduction"])
+                with self.assertRaisesRegex(SystemExit, "calibration_publication_blocked"):
+                    guard.verify_publication(self.output)
+        self.screen.write_text(json.dumps(baseline_screen))
+        self.latest_path.write_text(json.dumps(baseline_latest))
+
     def test_real_entrypoint_publishes_then_replay_fails_on_screen_mutation(self):
         published = self.run_entrypoint()
         self.assertEqual(published["publication_status"], "published")
