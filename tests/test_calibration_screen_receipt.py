@@ -319,5 +319,67 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
         self.latest_path.write_bytes(original_latest)
 
 
+    def test_real_entrypoint_rejects_hash_schema_and_reliability_state_mutations(self):
+        # Exercise actual audit.main(), not just validate_provenance() helpers.
+        # Every case keeps the numerical equity anchor unchanged and must
+        # produce an explicit withheld artifact with no research variants.
+        baseline = json.loads(json.dumps(self.reliability))
+        source = self.root / "trend_policy_v1.json"
+        original_source = source.read_bytes()
+        cases = (
+            ("missing_hashes", "missing_or_extra_source_hash"),
+            ("null_hashes", "missing_or_extra_source_hash"),
+            ("extra_hash", "missing_or_extra_source_hash"),
+            ("invalid_hash", "invalid_source_hash"),
+            ("stale_hash", "stale_source_hash"),
+            ("missing_source", "unavailable_source_file"),
+            ("wrong_reliability_schema", "invalid_reliability_schema"),
+            ("unverified_status", "unverified_reliability_status"),
+            ("allocation_hold", "allocation_not_ready_at_capture"),
+            ("hold_reason", "reliability_hold_reason"),
+            ("wrong_reliability_model", "model_version_mismatch"),
+            ("stale_evaluation_vintage", "stale_reliability_vintage"),
+        )
+        for label, expected_reason in cases:
+            with self.subTest(label=label):
+                self.reliability = json.loads(json.dumps(baseline))
+                source.write_bytes(original_source)
+                if label == "missing_hashes":
+                    self.reliability["source_hashes"].pop("trend_policy_v1.json")
+                elif label == "null_hashes":
+                    self.reliability["source_hashes"] = None
+                elif label == "extra_hash":
+                    self.reliability["source_hashes"]["unexpected.json"] = "a" * 64
+                elif label == "invalid_hash":
+                    self.reliability["source_hashes"]["trend_policy_v1.json"] = "not-a-sha256"
+                elif label == "stale_hash":
+                    self.reliability["source_hashes"]["trend_policy_v1.json"] = "0" * 64
+                elif label == "missing_source":
+                    source.unlink()
+                elif label == "wrong_reliability_schema":
+                    self.reliability["schema_version"] = 2
+                elif label == "unverified_status":
+                    self.reliability["status"] = "withheld"
+                elif label == "allocation_hold":
+                    self.reliability["allocation_ready_at_capture"] = False
+                elif label == "hold_reason":
+                    self.reliability["hold_reason"] = "synthetic_missing_yield"
+                elif label == "wrong_reliability_model":
+                    self.reliability["model_version"] = "different-v"
+                elif label == "stale_evaluation_vintage":
+                    self.reliability["evaluated_at"] = "2026-10-19T12:00:00+00:00"
+                self.save_reliability()
+                report = self.run_entrypoint()
+                self.assertEqual(report["publication_status"], "withheld")
+                self.assertEqual(report["withheld_reason"], expected_reason)
+                self.assertEqual(report["variants"], [])
+                self.assertIsNone(report["production_reproduction"])
+                with self.assertRaisesRegex(SystemExit, "calibration_publication_blocked"):
+                    guard.verify_publication(self.output)
+        source.write_bytes(original_source)
+        self.reliability = baseline
+        self.save_reliability()
+
+
 if __name__ == "__main__":
     unittest.main()
