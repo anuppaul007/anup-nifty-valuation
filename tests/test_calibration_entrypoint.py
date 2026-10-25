@@ -22,7 +22,8 @@ class WithheldEntrypointTest(unittest.TestCase):
             latest.write_text(json.dumps({
                 'model_version': a.guard_model_source(), 'generated_at': 'synthetic',
                 'nifty': {'date': 'synthetic', 'level': 20000, 'pe': 22,
-                          'pb': 3.5, 'div_yield': 1.25, 'gsec10': 6.5},
+                          'pb': 3.5, 'div_yield': 1.25, 'gsec10': 6.5,
+                          'gsec_meta': {'asof': '2026-10-19'}},
                 'earnings': {'score': 0}, 'trend': {'risk_off': False}
             }))
             reliability.write_text('{}')
