@@ -51,7 +51,14 @@ def raw_vector(pe,pb,dy,gsec):
     if not all(math.isfinite(v) and v > 0 for v in (pe,pb,dy,gsec)):
         raise ValueError('nonfinite_or_nonpositive_input')
     roe=100*pb/pe
-    return np.array([pe,math.log(pb)-BETA*math.log(roe),100/pe-gsec,dy],dtype=float)
+    # Individually finite inputs can overflow in derived ratios (e.g. ROE).
+    # Reject the derived nonfinite state before it contaminates calibration.
+    if not math.isfinite(roe) or roe <= 0:
+        raise ValueError('nonfinite_derived_input')
+    vector=np.array([pe,math.log(pb)-BETA*math.log(roe),100/pe-gsec,dy],dtype=float)
+    if not np.all(np.isfinite(vector)):
+        raise ValueError('nonfinite_derived_input')
+    return vector
 
 
 def production_centers_scales():
