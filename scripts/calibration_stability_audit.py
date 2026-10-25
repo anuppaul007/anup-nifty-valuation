@@ -48,7 +48,7 @@ def guard_model_source():
 
 def raw_vector(pe,pb,dy,gsec):
     pe,pb,dy,gsec=map(float,(pe,pb,dy,gsec))
-    if min(pe,pb,dy,gsec)<=0:raise ValueError('nonpositive_input')
+    if not all(math.isfinite(v) and v > 0 for v in (pe,pb,dy,gsec)):\n        raise ValueError('nonfinite_or_nonpositive_input')
     roe=100*pb/pe
     return np.array([pe,math.log(pb)-BETA*math.log(roe),100/pe-gsec,dy],dtype=float)
 
@@ -100,7 +100,13 @@ def main(output_path=None):
     except (OSError, UnicodeError, json.JSONDecodeError):
         write_withheld(out_path, 'unavailable_or_invalid_calibration_input', version)
         return
-    if not isinstance(screen, dict) or not isinstance(screen.get('records'), list) or not isinstance(latest, dict):
+    if (not isinstance(screen, dict)
+            or not isinstance(screen.get('records'), list)
+            or not all(isinstance(row, dict) for row in screen['records'])
+            or not isinstance(latest, dict)
+            or not isinstance(latest.get('nifty'), dict)
+            or not isinstance(latest.get('earnings'), dict)
+            or not isinstance(latest.get('trend'), dict)):
         write_withheld(out_path, 'invalid_calibration_input_structure', version)
         return
     try:
@@ -108,12 +114,37 @@ def main(output_path=None):
     except (OSError, UnicodeError, json.JSONDecodeError):
         write_withheld(out_path, 'unavailable_or_invalid_reliability_document', version)
         return
-    if latest.get('model_version')!=version:raise RuntimeError('latest_model_version_mismatch')
-    rows=[r for r in screen['records'] if r.get('methodology_era')=='Current ratio definitions']
-    if len(rows)!=36:raise RuntimeError(f'current_definition_count_{len(rows)}_expected_36')
-    x=np.vstack([raw_vector(r['pe'],r['pb'],r['dy'],r['gsec10']) for r in rows])
-    n=latest['nifty'];cur=raw_vector(n['pe'],n['pb'],n['div_yield'],n['gsec10'])
-    earn=float(latest['earnings']['score']);risk_off=bool(latest['trend']['risk_off'])
+    if latest.get('model_version')!=version:
+        write_withheld(out_path, 'latest_model_version_mismatch', version)
+        return
+    rows=[row for row in screen['records'] if row.get('methodology_era')=='Current ratio definitions']
+    if len(rows)!=36:
+        write_withheld(out_path, 'invalid_current_definition_count', version)
+        return
+    try:
+        if any(not isinstance(row.get('signal_date'), str) or not row['signal_date'] for row in rows):
+            raise ValueError('invalid_signal_date')
+        x=np.vstack([raw_vector(row['pe'],row['pb'],row['dy'],row['gsec10']) for row in rows])
+        n=latest['nifty']
+        cur=raw_vector(n['pe'],n['pb'],n['div_yield'],n['gsec10'])
+        if (not isinstance(n.get('date'), str) or not n['date']
+                or not isinstance(n.get('gsec_meta'), dict)
+                or not isinstance(n['gsec_meta'].get('asof'), str)
+                or not n['gsec_meta']['asof']):
+            raise ValueError('invalid_market_vintage')
+        level=n['level']
+        if (isinstance(level, bool) or not isinstance(level, (int, float))
+                or not math.isfinite(level) or level <= 0):
+            raise ValueError('invalid_market_level')
+        earn=float(latest['earnings']['score'])
+        if not math.isfinite(earn):
+            raise ValueError('invalid_earnings_score')
+        risk_off=latest['trend']['risk_off']
+        if not isinstance(risk_off, bool):
+            raise ValueError('invalid_trend_risk_off')
+    except (KeyError, TypeError, ValueError, OverflowError):
+        write_withheld(out_path, 'invalid_calibration_input_values', version)
+        return
     pc,ps=production_centers_scales();prod_z=z_from(cur,pc,ps);prod=allocation(prod_z,earn,risk_off)
     expected, reason = validate_anchor(reliability)
     if reason:
