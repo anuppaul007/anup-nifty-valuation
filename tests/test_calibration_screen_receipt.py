@@ -452,5 +452,37 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
         self.save_reliability()
 
 
+    def test_finite_market_values_that_overflow_derived_lenses_withhold(self):
+        # Finite JSON inputs can overflow the derived ROE/log-profitability
+        # calculation. Never emit NaN/Inf sensitivity variants or crash before
+        # writing a fail-closed research artifact.
+        original_screen = self.screen.read_bytes()
+        original_latest = self.latest_path.read_bytes()
+        try:
+            for label in ("screen_derived_overflow", "latest_derived_overflow"):
+                with self.subTest(label=label):
+                    screen = {"records": json.loads(original_screen)["records"],
+                              "yield_rule": "synthetic"}
+                    latest = json.loads(original_latest)
+                    if label == "screen_derived_overflow":
+                        screen["records"][0]["pe"] = 1e-300
+                        screen["records"][0]["pb"] = 1e300
+                    else:
+                        latest["nifty"]["pe"] = 1e-300
+                        latest["nifty"]["pb"] = 1e300
+                    self.screen.write_text(json.dumps(screen))
+                    self.latest_path.write_text(json.dumps(latest))
+                    report = self.run_entrypoint()
+                    self.assertEqual(report["publication_status"], "withheld")
+                    self.assertEqual(report["withheld_reason"], "invalid_calibration_input_values")
+                    self.assertEqual(report["variants"], [])
+                    self.assertIsNone(report["production_reproduction"])
+                    with self.assertRaisesRegex(SystemExit, "calibration_publication_blocked"):
+                        guard.verify_publication(self.output)
+        finally:
+            self.screen.write_bytes(original_screen)
+            self.latest_path.write_bytes(original_latest)
+
+
 if __name__ == "__main__":
     unittest.main()
