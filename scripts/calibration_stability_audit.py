@@ -48,7 +48,8 @@ def guard_model_source():
 
 def raw_vector(pe,pb,dy,gsec):
     pe,pb,dy,gsec=map(float,(pe,pb,dy,gsec))
-    if not all(math.isfinite(v) and v > 0 for v in (pe,pb,dy,gsec)):\n        raise ValueError('nonfinite_or_nonpositive_input')
+    if not all(math.isfinite(v) and v > 0 for v in (pe,pb,dy,gsec)):
+        raise ValueError('nonfinite_or_nonpositive_input')
     roe=100*pb/pe
     return np.array([pe,math.log(pb)-BETA*math.log(roe),100/pe-gsec,dy],dtype=float)
 
