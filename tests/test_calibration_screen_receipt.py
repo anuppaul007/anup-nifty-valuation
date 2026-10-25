@@ -227,6 +227,33 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
             # A genuine deterministic artifact remains accepted.
             audit.verify_recomputed_payload(original)
 
+    def test_publication_vintage_spoofing_fails_even_with_valid_numeric_receipts(self):
+        # The recomputation gate excludes generated_at because it is a
+        # nondeterministic clock. The entrypoint's actual publication verifier
+        # must independently reject fabricated vintage metadata.
+        original = self.run_entrypoint()
+        self.verify()
+        cases = (
+            ("missing", None, "invalid_publication_vintage"),
+            ("null", False, "invalid_publication_vintage"),
+            ("malformed", "not-a-date", "invalid_publication_vintage"),
+            ("naive", "2026-10-21T12:00:00", "invalid_publication_vintage"),
+            ("before_source", "2026-10-20T11:59:59+00:00", "stale_publication_vintage"),
+            ("future", "2099-01-01T00:00:00+00:00", "future_publication_vintage"),
+        )
+        for label, stamp, reason in cases:
+            with self.subTest(label=label):
+                tampered = json.loads(json.dumps(original))
+                if stamp is None:
+                    tampered.pop("generated_at")
+                else:
+                    tampered["generated_at"] = stamp
+                self.output.write_text(json.dumps(tampered))
+                with self.assertRaisesRegex(SystemExit, reason):
+                    self.verify()
+        self.output.write_text(json.dumps(original))
+        self.verify()
+
     def test_missing_screen_context_and_missing_file_are_blocked(self):
         self.run_entrypoint()
         with self.assertRaisesRegex(SystemExit, "provenance context missing"):
