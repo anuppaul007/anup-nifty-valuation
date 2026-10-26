@@ -37,5 +37,28 @@ class PublicationGateTests(unittest.TestCase):
                 verify_publication(output)
 
 
+    def test_legacy_schema_one_is_not_published(self):
+        """A real legacy nine-variant report is not a schema-2 publication receipt.
+
+        The existing main refresh may still commit schema-1 research evidence.
+        This test is a negative compatibility gate, not a fix for the refresh
+        workflow or external review manifest consumer.
+        """
+        with tempfile.TemporaryDirectory() as d:
+            output = Path(d) / 'audit.json'
+            legacy = {
+                'schema_version': 1, 'research_only': True,
+                'model_version': 'synthetic-v',
+                'production_reproduction': {'policy_equity_pct': 40.0},
+                'variants': [{'name': f'v{i}'} for i in range(9)],
+                'return_data_used': False,
+                'live_model_changed': False,
+                'live_allocation_changed': False,
+            }
+            output.write_text(json.dumps(legacy), encoding='utf-8')
+            with self.assertRaisesRegex(SystemExit, 'calibration_publication_blocked'):
+                verify_publication(output)
+
+
 if __name__ == '__main__':
     unittest.main()
