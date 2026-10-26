@@ -76,7 +76,7 @@ class CalibrationReviewManifestContractTests(unittest.TestCase):
                 self.assertEqual(evidence['reason'], 'malformed_withheld_artifact')
 
     def test_bad_json_nonfinite_and_missing_status_are_unverified(self):
-        for raw in (b'{bad', b'\\xff', b'{"schema_version":2,"x":NaN}', b'[]', b'null',
+        for raw in (b'{bad', b'\xff', b'{"schema_version":2,"x":NaN}', b'[]', b'null',
                     b'{"schema_version":2}'):
             with self.subTest(raw=raw):
                 self.path.write_bytes(raw)
