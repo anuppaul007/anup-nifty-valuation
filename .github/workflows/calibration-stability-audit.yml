@@ -16,6 +16,8 @@ on:
       - 'tests/test_calibration_entrypoint.py'
       - 'tests/test_calibration_provenance.py'
       - 'tests/test_calibration_screen_receipt.py'
+      - 'tests/test_calibration_manifest_contract.py'
+      - 'scripts/build_review_manifest.py'
       - 'CALIBRATION_REVIEW_NOTES_20261014.md'
       - '.github/workflows/calibration-stability-audit.yml'
 
