@@ -89,8 +89,13 @@ def allocation(z,earn_score,trend_risk_off):
 
 
 def calibrate(x):
-    center=np.median(x,axis=0);scale=np.std(x,axis=0,ddof=0)
-    if np.any(scale<=1e-12):raise RuntimeError('degenerate_descriptive_scale')
+    # Even finite raw observations can overflow the squared deviations in std.
+    # A nonfinite scale must never reach the strict JSON writer or publication.
+    with np.errstate(over='ignore', invalid='ignore'):
+        center=np.median(x,axis=0);scale=np.std(x,axis=0,ddof=0)
+    if (not np.all(np.isfinite(center)) or not np.all(np.isfinite(scale))
+            or np.any(scale<=1e-12)):
+        raise RuntimeError('invalid_descriptive_scale')
     return center,scale
 
 
@@ -100,7 +105,13 @@ def js(a):return [float(x) for x in np.asarray(a)]
 def main(output_path=None):
     out_path = Path(output_path) if output_path is not None else OUT
     out_path.unlink(missing_ok=True)  # stale evidence cannot pass the publication gate
-    version=guard_model_source()
+    try:
+        version=guard_model_source()
+    except (OSError, UnicodeError, RuntimeError):
+        # The source-constant guard is part of the entrypoint, not a preflight
+        # that may leave no artifact after stale evidence was removed.
+        write_withheld(out_path, 'model_source_validation_failed', 'unverified')
+        return
     try:
         screen_bytes=SCREEN.read_bytes()
         screen=json.loads(screen_bytes)
@@ -163,6 +174,19 @@ def main(output_path=None):
         write_withheld(out_path, provenance_reason, version)
         return
     enforce_reproduction(out_path, version, prod['policy_equity_pct'], expected)
+
+    # Preflight every deterministic sensitivity window before constructing any
+    # report. This includes the full 36, six leave-block-out 30, and two 18
+    # month windows. All must have finite, nondegenerate descriptive scales.
+    try:
+        calibrate(x)
+        for block in range(6):
+            calibrate(x[[i for i in range(36) if i // 6 != block]])
+        calibrate(x[:18])
+        calibrate(x[18:])
+    except (RuntimeError, ValueError, OverflowError, FloatingPointError):
+        write_withheld(out_path, 'invalid_descriptive_scale', version)
+        return
 
     variants=[]
     def add(name,idx,note):
