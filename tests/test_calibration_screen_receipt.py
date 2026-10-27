@@ -88,6 +88,66 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
             reliability=self.reliability, model_version=self.version,
             screen=self.screen)
 
+    def test_finite_raw_values_with_infinite_descriptive_std_withhold(self):
+        # Real entrypoint, finite positive JSON observations; NumPy's squared
+        # deviations overflow to inf in a 36-month descriptive scale.
+        original = self.screen.read_bytes()
+        try:
+            for label in ("overflowing_std", "degenerate_std"):
+                with self.subTest(label=label):
+                    rows = json.loads(json.dumps(self.rows))
+                    if label == "overflowing_std":
+                        for i, row in enumerate(rows):
+                            row["gsec10"] = 1e200 if i % 2 == 0 else 2e200
+                    else:
+                        for row in rows:
+                            for field in ("pe", "pb", "dy", "gsec10"):
+                                row[field] = self.rows[0][field]
+                    self.screen.write_text(json.dumps({
+                        "records": rows, "yield_rule": "synthetic"}))
+                    report = self.run_entrypoint()
+                    self.assertEqual(report["publication_status"], "withheld")
+                    self.assertEqual(report["withheld_reason"], "invalid_descriptive_scale")
+                    self.assertEqual(report["variants"], [])
+                    self.assertIsNone(report["production_reproduction"])
+                    with self.assertRaisesRegex(SystemExit, "calibration_publication_blocked"):
+                        guard.verify_publication(self.output)
+        finally:
+            self.screen.write_bytes(original)
+        self.assertEqual(self.run_entrypoint()["publication_status"], "published")
+        self.verify()
+
+    def test_model_source_guard_failure_writes_explicit_withheld_artifact(self):
+        # Previously guard_model_source ran after unlink but outside any
+        # exception handler. Missing/invalid bytes or changed constants must
+        # not leave the stale published artifact or an ambiguous missing file.
+        original = self.model.read_bytes()
+        try:
+            cases = (
+                ("missing", None),
+                ("invalid_utf8", bytes([255])),
+                ("changed_constant", original.replace(b"peM:22.44", b"peM:22.45")),
+                ("missing_version", original.replace(b"const VERSION=", b"const OTHER=")),
+            )
+            for label, replacement in cases:
+                with self.subTest(label=label):
+                    self.model.unlink(missing_ok=True)
+                    if replacement is not None:
+                        self.model.write_bytes(replacement)
+                    self.output.write_text('{"publication_status":"published"}')
+                    report = self.run_entrypoint()
+                    self.assertEqual(report["publication_status"], "withheld")
+                    self.assertEqual(report["withheld_reason"], "model_source_validation_failed")
+                    self.assertEqual(report["model_version"], "unverified")
+                    self.assertEqual(report["variants"], [])
+                    self.assertIsNone(report["production_reproduction"])
+                    with self.assertRaisesRegex(SystemExit, "calibration_publication_blocked"):
+                        guard.verify_publication(self.output)
+        finally:
+            self.model.write_bytes(original)
+        self.assertEqual(self.run_entrypoint()["publication_status"], "published")
+        self.verify()
+
     def test_nested_and_nonfinite_inputs_withhold_without_uncaught_exceptions(self):
         # Independent review flagged nested structures and NaN bypassing
         # top-level checks. Run actual audit.main with synthetic input files.
