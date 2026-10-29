@@ -544,5 +544,48 @@ class SyntheticCalibrationEntrypoint(unittest.TestCase):
             self.latest_path.write_bytes(original_latest)
 
 
+    def test_finite_market_curve_overflow_withholds_and_recovers(self):
+        # All raw inputs are finite; the production sigmoid's exp() overflows.
+        original = self.latest_path.read_bytes()
+        try:
+            latest = json.loads(original)
+            latest["nifty"]["pe"] = 50000.0
+            self.latest_path.write_text(json.dumps(latest))
+            self.output.write_text('{"publication_status":"published"}')
+            report = self.run_entrypoint()
+            self.assertEqual(report["publication_status"], "withheld")
+            self.assertEqual(report["withheld_reason"], "invalid_calibration_numerics")
+            self.assertEqual(report["variants"], [])
+            self.assertIsNone(report["production_reproduction"])
+            with self.assertRaisesRegex(SystemExit, "calibration_publication_blocked"):
+                guard.verify_publication(self.output)
+        finally:
+            self.latest_path.write_bytes(original)
+        self.assertEqual(self.run_entrypoint()["publication_status"], "published")
+        self.verify()
+
+    def test_finite_descriptive_variant_curve_overflow_withholds(self):
+        # Production formula remains finite, but a very narrow synthetic
+        # historical PE scale makes the descriptive variant's exp() overflow.
+        original = self.screen.read_bytes()
+        try:
+            screen = json.loads(original)
+            for i, row in enumerate(screen["records"]):
+                row["pe"] = 20.0 + i * 1e-8
+            self.screen.write_text(json.dumps(screen))
+            self.output.write_text('{"publication_status":"published"}')
+            report = self.run_entrypoint()
+            self.assertEqual(report["publication_status"], "withheld")
+            self.assertEqual(report["withheld_reason"], "invalid_calibration_numerics")
+            self.assertEqual(report["variants"], [])
+            self.assertIsNone(report["production_reproduction"])
+            with self.assertRaisesRegex(SystemExit, "calibration_publication_blocked"):
+                guard.verify_publication(self.output)
+        finally:
+            self.screen.write_bytes(original)
+        self.assertEqual(self.run_entrypoint()["publication_status"], "published")
+        self.verify()
+
+
 if __name__ == "__main__":
     unittest.main()
