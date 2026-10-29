@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-28T18:54:45+00:00",
+  "generated_at": "2026-10-29T18:59:59+00:00",
   "research_only": true,
   "model_version": "3.13-reliability-1",
   "question": "How fragile is today\u2019s policy allocation to deterministic re-estimation of lens centers/scales within the short current-definition era?",
@@ -12,14 +12,14 @@
     "historical_yield_caveat": "Two calendar-month lag; RBI archived SGL tenor yields before OECD coverage, then OECD monthly long-term yields. Series definitions differ. Publication times and historical vintages are not verified."
   },
   "current_packet": {
-    "generated_at": "2026-10-28T18:54:45+00:00",
-    "nifty_date": "2026-10-28",
-    "level": 22698.85,
-    "pe": 18.99,
-    "pb": 2.79,
-    "dividend_yield": 1.43,
-    "gsec10": 7.4533,
-    "gsec_asof": "2026-10-27"
+    "generated_at": "2026-10-29T18:59:59+00:00",
+    "nifty_date": "2026-10-29",
+    "level": 22936.75,
+    "pe": 19.19,
+    "pb": 2.82,
+    "dividend_yield": 1.42,
+    "gsec10": 7.4389,
+    "gsec_asof": "2026-10-28"
   },
   "production_reproduction": {
     "centers": {
@@ -35,16 +35,16 @@
       "dividend_yield": 0.18
     },
     "current_z": {
-      "pe": -1.6586538461538474,
-      "pb_log_profitability": -2.9537904693297623,
-      "earnings_yield_minus_gsec": -0.5894706236365017,
-      "dividend_yield": -0.9999999999999997
+      "pe": -1.5625,
+      "pb_log_profitability": -2.7845073327809304,
+      "earnings_yield_minus_gsec": -0.531639172187895,
+      "dividend_yield": -0.9444444444444441
     },
-    "composite_z": -1.5925104823889948,
-    "core_equity_pct": 92.36951555474695,
+    "composite_z": -1.4934873992589952,
+    "core_equity_pct": 90.95918303480039,
     "earnings_adjustment_pp": -2.1182287269466755,
     "trend_adjustment_pp": -20.0,
-    "policy_equity_pct": 70.25128682780027
+    "policy_equity_pct": 68.8409543078537
   },
   "full_36_descriptive_recalibration": {
     "centers": {
@@ -62,32 +62,32 @@
   },
   "leave_six_month_block_out": {
     "variants": 6,
-    "min_policy_equity_pct": 72.30495746285342,
-    "max_policy_equity_pct": 77.87372224198464,
-    "range_pp": 5.5687647791312145,
-    "min_change_vs_production_pp": 2.0536706350531517,
-    "max_change_vs_production_pp": 7.622435414184366
+    "min_policy_equity_pct": 70.40457064713306,
+    "max_policy_equity_pct": 76.95105555353655,
+    "range_pp": 6.546484906403492,
+    "min_change_vs_production_pp": 1.5636163392793492,
+    "max_change_vs_production_pp": 8.110101245682841
   },
   "one_lens_at_a_time_leave_block_sensitivity": {
     "pe": {
-      "min_change_pp": 3.3758378848817188,
-      "max_change_pp": 5.951896154381359,
-      "max_abs_change_pp": 5.951896154381359
+      "min_change_pp": 3.4852034455232683,
+      "max_change_pp": 6.347492628126076,
+      "max_abs_change_pp": 6.347492628126076
     },
     "pb_log_profitability": {
-      "min_change_pp": -0.8633544635945896,
-      "max_change_pp": 3.5637809439762407,
-      "max_abs_change_pp": 3.5637809439762407
+      "min_change_pp": -0.9004593826886662,
+      "max_change_pp": 3.832910381678033,
+      "max_abs_change_pp": 3.832910381678033
     },
     "earnings_yield_minus_gsec": {
-      "min_change_pp": -3.8854846386540203,
-      "max_change_pp": -1.8427698366592722,
-      "max_abs_change_pp": 3.8854846386540203
+      "min_change_pp": -4.705932497242685,
+      "max_change_pp": -2.3544813810161145,
+      "max_abs_change_pp": 4.705932497242685
     },
     "dividend_yield": {
-      "min_change_pp": 1.4190138634625669,
-      "max_change_pp": 1.6428004770147595,
-      "max_abs_change_pp": 1.6428004770147595
+      "min_change_pp": 1.4745102548164084,
+      "max_change_pp": 1.6973922785956006,
+      "max_abs_change_pp": 1.6973922785956006
     }
   },
   "variants": [
@@ -108,16 +108,16 @@
         "dividend_yield": 0.07223237108179938
       },
       "current_z": {
-        "pe": -2.8250716320835814,
-        "pb_log_profitability": -2.953790469329764,
-        "earnings_yield_minus_gsec": 0.06340022263915995,
-        "dividend_yield": -2.0766312631511537
+        "pe": -2.638290036573921,
+        "pb_log_profitability": -2.784507332780932,
+        "earnings_yield_minus_gsec": 0.17550500219025256,
+        "dividend_yield": -1.9381891789410766
       },
-      "composite_z": -1.8680128068219817,
-      "core_equity_pct": 95.58196909655877,
+      "composite_z": -1.7145065909520432,
+      "core_equity_pct": 93.91361913701105,
       "earnings_adjustment_pp": -2.1182287269466755,
       "trend_adjustment_pp": -20.0,
-      "policy_equity_pct": 73.46374036961208
+      "policy_equity_pct": 71.79539041006439
     },
     {
       "name": "leave_months_01_06_out",
@@ -136,16 +136,16 @@
         "dividend_yield": 0.071231235345801
       },
       "current_z": {
-        "pe": -2.706776721888615,
-        "pb_log_profitability": -2.8133692381575024,
-        "earnings_yield_minus_gsec": 0.20755181546212054,
-        "dividend_yield": -2.1760116786902968
+        "pe": -2.525113854647766,
+        "pb_log_profitability": -2.650613638790194,
+        "earnings_yield_minus_gsec": 0.3334022853162784,
+        "dividend_yield": -2.035623828452213
       },
-      "composite_z": -1.7586431045645827,
-      "core_equity_pct": 94.42318618980009,
+      "composite_z": -1.6039255403602275,
+      "core_equity_pct": 92.52279937407974,
       "earnings_adjustment_pp": -2.1182287269466755,
       "trend_adjustment_pp": -20.0,
-      "policy_equity_pct": 72.30495746285342
+      "policy_equity_pct": 70.40457064713306
     },
     {
       "name": "leave_months_07_12_out",
@@ -164,16 +164,16 @@
         "dividend_yield": 0.069423018917039
       },
       "current_z": {
-        "pe": -2.7708104075269455,
-        "pb_log_profitability": -3.095522070404549,
-        "earnings_yield_minus_gsec": 0.1933204812845776,
-        "dividend_yield": -2.088644404434152
+        "pe": -2.582639921447015,
+        "pb_log_profitability": -2.9056964483254335,
+        "earnings_yield_minus_gsec": 0.3105416838451319,
+        "dividend_yield": -1.9445999627490378
       },
-      "composite_z": -1.8484125641234346,
-      "core_equity_pct": 95.38476726294924,
+      "composite_z": -1.6868563996177128,
+      "core_equity_pct": 93.58145022397241,
       "earnings_adjustment_pp": -2.1182287269466755,
       "trend_adjustment_pp": -20.0,
-      "policy_equity_pct": 73.26653853600257
+      "policy_equity_pct": 71.46322149702573
     },
     {
       "name": "leave_months_13_18_out",
@@ -192,16 +192,16 @@
         "dividend_yield": 0.06700663317082042
       },
       "current_z": {
-        "pe": -3.032845673280674,
-        "pb_log_profitability": -2.907453232641486,
-        "earnings_yield_minus_gsec": 0.09827554329725506,
-        "dividend_yield": -2.238584344591736
+        "pe": -2.832326951080296,
+        "pb_log_profitability": -2.740825705164132,
+        "earnings_yield_minus_gsec": 0.20889088359794553,
+        "dividend_yield": -2.08934538828562
       },
-      "composite_z": -1.927466085910074,
-      "core_equity_pct": 96.15360159392125,
+      "composite_z": -1.7696545109097894,
+      "core_equity_pct": 94.54644848931736,
       "earnings_adjustment_pp": -2.1182287269466755,
       "trend_adjustment_pp": -20.0,
-      "policy_equity_pct": 74.03537286697457
+      "policy_equity_pct": 72.42821976237067
     },
     {
       "name": "leave_months_19_24_out",
@@ -220,16 +220,16 @@
         "dividend_yield": 0.0743744281023764
       },
       "current_z": {
-        "pe": -2.654197900815048,
-        "pb_log_profitability": -2.8040493384970033,
-        "earnings_yield_minus_gsec": -0.18588536089475427,
-        "dividend_yield": -2.084049638494598
+        "pe": -2.479866347395338,
+        "pb_log_profitability": -2.6464844504845595,
+        "earnings_yield_minus_gsec": -0.0701356734852354,
+        "dividend_yield": -1.9495948231078497
       },
-      "composite_z": -1.8541497652491066,
-      "core_equity_pct": 95.44294976777316,
+      "composite_z": -1.7069275802064177,
+      "core_equity_pct": 93.82357663942557,
       "earnings_adjustment_pp": -2.1182287269466755,
       "trend_adjustment_pp": -20.0,
-      "policy_equity_pct": 73.32472104082649
+      "policy_equity_pct": 71.70534791247889
     },
     {
       "name": "leave_months_25_30_out",
@@ -248,16 +248,16 @@
         "dividend_yield": 0.07770385375828467
       },
       "current_z": {
-        "pe": -2.583581953541817,
-        "pb_log_profitability": -2.71883712403616,
-        "earnings_yield_minus_gsec": -0.1686878477171651,
-        "dividend_yield": -2.0590999321309846
+        "pe": -2.408126472825902,
+        "pb_log_profitability": -2.563019275444252,
+        "earnings_yield_minus_gsec": -0.06364694751361714,
+        "dividend_yield": -1.9304061863727977
       },
-      "composite_z": -1.8013686469471928,
-      "core_equity_pct": 94.89304368557771,
+      "composite_z": -1.6582394353686298,
+      "core_equity_pct": 93.22687394122063,
       "earnings_adjustment_pp": -2.1182287269466755,
       "trend_adjustment_pp": -20.0,
-      "policy_equity_pct": 72.77481495863103
+      "policy_equity_pct": 71.10864521427396
     },
     {
       "name": "leave_months_31_36_out",
@@ -276,16 +276,16 @@
         "dividend_yield": 0.07140183626645903
       },
       "current_z": {
-        "pe": -3.5843228070994173,
-        "pb_log_profitability": -4.137702059829484,
-        "earnings_yield_minus_gsec": -0.1784915300103403,
-        "dividend_yield": -2.100786308075137
+        "pe": -3.361694061316842,
+        "pb_log_profitability": -3.9189076734697887,
+        "earnings_yield_minus_gsec": -0.06734593627183581,
+        "dividend_yield": -1.9607338875367946
       },
-      "composite_z": -2.4982615230503282,
-      "core_equity_pct": 99.9919509689313,
+      "composite_z": -2.3205392698923473,
+      "core_equity_pct": 99.06928428048322,
       "earnings_adjustment_pp": -2.1182287269466755,
       "trend_adjustment_pp": -20.0,
-      "policy_equity_pct": 77.87372224198464
+      "policy_equity_pct": 76.95105555353655
     },
     {
       "name": "first_18_only",
@@ -304,12 +304,12 @@
         "dividend_yield": 0.08294911425419538
       },
       "current_z": {
-        "pe": -3.0906893520287686,
-        "pb_log_profitability": -3.944153818343657,
-        "earnings_yield_minus_gsec": -1.5825602884376557,
-        "dividend_yield": -1.928893411805268
+        "pe": -2.90589477193736,
+        "pb_log_profitability": -3.7539727033109602,
+        "earnings_yield_minus_gsec": -1.4525333704644432,
+        "dividend_yield": -1.8083375735674387
       },
-      "composite_z": -2.7167396714803878,
+      "composite_z": -2.5545846062158155,
       "core_equity_pct": 100.0,
       "earnings_adjustment_pp": -2.1182287269466755,
       "trend_adjustment_pp": -20.0,
@@ -332,16 +332,16 @@
         "dividend_yield": 0.058362426607417334
       },
       "current_z": {
-        "pe": -2.9967928752261543,
-        "pb_log_profitability": -3.0963467836821397,
-        "earnings_yield_minus_gsec": 0.7210496070053234,
-        "dividend_yield": -2.3988036162671684
+        "pe": -2.7868599242470866,
+        "pb_log_profitability": -2.893391663432357,
+        "earnings_yield_minus_gsec": 0.9720238572431049,
+        "dividend_yield": -2.227460500819513
       },
-      "composite_z": -1.7859895136984218,
-      "core_equity_pct": 94.7265169047425,
+      "composite_z": -1.5689945116223525,
+      "core_equity_pct": 92.04779241851392,
       "earnings_adjustment_pp": -2.1182287269466755,
       "trend_adjustment_pp": -20.0,
-      "policy_equity_pct": 72.60828817779583
+      "policy_equity_pct": 69.92956369156724
     }
   ],
   "interpretation_guardrail": "These deterministic recalibrations quantify assumption fragility only. They are not confidence intervals, intrinsic-value estimates, optimized parameters, or alternative live candidates. The historical yield series differs from the current daily RBI security-yield proxy, so gap sensitivity carries an additional definition mismatch.",
