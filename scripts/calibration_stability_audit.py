@@ -164,67 +164,74 @@ def main(output_path=None):
     except (KeyError, TypeError, ValueError, OverflowError):
         write_withheld(out_path, 'invalid_calibration_input_values', version)
         return
-    pc,ps=production_centers_scales();prod_z=z_from(cur,pc,ps);prod=allocation(prod_z,earn,risk_off)
-    expected, reason = validate_anchor(reliability)
-    if reason:
-        write_withheld(out_path, reason, version)
-        return
-    provenance_reason = validate_provenance(reliability, root=ROOT, latest=latest, model_version=version)
-    if provenance_reason:
-        write_withheld(out_path, provenance_reason, version)
-        return
-    enforce_reproduction(out_path, version, prod['policy_equity_pct'], expected)
-
-    # Preflight every deterministic sensitivity window before constructing any
-    # report. This includes the full 36, six leave-block-out 30, and two 18
-    # month windows. All must have finite, nondegenerate descriptive scales.
+    # All derived calibration calculations must produce an explicit withheld
+    # research artifact on numerical overflow, not an unrecorded exception.
+    # Do not catch the hard RuntimeError from enforce_reproduction.
     try:
-        calibrate(x)
-        for block in range(6):
-            calibrate(x[[i for i in range(36) if i // 6 != block]])
-        calibrate(x[:18])
-        calibrate(x[18:])
-    except (RuntimeError, ValueError, OverflowError, FloatingPointError):
-        write_withheld(out_path, 'invalid_descriptive_scale', version)
+        pc,ps=production_centers_scales();prod_z=z_from(cur,pc,ps);prod=allocation(prod_z,earn,risk_off)
+        expected, reason = validate_anchor(reliability)
+        if reason:
+            write_withheld(out_path, reason, version)
+            return
+        provenance_reason = validate_provenance(reliability, root=ROOT, latest=latest, model_version=version)
+        if provenance_reason:
+            write_withheld(out_path, provenance_reason, version)
+            return
+        enforce_reproduction(out_path, version, prod['policy_equity_pct'], expected)
+
+        # Preflight every deterministic sensitivity window before constructing any
+        # report. This includes the full 36, six leave-block-out 30, and two 18
+        # month windows. All must have finite, nondegenerate descriptive scales.
+        try:
+            calibrate(x)
+            for block in range(6):
+                calibrate(x[[i for i in range(36) if i // 6 != block]])
+            calibrate(x[:18])
+            calibrate(x[18:])
+        except (RuntimeError, ValueError, OverflowError, FloatingPointError):
+            write_withheld(out_path, 'invalid_descriptive_scale', version)
+            return
+
+        variants=[]
+        def add(name,idx,note):
+            xx=x[np.asarray(idx,dtype=int)];c,s=calibrate(xx);z=z_from(cur,c,s);a=allocation(z,earn,risk_off)
+            variants.append({'name':name,'n_months':len(xx),'note':note,'center':dict(zip(LABELS,js(c))),'scale':dict(zip(LABELS,js(s))),'current_z':dict(zip(LABELS,js(z))),**a})
+        add('full_36_descriptive',range(36),'Descriptive recalibration on all 36 current-definition observations; not an OOS candidate.')
+        for b in range(6):
+            omit=set(range(b*6,(b+1)*6));keep=[i for i in range(36) if i not in omit]
+            add(f'leave_months_{b*6+1:02d}_{(b+1)*6:02d}_out',keep,f'Omits contiguous current-definition observations {b*6+1}-{(b+1)*6}; 30 months remain.')
+        add('first_18_only',range(18),'Early-half regime sensitivity only.')
+        add('last_18_only',range(18,36),'Late-half regime sensitivity only.')
+
+        loo=[v for v in variants if v['name'].startswith('leave_months_')]
+        vals=[v['policy_equity_pct'] for v in loo]
+        lens_impacts={k:[] for k in LABELS}
+        for v in loo:
+            alt=np.array([v['current_z'][k] for k in LABELS])
+            for i,k in enumerate(LABELS):
+                z=prod_z.copy();z[i]=alt[i];a=allocation(z,earn,risk_off)
+                lens_impacts[k].append({'variant':v['name'],'policy_equity_pct':a['policy_equity_pct'],'change_vs_production_pp':a['policy_equity_pct']-prod['policy_equity_pct']})
+        impact_summary={k:{'min_change_pp':min(q['change_vs_production_pp'] for q in arr),'max_change_pp':max(q['change_vs_production_pp'] for q in arr),'max_abs_change_pp':max(abs(q['change_vs_production_pp']) for q in arr)} for k,arr in lens_impacts.items()}
+        fc,fs=calibrate(x)
+        out={
+          'calibration_screen_sha256': hashlib.sha256(screen_bytes).hexdigest(),
+          'anchor_provenance': {'evaluated_at': reliability['evaluated_at'], 'source_hashes': reliability['source_hashes']},
+          'schema_version':2,'publication_status':'published','withheld_reason':None,'anchor_status':'verified','generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'model_version':version,
+          'question':'How fragile is today’s policy allocation to deterministic re-estimation of lens centers/scales within the short current-definition era?',
+          'sample':{'months':36,'first_signal_date':rows[0]['signal_date'],'last_signal_date':rows[-1]['signal_date'],'methodology':'Current ratio definitions','historical_yield_caveat':screen.get('yield_rule')},
+          'current_packet':{'generated_at':latest['generated_at'],'nifty_date':n['date'],'level':n['level'],'pe':n['pe'],'pb':n['pb'],'dividend_yield':n['div_yield'],'gsec10':n['gsec10'],'gsec_asof':n['gsec_meta']['asof']},
+          'production_reproduction':{'centers':dict(zip(LABELS,js(pc))),'scales':dict(zip(LABELS,js(ps))),'current_z':dict(zip(LABELS,js(prod_z))),**prod},
+          'full_36_descriptive_recalibration':{'centers':dict(zip(LABELS,js(fc))),'scales':dict(zip(LABELS,js(fs)))},
+          'leave_six_month_block_out':{'variants':6,'min_policy_equity_pct':min(vals),'max_policy_equity_pct':max(vals),'range_pp':max(vals)-min(vals),'min_change_vs_production_pp':min(vals)-prod['policy_equity_pct'],'max_change_vs_production_pp':max(vals)-prod['policy_equity_pct']},
+          'one_lens_at_a_time_leave_block_sensitivity':impact_summary,
+          'variants':variants,
+          'interpretation_guardrail':'These deterministic recalibrations quantify assumption fragility only. They are not confidence intervals, intrinsic-value estimates, optimized parameters, or alternative live candidates. The historical yield series differs from the current daily RBI security-yield proxy, so gap sensitivity carries an additional definition mismatch.',
+          'return_data_used':False,'live_model_changed':False,'live_allocation_changed':False
+        }
+        write_report(out_path, out)
+    except (OverflowError, ValueError, FloatingPointError):
+        write_withheld(out_path, 'invalid_calibration_numerics', version)
         return
-
-    variants=[]
-    def add(name,idx,note):
-        xx=x[np.asarray(idx,dtype=int)];c,s=calibrate(xx);z=z_from(cur,c,s);a=allocation(z,earn,risk_off)
-        variants.append({'name':name,'n_months':len(xx),'note':note,'center':dict(zip(LABELS,js(c))),'scale':dict(zip(LABELS,js(s))),'current_z':dict(zip(LABELS,js(z))),**a})
-    add('full_36_descriptive',range(36),'Descriptive recalibration on all 36 current-definition observations; not an OOS candidate.')
-    for b in range(6):
-        omit=set(range(b*6,(b+1)*6));keep=[i for i in range(36) if i not in omit]
-        add(f'leave_months_{b*6+1:02d}_{(b+1)*6:02d}_out',keep,f'Omits contiguous current-definition observations {b*6+1}-{(b+1)*6}; 30 months remain.')
-    add('first_18_only',range(18),'Early-half regime sensitivity only.')
-    add('last_18_only',range(18,36),'Late-half regime sensitivity only.')
-
-    loo=[v for v in variants if v['name'].startswith('leave_months_')]
-    vals=[v['policy_equity_pct'] for v in loo]
-    lens_impacts={k:[] for k in LABELS}
-    for v in loo:
-        alt=np.array([v['current_z'][k] for k in LABELS])
-        for i,k in enumerate(LABELS):
-            z=prod_z.copy();z[i]=alt[i];a=allocation(z,earn,risk_off)
-            lens_impacts[k].append({'variant':v['name'],'policy_equity_pct':a['policy_equity_pct'],'change_vs_production_pp':a['policy_equity_pct']-prod['policy_equity_pct']})
-    impact_summary={k:{'min_change_pp':min(q['change_vs_production_pp'] for q in arr),'max_change_pp':max(q['change_vs_production_pp'] for q in arr),'max_abs_change_pp':max(abs(q['change_vs_production_pp']) for q in arr)} for k,arr in lens_impacts.items()}
-    fc,fs=calibrate(x)
-    out={
-      'calibration_screen_sha256': hashlib.sha256(screen_bytes).hexdigest(),
-      'anchor_provenance': {'evaluated_at': reliability['evaluated_at'], 'source_hashes': reliability['source_hashes']},
-      'schema_version':2,'publication_status':'published','withheld_reason':None,'anchor_status':'verified','generated_at':datetime.now(timezone.utc).replace(microsecond=0).isoformat(),'research_only':True,'model_version':version,
-      'question':'How fragile is today’s policy allocation to deterministic re-estimation of lens centers/scales within the short current-definition era?',
-      'sample':{'months':36,'first_signal_date':rows[0]['signal_date'],'last_signal_date':rows[-1]['signal_date'],'methodology':'Current ratio definitions','historical_yield_caveat':screen.get('yield_rule')},
-      'current_packet':{'generated_at':latest['generated_at'],'nifty_date':n['date'],'level':n['level'],'pe':n['pe'],'pb':n['pb'],'dividend_yield':n['div_yield'],'gsec10':n['gsec10'],'gsec_asof':n['gsec_meta']['asof']},
-      'production_reproduction':{'centers':dict(zip(LABELS,js(pc))),'scales':dict(zip(LABELS,js(ps))),'current_z':dict(zip(LABELS,js(prod_z))),**prod},
-      'full_36_descriptive_recalibration':{'centers':dict(zip(LABELS,js(fc))),'scales':dict(zip(LABELS,js(fs)))},
-      'leave_six_month_block_out':{'variants':6,'min_policy_equity_pct':min(vals),'max_policy_equity_pct':max(vals),'range_pp':max(vals)-min(vals),'min_change_vs_production_pp':min(vals)-prod['policy_equity_pct'],'max_change_vs_production_pp':max(vals)-prod['policy_equity_pct']},
-      'one_lens_at_a_time_leave_block_sensitivity':impact_summary,
-      'variants':variants,
-      'interpretation_guardrail':'These deterministic recalibrations quantify assumption fragility only. They are not confidence intervals, intrinsic-value estimates, optimized parameters, or alternative live candidates. The historical yield series differs from the current daily RBI security-yield proxy, so gap sensitivity carries an additional definition mismatch.',
-      'return_data_used':False,'live_model_changed':False,'live_allocation_changed':False
-    }
-    write_report(out_path, out)
     print(json.dumps({'production':out['production_reproduction'],'leave_six_month_block_out':out['leave_six_month_block_out'],'one_lens_at_a_time':impact_summary,'variant_targets':[{'name':v['name'],'equity':v['policy_equity_pct']} for v in variants]},indent=2))
 
 
