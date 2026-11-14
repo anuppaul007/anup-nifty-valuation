@@ -76,6 +76,63 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+def _reject_nonfinite_json(value: str) -> None:
+    raise ValueError(f'nonstandard JSON constant: {value}')
+
+
+def calibration_publication_evidence(path: Path) -> dict:
+    """Classify a research receipt for reviewers, NEVER certify publication.
+
+    A review manifest hashes bytes but does not execute the source-bound
+    calibration publication gate. In particular, a legacy nine-variant report
+    and a schema-2 'published' claim are both UNVERIFIED here.
+    """
+    result = {
+        'classification': 'unverified',
+        'reported_schema_version': None,
+        'reported_publication_status': None,
+        'publication_gate_executed': False,
+    }
+    try:
+        doc = json.loads(
+            path.read_text(encoding='utf-8'),
+            parse_constant=_reject_nonfinite_json,
+        )
+    except (OSError, UnicodeError, ValueError):
+        result['reason'] = 'unreadable_or_nonstandard_json'
+        return result
+    if not isinstance(doc, dict):
+        result['reason'] = 'invalid_artifact_structure'
+        return result
+    schema = doc.get('schema_version')
+    status = doc.get('publication_status')
+    result['reported_schema_version'] = schema if type(schema) is int else None
+    result['reported_publication_status'] = status if isinstance(status, str) else None
+    if type(schema) is not int or schema != 2:
+        result['reason'] = 'legacy_or_unknown_schema'
+        return result
+    if status == 'withheld':
+        if (doc.get('research_only') is True
+                and doc.get('live_model_changed') is False
+                and doc.get('live_allocation_changed') is False
+                and doc.get('return_data_used') is False
+                and doc.get('anchor_status') == 'unverified'
+                and doc.get('production_reproduction') is None
+                and doc.get('variants') == []
+                and isinstance(doc.get('withheld_reason'), str)
+                and bool(doc['withheld_reason'])):
+            result['classification'] = 'withheld'
+            result['reason'] = 'explicit_withheld_research_only'
+        else:
+            result['reason'] = 'malformed_withheld_artifact'
+        return result
+    if status == 'published':
+        result['reason'] = 'claimed_published_not_verified_by_manifest'
+        return result
+    result['reason'] = 'missing_or_unknown_publication_status'
+    return result
+
+
 def file_record(relative: str, required: bool) -> dict:
     path = ROOT / relative
     if not path.exists():
@@ -84,13 +141,16 @@ def file_record(relative: str, required: bool) -> dict:
         return {'path': relative, 'required': False, 'present': False}
     if not path.is_file():
         raise RuntimeError(f'review path is not a regular file: {relative}')
-    return {
+    record = {
         'path': relative,
         'required': bool(required),
         'present': True,
         'size_bytes': int(path.stat().st_size),
         'sha256': sha256_file(path),
     }
+    if relative == 'data/calibration_stability_audit.json':
+        record['calibration_publication_evidence'] = calibration_publication_evidence(path)
+    return record
 
 
 def parse_requirement_names(path: Path) -> list[str]:
