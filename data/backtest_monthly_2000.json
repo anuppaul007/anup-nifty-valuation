@@ -3,8 +3,8 @@
   "model_version": "3.6-long-history-common-lens",
   "scope": "common-factor valuation backtest only; P/E + profitability-adjusted P/B + dividend yield. Yield-gap, earnings and macro overlays excluded for the entire 2000-present series.",
   "start": "2000-01-01",
-  "end": "2026-10-01",
-  "rows": 322,
+  "end": "2026-11-01",
+  "rows": 323,
   "missing_months": [],
   "signal_rule": "first available NIFTY 50 trading day in each calendar month; displayed Date is the calendar month first day",
   "nifty_column_rule": "NIFTY 50 close on the first available trading day of each month",
@@ -2234,54 +2234,61 @@
       "Date": "2026-03-01",
       "NIFTY 50": 24865.7,
       "RBI Repo Rate %": 5.25,
-      "Equity %": 63,
-      "Debt %": 37
+      "Equity %": 65,
+      "Debt %": 35
     },
     {
       "Date": "2026-04-01",
       "NIFTY 50": 22679.4,
       "RBI Repo Rate %": 5.25,
-      "Equity %": 84,
-      "Debt %": 16
+      "Equity %": 85,
+      "Debt %": 15
     },
     {
       "Date": "2026-05-01",
       "NIFTY 50": 24119.3,
       "RBI Repo Rate %": 5.25,
-      "Equity %": 72,
-      "Debt %": 28
+      "Equity %": 74,
+      "Debt %": 26
     },
     {
       "Date": "2026-06-01",
       "NIFTY 50": 23382.6,
       "RBI Repo Rate %": 5.25,
-      "Equity %": 81,
-      "Debt %": 19
+      "Equity %": 84,
+      "Debt %": 16
     },
     {
       "Date": "2026-07-01",
       "NIFTY 50": 24005.85,
       "RBI Repo Rate %": 5.25,
-      "Equity %": 75,
-      "Debt %": 25
+      "Equity %": 80,
+      "Debt %": 20
     },
     {
       "Date": "2026-08-01",
       "NIFTY 50": 24774.3,
       "RBI Repo Rate %": 5.25,
-      "Equity %": 73,
-      "Debt %": 27
+      "Equity %": 79,
+      "Debt %": 21
     },
     {
       "Date": "2026-09-01",
       "NIFTY 50": 24055.8,
       "RBI Repo Rate %": 5.25,
-      "Equity %": 78,
-      "Debt %": 22
+      "Equity %": 84,
+      "Debt %": 16
     },
     {
       "Date": "2026-10-01",
       "NIFTY 50": 22421.95,
+      "RBI Repo Rate %": 5.25,
+      "Equity %": 92,
+      "Debt %": 8
+    },
+    {
+      "Date": "2026-11-01",
+      "NIFTY 50": 23440.8,
       "RBI Repo Rate %": 5.25,
       "Equity %": 88,
       "Debt %": 12

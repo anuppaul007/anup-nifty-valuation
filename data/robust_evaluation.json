@@ -5,98 +5,98 @@
   "decision": "NOT_ELIGIBLE_FOR_PROMOTION",
   "decision_reason": "Every critical gate must pass; no composite score averages away failures. Timing-skill tests remove the strategy beta by using exposure-matched residuals.",
   "fair_null_and_timing": {
-    "months": 65,
-    "mean_equity_pct": 54.2729234828676,
+    "months": 66,
+    "mean_equity_pct": 55.05396474042674,
     "dynamic_net": {
-      "months": 65,
-      "cagr_pct": 7.436274549112887,
-      "annual_vol_pct": 9.036167229009768,
-      "max_drawdown_pct": -9.603649549576366,
-      "sortino_0": 1.414795778309224,
-      "calmar": 0.7743175665381203,
-      "ending_wealth_from_100": 147.48038419769654,
-      "worst_month_pct": -7.702953076325247,
-      "annual_turnover_x": 1.037106793440944,
+      "months": 66,
+      "cagr_pct": 7.574772087236514,
+      "annual_vol_pct": 9.03367738975427,
+      "max_drawdown_pct": -9.732443154996906,
+      "sortino_0": 1.4324813150220121,
+      "calmar": 0.7783011898042699,
+      "ending_wealth_from_100": 149.4195384357419,
+      "worst_month_pct": -7.834454728590378,
+      "annual_turnover_x": 1.0275136543647028,
       "costed_10bp_turnover": true
     },
     "beta_matched_static_net": {
-      "months": 65,
-      "cagr_pct": 7.623514110292806,
-      "annual_vol_pct": 8.210033816107266,
-      "max_drawdown_pct": -8.691077891130018,
-      "sortino_0": 1.5849901820678085,
-      "calmar": 0.8771655490595993,
-      "ending_wealth_from_100": 148.87798970668757,
-      "worst_month_pct": -6.95728068770558,
+      "months": 66,
+      "cagr_pct": 7.658027790856292,
+      "annual_vol_pct": 8.23597756047612,
+      "max_drawdown_pct": -8.794862052246732,
+      "sortino_0": 1.5856054461027294,
+      "calmar": 0.870738818342236,
+      "ending_wealth_from_100": 150.05667117777168,
+      "worst_month_pct": -7.03148758289267,
       "annual_turnover_x": 0.0,
       "costed_10bp_turnover": true
     },
-    "dynamic_minus_static_cagr_pp": -0.18723956117991936,
-    "net_timing_mean_annualized_pp": -0.10613690635013111,
-    "net_timing_monthly_sharpe": -0.01078190675413381,
-    "net_timing_t_stat_naive": -0.08692651126994777,
+    "dynamic_minus_static_cagr_pp": -0.08325570361977785,
+    "net_timing_mean_annualized_pp": -0.010812902643684489,
+    "net_timing_monthly_sharpe": -0.001082108316790685,
+    "net_timing_t_stat_naive": -0.008791089523583503,
     "timing_effective_sample": {
-      "raw_n": 65,
-      "effective_n": 30.153927743109854,
-      "positive_acf_sum": 0.5778032061652805,
+      "raw_n": 66,
+      "effective_n": 31.860638931005447,
+      "positive_acf_sum": 0.5357607727661033,
       "acf_1_to_12": {
-        "1": 0.02637326788464328,
-        "2": 0.05420766516927242,
-        "3": 0.2529759680777373,
-        "4": 0.03797486813778266,
-        "5": 0.07452981040976749,
-        "6": -0.12316574281372943,
-        "7": -0.017030515153181373,
-        "8": 0.08147182042198399,
-        "9": -0.04196286702430226,
-        "10": 0.05026980606409327,
-        "11": -0.1476308398875559,
-        "12": -0.07815955955434471
+        "1": -0.006547232772384684,
+        "2": 0.04721092215560877,
+        "3": 0.2722447340890945,
+        "4": 0.03481163386963281,
+        "5": 0.05272378988524286,
+        "6": -0.053528563713688686,
+        "7": -0.04076986987633222,
+        "8": 0.07702953172177919,
+        "9": -0.046663868147055476,
+        "10": 0.05174016104474527,
+        "11": -0.14340287985528535,
+        "12": -0.06083969595244539
       },
       "method": "Bartlett-style positive-autocorrelation design effect; diagnostic only"
     },
-    "signal_weight_lag1_autocorrelation": 0.8309082282251101,
-    "dynamic_realised_turnover_x": 5.920899837704715,
-    "static_realised_turnover_x": 0.4431136849573418,
+    "signal_weight_lag1_autocorrelation": 0.8424304155414385,
+    "dynamic_realised_turnover_x": 5.95595117558547,
+    "static_realised_turnover_x": 0.4548453109982271,
     "placebo": {
       "method": "all non-zero circular shifts of exact target weights; mean exposure and target-path turnover are preserved by construction",
-      "unique_paths": 64,
-      "actual_percentile": 45.3125,
-      "p05_excess_cagr_pp": -2.0852423055606217,
-      "median_excess_cagr_pp": -0.024984722476018018,
-      "p95_excess_cagr_pp": 1.0294702508436167,
-      "max_excess_cagr_pp": 1.8437740964607041
+      "unique_paths": 65,
+      "actual_percentile": 50.76923076923077,
+      "p05_excess_cagr_pp": -2.081284486144206,
+      "median_excess_cagr_pp": -0.0968740312329297,
+      "p95_excess_cagr_pp": 1.3804314759681218,
+      "max_excess_cagr_pp": 2.0562555316169684
     },
     "paired_moving_block_bootstrap": [
       {
         "block_months": 3,
         "draws": 5000,
-        "annualized_mean_timing_pp": -0.10613690635013111,
+        "annualized_mean_timing_pp": -0.010812902643684489,
         "ci95_pp": [
-          -2.9884557923134603,
-          2.1954104577821574
+          -2.5598304458130863,
+          2.057310428297868
         ],
-        "probability_mean_gt_zero": 0.4956
+        "probability_mean_gt_zero": 0.5264
       },
       {
         "block_months": 6,
         "draws": 5000,
-        "annualized_mean_timing_pp": -0.10613690635013111,
+        "annualized_mean_timing_pp": -0.010812902643684489,
         "ci95_pp": [
-          -3.66541016242873,
-          2.2109461566615645
+          -3.1460709789173107,
+          2.0737398762902544
         ],
-        "probability_mean_gt_zero": 0.5178
+        "probability_mean_gt_zero": 0.5472
       },
       {
         "block_months": 12,
         "draws": 5000,
-        "annualized_mean_timing_pp": -0.10613690635013111,
+        "annualized_mean_timing_pp": -0.010812902643684489,
         "ci95_pp": [
-          -3.580036645636392,
-          2.123367525380978
+          -3.1992817567519722,
+          2.0067976397564045
         ],
-        "probability_mean_gt_zero": 0.4996
+        "probability_mean_gt_zero": 0.5302
       }
     ]
   },
@@ -105,21 +105,21 @@
     "draws": 5000,
     "seed": 20260913,
     "observed_signal": {
-      "mean": -0.10199785759054256,
-      "sd": 0.660847717807073,
-      "lag1_phi_ols": 0.7462432761069306
+      "mean": -0.130948190747406,
+      "sd": 0.6847017324701203,
+      "lag1_phi_ols": 0.7706153914058225
     },
     "surrogate_diagnostics": {
-      "median_mean_equity_pct": 53.19084607765845,
-      "median_lag1_acf": 0.7059936868235728
+      "median_mean_equity_pct": 54.06503945134147,
+      "median_lag1_acf": 0.7301580848933082
     },
-    "actual_excess_cagr_pp": -0.18723956117991936,
-    "actual_timing_residual_monthly_sharpe": -0.01078190675413381,
-    "actual_excess_cagr_percentile": 49.32,
-    "actual_timing_sharpe_percentile": 51.48,
-    "p05_excess_cagr_pp": -1.9579123508035556,
-    "median_excess_cagr_pp": -0.16306695136585336,
-    "p95_excess_cagr_pp": 1.5640811514711874,
+    "actual_excess_cagr_pp": -0.08325570361977785,
+    "actual_timing_residual_monthly_sharpe": -0.001082108316790685,
+    "actual_excess_cagr_percentile": 52.8,
+    "actual_timing_sharpe_percentile": 54.5,
+    "p05_excess_cagr_pp": -1.8470608264747423,
+    "median_excess_cagr_pp": -0.15627377065913217,
+    "p95_excess_cagr_pp": 1.5394443472156463,
     "interpretation": "Tests whether the specific valuation signal beats generic persistent mean-reverting signals with similar first-order structure; it is a model null, not a market forecast."
   },
   "multiple_testing_and_overfit": {
@@ -127,44 +127,43 @@
     "return_series": "exposure-matched timing residual (dynamic net return minus same-mean-equity static net return)",
     "trial_count": 24,
     "broader_logged_research_variants": 547,
-    "variant_months": 65,
-    "monthly_sharpe_mean_across_trials": -0.017163942180584448,
-    "monthly_sharpe_std_across_trials": 0.006976579481983145,
-    "expected_max_monthly_sharpe_under_selection": -0.0033518976933430093,
+    "variant_months": 66,
+    "monthly_sharpe_mean_across_trials": -0.007064451003751353,
+    "monthly_sharpe_std_across_trials": 0.006542871174614742,
+    "expected_max_monthly_sharpe_under_selection": 0.005888949437173602,
     "live_variant": {
       "key": "k=1.35|zc=2.5",
-      "monthly_sharpe": -0.01078190675413381,
-      "benchmark_expected_max_monthly_sharpe": -0.0033518976933430093,
-      "probability": 0.47615407851850877,
-      "z": -0.05980849829248272,
-      "skew": -1.1612654277159324,
-      "raw_kurtosis": 9.203726768138322,
+      "monthly_sharpe": -0.001082108316790685,
+      "benchmark_expected_max_monthly_sharpe": 0.005888949437173602,
+      "probability": 0.4775756111790512,
+      "z": -0.05623923906534556,
+      "skew": -1.2103661761867284,
+      "raw_kurtosis": 9.132526744717193,
       "moment_source": "selected exposure-matched timing-residual series"
     },
     "best_observed_variant": {
       "key": "k=1.50|zc=4.0",
-      "monthly_sharpe": -0.007881161858878603,
-      "benchmark_expected_max_monthly_sharpe": -0.0033518976933430093,
-      "probability": 0.4854863610462957,
-      "z": -0.03638832653413892,
-      "skew": -1.088576959148304,
-      "raw_kurtosis": 8.807754669489766,
+      "monthly_sharpe": 0.0015759817228639301,
+      "benchmark_expected_max_monthly_sharpe": 0.005888949437173602,
+      "probability": 0.48614317452586175,
+      "z": -0.034740897570166754,
+      "skew": -1.143002238877352,
+      "raw_kurtosis": 8.759032778886255,
       "moment_source": "selected exposure-matched timing-residual series"
     },
     "cscv": {
       "slices": 8,
       "splits": 70,
-      "pbo": 0.6857142857142857,
+      "pbo": 0.7,
       "median_oos_rank_logit": -1.6582280766035322,
       "in_sample_winner_counts": {
         "k=1.50|zc=4.0": 38,
         "k=1.35|zc=4.0": 2,
-        "k=1.15|zc=4.0": 1,
-        "k=0.60|zc=4.0": 18,
-        "k=1.50|zc=2.5": 5,
-        "k=0.80|zc=4.0": 4,
-        "k=1.00|zc=4.0": 1,
-        "k=1.00|zc=2.5": 1
+        "k=1.15|zc=4.0": 3,
+        "k=1.50|zc=2.5": 4,
+        "k=0.60|zc=4.0": 19,
+        "k=0.80|zc=4.0": 1,
+        "k=0.60|zc=2.5": 3
       }
     },
     "warning": "DSR/PBO use only the exact 24-member common-sample valuation-curve family. Broader logged trials have different samples/objectives and are disclosed, not falsely pooled. DSR and PBO now test timing residuals, not total equity-beta returns."
@@ -173,50 +172,50 @@
     "target_sharpe_difference": 0.2,
     "independent_observations_for_95pct_signal_to_noise": 96.03647051735311,
     "independent_observations_for_95pct_two_sided_80pct_power": 196.22199335872716,
-    "observed_weight_lag1_rho": 0.8309082282251101,
-    "ar1_design_effect": 10.827896644566357,
-    "approx_calendar_months_95pct": 1040,
-    "approx_calendar_years_95pct": 86.65608140590363,
-    "approx_calendar_months_80pct_power": 2125,
-    "approx_calendar_years_80pct_power": 177.05595528992365,
+    "observed_weight_lag1_rho": 0.8424304155414385,
+    "ar1_design_effect": 11.69280493994049,
+    "approx_calendar_months_95pct": 1123,
+    "approx_calendar_years_95pct": 93.57797640664631,
+    "approx_calendar_months_80pct_power": 2295,
+    "approx_calendar_years_80pct_power": 191.1987911058246,
     "warning": "Heuristic illustrating persistence cost; not a substitute for a full power model."
   },
   "lens_redundancy": {
-    "months": 66,
+    "months": 67,
     "correlation_matrix": {
       "pe": {
         "pe": 1.0,
-        "pb_profitability_adjusted": 0.8920035219934142,
-        "earnings_yield_minus_gsec": 0.480449794557068,
-        "dividend_yield": 0.7023133907057422
+        "pb_profitability_adjusted": 0.8939009043593041,
+        "earnings_yield_minus_gsec": 0.483690611854225,
+        "dividend_yield": 0.7962322784925314
       },
       "pb_profitability_adjusted": {
-        "pe": 0.8920035219934142,
+        "pe": 0.8939009043593041,
         "pb_profitability_adjusted": 1.0,
-        "earnings_yield_minus_gsec": 0.643017899944926,
-        "dividend_yield": 0.6109062292386747
+        "earnings_yield_minus_gsec": 0.6390492068177467,
+        "dividend_yield": 0.8254329428120096
       },
       "earnings_yield_minus_gsec": {
-        "pe": 0.480449794557068,
-        "pb_profitability_adjusted": 0.643017899944926,
+        "pe": 0.483690611854225,
+        "pb_profitability_adjusted": 0.6390492068177467,
         "earnings_yield_minus_gsec": 1.0,
-        "dividend_yield": 0.2948376554227887
+        "dividend_yield": 0.49282079608622
       },
       "dividend_yield": {
-        "pe": 0.7023133907057422,
-        "pb_profitability_adjusted": 0.6109062292386747,
-        "earnings_yield_minus_gsec": 0.2948376554227887,
+        "pe": 0.7962322784925314,
+        "pb_profitability_adjusted": 0.8254329428120096,
+        "earnings_yield_minus_gsec": 0.49282079608622,
         "dividend_yield": 1.0
       }
     },
     "eigenvalues": [
-      0.08066293099941756,
-      0.3300636755404818,
-      0.7387442172104326,
-      2.8505291762496676
+      0.0822763745755666,
+      0.21765118931790844,
+      0.6050895059923697,
+      3.0949829301141554
     ],
-    "effective_independent_lenses": 1.8209322242651957,
-    "max_absolute_pairwise_correlation": 0.8920035219934142,
+    "effective_independent_lenses": 1.6001289559951102,
+    "max_absolute_pairwise_correlation": 0.8939009043593041,
     "interpretation": "Displayed lenses are correlated; participation ratio estimates effective independent dimensions."
   },
   "fair_pe_reference_sensitivity": {
@@ -227,40 +226,40 @@
     "status": "complete",
     "common_window_methods": {
       "fixed_reference_live_curve": {
-        "months": 29,
-        "cagr_pct": 4.644441704112179,
-        "max_drawdown_pct": -9.603649549576343,
-        "annual_vol_pct": 10.362662663644441,
-        "annual_turnover_x": 0.9743714299077046,
+        "months": 30,
+        "cagr_pct": 5.03359051870389,
+        "max_drawdown_pct": -9.732443154996883,
+        "annual_vol_pct": 10.32136760358707,
+        "annual_turnover_x": 0.9559129173964171,
         "first_signal": "2024-04",
-        "last_signal": "2026-08"
+        "last_signal": "2026-09"
       },
       "fixed_reference_yield_lag_2m": {
-        "months": 29,
-        "cagr_pct": 4.496344275425779,
-        "max_drawdown_pct": -9.897706505039604,
-        "annual_vol_pct": 10.403992019386472,
-        "annual_turnover_x": 1.0449993293807542,
+        "months": 30,
+        "cagr_pct": 4.915765939194872,
+        "max_drawdown_pct": -10.023339665429498,
+        "annual_vol_pct": 10.36477509227873,
+        "annual_turnover_x": 1.029548974313655,
         "first_signal": "2024-04",
-        "last_signal": "2026-08"
+        "last_signal": "2026-09"
       },
       "rolling_36m_equal_lenses": {
-        "months": 29,
-        "cagr_pct": 4.862431037624582,
-        "max_drawdown_pct": -9.425445759138318,
-        "annual_vol_pct": 10.796906922330402,
-        "annual_turnover_x": 1.4922049536025137,
+        "months": 30,
+        "cagr_pct": 4.9322638250311135,
+        "max_drawdown_pct": -9.995520043536033,
+        "annual_vol_pct": 11.080970747255767,
+        "annual_turnover_x": 1.3606861240997623,
         "first_signal": "2024-04",
-        "last_signal": "2026-08"
+        "last_signal": "2026-09"
       },
       "expanding_equal_lenses": {
-        "months": 29,
-        "cagr_pct": 4.229881610665354,
-        "max_drawdown_pct": -10.358708980309528,
-        "annual_vol_pct": 11.146507943228148,
-        "annual_turnover_x": 1.2910919798280172,
+        "months": 30,
+        "cagr_pct": 4.419798860528279,
+        "max_drawdown_pct": -10.785137864054162,
+        "annual_vol_pct": 11.33091148090167,
+        "annual_turnover_x": 1.2079197605960093,
         "first_signal": "2024-04",
-        "last_signal": "2026-08"
+        "last_signal": "2026-09"
       }
     },
     "warning": "Rolling/expanding use prior observations but were designed retrospectively; no untouched OOS claim."
@@ -276,7 +275,7 @@
     "historical_result_can_promote_live": false
   },
   "prospective_evidence": {
-    "completed_decision_files": 0,
+    "completed_decision_files": 1,
     "minimum_required_before_any_promotion_review": 60
   },
   "implementation_status": {
@@ -379,8 +378,8 @@
     "hash_algorithm": "sha256",
     "files": {
       "model.js": "ccd60e5aeaef75e6dee7f84de5410f689dadada23f2ee619bf420d57a6748358",
-      "data/retrospective.json": "e64f8530b245c0038c409c2d9e5813000662e2f39478437d9a7e6cddd02eb332",
-      "data/latest.json": "d1761fbf83311c52f757b7f7744248e2e64c5591dec4dfc98035e1e9b59437e4",
+      "data/retrospective.json": "8307eacfc923e251d47f5bed43b3df40551fe8a2bc6d9e402809d7ee5eb7aa3c",
+      "data/latest.json": "394da9ea6b3a788cec42dbcd63606248f601079ad93a7591de1083fc8c8545ac",
       "validation_policy.json": "e8aa03b832a9f02b522cf902ed622b1ce153f1f2678ba1a3a9bac28df80c678d",
       "robust_evaluation_policy.json": "de75f801957322d0a5e707d42eace524e5fc08548f0e17bc2728a1cf549f5023",
       "research_trial_registry.json": "bff324fd6d0c3be24ac22e87768c4923f12b7069bcb9866858a67f43a033d85b",

@@ -1,6 +1,6 @@
 {
   "status": "complete",
-  "generated_on": "2026-10-23",
+  "generated_on": "2026-11-25",
   "basis": {
     "rebalancing": "monthly using backtest_monthly_2000.csv",
     "taxes_loads_slippage": "excluded",
@@ -12,35 +12,35 @@
   "strategy": {
     "start_value_inr": 10000000.0,
     "start_date": "2000-01-01",
-    "end_date": "2026-10-23",
-    "ending_value_inr": 380774202.36840147,
-    "multiple_x": 38.07742023684015,
-    "cagr_pct": 14.54049184378512,
-    "months_used": 322,
+    "end_date": "2026-11-25",
+    "ending_value_inr": 418640778.19357735,
+    "multiple_x": 41.86407781935773,
+    "cagr_pct": 14.892492002782799,
+    "months_used": 323,
     "source_month_counts": {
-      "equity_fund": 247,
+      "equity_fund": 248,
       "equity_tri_proxy": 75,
-      "debt_fund": 247,
+      "debt_fund": 248,
       "debt_rate_proxy": 75
     },
     "equity_fund": {
       "scheme_code": 101349,
       "name": "ICICI Prudential Nifty 50 Index Fund - Regular Plan - Cumulative",
       "nav_first_date": "2006-04-02",
-      "nav_last_date": "2026-10-22"
+      "nav_last_date": "2026-11-23"
     },
     "debt_fund": {
       "scheme_code": 101758,
       "name": "ICICI Prudential Short Term Fund - Regular Plan - Growth",
       "nav_first_date": "2006-04-02",
-      "nav_last_date": "2026-10-22"
+      "nav_last_date": "2026-11-25"
     },
     "strict_actual_funds": {
       "start_month": "2006-04",
-      "months": 247,
-      "ending_value_inr": 107216346.3110949,
-      "multiple_x": 10.72163463110949,
-      "cagr_pct": 12.230925824138517
+      "months": 248,
+      "ending_value_inr": 117878612.50989427,
+      "multiple_x": 11.787861250989426,
+      "cagr_pct": 12.688699369477142
     },
     "timeline": [
       {
@@ -2871,75 +2871,84 @@
       },
       {
         "month": "2026-03",
-        "equity_weight_pct": 63.0,
+        "equity_weight_pct": 65.0,
         "equity_return_pct": -8.80106438678041,
         "debt_return_pct": -0.37057674898335335,
         "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
         "debt_source": "ICICI Pru Short Term Fund Regular Growth",
-        "end_value": 373496685.79104656
+        "end_value": 372828997.3370982
       },
       {
         "month": "2026-04",
-        "equity_weight_pct": 84.0,
+        "equity_weight_pct": 85.0,
         "equity_return_pct": 6.316637451133644,
         "debt_return_pct": 0.8536858974358852,
         "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
         "debt_source": "ICICI Pru Short Term Fund Regular Growth",
-        "end_value": 393824486.4445577
+        "end_value": 393324133.28618
       },
       {
         "month": "2026-05",
-        "equity_weight_pct": 72.0,
+        "equity_weight_pct": 74.0,
         "equity_return_pct": -2.9279708470577703,
         "debt_return_pct": 0.06340106176916382,
         "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
         "debt_source": "ICICI Pru Short Term Fund Regular Growth",
-        "end_value": 385592031.7090097
+        "end_value": 384866822.11389554
       },
       {
         "month": "2026-06",
-        "equity_weight_pct": 81.0,
+        "equity_weight_pct": 84.0,
         "equity_return_pct": 2.9478119624562593,
         "debt_return_pct": 1.7634653801812172,
         "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
         "debt_source": "ICICI Pru Short Term Fund Regular Growth",
-        "end_value": 396090877.9966826
+        "end_value": 395482667.2070516
       },
       {
         "month": "2026-07",
-        "equity_weight_pct": 75.0,
+        "equity_weight_pct": 80.0,
         "equity_return_pct": 3.4239353819972784,
         "debt_return_pct": 0.27089825554631464,
         "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
         "debt_source": "ICICI Pru Short Term Fund Regular Growth",
-        "end_value": 406530550.6038444
+        "end_value": 406529795.114077
       },
       {
         "month": "2026-08",
-        "equity_weight_pct": 73.0,
+        "equity_weight_pct": 79.0,
         "equity_return_pct": -2.896874747380618,
         "debt_return_pct": 0.1434869826804075,
         "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
         "debt_source": "ICICI Pru Short Term Fund Regular Growth",
-        "end_value": 398091069.549037
+        "end_value": 397348731.16434735
       },
       {
         "month": "2026-09",
-        "equity_weight_pct": 78.0,
+        "equity_weight_pct": 84.0,
         "equity_return_pct": -6.797780386910823,
         "debt_return_pct": 0.04382359294408111,
         "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
         "debt_source": "ICICI Pru Short Term Fund Regular Growth",
-        "end_value": 377021592.08188605
+        "end_value": 374687441.30645716
       },
       {
         "month": "2026-10",
-        "equity_weight_pct": 88.0,
-        "equity_return_pct": 1.182127027834512,
-        "debt_return_pct": -0.37451205475239613,
+        "equity_weight_pct": 92.0,
+        "equity_return_pct": 4.545420544792211,
+        "debt_return_pct": -0.08807479678331065,
         "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
         "debt_source": "ICICI Pru Short Term Fund Regular Growth",
-        "end_value": 380774202.36840147
+        "end_value": 390329671.23128486
+      },
+      {
+        "month": "2026-11",
+        "equity_weight_pct": 88.0,
+        "equity_return_pct": 8.152404938412916,
+        "debt_return_pct": 0.65842252224797,
+        "equity_source": "ICICI Pru Nifty 50 Index Fund Regular Growth",
+        "debt_source": "ICICI Pru Short Term Fund Regular Growth",
+        "end_value": 418640778.19357735
       }
     ]
   },
@@ -2951,10 +2960,10 @@
         "name": "Anup monthly allocation methodology (reconstructed)",
         "scheme_code": null,
         "start_date": "2000-01-01",
-        "end_date": "2026-10-23",
-        "cagr_pct": 14.54049184378512,
-        "value_of_1cr_inr": 380774202.36840147,
-        "multiple_x": 38.07742023684015,
+        "end_date": "2026-11-25",
+        "cagr_pct": 14.892492002782799,
+        "value_of_1cr_inr": 418640778.19357735,
+        "multiple_x": 41.86407781935773,
         "is_methodology": true,
         "rank": 1
       }
@@ -2974,6 +2983,20 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
+        "query": "Nippon India Growth Fund",
+        "selected": "Nippon India Multi Asset Allocation Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "SBI Long Term Equity Fund",
+        "error": "no regular-growth match"
+      },
+      {
+        "query": "Franklin India Flexi Cap Fund",
+        "selected": "Franklin India Flexi Cap Fund - Regular Plan - Growth",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
         "query": "HDFC Flexi Cap Fund",
         "selected": "HDFC Flexi Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
@@ -2984,27 +3007,8 @@
         "error": "no NAV close enough to Jan-2000"
       },
       {
-        "query": "Franklin India Flexi Cap Fund",
-        "selected": "Franklin India Flexi Cap Fund - Regular Plan - Growth",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
-        "query": "SBI Long Term Equity Fund",
-        "error": "no regular-growth match"
-      },
-      {
-        "query": "Nippon India Growth Fund",
-        "selected": "Nippon India Growth Mid Cap Fund - Regular Plan - Growth Option",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
         "query": "Nippon India Vision Fund",
         "selected": "Nippon India Vision Large & Mid Cap Fund - Regular Plan - GROWTH Option",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
-        "query": "SBI Contra Fund",
-        "selected": "SBI CONTRA FUND - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -3012,8 +3016,18 @@
         "error": "no regular-growth match"
       },
       {
+        "query": "SBI Contra Fund",
+        "selected": "SBI CONTRA FUND - Regular Plan - Growth",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
         "query": "Kotak Bluechip Fund",
         "error": "no regular-growth match"
+      },
+      {
+        "query": "Tata Mid Cap Growth Fund",
+        "selected": "Tata Mid Cap Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
       },
       {
         "query": "ICICI Prudential Multicap Fund",
@@ -3024,18 +3038,8 @@
         "error": "no regular-growth match"
       },
       {
-        "query": "Tata ELSS Tax Saver Fund",
-        "selected": "Tata ELSS - Tax Saver Fund - Regular Plan - Growth Option",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
         "query": "JM Flexicap Fund",
         "error": "no regular-growth match"
-      },
-      {
-        "query": "Tata Large & Mid Cap Fund",
-        "selected": "Tata Large & Mid Cap Fund - Regular Plan - Growth Option",
-        "error": "no NAV close enough to Jan-2000"
       },
       {
         "query": "Sundaram Diversified Equity",
@@ -3046,13 +3050,23 @@
         "error": "no regular-growth match"
       },
       {
-        "query": "Tata Mid Cap Growth Fund",
-        "selected": "Tata Mid Cap Fund - Regular Plan - Growth Option",
+        "query": "Tata ELSS Tax Saver Fund",
+        "selected": "Tata ELSS - Tax Saver Fund - Regular Plan - Growth Option",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "HSBC Value Fund",
+        "selected": "HSBC Value Fund - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
       },
       {
         "query": "Canara Robeco ELSS Tax Saver",
         "selected": "Canara Robeco ELSS - Tax Saver Fund - Regular Plan - GROWTH OPTION",
+        "error": "no NAV close enough to Jan-2000"
+      },
+      {
+        "query": "Tata Large & Mid Cap Fund",
+        "selected": "Tata Large & Mid Cap Fund - Regular Plan - Growth Option",
         "error": "no NAV close enough to Jan-2000"
       },
       {
@@ -3063,11 +3077,6 @@
       {
         "query": "DSP Flexi Cap Fund",
         "selected": "DSP Flexi Cap Fund - Regular Plan - Growth",
-        "error": "no NAV close enough to Jan-2000"
-      },
-      {
-        "query": "HSBC Value Fund",
-        "selected": "HSBC Value Fund - Regular Plan - Growth",
         "error": "no NAV close enough to Jan-2000"
       }
     ],
