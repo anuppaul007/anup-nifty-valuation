@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "model_version": "multiasset-research-v1",
-  "generated_at": "2026-11-26T22:25:01+00:00",
+  "generated_at": "2026-11-26T22:50:16+00:00",
   "status": "live",
   "source_latest_generated_at": "2026-11-26T22:24:40+00:00",
   "core_source": "V3.6 NIFTY equity/debt research signal; gold and silver are a diversification layer carved proportionally from both sleeves",
@@ -107,7 +107,7 @@
     }
   },
   "btc": {
-    "score": -0.17963556204032743,
+    "score": -0.17917235193582312,
     "tactical_signal_pct": 2.5,
     "range_pct": [
       0,
@@ -116,14 +116,14 @@
     "included_in_core_100pct": false,
     "drivers": {
       "price_vs_200d": {
-        "value": -15.82699025693659,
-        "score": -0.6591728525262995,
+        "value": -15.773727596913723,
+        "score": -0.6576642296134041,
         "weight": 0.3,
         "asof": "2026-11-26"
       },
       "btc_12m_momentum": {
-        "value": -33.12118716237753,
-        "score": -0.5020324685944767,
+        "value": -33.07868888142609,
+        "score": -0.5015024942495809,
         "weight": 0.2,
         "asof": "2026-11-26"
       },
@@ -134,21 +134,21 @@
         "asof": "2026-11-26T22:24:40+00:00"
       },
       "drawdown_value": {
-        "value": -51.473842840363204,
-        "score": 0.8676991782574639,
+        "value": -51.443006792697844,
+        "score": 0.86731769170409,
         "weight": 0.25,
         "asof": "2026-11-26"
       }
     },
     "market": {
-      "price": 60537.609375,
+      "price": 60576.078125,
       "asof": "2026-11-26",
       "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD",
-      "ma200": 71920.45236328125,
-      "vs_ma200_pct": -15.82699025693659,
-      "momentum_12m_pct": -33.12118716237753,
+      "ma200": 71920.64470703126,
+      "vs_ma200_pct": -15.773727596913723,
+      "momentum_12m_pct": -33.07868888142609,
       "three_year_high": 124752.53125,
-      "drawdown_from_3y_high_pct": -51.473842840363204,
+      "drawdown_from_3y_high_pct": -51.443006792697844,
       "observations": 1097
     }
   },
